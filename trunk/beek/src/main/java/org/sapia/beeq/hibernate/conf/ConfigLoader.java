@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.sapia.beeq.hibernate.HibernateMessage;
+import org.sapia.beeq.hibernate.Payload;
 import org.sapia.beeq.hibernate.queue.QueueElement;
 import org.sapia.beeq.hibernate.queue.retry.RetryQueueElement;
 
@@ -15,6 +16,7 @@ public class ConfigLoader {
   private void loadClasses(){
     config
       .addClass(HibernateMessage.class)
+      .addClass(Payload.class)
       .addClass(QueueElement.class)
       .addClass(RetryQueueElement.class);
   }

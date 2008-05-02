@@ -4,6 +4,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sapia.beeq.Message;
 
+/**
+ * This class implements the {@link Sender} interface
+ * over a {@link Log}. An instance of it simply logs a given message's 
+ * content.
+ * 
+ * @author yduchesne
+ *
+ */
 public class LoggingSender implements Sender{
   
   private Log log = LogFactory.getLog(getClass());
@@ -19,6 +27,5 @@ public class LoggingSender implements Sender{
   public boolean accepts(Message msg) {
     return true;
   }
-  
 
 }
