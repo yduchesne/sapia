@@ -1,0 +1,4 @@
+<catalogue xml:lang="en">
+  <message key="success">SUCCESSFUL</message>
+  <message key="failure">FAILURE</message>
+</catalogue>
