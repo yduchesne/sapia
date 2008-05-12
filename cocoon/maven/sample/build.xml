@@ -1,0 +1,11 @@
+<project name="sapia-cocoon-sample" default="build" basedir=".">
+
+  <target name="build">
+    <jar destfile="${basedir}/sapia_cocoon.jar">
+      <fileset dir="${basedir}/src/main/java">
+        <include name="org/sapia/**" />
+      </fileset>
+    </jar>
+  </target>
+
+</project>
