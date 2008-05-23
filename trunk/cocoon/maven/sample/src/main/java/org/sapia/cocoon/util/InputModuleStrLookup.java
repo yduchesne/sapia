@@ -52,9 +52,6 @@ public class InputModuleStrLookup extends StrLookup{
         if(value == null){
           throw new IllegalArgumentException("No value found for: " + parts[1] + " in input module: " + parts[0]);
         }
-        if(key.equals("content-uri")){
-          System.out.println("------------ " + value);
-        }
         if(value instanceof String){
           return (String)value;
         }
