@@ -27,4 +27,8 @@ public class MyBean {
     public String getMessage() {
         return this.message;
     }
+    
+    public String echo(String message){
+      return message;
+    }
 }

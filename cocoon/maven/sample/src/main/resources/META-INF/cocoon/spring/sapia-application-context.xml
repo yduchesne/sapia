@@ -81,7 +81,11 @@
   <!-- Readers -->        
   <bean name="org.apache.cocoon.reading.Reader/i18n" 
         class="org.sapia.cocoon.reading.i18n.i18nReader" 
-        scope="prototype" />                
+        scope="prototype" />
+                        
+  <bean name="org.apache.cocoon.reading.Reader/json" 
+        class="org.sapia.cocoon.reading.json.JsonRpcReader" 
+        scope="prototype" />        
         
   <!-- Serializers -->
   <bean name="org.apache.cocoon.serialization.Serializer/json" 
@@ -95,6 +99,16 @@
         
   <bean name="org.apache.cocoon.acting.Action/output" 
         class="org.sapia.cocoon.acting.OutputModuleAction" 
-        scope="prototype" />                                        
+        scope="prototype" />
+        
+  <!-- Modules -->        
+  <bean name="org.apache.cocoon.components.modules.input.InputModule/application" 
+        class="org.sapia.cocoon.module.AppContextInputModule" 
+        scope="singleton" />
+        
+  <!-- Demo beans -->        
+	<bean id="demo" class="demo.MyBean" scope="singleton">
+		<property name="message" value="This is a message coming from a Spring bean."/>
+	</bean>                 
         
 </beans>
