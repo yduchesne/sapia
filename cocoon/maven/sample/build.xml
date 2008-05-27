@@ -5,8 +5,9 @@
 			<arg value="compile"/>
 		</exec>
     <jar destfile="${basedir}/sapia_cocoon.jar">
-      <fileset dir="${basedir}/src/main/java">
-        <include name="org/sapia/**" />
+      <fileset dir="${basedir}/target/classes">
+        <include name="org/sapia/cocoon/*.class" />
+      	<include name="org/sapia/cocoon/**/*.class" />
       </fileset>
     </jar>
   </target>
@@ -15,7 +16,7 @@
 	  <exec executable="mvn">
 	    <arg value="-DgroupId=org.sapia-oss"/>
 	    <arg value="-DartifactId=sapia_cocoon"/>
-	  	<arg value="-Dversion=2.2a4"/>
+	  	<arg value="-Dversion=2.2a6"/>
 	  	<arg value="-Dpackaging=jar"/>
 	  	<arg value="-Dfile=${basedir}/sapia_cocoon.jar"/>
 	  	<arg value="install:install-file"/>
