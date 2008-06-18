@@ -16,7 +16,7 @@
 	  <exec executable="mvn">
 	    <arg value="-DgroupId=org.sapia-oss"/>
 	    <arg value="-DartifactId=sapia_cocoon"/>
-	  	<arg value="-Dversion=2.2a6"/>
+	  	<arg value="-Dversion=2.2a7"/>
 	  	<arg value="-Dpackaging=jar"/>
 	  	<arg value="-Dfile=${basedir}/sapia_cocoon.jar"/>
 	  	<arg value="install:install-file"/>
