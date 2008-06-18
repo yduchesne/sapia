@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
@@ -47,6 +48,17 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
   public static final String ARG_NAME_PATTERN    = "json-arg-";
   public static final String ARG_VALUE          = "json-arg-value";
   public static final String MIME_TYPE = "application/json;charset=utf-8";
+  
+  static Set<Class> PRIMITIVES = new HashSet<Class>();
+  static{
+    PRIMITIVES.add(Boolean.class);
+    PRIMITIVES.add(Byte.class);
+    PRIMITIVES.add(Short.class);
+    PRIMITIVES.add(Integer.class);
+    PRIMITIVES.add(Long.class);
+    PRIMITIVES.add(Float.class);
+    PRIMITIVES.add(Double.class);
+  }
   
   private Map objectModel;
   private OutputStream out;
@@ -207,7 +219,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
           return null;
         }
       }
-      else if(type.isPrimitive()){
+      else if(type.isPrimitive() || PRIMITIVES.contains(type)){
         JSONObject json = JSONObject.fromObject(value);
         boolean isNull = json.getString(ARG_VALUE) == null || json.getString(ARG_VALUE).equals("null");
         
@@ -237,7 +249,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
         else if(type.equals(float.class) || type.equals(Float.class)){
           return Float.parseFloat(json.getString(ARG_VALUE));
         }        
-        else if(type.equals(Double.class) || type.equals(Double.class)){
+        else if(type.equals(double.class) || type.equals(Double.class)){
           return json.getDouble(ARG_VALUE);
         }
         else{
@@ -266,6 +278,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
       // bean...
       else{
         JSONObject json = JSONObject.fromObject(value);
+        json = json.getJSONObject(ARG_VALUE);
         JsonConfig config = new JsonConfig();
         config.setRootClass(type);
         return JSONSerializer.toJava(json, config);        
