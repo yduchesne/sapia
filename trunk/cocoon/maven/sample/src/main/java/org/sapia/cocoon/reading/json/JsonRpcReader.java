@@ -269,10 +269,11 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
         return toReturn;
       }
       else if(type.isArray()){
-        JSONArray jsonArray = (JSONArray) JSONSerializer.toJSON(value);  
-        JsonConfig jsonConfig = new JsonConfig();  
+        JSONObject json = JSONObject.fromObject(value);
+        JSONArray jsonArray = json.getJSONArray(ARG_VALUE);
+        JsonConfig jsonConfig = new JsonConfig();          
         jsonConfig.setRootClass(type.getComponentType());
-        jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);  
+        jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
         return JSONSerializer.toJava(jsonArray, jsonConfig);
       }
       // bean...
