@@ -5,7 +5,7 @@
 
   <groupId>org.sapia-oss</groupId>
   <artifactId>sapia_cocoon</artifactId>
-  <version>2.2a3</version>
+  <version>2.2a8</version>
   <packaging>jar</packaging>
   <name>Sapia Cocoon Components</name>
   <url>http://www.sapia-oss.org</url>
