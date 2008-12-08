@@ -1,0 +1,20 @@
+<gumby:TablePanel xmlns:swing="java:swing" xmlns:gumby="gumby:swing"
+  xmlns:j="jelly:core">
+  <j:forEach items="${Model.properties}" var="prop">
+    <tr>
+      <td weight="0.5">
+        <swing:Insets top="3" left="30" bottom="3" right="15"/>
+        <swing:JLabel>
+          <text>${prop.key}</text>
+        </swing:JLabel>
+      </td>
+      <td weight="0.5">
+       <swing:Insets top="3" left="0" bottom="3" right="0"/>                
+        <swing:JTextField columns="25">
+          <name>${prop.key}</name>
+          <text>${prop.value}</text>
+        </swing:JTextField>
+      </td>      
+    </tr>
+  </j:forEach>
+</gumby:TablePanel>

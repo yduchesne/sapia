@@ -1,0 +1,76 @@
+<gumby:TablePanel xmlns:swing="java:swing" xmlns:awt="java:awt"
+  xmlns:gumby="gumby:swing">
+  <tr>
+    <td colspan="2">
+        <swing:Insets top="10" left="10" right="10" bottom="10" />    
+      <swing:JLabel text="Enter the required information:" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <swing:Insets top="10" left="10" right="10" bottom="10" />    
+      <swing:JLabel text="Property name:" />
+    </td>
+    <td>
+      <swing:Insets top="10" left="10" right="10" bottom="10" />    
+      <swing:JTextField name="name" columns="15">    
+        <gumby:Register id="name:local" />
+      </swing:JTextField>
+    </td>    
+  </tr>
+  <tr>
+    <td>
+      <swing:Insets top="10" left="10" right="10" bottom="10" />    
+      <swing:JLabel text="Property value:" />
+    </td>
+    <td>
+      <swing:Insets top="10" left="10" right="10" bottom="10" />    
+      <swing:JTextField name="value" columns="15">    
+        <gumby:Register id="value:local" />      
+      </swing:JTextField>
+    </td>    
+  </tr>  
+  <tr>
+    <td colspan="2">
+      <gumby:New class="JPanel">
+        <gumby:Expr void="true">
+          import java.awt.FlowLayout; Parent.setLayout(new
+          FlowLayout(FlowLayout.CENTER));
+        </gumby:Expr>
+        <swing:JButton text="OK">
+          <actionListener>
+            <gumby:Expr>
+              import java.awt.event.*; import org.sapia.regis.gui.*;
+              
+              dialog = RenderContext.getEnv().get("dialog", "local");
+
+              new ActionListener(){ 
+                public void actionPerformed(ActionEvent e){
+                  dialog.addProperty();
+                  dialog.dispose();
+                }
+              };
+            </gumby:Expr>
+          </actionListener>
+        </swing:JButton>
+        <swing:JButton text="Cancel">
+          <actionListener>
+            <gumby:Expr>
+              import java.awt.event.*; import org.sapia.regis.gui.*;
+              
+              dialog = RenderContext.getEnv().get("dialog", "local");
+
+              new ActionListener(){ 
+                public void actionPerformed(ActionEvent e){
+                  dialog.dispose();
+                }
+              };
+            </gumby:Expr>
+          </actionListener>
+        </swing:JButton>        
+      </gumby:New>
+    </td>
+  </tr>
+</gumby:TablePanel>
+
+
