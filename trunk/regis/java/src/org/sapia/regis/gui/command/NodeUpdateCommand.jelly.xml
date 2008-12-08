@@ -1,0 +1,7 @@
+<registry xmlns:j="jelly:core">
+  <node operation="update-overwrite" name="">
+    <j:forEach items="${properties}" var="prop">
+      <property name="${prop.key}"  value="${prop.value}" />
+    </j:forEach>
+  </node>
+</registry>
