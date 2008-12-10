@@ -1478,6 +1478,96 @@ public interface SessionManagerConf{
       </p>
     </sapia:sect2>    
     
+    <sapia:sect2 title="Code Generation">
+       <sect-desc>
+         <p>
+          Loosely-typed configuration may become a pain when dealing with a statically-typed language such as Java. In order
+          to bridge the gap between the loose, tree-based configuration model of Regis and the static nature of Java, a code generation
+          facility has been added to the framework. Basically, it generates classes based on the configuration contained in a Registry.
+         </p>
+       </sect-desc>
+       
+       <sapia:sect3 title="Generating Code with Ant">
+         <p>Regis provides an Ant task that may be configured as follows:</p>
+         
+  <sapia:code><![CDATA[<!-- declaring the taskdef -->
+<taskdef classname="org.sapia.regis.ant.CodeGenTask"
+    name="codegen">
+  <classpath>
+    <fileset dir="${project.distributionDir}">
+      <include name="sapia_regis.jar"/>
+    </fileset>
+  </classpath>
+</taskdef>
+    
+<!-- invoking the task -->
+<codegen 
+  destdir="${basedir}/codegen/src" 
+  properties="etc/codegen/bootstrap.properties"
+  packagePrefix="org.sapia.regis.sample"
+  version="1.0"
+  rootClassName="SampleApp" />]]></sapia:code>         
+        
+        <p>The task takes the following attributes:
+	        <ul>
+	          <li><b>destdir</b>: indicates the directory where the sources must be generated</li>
+	          <li><b>properties</b>:</li> indicates the Regis boostrap file to use for loading (or connecting to) the Registry instance
+	          whose contents will be used for generating the code. 
+	          <li><b>packagePrefix</b>: the package prefix to use, which will be inserted into the generated sources (and used when creating the source files).</li>
+	          <li><b>version:</b> an arbitrary version number, also inserted in the generated sources.</li>	          	          	          
+	          <li><b>rootClassName:</b> The name (excluding the package) of the class to use when generating the "root" class (the code generator creates such a root class
+	          and corresponding factory to serve as a convenient entry point for applications.</li>
+	        </ul>
+        </p> 
+         
+         
+       </sapia:sect3>
+       
+       <sapia:sect3 title="Using the Generated Code">
+         <p>
+         The following illustrates how to use the generated code. Note
+         that the code generator creates a root class (and associated 
+         interface), that corresponds to the root of the configuration.
+         The generator also creates a factory allowing applications to
+         create an instance of the root class, as illustrated below:
+         </p>
+         <sapia:code>import org.sapia.regis.sample.*;
+import org.sapia.regis.*;
+import java.util.Properties;
+ 
+...
+ 
+Properties props = new Properties();
+  
+props.setProperty(RegistryContext.BOOTSTRAP, "etc/codegen/bootstrap.properties");
+RegistryContext ctx = new RegistryContext(props);
+Registry reg = ctx.connect();
+RegisSession s = reg.open();
+    
+SampleApp appConfig = SampleAppFactory.createFor(reg);
+for(DatabasesNode node : appConfig.getDatabases().getDatabasesNodes()){
+  System.out.println(node.getUsername() + ", " + node.getUrl());
+}
+
+s.close();</sapia:code>         
+       </sapia:sect3>
+       
+       <sapia:sect3 title="Behind the Scenes">
+         <p>
+         The code generator creates a class hierarchy correspdonding to the node
+         hierarchy of the Registry instance that is used as a base for code
+         generation. The generator creates packages that match the different node paths 
+         under the configuration tree.
+         </p>
+         <p>
+         Instances of the generated classes encapsulate their corresponding node at runtime. Therefore,
+         the configuration is not hardwired into the source; the generated classes serve as proxies - sort of a
+         strongly-typed abstraction layer.
+         </p>         
+       </sapia:sect3>
+    
+    </sapia:sect2>
+    
     <sapia:sect2 title="Conclusion">
       <p>Regis can be used to implement a robust, performant, persistent and
       distributed configuration infrastructure.</p>

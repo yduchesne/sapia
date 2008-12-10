@@ -10,7 +10,7 @@ public class Path implements Serializable{
   
   static final long serialVersionUID = 1L;
   
-  private List _tokens;
+  protected List _tokens;
   
   public Path(List tokens){
     _tokens = tokens;
@@ -34,25 +34,34 @@ public class Path implements Serializable{
   }
   
   public static Path parse(String path){
-    StringTokenizer tokenizer = new StringTokenizer(path, "/");
+    return parse(path, "/");
+  }
+  
+  public static Path parse(String path, String delim){
+    StringTokenizer tokenizer = new StringTokenizer(path, delim);
     ArrayList tokens = new ArrayList();
     while(tokenizer.hasMoreTokens()){
       tokens.add(tokenizer.nextToken());
     }
     tokens.trimToSize();
     return new Path(tokens);
-  }
+  }  
   
-  public String toString(){
+  public String toString(char delim){
     StringBuffer buf = new StringBuffer();
     for(int i = 0; i < _tokens.size(); i++){
       String token = (String)_tokens.get(i);
       buf.append(token);
       if(i < _tokens.size() - 1){
-        buf.append("/");
+        buf.append(delim);
       }
     }
     return buf.toString();
   }
+
+  
+  public String toString(){
+    return toString('/');
+  }  
 
 }
