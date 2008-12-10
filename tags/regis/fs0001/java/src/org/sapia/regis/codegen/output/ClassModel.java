@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,11 @@ class ClassModel {
     }
 
     if (ctx.isInterface()) {
+      writer.println("/**");
+      writer.println(" * Generated: " + new Date());
+      writer.println(" * @author: " + System.getProperty("user.name"));
+      writer.println(" * @version: " + ctx.getConfig().getVersion());
+      writer.println(" */");            
       writer.println("public interface " + ctx.getClassName() + " extends " 
           + NodeCapable.class.getName() +  " {");
       writer.println();
@@ -77,6 +83,14 @@ class ClassModel {
       }      
       
     } else {
+      writer.println("/**");
+      writer.println(" *");
+      writer.println(" * Wraps the node at <code>" + ctx.getNode().getAbsolutePath().toString() + "</code>");
+      writer.println(" *");      
+      writer.println(" * Generated: " + new Date());
+      writer.println(" * @author: " + System.getProperty("user.name"));
+      writer.println(" * @version: " + ctx.getConfig().getVersion());
+      writer.println(" */");      
       if (ctx.getHints().getParentInterface() != null) {
         writer.println("public class "
             + ctx.getClassName()

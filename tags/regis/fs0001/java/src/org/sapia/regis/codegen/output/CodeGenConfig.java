@@ -9,10 +9,14 @@ import java.io.File;
  *
  */
 public class CodeGenConfig {
+  
+  public static final String VERSION_UNSPECIFIED = "unspecified";
 
   private String packagePrefix, rootClassName;
 
   private File destinationDir;
+  
+  private String version;
 
   /**
    * @param dest a {@link File} corresponding to the directory where the generated code will
@@ -51,6 +55,22 @@ public class CodeGenConfig {
 
   public void setRootClassName(String rootClassName) {
     this.rootClassName = rootClassName;
+  }
+
+  /**
+   * @return the version that should be inserted into the generated sources.
+   */
+  public String getVersion() {
+    if(version == null){
+      return VERSION_UNSPECIFIED; 
+    }
+    else{
+      return version;
+    }
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 
 }

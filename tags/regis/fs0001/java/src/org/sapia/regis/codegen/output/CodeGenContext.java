@@ -8,35 +8,38 @@ import java.io.PrintWriter;
 import org.sapia.regis.Node;
 import org.sapia.regis.Path;
 
-public class CodeGenContext {
+class CodeGenContext {
 
+  private CodeGenConfig config;
+  
+  private Node node;
+  
   private Path packagePath;
 
   private String className;
 
   private boolean isInterface;
 
-  private Node node;
-
   private Hints hints;
 
-  public CodeGenContext(Node node) {
+  CodeGenContext(CodeGenConfig config, Node node) {
+    this.config = config;
     this.node = node;
   }
 
-  public Path getPackagePath() {
+  Path getPackagePath() {
     return packagePath;
   }
 
-  public void setPackagePath(Path packagePath) {
+  void setPackagePath(Path packagePath) {
     this.packagePath = packagePath;
   }
 
-  public String getClassName() {
+  String getClassName() {
     return className;
   }
 
-  public String getFullyQualifiedClassName() {
+  String getFullyQualifiedClassName() {
     String packageName = packagePath.toString('.');
     if (packageName.length() == 0) {
       return className;
@@ -45,27 +48,35 @@ public class CodeGenContext {
     }
   }
 
-  public void setClassName(String className) {
+  void setClassName(String className) {
     this.className = className;
   }
 
-  public boolean isInterface() {
+  boolean isInterface() {
     return isInterface;
   }
 
-  public void setInterface(boolean isInterface) {
+  void setInterface(boolean isInterface) {
     this.isInterface = isInterface;
   }
 
-  public Node getNode() {
+  Node getNode() {
     return node;
   }
 
-  public void setNode(Node node) {
+  void setNode(Node node) {
     this.node = node;
   }
+  
+  CodeGenConfig getConfig(){
+    return config;
+  }
 
-  public PrintWriter createWriter(File destDir) throws IOException {
+  PrintWriter createWriter(File destDir) throws IOException {
+    return createWriter(destDir, getClassName());
+  }
+  
+  PrintWriter createWriter(File destDir, String className) throws IOException{
     String packagePath = this.getPackagePath().toString(File.separatorChar);
     File outdir = null;
     if (packagePath != null && packagePath.length() > 0) {
@@ -80,18 +91,17 @@ public class CodeGenContext {
           + outdir.getAbsolutePath());
     }
 
-    File outfile = new File(outdir, getClassName() + ".java");
+    File outfile = new File(outdir, className + ".java");
     return new PrintWriter(new FileOutputStream(outfile), true);
-
   }
 
-  public Hints getHints() {
+  Hints getHints() {
     if (hints == null)
       hints = new Hints();
     return hints;
   }
 
-  public void setHints(Hints hints) {
+  void setHints(Hints hints) {
     this.hints = hints;
   }
 }

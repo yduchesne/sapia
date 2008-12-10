@@ -131,14 +131,14 @@ class NodeIntrospector {
       String className = this.config.getRootClassName() == null ? "Root" : this.config.getRootClassName();
       
       // interface
-      CodeGenContext rootIntCtx = new CodeGenContext(this.node);
+      CodeGenContext rootIntCtx = new CodeGenContext(this.config, this.node);
       rootIntCtx.setClassName(className);
       rootIntCtx.setPackagePath(Path.parse(getPackageName(), "."));
       rootIntCtx.setInterface(true);
       ClassModel rootIntfModel = new ClassModel(rootIntCtx);
       
       // impl
-      CodeGenContext rootImplCtx = new CodeGenContext(this.node);
+      CodeGenContext rootImplCtx = new CodeGenContext(this.config, this.node);
       rootImplCtx.getHints().setParentInterface(rootIntfModel);
       rootImplCtx.setClassName(className + "Impl");
       rootImplCtx.setPackagePath(Path.parse(getPackageName(), "."));
@@ -153,6 +153,12 @@ class NodeIntrospector {
       
       rootIntfModel.output(this.config.getDestinationDir());
       rootImplModel.output(this.config.getDestinationDir());
+      
+      // factory
+      
+      RootFactoryModel factory = new RootFactoryModel(rootImplModel);
+      factory.output(config.getDestinationDir());
+      
       return rootImplModel;
     } else {
       String packageName = getPackageName();
@@ -176,7 +182,7 @@ class NodeIntrospector {
         }
 
         String interfaceName = getClassName() + "Node";
-        CodeGenContext currentContext = new CodeGenContext(this.node);
+        CodeGenContext currentContext = new CodeGenContext(this.config, this.node);
 
         Set<PropertyModel> properties = new HashSet<PropertyModel>();
         NodeIntrospector firstChild = children.iterator().next();
@@ -196,7 +202,7 @@ class NodeIntrospector {
 
           // creating interface
 
-          CodeGenContext interfaceContext = new CodeGenContext(this.node);
+          CodeGenContext interfaceContext = new CodeGenContext(this.config, this.node);
           interfaceContext.setClassName(interfaceName);
           interfaceContext.setPackagePath(packagePath);
           interfaceContext.setInterface(true);
@@ -205,7 +211,7 @@ class NodeIntrospector {
           interfaceModel.output(this.config.getDestinationDir());
 
           // creating default implementation
-          CodeGenContext interfaceImplContext = new CodeGenContext(this.node);
+          CodeGenContext interfaceImplContext = new CodeGenContext(this.config, this.node);
           interfaceImplContext.setClassName(interfaceName + "Impl");
           interfaceImplContext.setPackagePath(packagePath);
           ClassModel interfaceModelImpl = new ClassModel(interfaceImplContext);
@@ -232,7 +238,7 @@ class NodeIntrospector {
 
       } else {
         Path packagePath = Path.parse(packageName, ".");
-        CodeGenContext currentContext = new CodeGenContext(this.node);
+        CodeGenContext currentContext = new CodeGenContext(this.config, this.node);
         ClassModel model = new ClassModel(currentContext);
         currentContext.setClassName(getClassName());
         currentContext.setPackagePath(packagePath);
