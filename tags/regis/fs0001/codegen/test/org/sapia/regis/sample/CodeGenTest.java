@@ -1,6 +1,5 @@
 package org.sapia.regis.sample;
 
-import java.io.File;
 import java.util.Properties;
 
 import org.sapia.regis.RegisSession;
