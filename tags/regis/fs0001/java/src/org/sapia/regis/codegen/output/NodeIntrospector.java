@@ -10,7 +10,7 @@ import org.sapia.regis.Node;
 import org.sapia.regis.Path;
 import org.sapia.regis.Property;
 
-public class NodeIntrospector {
+class NodeIntrospector {
 
   private NodeIntrospector parent;
 
@@ -20,30 +20,30 @@ public class NodeIntrospector {
 
   private String packageName, className;
 
-  public NodeIntrospector(Node node, CodeGenConfig config) {
+  NodeIntrospector(Node node, CodeGenConfig config) {
     this(null, node, config);
   }
 
-  public NodeIntrospector(NodeIntrospector parent, Node node,
+  NodeIntrospector(NodeIntrospector parent, Node node,
       CodeGenConfig config) {
     this.parent = parent;
     this.node = node;
     this.config = config;
   }
 
-  public Node getNode() {
+  Node getNode() {
     return node;
   }
 
-  public NodeIntrospector getParent() {
+  NodeIntrospector getParent() {
     return parent;
   }
 
-  public boolean hasParent() {
+  boolean hasParent() {
     return parent != null;
   }
 
-  public String getPackageName() {
+  String getPackageName() {
     if (this.packageName == null) {
       StringBuilder sb = new StringBuilder();
       if (config.getPackagePrefix() != null) {
@@ -73,7 +73,7 @@ public class NodeIntrospector {
     return this.packageName;
   }
 
-  public Collection<PropertyModel> getProperties() {
+  Collection<PropertyModel> getProperties() {
     Set<PropertyModel> propWrappers = new HashSet<PropertyModel>();
     for (Object k : getNode().getPropertyKeys()) {
       propWrappers.add(new PropertyModel(getNode().getProperty((String) k)));
@@ -81,7 +81,7 @@ public class NodeIntrospector {
     return propWrappers;
   }
 
-  public Set<String> getCommonPropertyKeysWith(Set somePropertyKeys,
+  Set<String> getCommonPropertyKeysWith(Set somePropertyKeys,
       NodeIntrospector wrapper) {
     Set<String> commonPropertyKeys = new HashSet<String>();
     Collection<String> otherPropKeys = wrapper.getNode().getPropertyKeys();
@@ -93,7 +93,7 @@ public class NodeIntrospector {
     return commonPropertyKeys;
   }
 
-  public String getClassName() {
+  String getClassName() {
     if (this.className == null) {
       if (node.isRoot()) {
         throw new IllegalStateException("Cannot get class name for root node");
@@ -111,7 +111,7 @@ public class NodeIntrospector {
     return className;
   }
 
-  public Collection<NodeIntrospector> getChildren() {
+  Collection<NodeIntrospector> getChildren() {
     Collection<NodeIntrospector> childrenWrappers = new ArrayList<NodeIntrospector>();
     for (Object o : node.getChildren()) {
       Node n = (Node) o;
@@ -120,24 +120,40 @@ public class NodeIntrospector {
     return childrenWrappers;
   }
 
-  public void generate() throws IOException {
+  void generate() throws IOException {
     doGenerate(null);
   }
 
-  protected ClassModel doGenerate(Hints hints) throws IOException {
+  ClassModel doGenerate(Hints hints) throws IOException {
 
     if (getNode().isRoot()) {
-      CodeGenContext ctx = new CodeGenContext(this.node);
-      ctx.setClassName(this.config.getRootClassName() == null ? "Root" : this.config.getRootClassName());
-      ctx.setPackagePath(Path.parse(getPackageName(), "."));
-      ClassModel rootModel = new ClassModel(ctx);
+
+      String className = this.config.getRootClassName() == null ? "Root" : this.config.getRootClassName();
+      
+      // interface
+      CodeGenContext rootIntCtx = new CodeGenContext(this.node);
+      rootIntCtx.setClassName(className);
+      rootIntCtx.setPackagePath(Path.parse(getPackageName(), "."));
+      rootIntCtx.setInterface(true);
+      ClassModel rootIntfModel = new ClassModel(rootIntCtx);
+      
+      // impl
+      CodeGenContext rootImplCtx = new CodeGenContext(this.node);
+      rootImplCtx.getHints().setParentInterface(rootIntfModel);
+      rootImplCtx.setClassName(className + "Impl");
+      rootImplCtx.setPackagePath(Path.parse(getPackageName(), "."));
+      ClassModel rootImplModel = new ClassModel(rootImplCtx);
 
       for (NodeIntrospector nw : getChildren()) {
-        rootModel.addMember(new ClassModelMember(nw.getNode().getName(), nw
-            .doGenerate(new Hints())));
+        ClassModelMember member = new ClassModelMember(nw.getNode().getName(), nw
+            .doGenerate(new Hints())); 
+        rootImplModel.addMember(member);
+        rootIntfModel.addMember(member);
       }
-      rootModel.output(this.config.getDestinationDir());
-      return null;
+      
+      rootIntfModel.output(this.config.getDestinationDir());
+      rootImplModel.output(this.config.getDestinationDir());
+      return rootImplModel;
     } else {
       String packageName = getPackageName();
 

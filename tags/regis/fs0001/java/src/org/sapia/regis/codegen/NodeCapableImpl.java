@@ -20,7 +20,7 @@ public class NodeCapableImpl implements NodeCapable{
     return node;
   }
   
-  protected <T> T getConcreteInstanceFor(Class<T> clazz, String nodeName){
+  protected <T> T getInstanceFor(Class<T> clazz, String nodeName){
     Node n = node.getChild(nodeName);
     if(n == null){
       throw new IllegalStateException("Could not find node for: " + clazz + "; node: " + nodeName);

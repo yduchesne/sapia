@@ -1,14 +1,14 @@
 package org.sapia.regis.codegen.output;
 
-public class Hints {
+class Hints {
 
   private ClassModel parentInterface;
 
-  public ClassModel getParentInterface() {
+  ClassModel getParentInterface() {
     return parentInterface;
   }
 
-  public void setParentInterface(ClassModel parentInterface) {
+  void setParentInterface(ClassModel parentInterface) {
     this.parentInterface = parentInterface;
   }
 

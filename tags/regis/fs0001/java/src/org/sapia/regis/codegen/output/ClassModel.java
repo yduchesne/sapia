@@ -12,9 +12,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.sapia.regis.Node;
+import org.sapia.regis.codegen.NodeCapable;
 import org.sapia.regis.codegen.NodeCapableImpl;
 
-public class ClassModel {
+class ClassModel {
 
   private CodeGenContext ctx;
 
@@ -22,27 +23,27 @@ public class ClassModel {
 
   private Set<PropertyModel> properties = new TreeSet<PropertyModel>();
 
-  public ClassModel(CodeGenContext ctx) {
+  ClassModel(CodeGenContext ctx) {
     this.ctx = ctx;
   }
 
-  public CodeGenContext getContext() {
+  CodeGenContext getContext() {
     return ctx;
   }
 
-  public void addMember(ClassModelMember member) {
+  void addMember(ClassModelMember member) {
     members.add(member);
   }
 
-  public Collection<PropertyModel> getProperties() {
+  Collection<PropertyModel> getProperties() {
     return properties;
   }
 
-  public void addProperties(Collection<PropertyModel> properties) {
+  void addProperties(Collection<PropertyModel> properties) {
     this.properties.addAll(properties);
   }
 
-  public void output(File destDir) throws IOException {
+  void output(File destDir) throws IOException {
     PrintWriter writer = ctx.createWriter(destDir);
     try {
       doOutput(writer);
@@ -52,7 +53,7 @@ public class ClassModel {
     }
   }
 
-  private void doOutput(PrintWriter writer) throws IOException {
+  void doOutput(PrintWriter writer) throws IOException {
     String packageName = ctx.getPackagePath().toString('.');
     if (packageName != null && packageName.length() > 0) {
       writer.println("package " + packageName + ";");
@@ -60,12 +61,21 @@ public class ClassModel {
     }
 
     if (ctx.isInterface()) {
-      System.out.println("Generating : " + ctx.getClassName());
-      writer.println("public interface " + ctx.getClassName() + " {");
+      writer.println("public interface " + ctx.getClassName() + " extends " 
+          + NodeCapable.class.getName() +  " {");
       writer.println();
       for (PropertyModel p : getProperties()) {
         p.toSource(writer, true);
       }
+      
+      for (ClassModelMember member : members) {
+        if (member.getModel().ctx.getHints().getParentInterface() == null) {
+          writer.println("  public "
+              + member.getModel().ctx.getFullyQualifiedClassName() + " get"
+              + CodeGenUtils.toCamelCase(member.getName()) + "();");
+        }
+      }      
+      
     } else {
       if (ctx.getHints().getParentInterface() != null) {
         writer.println("public class "
@@ -96,7 +106,7 @@ public class ClassModel {
           writer.println("  public "
               + member.getModel().ctx.getFullyQualifiedClassName() + " get"
               + CodeGenUtils.toCamelCase(member.getName()) + "(){");
-          writer.println("    return getConcreteInstanceFor("
+          writer.println("    return getInstanceFor("
               + member.getModel().ctx.getFullyQualifiedClassName()
               + ".class, \"" + member.getName() + "\");");
           writer.println("  }");
@@ -128,7 +138,7 @@ public class ClassModel {
             + "> members = new java.util.ArrayList<"
             + intf.ctx.getFullyQualifiedClassName() + ">();");
         for (ClassModelMember member : members) {
-          writer.println("    members.add(getConcreteInstanceFor("
+          writer.println("    members.add(getInstanceFor("
               + intf.ctx.getFullyQualifiedClassName() + "Impl.class, \""
               + member.getName() + "\"));");
         }

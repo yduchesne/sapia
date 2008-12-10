@@ -1,16 +1,15 @@
 package org.sapia.regis.codegen.output;
 
-public class CodeGenUtils {
+class CodeGenUtils {
 
-  public static String toCamelCase(String s) {
+  static String toCamelCase(String s) {
     StringBuilder sb = new StringBuilder();
     boolean setToCapital = false;
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
       if (i == 0) {
         c = Character.toUpperCase(c);
-      } else if (c == ' ' || c == '_' || c == '-' || c == '.'
-          || !Character.isLetterOrDigit(c)) {
+      } else if (!Character.isLetterOrDigit(c)) {
         setToCapital = true;
         continue;
       }
@@ -24,7 +23,7 @@ public class CodeGenUtils {
     return sb.toString();
   }
 
-  public static String removeInvalidChars(String s) {
+  static String removeInvalidChars(String s) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);

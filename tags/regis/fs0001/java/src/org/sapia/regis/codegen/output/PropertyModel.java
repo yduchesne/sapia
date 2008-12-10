@@ -4,15 +4,15 @@ import java.io.PrintWriter;
 
 import org.sapia.regis.Property;
 
-public class PropertyModel implements Comparable<PropertyModel> {
+class PropertyModel implements Comparable<PropertyModel> {
 
   Property property;
 
-  public PropertyModel(Property prop) {
+  PropertyModel(Property prop) {
     this.property = prop;
   }
 
-  public void toSource(PrintWriter writer, boolean isInterface) {
+  void toSource(PrintWriter writer, boolean isInterface) {
     if (isInterface) {
       writer.println("  public " + Property.class.getName() + " get"
           + CodeGenUtils.toCamelCase(property.getKey()) + "();");

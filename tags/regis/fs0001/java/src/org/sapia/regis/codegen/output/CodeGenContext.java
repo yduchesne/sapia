@@ -81,8 +81,6 @@ public class CodeGenContext {
     }
 
     File outfile = new File(outdir, getClassName() + ".java");
-
-    System.out.println("Generating into: " + outfile.getAbsolutePath());
     return new PrintWriter(new FileOutputStream(outfile), true);
 
   }

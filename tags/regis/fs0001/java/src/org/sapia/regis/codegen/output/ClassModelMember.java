@@ -1,29 +1,29 @@
 package org.sapia.regis.codegen.output;
 
-public class ClassModelMember {
+class ClassModelMember {
 
   private String name;
 
   private ClassModel model;
 
-  public ClassModelMember(String name, ClassModel model) {
+  ClassModelMember(String name, ClassModel model) {
     this.name = name;
     this.model = model;
   }
 
-  public String getName() {
+  String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  void setName(String name) {
     this.name = name;
   }
 
-  public ClassModel getModel() {
+  ClassModel getModel() {
     return model;
   }
 
-  public void setModel(ClassModel model) {
+  void setModel(ClassModel model) {
     this.model = model;
   }
 }

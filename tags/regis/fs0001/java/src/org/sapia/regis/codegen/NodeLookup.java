@@ -16,10 +16,10 @@ import org.sapia.regis.Registry;
  */
 public class NodeLookup {
   
-  private Registry registry;
+  private Node root;
   
-  private NodeLookup(Registry reg) {
-    this.registry = reg;
+  private NodeLookup(Node root) {
+    this.root = root;
   }
   
   /**
@@ -29,7 +29,7 @@ public class NodeLookup {
    * @return a {@link NodeLookup}
    */
   public static NodeLookup create(Registry registry){
-    NodeLookup lookup = new NodeLookup(registry);
+    NodeLookup lookup = new NodeLookup(registry.getRoot());
     return lookup;
   }
   
@@ -50,7 +50,7 @@ public class NodeLookup {
     if(path == null){
       throw new IllegalStateException("Static NODE_PATH field is null on class " + nodeClass);
     }
-    Node child = registry.getRoot().getChild(Path.parse(path));
+    Node child = root.getChild(Path.parse(path));
     try{
       return  nodeClass.getConstructor(new Class[]{Node.class}).newInstance(child);
     }catch(Exception e){
