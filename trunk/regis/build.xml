@@ -330,10 +330,25 @@
         config="etc/configUpdateExample.xml"></updateRegistry>
   </target>
 
-  <target name="checkConfig">
-    <taskdef classname="org.sapia.regis.ant.CheckConfigTask"
-        name="checkConfig">
+  <target name="codegen">
+  	
+  	<delete dir="${basedir}/codegen/src" />
+  	<delete dir="${basedir}/codegen/classes" />
+  	
+  	<mkdir dir="${basedir}/codegen/src" />
+  	<mkdir dir="${basedir}/codegen/classes" />
+  	
+  	
+    <path id="codegen-classpath">
+      <path refid="lib-classpath" />
+      <path refid="build-lib-classpath" />
+      <pathelement location="${project.classesDir}" />
+    </path>
+  	
+    <taskdef classname="org.sapia.regis.ant.CodeGenTask"
+        name="codegen">
       <classpath>
+      	<path location="${basedir}/java/classes" />
         <fileset dir="${project.distributionDir}">
           <include name="sapia_regis.jar"/>
         </fileset>
@@ -342,27 +357,17 @@
         </fileset>
       </classpath>
     </taskdef>
-    <checkConfig
-        properties="etc/checkRegistry.properties">
-      <checkNode path="databases" childCount="3">
-        <checkNode path="002">
-          <checkProperty name="url" value="jdbc://mercury:5432/" />
-        </checkNode>
-      </checkNode>
-      <checkNode path="databases/002">
-        <checkProperty name="url" value="jdbc://mercury:5432/" />
-      </checkNode>
-      <checkProperty path="users/backoffice/account1" name="username" value="cbrown"/>
-    </checkConfig>
-  </target>
-
-  <target name="copy-repo">
-    <copy todir="../regis">
-      <fileset dir="${basedir}">
-        <exclude name="CVS/*"/>
-        <exclude name="**/CVS/*"/>
-      </fileset>
-    </copy>
+    <codegen 
+    	  destdir="${basedir}/codegen/src" 
+    		properties="etc/codegen/bootstrap.properties"
+    	  packagePrefix="org.sapia.regis.sample"
+    	  version="1.0"
+    	  rootClassName="SampleApp" />
+  	
+    <javac destdir="${basedir}/codegen/classes" debug="true" >
+    	<classpath refid="codegen-classpath" />
+      <src path="${basedir}/codegen/src" />
+    </javac>  	
   </target>
 
 </project>
