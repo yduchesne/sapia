@@ -1,12 +1,22 @@
 Welcome to Ubik's wiki.
 
-= News =
+= History =
 
 * 2008-12-11: Added Guice support
 
 = Guice and Ubik =
 
-We have implemented some cool use features in order to adapt Ubik to Guice: 
+  * the ability to export (to a Ubik JNDI server) objects instantiated by Guice as Ubik   services. 
+  * the ability to inject, as dependencies, remote references looked up from a Ubik JNDI server.
 
-* the ability to export (to a Ubik JNDI server) objects instantiated by Guice as Ubik services.
-* the ability to inject as dependencies remote references looked up into a Ubik JNDI server.
+Imagine a distributed app where node A depends on node B. There are potentially a few problems:
+
+ # at the startup of A, B may not yet be available. Typically, this involves the startup of A being aborted.
+ # B might want to "appear" on the network at startup, but Ubik's JNDI my not be up at that time.
+
+What's been implemented supports the late-binding of services, through discovery:
+
+ # at the startup of A, if B is not available (or if A cannot find a Ubik JNDI server at this time), a proxy is created for B in order to allow for the proper startup of A. The proxy will automatically discover all instances of B that appear on the network, eventually. Before an instance of B is acquired, the proxy will throw exceptions when invoked.
+ # if B attempts to binding itself to Ubik's JNDI but no JNDI server is present, B will place itself in watchdog mode and wait that a Ubik JNDI server appears. When it does, B will bind itslef to it.
+
+See the Javadoc for more info.
