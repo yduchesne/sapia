@@ -26,17 +26,34 @@ import com.google.inject.Provider;
  * <p>
  * Example:
  * <pre>
- * // Bind to DataSource from JNDI.
- * bind(MyService.class).toProvider(new RemoteServiceProvider&lt;MyService&gt;(MyService.class, "my/service"));
+ *   
+ *   final NamingService naming = new NamingServiceImpl("default")
+ *     .setJndiHost(Localhost.getLocalAddress().getHostAddress())
+ *     .setJndiPort(1099);    
+ *   
+ *   Injector injector = Guice.createInjector(new AbstractModule(){
+ *     
+ *     @Override
+ *    protected void configure() {
+ *      bind(NamingService.class).toInstance(naming);        
+ *      bind(TimeServiceIF.class).toProvider(new RemoteServiceImporter<TimeServiceIF>(TimeServiceIF.class, "services/time"));
+ *    }
+ *     
+ *  });
+ *   
+ *  TimeServiceIF service = injector.getInstance(TimeServiceIF.class);
+ *  System.out.println("Got time: " + service.getTime());
  * </pre>
+ * 
  * Note that a {@link NamingService} must have been bound beforehand (so that it can be injected into 
  * this instance).
  * 
  * @see NamingService
+ * @see RemoteServiceExporter
  * 
  * @author yduchesne
  */
-public class RemoteServiceProvider<T> implements Provider<T>{
+public class RemoteServiceImporter<T> implements Provider<T>{
 
   @Inject
   private NamingService _naming;
@@ -48,13 +65,13 @@ public class RemoteServiceProvider<T> implements Provider<T>{
   private Class<T> _type;
 
   /**
-   * Creates a new instance of {@link RemoteServiceProvider}.
+   * Creates a new instance of {@link RemoteServiceImporter}.
    * 
    * @param type the {@link Class} of the service to retrieve.
    * @param jndiName the name under which the expected service is bound into
    * Ubik's JNDI server(s).
    */
-  public RemoteServiceProvider(Class<T> type, String jndiName) {
+  public RemoteServiceImporter(Class<T> type, String jndiName) {
     _type = type;
     _name = jndiName;
   }
@@ -79,6 +96,7 @@ public class RemoteServiceProvider<T> implements Provider<T>{
     } catch (Exception e) {
       Log.warning(getClass(), "Could not resolve remote service: " + _name
           + "; attempting discovery");
+      Log.error(getClass(), e);
       _naming.register(new ServiceDiscoListenerImpl());
       
       // not found remote object, returning lazy proxy
@@ -88,23 +106,6 @@ public class RemoteServiceProvider<T> implements Provider<T>{
     }
   }
 
-  /**
-   * Callback method after an invocation on the remote object occured.
-   * 
-   * @param aMethod
-   *          The method called.
-   * @param someArgs
-   *          The arguments passed.
-   * @param aResult
-   *          The result of the invocation.
-   * @return The objet to return by this proxy on the method invocation.
-   */
-  public Object onPostInvokeEvent(Method aMethod, Object[] someArgs,
-      Object aResult) {
-    return aResult;
-  }
-  
-  
   ////////////////// INNER CLASSES ///////////////////
   
   class ServiceDiscoListenerImpl implements ServiceDiscoListener{ 
@@ -130,9 +131,9 @@ public class RemoteServiceProvider<T> implements Provider<T>{
    */
   public class ProxyInvocationHandler implements InvocationHandler {
 
-    private RemoteServiceProvider<T> _owner;
+    private RemoteServiceImporter<T> _owner;
 
-    ProxyInvocationHandler(RemoteServiceProvider<T> owner) {
+    ProxyInvocationHandler(RemoteServiceImporter<T> owner) {
       _owner = owner;
     }
 
@@ -142,7 +143,7 @@ public class RemoteServiceProvider<T> implements Provider<T>{
       if (_owner._remote != null) {
         try {
           Object result = method.invoke(_owner._remote, args);
-          return _owner.onPostInvokeEvent(method, args, result);
+          return result;
         } catch (InvocationTargetException e) {
           throw e.getTargetException();
         }

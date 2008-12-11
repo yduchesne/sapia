@@ -6,8 +6,11 @@ import javax.naming.NamingException;
 import org.sapia.ubik.rmi.naming.remote.discovery.ServiceDiscoListener;
 
 /**
- * Specifies the behavior of a service that services as a broker between
- * a remote Ubik JNDI provider and in-VM Guice services.
+ * Specifies the behavior of a service that serves as a broker between
+ * a remote Ubik JNDI provider and in-VM Guice-instantiated objects.
+ * 
+ * @see RemoteServiceExporter
+ * @see RemoteServiceImporter
  *
  * @author yduchesne
  */
@@ -37,7 +40,7 @@ public interface NamingService {
    */
   public void register(ServiceDiscoListener listener);
   
-/**
+  /**
    * Unregisters the given listener from this instance.
    * 
    * @param listener a <code>ServiceDiscoListener</code>.
@@ -45,4 +48,8 @@ public interface NamingService {
   public void unregister(ServiceDiscoListener listener);  
 
 
+  /**
+   * Shuts down this instance. 
+   */
+  public void shutdown();
 }

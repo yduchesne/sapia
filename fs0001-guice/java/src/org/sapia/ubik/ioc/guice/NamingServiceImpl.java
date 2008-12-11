@@ -25,7 +25,7 @@ import org.sapia.ubik.rmi.server.Log;
 import com.google.inject.Singleton;
 
 @Singleton
-public class NamingServiceImpl implements JndiDiscoListener{
+public class NamingServiceImpl implements NamingService, JndiDiscoListener{
   
   private String         _domain;
   private String         _host, _addr;
@@ -34,22 +34,25 @@ public class NamingServiceImpl implements JndiDiscoListener{
   private Set<Object>    _toBind = Collections.synchronizedSet(new HashSet<Object>());
   private DiscoveryHelper _helper;
   
-  public NamingServiceImpl(String domain){
+  public NamingServiceImpl(String domain) throws IOException{
     _domain = domain;
+    init();
   }
 
   /**
    * @param host the host of the remote Ubik JNDI server.
    */
-  public void setJndiHost(String host) {
+  public NamingServiceImpl setJndiHost(String host) {
     _host = host;
+    return this;
   }
 
   /**
    * @param port the port of the remote Ubik JNDI server.
    */
-  public void setJndiPort(int port) {
+  public NamingServiceImpl setJndiPort(int port) {
     _port = port;
+    return this;
   }
 
   /**
@@ -110,10 +113,7 @@ public class NamingServiceImpl implements JndiDiscoListener{
     }    
   }        
 
-  /**
-   * @see org.sapia.soto.Service#dispose()
-   */
-  public void dispose() {
+  public void shutdown() {
     try {
       if(_ctx != null)
         _ctx.close();
@@ -124,10 +124,7 @@ public class NamingServiceImpl implements JndiDiscoListener{
     }
   }
 
-  /**
-   * @see org.sapia.soto.Service#init()
-   */
-  public void init() throws Exception {
+  private void init() throws IOException{
     if(_port == 0){
       _port = 1099;
     }
@@ -154,12 +151,6 @@ public class NamingServiceImpl implements JndiDiscoListener{
       _helper = getDiscoHelper(_domain, _addr, _mcastPort);
       _helper.addJndiDiscoListener(this);
     }
-  }
-
-  /**
-   * @see org.sapia.soto.Service#start()
-   */
-  public void start() throws Exception {
   }
 
   public void onJndiDiscovered(Context context) {
