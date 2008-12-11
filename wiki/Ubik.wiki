@@ -1,0 +1,12 @@
+Welcome to Ubik's wiki.
+
+= News =
+
+* 2008-12-11: Added Guice support
+
+= Guice and Ubik =
+
+We have implemented some cool use features in order to adapt Ubik to Guice: 
+
+* the ability to export (to a Ubik JNDI server) objects instantiated by Guice as Ubik services.
+* the ability to inject as dependencies remote references looked up into a Ubik JNDI server.
