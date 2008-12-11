@@ -1,5 +1,7 @@
 Welcome to Ubik's wiki.
 
+Web site: [http://www.sapia-oss.org/projects/ubik/]
+
 = History =
 
 We've been using Ubik in production for a couple of years now. In fact, the project has been started in 2002. What a long way! EJBs were all the rage at that time (but slowly loosing ground to more lightweight approaches).
