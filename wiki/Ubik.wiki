@@ -2,15 +2,19 @@ Welcome to Ubik's wiki.
 
 = History =
 
-We've been using Ubik in production for a couple of years now. In fact, the project has been started in 2002. What a long way! EJB were all the rage at that time (but slowly loosing ground to more lightweight approaches).
+We've been using Ubik in production for a couple of years now. In fact, the project has been started in 2002. What a long way! EJBs were all the rage at that time (but slowly loosing ground to more lightweight approaches).
 
-Anyway, Ubik has been designed for ease of use in mind. It's great for quickly implementing remote services.
+Anyway, Ubik has been designed for ease of use in mind. It's great for quickly implementing remote services, in a manner that is completely compatible with the "lightweight" philosophy (in fact, with exactly that philosophy in mind).
+
+Ubik offers scalability and reliability without the complexity of JINI.
 
 = News =
 
-* 2008-12-11: Added Guice support
+ * 2008-12-11: Added Guice support
 
 = Guice and Ubik =
+
+The Ubik-Guice integration provides:
 
   * the ability to export (to a Ubik JNDI server) objects instantiated by Guice as Ubik   services. 
   * the ability to inject, as dependencies, remote references looked up from a Ubik JNDI server.
@@ -24,5 +28,30 @@ What's been implemented supports the late-binding of services, through discovery
 
  # at the startup of A, if B is not available (or if A cannot find a Ubik JNDI server at this time), a proxy is created for B in order to allow for the proper startup of A. The proxy will automatically discover all instances of B that appear on the network, eventually. Before an instance of B is acquired, the proxy will throw exceptions when invoked.
  # if B attempts to binding itself to Ubik's JNDI but no JNDI server is present, B will place itself in watchdog mode and wait that a Ubik JNDI server appears. When it does, B will bind itslef to it.
+
+{{{
+final NamingService naming = new NamingServiceImpl("default")
+  .setJndiHost(Localhost.getLocalAddress().getHostAddress())
+  .setJndiPort(1099);    
+
+Injector injector = Guice.createInjector(new AbstractModule(){
+  
+  @Override
+  protected void configure() {
+    bind(NamingService.class).toInstance(naming);
+    bind(TimeServiceIF.class).toProvider(new RemoteServiceExporter<TimeServiceIF>(new TimeServiceImpl(), "services/time"));
+  }
+  
+});
+
+// calling getInstance() internally invokes get() on the RemoteServiceExporter, which publishes the service
+// to the JNDI.
+TimeServiceIF server = injector.getInstance(TimeServiceIF.class);
+
+System.out.println("Bound time server");
+while(true){
+  Thread.sleep(10000);
+}
+}}}
 
 See the Javadoc for more info.
