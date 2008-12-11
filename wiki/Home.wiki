@@ -1,4 +1,4 @@
-Welcome to Sapia's wiki. Here you can witness our latest musings and quickie notes that we write to complement Sapia's main site.
+Welcome to Sapia's wiki. Here you can witness our latest musings and quickie notes that we write to complement [http://www.sapia-oss.org Sapia's main site].
 
 = Projects =
 
