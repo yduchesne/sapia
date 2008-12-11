@@ -1,5 +1,7 @@
 Welcome to Sapia's wiki. Here you can witness our latest musings and quickie notes that we write to complement Sapia's main site.
 
-= Sections =
+= Projects =
 
-TBD...
+This section links to the project-related pages.
+
+* [Ubik ubik home]
