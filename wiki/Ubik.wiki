@@ -8,6 +8,8 @@ Anyway, Ubik has been designed for ease of use in mind. It's great for quickly i
 
 Ubik offers scalability and reliability without the complexity of JINI and the bloat of an appserver.
 
+<wiki:toc max_depth="1" />
+
 = News =
 
  * 2008-12-11: Added Guice support
@@ -59,3 +61,27 @@ while(true){
 }}}
 
 See the Javadoc for more info.
+
+
+= Tips =
+
+== How to start a JNDI Server Programmatically ==
+
+{{{
+package org.sapia.ubik.rmi.examples;
+
+import org.sapia.ubik.rmi.naming.remote.EmbeddableJNDIServer;
+
+public class JndiRunner {
+  
+  public static void main(String[] args) throws Exception{
+    
+    EmbeddableJNDIServer jndi = new EmbeddableJNDIServer("default", 1099);
+    jndi.start(true);
+    
+    while(true){
+      Thread.sleep(100000);
+    }
+  }
+}
+}}}
