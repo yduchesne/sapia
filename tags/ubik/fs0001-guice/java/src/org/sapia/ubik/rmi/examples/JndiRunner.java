@@ -12,7 +12,6 @@ public class JndiRunner {
     while(true){
       Thread.sleep(100000);
     }
-    
   }
 
 }
