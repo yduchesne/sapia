@@ -2,6 +2,12 @@ Welcome to Ubik's wiki.
 
 = History =
 
+We've been using Ubik in production for a couple of years now. In fact, the project has been started in 2002. What a long way! EJB were all the rage at that time (but slowly loosing ground to more lightweight approaches).
+
+Anyway, Ubik has been designed for ease of use in mind. It's great for quickly implementing remote services.
+
+= News =
+
 * 2008-12-11: Added Guice support
 
 = Guice and Ubik =
