@@ -45,6 +45,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
   public static final String PARAM_METHOD       = "method";
   public static final String PARAM_KEY          = "key";
   public static final String PARAM_SERVICE      = "service";
+  public static final String PARAM_DEBUG        = "debug";
   public static final String ARG_NAME_PATTERN    = "json-arg-";
   public static final String ARG_VALUE          = "json-arg-value";
   public static final String MIME_TYPE = "application/json;charset=utf-8";
@@ -64,7 +65,9 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
   private OutputStream out;
   private String moduleName, method, key, service;
   private BeanFactory factory;
+  private boolean debug;
   private Log log = LogFactory.getLog(getClass());
+  
   
   public void setOutputStream(OutputStream out) throws IOException {
     this.out = out;
@@ -83,6 +86,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
       this.method      = params.getParameter(PARAM_METHOD);
       this.key         = params.getParameter(PARAM_KEY);
       this.service     = params.getParameter(PARAM_SERVICE, null);
+      this.debug       = params.getParameterAsBoolean(PARAM_DEBUG, false);
     }catch(ParameterException e){
       throw new ProcessingException("Could not acquire required parameter", e);
     }
@@ -165,12 +169,21 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
       if(mt.getName().equals(method) && mt.getParameterTypes().length == args.size()){
         Class[] types = mt.getParameterTypes();
         Object[] params = new Object[types.length];
+        debug("Converting arguments for method : " + method);
         for(int i = 0; i < types.length; i++){
           params[i] = args.get(i).convertTo(types[i]);
+          debug("Converted arg"+i+" " + args.get(i).value + " to " + params[i]);
         }
         try{
           if(log.isDebugEnabled()){
             log.debug("Performing invocation of " + mt + " on " + bean);
+          }
+          if(debug){
+            debug("Invoking: " + mt + " on " + bean);
+            debug("With args:");
+            for (int i = 0; i < params.length; i++) {
+              debug("-- arg" + i + " = " + params[i]);
+            }
           }
           return mt.invoke(bean, params);
         }catch(InvocationTargetException e){
@@ -200,7 +213,9 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
     return args;
   }
   
-  static class Arg implements Comparable<Arg>{
+  ///////////// INNER CLASSES //////////////
+  
+  class Arg implements Comparable<Arg>{
     
     int index;
     String value;
@@ -232,7 +247,12 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
           }
         }
         else if(isNull){
-          return 0;
+          if(PRIMITIVES.contains(type)){
+            return null;
+          }
+          else{
+            return 0;
+          }
         }
         else if(type.equals(byte.class) || type.equals(Byte.class)){
           return Byte.parseByte(json.getString(ARG_VALUE));
@@ -289,8 +309,12 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
     public int compareTo(Arg o) {
       return index - o.index;
     }
-    
   }
   
+  private void debug(String msg){
+    if(debug){
+      System.out.println("** ["+getClass().getName() + " - " + new Date() + "] " + msg);
+    }
+  }
 
 }
