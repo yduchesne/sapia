@@ -2,6 +2,7 @@ package org.sapia.cocoon.reading.json;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.sapia.cocoon.reading.json.JsonRpcReader.Arg;
@@ -26,7 +27,7 @@ public class JsonRpcReaderTest extends TestCase {
     args.add(new Arg(2, arg3.toString()));
     args.add(new Arg(3, arg4.toString()));    
     
-    Object value = reader.doInvoke(this, "invoke", args);
+    Object value = reader.doInvoke(this, "invoke", args, new HashMap());
     JsonResult result = new JsonResult();
     result.setValue(value);
     reader.serialize(result, System.out);
@@ -47,7 +48,7 @@ public class JsonRpcReaderTest extends TestCase {
     args.add(new Arg(2, arg3.toString()));
     args.add(new Arg(3, arg4.toString()));    
     
-    Object value = reader.doInvoke(this, "invoke", args);
+    Object value = reader.doInvoke(this, "invoke", args, new HashMap());
     JsonResult result = new JsonResult();
     result.setValue(value);
     reader.serialize(result, System.out);
