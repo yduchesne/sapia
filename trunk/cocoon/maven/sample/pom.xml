@@ -5,11 +5,11 @@
 
   <groupId>org.sapia-oss</groupId>
   <artifactId>sapia_cocoon</artifactId>
-  <version>2.2a8</version>
+  <version>2.2b1</version>
   <packaging>jar</packaging>
   <name>Sapia Cocoon Components</name>
   <url>http://www.sapia-oss.org</url>
-  <description>Useful Cocoon Componets (for Cocoon 2.2 and above)</description>
+  <description>Useful Cocoon Components (for Cocoon 2.2 and above)</description>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -67,16 +67,7 @@
           <artifactId>servletapi</artifactId>
           <version>2.4</version>    
         </dependency>     
-        <dependency>
-          <groupId>caucho</groupId>
-          <artifactId>quercus</artifactId>
-          <version>3.1.5b</version>    
-        </dependency>     
-        <dependency>
-          <groupId>caucho</groupId>
-          <artifactId>resin-util</artifactId>
-          <version>1.0</version>    
-        </dependency>
+
     <dependency>
       <groupId>org.jruby</groupId>
         <artifactId>jruby-complete</artifactId>
