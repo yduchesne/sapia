@@ -124,7 +124,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
       }
     }
     try{
-      Object result = doInvoke(bean, method, args);
+      Object result = doInvoke(bean, method, args, this.objectModel);
       serializeResponse(result);
     }catch(Throwable e){
       log.error("Error caught while performing invocation", e);
@@ -163,7 +163,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
     return true;
   }
   
-  protected Object doInvoke(Object bean, String method, List<Arg> args) throws Throwable{
+  protected Object doInvoke(Object bean, String method, List<Arg> args, Map objectModel) throws Throwable{
     Method[] methods = bean.getClass().getMethods();
     for(Method mt:methods){
       if(mt.getName().equals(method) && mt.getParameterTypes().length == args.size()){
@@ -185,7 +185,12 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
               debug("-- arg" + i + " = " + params[i]);
             }
           }
-          return mt.invoke(bean, params);
+          JsonContext.setObjectModel(objectModel);
+          try{
+            return mt.invoke(bean, params);
+          }finally{
+            JsonContext.unsetObjectModel();
+          }
         }catch(InvocationTargetException e){
           throw e.getTargetException();
         }catch(Exception e){
@@ -215,7 +220,7 @@ public class JsonRpcReader implements SitemapModelComponent, Reader, BeanFactory
   
   ///////////// INNER CLASSES //////////////
   
-  class Arg implements Comparable<Arg>{
+  static class Arg implements Comparable<Arg>{
     
     int index;
     String value;
