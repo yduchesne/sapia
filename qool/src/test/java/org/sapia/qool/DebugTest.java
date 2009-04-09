@@ -11,10 +11,20 @@ public class DebugTest extends TestCase {
   }
 
   public void testIsLoggable(){
-    Debug d = Debug.createInstanceFor(this, Level.ERROR);
-    assertTrue(!d.getLevel().isLoggable(Level.DEBUG));
-    assertTrue(!d.getLevel().isLoggable(Level.INFO));
-    assertTrue(!d.getLevel().isLoggable(Level.WARNING));
-    assertTrue(d.getLevel().isLoggable(Level.ERROR));
+  
+    Debug.setGlobalLevel(Level.DEBUG);
+    
+    Debug d = Debug.createInstanceFor(this, Level.DEBUG);
+    assertTrue(d.isLoggable(Level.DEBUG));
+    assertTrue(d.isLoggable(Level.INFO));
+    assertTrue(d.isLoggable(Level.WARNING));
+    assertTrue(d.isLoggable(Level.ERROR));
+    
+    Debug.setGlobalLevel(Level.ERROR);
+  
+    assertTrue(!d.isLoggable(Level.DEBUG));
+    assertTrue(!d.isLoggable(Level.INFO));
+    assertTrue(!d.isLoggable(Level.WARNING));
+    assertTrue(d.isLoggable(Level.ERROR));
   }
 }

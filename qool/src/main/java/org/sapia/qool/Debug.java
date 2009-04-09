@@ -10,6 +10,8 @@ import java.util.Calendar;
  */
 public class Debug {
   
+  public static final String PROP_DEBUG_LEVEL = "org.sapia.qool.debug";
+  
   public enum Level{
     
     DEBUG,
@@ -21,7 +23,20 @@ public class Debug {
       return other.ordinal() >= ordinal();
     }
   }
+  
+  private static Level globalLevel = Level.ERROR;
 
+  static{
+    String levelStr = System.getProperty(PROP_DEBUG_LEVEL);
+    if(levelStr != null){
+      try{
+        globalLevel = Level.valueOf(levelStr.toUpperCase());
+      }catch(RuntimeException e){
+        // property not valid, ignoring
+      }
+    }
+  }
+  
   private Level level = Level.ERROR;
   
   private String name;
@@ -36,19 +51,23 @@ public class Debug {
   }
   
   public boolean isDebug(){
-    return this.level.isLoggable(Level.DEBUG);
+    return isLoggable(Level.DEBUG);
   }
   
   public boolean isInfo(){
-    return this.level.isLoggable(Level.INFO);
+    return isLoggable(Level.INFO);
   }
   
   public boolean isWarning(){
-    return this.level.isLoggable(Level.WARNING);
+    return isLoggable(Level.WARNING);
   }
   
   public boolean isError(){
-    return this.level.isLoggable(Level.ERROR);
+    return isLoggable(Level.ERROR);
+  }
+  
+  public boolean isLoggable(Level other){
+    return globalLevel.isLoggable(other) && this.level.isLoggable(other);
   }
   
   public Level getLevel() {
@@ -82,8 +101,9 @@ public class Debug {
   public Debug trace(String msg, Level l){
     return trace(msg, l, null);
   }
+  
   public Debug trace(String msg, Level l, Throwable err){
-    if(level.isLoggable(l)){
+    if(globalLevel.isLoggable(l) && level.isLoggable(l)){
       Calendar cal = Calendar.getInstance();
       StringBuilder sb = new StringBuilder().append("[")
         .append(l.name()).append(" ")
@@ -101,14 +121,34 @@ public class Debug {
     return this;
   }
   
+  public static void setGlobalLevel(Level globalLevel) {
+    Debug.globalLevel = globalLevel != null ? globalLevel : Level.ERROR;
+  }
+  
+  public static Level getGlobalLevel() {
+    return globalLevel;
+  }
+
+  public static Debug createInstanceFor(String name){
+    return createInstanceFor(name, globalLevel);
+  }
+
   public static Debug createInstanceFor(String name, Level level){
     return createInstanceFor(name, level);
+  }
+
+  public static Debug createInstanceFor(Object instance){
+    return createInstanceFor(instance.getClass(), globalLevel);
   }
   
   public static Debug createInstanceFor(Object instance, Level level){
     return createInstanceFor(instance.getClass(), level);
   }
-  
+ 
+  public static Debug createInstanceFor(Class<?> clazz){
+    return new Debug(clazz.getSimpleName()).setLevel(globalLevel);
+  } 
+
   public static Debug createInstanceFor(Class<?> clazz, Level level){
     return new Debug(clazz.getSimpleName()).setLevel(level);
   } 
