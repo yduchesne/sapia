@@ -93,7 +93,7 @@ public class JmsConnectionPool {
         }
       }
       else{
-        throw new IllegalStateException("Unknow connection type: " + type);
+        throw new IllegalStateException("Unknown connection type: " + type);
       }
       if(debug.isDebug()) debug.debug("acquiring: creating new connection (busy count: " + busyCount.get() + " - available: " + available.size());
       pooledConnection.setConfig(config);
@@ -130,7 +130,7 @@ public class JmsConnectionPool {
         try{
           c.getDelegate().close();
         }catch(Exception e){
-          debug.warn("Eror closing JMS connection", e);
+          debug.warn("Error closing JMS connection", e);
         }
       }
     }
