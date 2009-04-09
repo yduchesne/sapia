@@ -36,7 +36,7 @@ public class PooledJmsConnection implements Connection, TopicConnection, QueueCo
   private Type type;
   private PooledJmsConnectionFactory owner;
   private Connection delegate;
-  private boolean started;
+  private volatile boolean started;
   
   public PooledJmsConnection(Type type, Connection delegate) {
     pools.put(Type.QUEUE,   new JmsSessionPool(delegate, new PooledQueueSessionFactory()));
@@ -103,7 +103,7 @@ public class PooledJmsConnection implements Connection, TopicConnection, QueueCo
     }
   }
 
-  public void close() throws JMSException {
+  public synchronized void close() throws JMSException {
     this.owner.release(this);
   }
   
@@ -154,6 +154,7 @@ public class PooledJmsConnection implements Connection, TopicConnection, QueueCo
   
   boolean recycle(){
     // TODO provide better implementation
+    // i.e: detect if connection is still valid
     return true;
   }
 
