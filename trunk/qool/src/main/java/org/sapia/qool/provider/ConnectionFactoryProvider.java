@@ -7,7 +7,7 @@ import javax.jms.ConnectionFactory;
 
 /**
  * This class provides static methods to register {@link Connector}s, and to retrieve {@link ConnectionFactory}
- * instances, given URLs.
+ * instances, given URIs.
  * 
  * @author yduchesne
  *
@@ -30,38 +30,38 @@ public class ConnectionFactoryProvider {
   }
   
   /**
-   * The URL passed to this method is expected to be prefixed by a string under that
-   * identifies which connector to use. The URL must be formatted as follows:
+   * The URI passed to this method is expected to be prefixed by a string under that
+   * identifies which connector to use. The URI must be formatted as follows:
    * 
-   * <pre><prefix>:&lt;vendor-specific-part%gt;</pre>
+   * <pre>&lt;prefix&gt;:&lt;vendor-specific-part%gt;</pre>
    * 
    * For example:
    *  
-   * <pre><prefix>amq:vm://localhost</pre>
+   * <pre>&lt;prefix&gt;amq:vm://localhost</pre>
    * 
-   * Where <code>amq</code> (follow by the colon) consists of the so-called connector prefix. Only the remaining part of
-   * the URL is passed to the underlying {@link Connector}.
+   * Where <code>amq</code> (follow by the colon) consists of the so-called connector prefix. 
+   * Only the "vendor-specific part" of the URI is passed to the underlying {@link Connector}.
    * 
-   * @param url a URL.
+   * @param uri a URI.
    * @return a new {@link ConnectionFactory} instance.
    * @throws Exception
    */
-  public static ConnectionFactory createFactory(String url) throws Exception{
-    int idx = url.indexOf(':');
+  public static ConnectionFactory createFactory(String uri) throws Exception{
+    int idx = uri.indexOf(':');
     if(idx <= 0){
     }
-    String connectorPrefix = url.substring(0, idx);
-    String connectorUrl = url.substring(idx+1);
+    String connectorPrefix = uri.substring(0, idx);
+    String connectorUri = uri.substring(idx+1);
     Connector impl = impls.get(connectorPrefix);
     
     // falling back to AMQ
     if(impl == null){
-      return DEFAULT_IMPL.createConnectionFactory(url);
+      return DEFAULT_IMPL.createConnectionFactory(uri);
     }
     
     // using found connector...
     else{
-      return impl.createConnectionFactory(connectorUrl);
+      return impl.createConnectionFactory(connectorUri);
     }
     
   }
