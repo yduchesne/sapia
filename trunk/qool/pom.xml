@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.sapia-oss</groupId>
+  <artifactId>sapia_qool</artifactId>
+  <version>1.0a</version>
+  <packaging>jar</packaging>
+  <name>Sapia JMS Pooling Utilities</name>
+  <url>http://www.sapia-oss.org</url>
+  <description>JMS pooling lib</description>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>http://sapia.cvs.sourceforge.net/sapia/qool/</url>
+  </scm>  
+  
+  <!--repositories>
+    <repository>
+      <id>ibiblio</id>
+      <url>http://www.ibiblio.org/pub/packages/maven2</url>
+    </repository>
+    <repository>
+      <id>codehaus</id>
+      <url>http://maven.codehaus.org/maven2</url>
+    </repository>    
+    <repository>
+      <id>codehaus-2</id>
+      <url>http://repository.codehaus.org</url>
+    </repository>        
+  </repositories-->    
+
+  <dependencies>
+	<dependency>
+	  <groupId>org.apache.activemq</groupId>
+	  <artifactId>activemq-all</artifactId>
+	  <version>5.2.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.camel</groupId>
+	  <artifactId>camel-core</artifactId>
+	  <version>1.6.0</version>           
+	</dependency>        
+	<dependency>
+	  <groupId>org.apache.camel</groupId>
+	  <artifactId>camel-jms</artifactId>
+	  <version>1.6.0</version>           
+	</dependency>        
+	<dependency>
+	  <groupId>org.apache.camel</groupId>
+	  <artifactId>camel-jms</artifactId>
+	  <version>1.6.0</version>           
+	</dependency>      
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>         
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.4</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>      
+    </plugins>
+  </build>
+
+</project>
