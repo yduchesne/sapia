@@ -5,7 +5,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 /**
- * Create {@link ActiveMQConnectionFactory} instances.
+ * This provider creates {@link ActiveMQConnectionFactory} instances. It expects any valid ActiveMQ URI 
+ * (see the ActiveMQ doc for more details).
  * 
  * @author yduchesne
  *
