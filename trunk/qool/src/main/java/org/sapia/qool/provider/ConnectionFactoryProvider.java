@@ -67,7 +67,7 @@ public class ConnectionFactoryProvider {
       String connectorUri = uri.substring(idx+1);
       Connector impl = impls.get(connectorPrefix);
       if(impl == null){
-        debug.debug("No connector for prefix: " + connectorPrefix + "; falling back to: " + DEFAULT_IMPL);
+        debug.error("No connector for prefix: " + connectorPrefix + "; falling back to: " + DEFAULT_IMPL);
         return DEFAULT_IMPL.createConnectionFactory(uri);
       }
       else{
@@ -77,7 +77,7 @@ public class ConnectionFactoryProvider {
     }
     
     // falling back to AMQ
-    debug.debug("Falling back to default provider: " + DEFAULT_IMPL);
+    debug.error("Falling back to default provider: " + DEFAULT_IMPL);
     return DEFAULT_IMPL.createConnectionFactory(uri);
   }
 

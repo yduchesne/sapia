@@ -19,6 +19,7 @@ public class Config {
   private int maxConnections = DEFAULT_MAX_CONNECTIONS;
   private int maxSessions = DEFAULT_MAX_SESSIONS;
   private boolean registerShutdownHooks = true;
+  private long poolTimeout;
   private Debug.Level debugLevel = Debug.Level.ERROR;
    
   /**
@@ -54,6 +55,19 @@ public class Config {
 
   public void setRegisterShutdownHooks(boolean registerShutdownHooks) {
     this.registerShutdownHooks = registerShutdownHooks;
+  }
+  
+  /**
+   * @return the number of milliseconds to wait on the pool in order to acquire an available object (if the returned
+   * value is smaller than 0, callers will eventually wait until an object becomes available in the pool, without
+   * a timeout).
+   */
+  public long getPoolTimeout() {
+    return poolTimeout;
+  }
+
+  public void setPoolTimeout(long poolTimeout) {
+    this.poolTimeout = poolTimeout;
   }
   
   /**
