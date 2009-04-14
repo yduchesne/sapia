@@ -21,6 +21,7 @@ import javax.jms.TopicSession;
 import org.sapia.qool.Constants.Type;
 import org.sapia.qool.queue.PooledQueueSessionFactory;
 import org.sapia.qool.topic.PooledTopicSessionFactory;
+import org.sapia.qool.util.Poolable;
 
 /**
  * This class is meant to wrap a vendor-specific {@link Connection} in order to provide
@@ -29,7 +30,7 @@ import org.sapia.qool.topic.PooledTopicSessionFactory;
  * @author yduchesne
  *
  */
-public class PooledJmsConnection implements Connection, TopicConnection, QueueConnection{
+public class PooledJmsConnection implements Connection, TopicConnection, QueueConnection, Poolable{
 
   private Map<Type, JmsSessionPool> pools = new HashMap<Type, JmsSessionPool>();
 
@@ -131,6 +132,18 @@ public class PooledJmsConnection implements Connection, TopicConnection, QueueCo
     return (QueueSession)doAcquire(Type.QUEUE, transacted, ackMode);
   }
   
+  /////////////////////// Poolable interface
+
+  public void dispose() throws JMSException{
+    this.shutdown();
+  }
+  
+  public boolean recycle(){
+    // TODO provide better implementation
+    // i.e: detect if connection is still valid
+    return true;
+  }  
+  
   /////////////////////// Restricted methods
   
   void setOwner(PooledJmsConnectionFactory owner) {
@@ -152,12 +165,6 @@ public class PooledJmsConnection implements Connection, TopicConnection, QueueCo
     return delegate;
   }
   
-  boolean recycle(){
-    // TODO provide better implementation
-    // i.e: detect if connection is still valid
-    return true;
-  }
-
   synchronized void shutdown() throws JMSException {
     for(JmsSessionPool p:this.pools.values()){
       p.close();
@@ -199,7 +206,7 @@ public class PooledJmsConnection implements Connection, TopicConnection, QueueCo
   private PooledJmsSession doAcquire(Type t, boolean transacted, int ackMode)
     throws JMSException{
     try{
-      PooledJmsSession s = pool(t).acquire(transacted, ackMode);
+      PooledJmsSession s = pool(t).acquire(new PooledSessionConfig().setTransactional(transacted).setAckMode(ackMode));
       s.setOwner(this);
       return s;
     }catch(InterruptedException e){
@@ -207,6 +214,6 @@ public class PooledJmsConnection implements Connection, TopicConnection, QueueCo
       jex.setLinkedException(e);
       throw jex;
     }    
-  }
+  }  
 
 }

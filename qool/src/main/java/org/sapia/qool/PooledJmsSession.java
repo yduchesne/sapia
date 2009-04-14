@@ -23,6 +23,7 @@ import javax.jms.TopicSubscriber;
 
 import org.sapia.qool.Constants.TxStatus;
 import org.sapia.qool.Constants.Type;
+import org.sapia.qool.util.Poolable;
 
 /**
  * Base class for pooled JMS sessions.
@@ -30,7 +31,7 @@ import org.sapia.qool.Constants.Type;
  * @author yduchesne
  *
  */
-public class PooledJmsSession implements Session{
+public class PooledJmsSession implements Session, Poolable{
 
   protected Session delegate;
   private TxStatus status;
@@ -200,6 +201,34 @@ public class PooledJmsSession implements Session{
   public int getAcknowledgeMode() throws JMSException {
     return delegate.getAcknowledgeMode();
   }
+  
+  public boolean recycle(){
+    if(status == TxStatus.NONE){
+      return isValid;
+    }
+    else if(status == TxStatus.STARTED){
+      // we are attempting a rollback (status should
+      // be committed or rolled back at this point)
+      try{
+        this.delegate.rollback();
+      }catch(JMSException e){
+        try{
+          this.delegate.close();
+        }catch(JMSException e2){
+          // noop
+        }
+      }
+      // we do not pool transacted sessions
+      return false;
+    }
+    else{
+      return isValid;
+    }
+  }
+
+  public void dispose() throws JMSException {
+    this.close();
+  }
 
   /////////////////////////////////////////////////////////////////////
   // RESTRICTED
@@ -233,28 +262,5 @@ public class PooledJmsSession implements Session{
     return isValid;
   }
   
-  boolean recycle(){
-    if(status == TxStatus.NONE){
-      return isValid;
-    }
-    else if(status == TxStatus.STARTED){
-      // we are attempting a rollback (status should
-      // be committed or rolled back at this point)
-      try{
-        this.delegate.rollback();
-      }catch(JMSException e){
-        try{
-          this.delegate.close();
-        }catch(JMSException e2){
-          // noop
-        }
-      }
-      // we do not pool transacted sessions
-      return false;
-    }
-    else{
-      return isValid;
-    }
-  }
 
 }

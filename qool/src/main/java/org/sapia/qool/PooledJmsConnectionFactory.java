@@ -106,7 +106,7 @@ public class PooledJmsConnectionFactory implements ConnectionFactory, TopicConne
   private PooledJmsConnection doAcquire(Type t, String username, String password)
     throws JMSException{
     try{
-      PooledJmsConnection c = pool(t).acquire(username, password);
+      PooledJmsConnection c = pool(t).acquire(new PooledConnectionConfig().setCredentials(username, password));
       c.setOwner(this);
       return c;
     }catch(InterruptedException e){
