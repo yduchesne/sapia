@@ -85,7 +85,7 @@ class ClassModel {
     } else {
       writer.println("/**");
       writer.println(" *");
-      writer.println(" * Wraps the node at <code>" + ctx.getNode().getAbsolutePath().toString() + "</code>");
+      writer.println(" * Wraps the node at <code>" + ctx.getNode().getAbsolutePath().toString().replace("*/", "/") + "</code>");
       writer.println(" *");      
       writer.println(" * Generated: " + new Date());
       writer.println(" * @author: " + System.getProperty("user.name"));
