@@ -1,4 +1,4 @@
-
+	
 <project name="regis" default="build" basedir="." xmlns:savant="inversoft:savant">
 
   <property name="project.javaDir" value="${basedir}/java"/>
@@ -79,12 +79,7 @@
 
   <!-- Compiles all the files of the ${project.sourceDir} and ${project.testDir} directories -->
   <target name="compile" depends="clean-classes,init">
-    <javac destdir="${project.classesDir}" debug="true" classpathref="lib-classpath" excludes="**/CVS/**/*.java">
-      <src path="${project.sourceDir}" />
-      <src path="${project.testDir}" />
-    </javac>
-
-    <javac destdir="${project.classesDir}" debug="true" classpathref="lib-classpath" excludes="**/CVS/**/*.java">
+    <javac source="1.5" target="1.5" destdir="${project.classesDir}" debug="true" classpathref="lib-classpath" excludes="**/CVS/**/*.java">
       <src path="${project.sourceDir}" />
       <src path="${project.testDir}" />
     </javac>
