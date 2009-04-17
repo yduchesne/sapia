@@ -15,4 +15,6 @@ public interface NodeCapable {
    */
   public Node getNode();
 
+  public <T extends NodeCapable> T getInstanceFor(Class<T> nodeClass);
+
 }
