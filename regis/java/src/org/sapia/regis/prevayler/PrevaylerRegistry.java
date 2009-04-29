@@ -17,12 +17,12 @@ import org.sapia.regis.util.Utils;
 
 public class PrevaylerRegistry implements Registry, Configurable{
   
-  private NodeImpl _root = new NodeImpl(null, Node.ROOT_NAME);
+  private NodeImpl _root;;
   private Prevayler _prevayler;
   
   private static RegisSession SESSION = new PrevaylerSession();
   
-  PrevaylerRegistry(String prevalenceBase, boolean deleteOnStartup) throws Exception{
+  PrevaylerRegistry(String prevalenceBase, boolean deleteOnStartup, boolean render) throws Exception{
     if(deleteOnStartup){
       File f = new File(prevalenceBase);
       if(f.exists()){
@@ -30,6 +30,7 @@ public class PrevaylerRegistry implements Registry, Configurable{
       }
       f.mkdirs();
     }
+    _root = new NodeImpl(null, Node.ROOT_NAME, render);
     _prevayler = PrevaylerFactory.createPrevayler(_root, prevalenceBase);
   }
   

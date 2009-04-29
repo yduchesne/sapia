@@ -42,18 +42,24 @@ public class NodeImpl implements RWNode, Serializable{
   private List appendedLinks = new ArrayList();
   private List prependedLinks = new ArrayList();
   private List includes = new ArrayList();  
+  private boolean render = true;
   
   static final NullContext NULL_CONTEXT = new NullContext();
   
   public NodeImpl(){
+    this(true);
+  }
+  public NodeImpl(boolean render){
+    this.render = render;
   }
   
-  public NodeImpl(NodeImpl parent, String name){
+  public NodeImpl(NodeImpl parent, String name, boolean render){
     this.parent = parent;
     this.name = name;
     if(name.equals(ROOT_NAME) && parent != null){
       throw new IllegalStateException("Name of child node cannot have null or empty name");
     }
+    this.render = render;
   }
   
   public String getName(){
@@ -118,7 +124,7 @@ public class NodeImpl implements RWNode, Serializable{
     if(name.equals(Node.ROOT_NAME)){
       throw new IllegalStateException("Empty name is invalid");
     }
-    NodeImpl node = new NodeImpl(this, name);
+    NodeImpl node = new NodeImpl(this, name, render);
     getChildrenMap().put(name, node);
     return node;
   }
@@ -372,6 +378,14 @@ public class NodeImpl implements RWNode, Serializable{
       return doGetNodes(query);
     }
   }
+  
+  public void setRender(boolean render) {
+    this.render = render;
+  }
+  
+  public boolean isRender() {
+    return render;
+  }
     
   public int hashCode(){
     if(getId() == null) return super.hashCode(); 
@@ -446,61 +460,64 @@ public class NodeImpl implements RWNode, Serializable{
   
   
   protected void doRender(Map target, Map src){
-    TemplateFactory fac = new TemplateFactory();
-    fac.setThrowExcOnMissingVar(false);
-    TemplateContextIF ctx = new MapContext(src, NULL_CONTEXT, false);
-    
-    Iterator keys = target.keySet().iterator();
-    while(keys.hasNext()){
-      String key = (String)keys.next();
-      String val = (String)target.get(key);
-      if(val != null){
-        try{
-          val = fac.parse(val).render(ctx);
-          target.put(key, val);        
-        }catch(TemplateException e){}      
+    if(render){
+      TemplateFactory fac = new TemplateFactory();
+      fac.setThrowExcOnMissingVar(false);
+      TemplateContextIF ctx = new MapContext(src, NULL_CONTEXT, false);
+      
+      Iterator keys = target.keySet().iterator();
+      while(keys.hasNext()){
+        String key = (String)keys.next();
+        String val = (String)target.get(key);
+        if(val != null){
+          try{
+            val = fac.parse(val).render(ctx);
+            target.put(key, val);        
+          }catch(TemplateException e){}      
+        }
       }
+      
+      keys = src.keySet().iterator();
+      while(keys.hasNext()){
+        String key = (String)keys.next();
+        String val = (String)src.get(key);
+        if(!target.containsKey(key) && val != null){
+          target.put(key, val);    
+        }
+      }    
     }
-    
-    keys = src.keySet().iterator();
-    while(keys.hasNext()){
-      String key = (String)keys.next();
-      String val = (String)src.get(key);
-      if(!target.containsKey(key) && val != null){
-        target.put(key, val);    
-      }
-    }    
   }
   
   protected void doRenderProperty(PropertyImpl prop, Map values){
-    if(isInheritsParent() && getParent() != null){
-      ((NodeImpl)getParent()).doRenderProperty(prop, values);
-    }
-    for(int i = 0; i < prependedLinks.size(); i++){
-      NodeImpl node = (NodeImpl)prependedLinks.get(i);
-      node.doRenderProperty(prop, values);
-    }
-    
-    TemplateFactory fac = new TemplateFactory();
-    fac.setThrowExcOnMissingVar(false);
-    Map vars = new CompositeHashMap().addChild(values);
-    vars.putAll(getValueMap());
-    TemplateContextIF ctx = new MapContext(vars, NULL_CONTEXT, false);
-    try{
-      prop._value = fac.parse(prop._value).render(ctx);
-    }catch(TemplateException e){}
-    
-    for(int i = 0; i < appendedLinks.size(); i++){
-      NodeImpl node = (NodeImpl)appendedLinks.get(i);
-      node.doRenderProperty(prop, values);
-    }
-
-    if (prop != null && prop._value.contains(TemplateFactory.DEFAULT_STARTING_DELIMITER)) {
+    if(render){
+      if(isInheritsParent() && getParent() != null){
+        ((NodeImpl)getParent()).doRenderProperty(prop, values);
+      }
+      for(int i = 0; i < prependedLinks.size(); i++){
+        NodeImpl node = (NodeImpl)prependedLinks.get(i);
+        node.doRenderProperty(prop, values);
+      }
+      
+      TemplateFactory fac = new TemplateFactory();
+      fac.setThrowExcOnMissingVar(false);
+      Map vars = new CompositeHashMap().addChild(values);
+      vars.putAll(getValueMap());
+      TemplateContextIF ctx = new MapContext(vars, NULL_CONTEXT, false);
       try{
         prop._value = fac.parse(prop._value).render(ctx);
       }catch(TemplateException e){}
+      
+      for(int i = 0; i < appendedLinks.size(); i++){
+        NodeImpl node = (NodeImpl)appendedLinks.get(i);
+        node.doRenderProperty(prop, values);
+      }
+  
+      if (prop != null && prop._value.contains(TemplateFactory.DEFAULT_STARTING_DELIMITER)) {
+        try{
+          prop._value = fac.parse(prop._value).render(ctx);
+        }catch(TemplateException e){}
+      }
     }
-    
   }  
   
   protected void doGetPropertyKeys(List fill){

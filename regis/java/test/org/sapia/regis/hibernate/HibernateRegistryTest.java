@@ -33,7 +33,7 @@ public class HibernateRegistryTest extends TestCase {
   }
   
   private HibernateRegistry openRegis(SessionFactory fac) throws Exception{
-    return new HibernateRegistry(fac);
+    return new HibernateRegistry(fac, true);
   }  
 
   public void testGetRoot() {

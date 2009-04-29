@@ -3,6 +3,7 @@ package org.sapia.regis.cache;
 import java.util.Properties;
 
 import org.sapia.regis.Registry;
+import org.sapia.regis.RegistryContext;
 import org.sapia.regis.RegistryFactory;
 
 public class CacheRegistryFactory implements RegistryFactory{
@@ -19,7 +20,7 @@ public class CacheRegistryFactory implements RegistryFactory{
    */
   public static final String REFRESH_INTERVAL = "org.sapia.regis.cache.interval";
   
-
+  
   public static final int DEFAULT_REFRESH_INTERVAL  = 60 * 2;
   
   public Registry connect(Properties props) throws Exception {
@@ -32,8 +33,14 @@ public class CacheRegistryFactory implements RegistryFactory{
     if(className == null){
       throw new IllegalArgumentException("Registry factory class not set - " + FACTORY_CLASS);
     }
+    
+    String interpolationActiveStr = props.getProperty(RegistryContext.INTERPOLATION_ACTIVE); 
+    boolean interpolationActive = true;
+    if(interpolationActiveStr != null){
+      interpolationActive = interpolationActiveStr.toLowerCase().equalsIgnoreCase("true");
+    }
     Registry toCache = ((RegistryFactory)Class.forName(className).newInstance()).connect(props);
-    CacheRegistry cache = new CacheRegistry(toCache, interval*1000);
+    CacheRegistry cache = new CacheRegistry(toCache, interval*1000, interpolationActive);
     return cache;
   }
 }

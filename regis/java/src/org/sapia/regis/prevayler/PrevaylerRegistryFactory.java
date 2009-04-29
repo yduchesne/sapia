@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Properties;
 
 import org.sapia.regis.Registry;
+import org.sapia.regis.RegistryContext;
 import org.sapia.regis.RegistryFactory;
 
 public class PrevaylerRegistryFactory implements RegistryFactory{
@@ -29,10 +30,11 @@ public class PrevaylerRegistryFactory implements RegistryFactory{
   public Registry connect(Properties props) throws Exception {
     String baseDir = props.getProperty(BASE_DIR, DEFAULT_BASE_DIR);
     String deleteOnStartup = props.getProperty(DELETE_ON_STARTUP, "false");    
+    String render = props.getProperty(RegistryContext.INTERPOLATION_ACTIVE, "true");    
     File fBaseDir = new File(baseDir);
     fBaseDir.mkdirs();
     PrevaylerRegistry registry = new PrevaylerRegistry(fBaseDir.getAbsolutePath(), 
-        new Boolean(deleteOnStartup).booleanValue());
+        new Boolean(deleteOnStartup).booleanValue(), new Boolean(render).booleanValue());
     return registry;
   }
 }

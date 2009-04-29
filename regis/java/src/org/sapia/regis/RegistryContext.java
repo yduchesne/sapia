@@ -74,6 +74,12 @@ public class RegistryContext {
    */
   public static final String BOOTSTRAP = "org.sapia.regis.bootstrap";  
   
+  /**
+   * This constant corresponds to the property indicating if properties should be interpolated
+   * prior to being returned (defaults to true).
+   */
+  public static final String INTERPOLATION_ACTIVE = "org.sapia.regis.interpolation.active";
+  
   private Properties _props;
   
   /**

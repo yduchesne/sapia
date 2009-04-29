@@ -31,7 +31,7 @@ public class NewNodePanel extends JPanel implements ContextAware, GuiConsts{
   public synchronized void fireCreateNewNodeForm(){
     super.removeAll();
     
-    NodeImpl impl = new NodeImpl();
+    NodeImpl impl = new NodeImpl(true);
     NewNodeModel model = GlobalContext.getInstance().getModelManager().getNewNodeModel();
     model.setNode(impl);
     model.setParent(GlobalContext.getInstance().getModelManager().getNodeModel().getNode());

@@ -21,19 +21,20 @@ public class CacheRegistry implements Registry{
   private Registry _internal;
   private CacheNode _root;
   
+  /**
+   * @param reg a <code>Registry</code> whose state should be cached.
+   * @param refreshIntervalMillis an refresh interval, in milliseconds.
+   * @param render if <code>true</code>, will perform property interpolation within the nodes.
+   */
+  public CacheRegistry(Registry reg, long refreshIntervalMillis, boolean render){
+    _root = new CacheNode(Path.parse(Node.ROOT_NAME), reg, refreshIntervalMillis, render);
+    _internal = reg;
+  }
+
   public RegisSession open() {
     CacheRegisSession session = new CacheRegisSession(_internal.open());
     CacheSessions.join(session);
     return session;
-  }
-  
-  /**
-   * @param reg a <code>Registry</code> whose state should be cached.
-   * @param refreshIntervalMillis an refresh interval, in milliseconds.
-   */
-  public CacheRegistry(Registry reg, long refreshIntervalMillis){
-    _root = new CacheNode(Path.parse(Node.ROOT_NAME), reg, refreshIntervalMillis);
-    _internal = reg;
   }
   
   public Node getRoot() {

@@ -43,7 +43,7 @@ public class FormTest extends TestCase {
   }
   
   public void testAssign(){
-    NodeImpl node = new NodeImpl();
+    NodeImpl node = new NodeImpl(true);
     f.createField(BuiltinTypes.INT_TYPE, "intField");
     f.createField(BuiltinTypes.BOOLEAN_TYPE, "booleanField");
     Map values = new HashMap();

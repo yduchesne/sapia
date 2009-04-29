@@ -23,7 +23,7 @@ public class RegistryFactory {
   public static Registry newDebugInstance() throws Exception{
     RegisLog.setDebug();
     LocalRegistry local = (LocalRegistry)newEmbeddedInstance();
-    local.load(new File("etc/configCreateExample.xml"));
+    local.load(new File("etc/configCreateExample.xml"), true);
     return local;
   }  
   

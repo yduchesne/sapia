@@ -34,8 +34,8 @@ public class LocalRegistry implements Registry, Configurable {
   
   private RWNode _root;
   
-  public LocalRegistry(){
-    this(new NodeImpl(null, Node.ROOT_NAME));
+  public LocalRegistry(boolean render){
+    this(new NodeImpl(null, Node.ROOT_NAME, render));
   }
   
   public LocalRegistry(RWNode root){
@@ -50,13 +50,13 @@ public class LocalRegistry implements Registry, Configurable {
     return _root;
   }
   
-  public void load(File config) throws Exception{
-    load(new FileInputStream(config));
+  public void load(File config, boolean render) throws Exception{
+    load(new FileInputStream(config), render);
   }
   
-  public void load(InputStream is) throws Exception{
+  public void load(InputStream is, boolean render) throws Exception{
     if(_root == null){
-      _root = new NodeImpl(null, Node.ROOT_NAME);
+      _root = new NodeImpl(null, Node.ROOT_NAME, render);
     }
     RegistryConfigLoader loader = new RegistryConfigLoader(_root);
     loader.load(is);

@@ -15,14 +15,14 @@
     
     <property name="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</property>
 
-    <property name="hibernate.cache.use_query_cache">true</property>    
+    <!--  property name="hibernate.cache.use_query_cache">true</property>    
     <property name="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</property>
     <property name="net.sf.ehcache.configurationResourceName">/org/sapia/regis/impl/ehcache.xml</property>
    
     <collection-cache collection="org.sapia.regis.impl.NodeImpl.childrenMap" usage="read-write"/>
     <collection-cache collection="org.sapia.regis.impl.NodeImpl.appendedLinks" usage="read-write"/>
     <collection-cache collection="org.sapia.regis.impl.NodeImpl.prependedLinks" usage="read-write"/>
-    <collection-cache collection="org.sapia.regis.impl.NodeImpl.includes" usage="read-write"/>    
+    <collection-cache collection="org.sapia.regis.impl.NodeImpl.includes" usage="read-write"/ -->    
 
     <property name="hibernate.show_sql">${hibernate.show_sql}</property>
     

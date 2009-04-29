@@ -18,7 +18,7 @@ public class FormInstanceTest extends TestCase {
     Form form = new Form("test");
     form.createField(BuiltinTypes.INT_TYPE, "field1");
     form.createField(BuiltinTypes.BOOLEAN_TYPE, "field2");
-    n = new NodeImpl();
+    n = new NodeImpl(true);
     f = form.getInstance(n);
   }
   

@@ -22,10 +22,11 @@ public class HibernateRegistry implements Registry{
   
   private SessionFactory _fac;
   private Long _rootId;
+  private boolean render;
     
-  public HibernateRegistry(SessionFactory fac){
+  public HibernateRegistry(SessionFactory fac, boolean render){
     _fac = fac;
-    _rootId = acquireRoot().getId();
+    _rootId = acquireRoot(render).getId();
   }
   
   public RegisSession open() {
@@ -36,7 +37,10 @@ public class HibernateRegistry implements Registry{
   
   public Node getRoot(){
     Session s = Sessions.get();
-    Node n = (Node)s.load(NodeImpl.class, _rootId);
+    Node n = (Node)s.createCriteria(NodeImpl.class).add(Restrictions.eq("id", _rootId)).uniqueResult();
+    if(n == null){
+      throw new IllegalStateException("No root persisted");
+    }
     return n;
   }
 
@@ -62,10 +66,10 @@ public class HibernateRegistry implements Registry{
     RWNode root;
     
     if(path.isRoot()){
-      return acquireRoot();
+      return acquireRoot(render);
     }
     else{
-      root = acquireRoot();
+      root = acquireRoot(render);
     }
     node = root;
     RWNode child;
@@ -81,7 +85,7 @@ public class HibernateRegistry implements Registry{
     return node;
   }
   
-  private NodeImpl acquireRoot(){
+  private NodeImpl acquireRoot(boolean render){
     Session session = null;
     if(Sessions.isRegistered()){
       session = Sessions.get();
@@ -90,7 +94,7 @@ public class HibernateRegistry implements Registry{
       session = _fac.openSession();
     }
     try{
-      NodeImpl  root = doAcquireRoot(session);
+      NodeImpl  root = doAcquireRoot(session, render);
       return root;
     }finally{
       if(!Sessions.isRegistered()){
@@ -100,14 +104,14 @@ public class HibernateRegistry implements Registry{
   }
   
   
-  private NodeImpl doAcquireRoot(Session session){
+  private NodeImpl doAcquireRoot(Session session, boolean render){
     NodeImpl root = (NodeImpl)session.createCriteria(NodeImpl.class)
     .add(Restrictions.eq("name", Node.ROOT_NAME)).uniqueResult();
     
     if(root == null){
       Transaction tx = session.beginTransaction();
       try{
-        root = new NodeImpl(null, "");
+        root = new NodeImpl(null, "", render);
         session.save(root);
       }finally{
         tx.commit();

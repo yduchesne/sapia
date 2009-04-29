@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.hibernate.cfg.Configuration;
 import org.sapia.regis.Registry;
+import org.sapia.regis.RegistryContext;
 import org.sapia.regis.RegistryFactory;
 import org.sapia.regis.impl.NodeImpl;
 import org.sapia.util.text.TemplateContextIF;
@@ -46,9 +47,9 @@ public class HibernateRegistryFactory implements RegistryFactory{
     DocumentBuilderFactory builderFac = DocumentBuilderFactory.newInstance();
     DocumentBuilder        builder    = builderFac.newDocumentBuilder();
     Document               doc        = builder.parse(new ByteArrayInputStream(configStr.getBytes()));
-
+    String render = props.getProperty(RegistryContext.INTERPOLATION_ACTIVE, "true");    
     cfg.configure(doc);
-    return new HibernateRegistry(cfg.buildSessionFactory());
+    return new HibernateRegistry(cfg.buildSessionFactory(), new Boolean(render).booleanValue());
   }
   
   private String loadHibernateConfig(boolean ddl) throws IOException{
