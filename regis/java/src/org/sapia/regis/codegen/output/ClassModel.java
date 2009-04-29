@@ -152,10 +152,10 @@ class ClassModel {
             + intf.ctx.getFullyQualifiedClassName()
             + "> members = new java.util.ArrayList<"
             + intf.ctx.getFullyQualifiedClassName() + ">();");
-        writer.println("    Iterator children = this.node.getChildren().iterator();");
+        writer.println("    "+Iterator.class.getName()+" children = this.node.getChildren().iterator();");
         writer.println("    while(children.hasNext()){");
-        writer.println("        Node child = (Node)children.next();");
-        writer.println("        members.add(getInstanceFor("+intf.ctx.getFullyQualifiedClassName() + "Impl.class, child.getName())");
+        writer.println("        "+Node.class.getName()+" child = ("+Node.class.getName()+")children.next();");
+        writer.println("        members.add(getInstanceFor("+intf.ctx.getFullyQualifiedClassName() + "Impl.class, child.getName()))");
         writer.println("    }");
         writer.println("    return members;");
         writer.println("  }");
