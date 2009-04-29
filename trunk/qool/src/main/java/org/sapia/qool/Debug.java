@@ -104,7 +104,7 @@ public class Debug {
   
   public Debug trace(String msg, Level l, Throwable err){
     if(l == null) l = Level.DEBUG;
-    if(globalLevel.isLoggable(l) && level.isLoggable(l)){
+    if(globalLevel().isLoggable(l) && level().isLoggable(l)){
       Calendar cal = Calendar.getInstance();
       StringBuilder sb = new StringBuilder().append("[")
         .append(l.name()).append(" ")
@@ -154,4 +154,11 @@ public class Debug {
     return new Debug(clazz.getSimpleName()).setLevel(level);
   } 
   
+  private Level level(){
+    return level == null ? Level.ERROR : level;
+  }
+  
+  private Level globalLevel(){
+    return globalLevel == null ? Level.ERROR : globalLevel;
+  }
 }
