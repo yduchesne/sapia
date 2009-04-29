@@ -57,6 +57,11 @@ public class CodeGenTask extends Task{
       }catch(Exception e2){}
       throw new BuildException("Could not load registry properties", e);      
     }
+    
+    // making sure we disable variable rendering:
+    
+    props.setProperty(RegistryContext.INTERPOLATION_ACTIVE, "false");
+    
     RegistryContext ctx = new RegistryContext(props);
     Registry reg = null;
     try{

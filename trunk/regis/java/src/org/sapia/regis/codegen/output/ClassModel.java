@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,16 +152,14 @@ class ClassModel {
             + intf.ctx.getFullyQualifiedClassName()
             + "> members = new java.util.ArrayList<"
             + intf.ctx.getFullyQualifiedClassName() + ">();");
-        for (ClassModelMember member : members) {
-          writer.println("    members.add(getInstanceFor("
-              + intf.ctx.getFullyQualifiedClassName() + "Impl.class, \""
-              + member.getName() + "\"));");
-        }
+        writer.println("    Iterator children = this.node.getChildren().iterator();");
+        writer.println("    while(children.hasNext()){");
+        writer.println("        Node child = (Node)children.next();");
+        writer.println("        members.add(getInstanceFor("+intf.ctx.getFullyQualifiedClassName() + "Impl.class, child.getName())");
+        writer.println("    }");
         writer.println("    return members;");
         writer.println("  }");
-
       }
-
     }
     writer.println("}");
   }

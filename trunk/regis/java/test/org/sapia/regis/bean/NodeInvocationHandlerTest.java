@@ -15,8 +15,8 @@ public class NodeInvocationHandlerTest extends TestCase {
   }
 
   public void testGetValues(){
-    LocalRegistry reg = new LocalRegistry();
-    NodeImpl node = new NodeImpl(null, "");
+    LocalRegistry reg = new LocalRegistry(true);
+    NodeImpl node = new NodeImpl(null, "", true);
     node.setProperty("booleanValue", "true");
     node.setProperty("intValue", "10");    
     node.setProperty("longValue", "100");
@@ -35,8 +35,8 @@ public class NodeInvocationHandlerTest extends TestCase {
   }
   
   public void testWithSessionUtil(){
-    LocalRegistry reg = new LocalRegistry();
-    NodeImpl node = new NodeImpl(null, "");
+    LocalRegistry reg = new LocalRegistry(true);
+    NodeImpl node = new NodeImpl(null, "", true);
     node.setProperty("booleanValue", "true");
     node.setProperty("intValue", "10");    
     node.setProperty("longValue", "100");
@@ -60,8 +60,8 @@ public class NodeInvocationHandlerTest extends TestCase {
   }
   
   public void testInvalidConfig(){
-    LocalRegistry reg = new LocalRegistry();
-    NodeImpl node = new NodeImpl(null, "");
+    LocalRegistry reg = new LocalRegistry(true);
+    NodeImpl node = new NodeImpl(null, "", true);
     node.setProperty("socket", "1099");
 
     try{
@@ -73,8 +73,8 @@ public class NodeInvocationHandlerTest extends TestCase {
   }  
   
   public void testMissingProperty(){
-    LocalRegistry reg = new LocalRegistry();    
-    NodeImpl node = new NodeImpl(null, "");
+    LocalRegistry reg = new LocalRegistry(true);    
+    NodeImpl node = new NodeImpl(null, "", true);
     
     NodeInvocationHandler handler = new NodeInvocationHandler(reg, node, Config.class);
     Config conf = (Config)BeanFactory.newBeanInstanceFor(node, Config.class, handler);

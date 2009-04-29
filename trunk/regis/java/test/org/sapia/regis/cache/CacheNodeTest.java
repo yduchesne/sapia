@@ -18,17 +18,17 @@ public class CacheNodeTest extends TestCase {
   }
   
   protected void setUp() throws Exception {
-    wrapped = new LocalRegistry();
+    wrapped = new LocalRegistry(true);
     RWNode child1 = (RWNode)((RWNode)wrapped.getRoot()).createChild("child1");
     child1.setProperty("prop1", "val1");
     child1.setProperty("template", "${user.dir}");
-    RWNode link = new NodeImpl(null, "link");
+    RWNode link = new NodeImpl(null, "link", true);
     child1.appendLink(link);
     child1.prependLink(link);
     RWNode child2 = (RWNode)((RWNode)wrapped.getRoot().getChild("child1")).createChild("child2");
     child2.setProperty("prop2", "100");
     child2.setInheritsParent(true);
-    cacheReg = new CacheRegistry(wrapped, 500);    
+    cacheReg = new CacheRegistry(wrapped, 500, true);    
   }
   
   public void testGetNodes() {

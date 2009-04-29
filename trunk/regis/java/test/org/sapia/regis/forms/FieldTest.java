@@ -21,7 +21,7 @@ public class FieldTest extends TestCase {
   }
   
   public void testSetString(){
-    NodeImpl node = new NodeImpl();
+    NodeImpl node = new NodeImpl(true);
     f.set(node, "100");
     super.assertEquals(f.get(node), new Integer(100));
     
@@ -32,7 +32,7 @@ public class FieldTest extends TestCase {
   }
   
   public void testSetInt(){
-    NodeImpl node = new NodeImpl();
+    NodeImpl node = new NodeImpl(true);
     f.set(node, new Integer(100));
     super.assertEquals(f.get(node), new Integer(100));
   }
@@ -40,7 +40,7 @@ public class FieldTest extends TestCase {
   public void testSetFromMap(){
     Map values = new HashMap();
     values.put("test", "100");
-    NodeImpl node = new NodeImpl();
+    NodeImpl node = new NodeImpl(true);
     f.set(node, values);
     super.assertEquals(f.get(node), new Integer(100));    
   }

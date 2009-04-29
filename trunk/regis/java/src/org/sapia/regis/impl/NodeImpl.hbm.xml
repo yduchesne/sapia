@@ -4,7 +4,6 @@
 
 <hibernate-mapping package="org.sapia.regis.impl">
   <class name="NodeImpl" table="NODE">
-    <cache usage="read-write" />
     <id name="id" type="long">
       <generator class="seqhilo">
         <param name="sequence">regis_node_seq</param>
@@ -24,6 +23,8 @@
       index="node_name_idx" />
 
     <property name="inheritsParent" type="boolean" />
+    
+    <property name="render" type="boolean" />
 
     <map name="valueMap" table="NODE_VALUES" cascade="all"
       sort="natural">

@@ -45,24 +45,28 @@ public class CacheNode implements Node{
   private Collection childrenNames;
   private long lastChecksum, lastCheck, interval;
   private Node ref;
+  private boolean render;
   
   CacheNode(
       Node node, 
       Registry registry,
-      long refreshIntervalMillis){
-    init(node, registry, refreshIntervalMillis);
+      long refreshIntervalMillis,
+      boolean render){
+    init(node, registry, refreshIntervalMillis, render);
   }  
   
   CacheNode(
       Path path, 
       Registry registry,
-      long refreshIntervalMillis){
-    init(registry.getRoot().getChild(path), registry, refreshIntervalMillis);
+      long refreshIntervalMillis,
+      boolean render){
+    init(registry.getRoot().getChild(path), registry, refreshIntervalMillis, render);
   }
   
   void init(Node node, 
       Registry registry,
-      long refreshIntervalMillis){
+      long refreshIntervalMillis,
+      boolean render){
     this.name = node.getName();
     this.type = node.getType();
     this.path = node.getAbsolutePath();
@@ -73,6 +77,7 @@ public class CacheNode implements Node{
     this.lastChecksum = node.lastModifChecksum();
     this.lastCheck = System.currentTimeMillis();
     this.ref = node;
+    this.render = render;
   }
 
   public Collection getPropertyKeys() {
@@ -89,7 +94,7 @@ public class CacheNode implements Node{
     if(child == null){
       return child;
     }
-    else return new CacheNode(child, registry, interval);
+    else return new CacheNode(child, registry, interval, render);
   }
 
   public Node getChild(String name) {
@@ -97,7 +102,7 @@ public class CacheNode implements Node{
     if(child == null){
       return child;
     }
-    else return new CacheNode(child, registry, interval);
+    else return new CacheNode(child, registry, interval, render);
   }
 
   public Collection getChildren() {
@@ -129,7 +134,13 @@ public class CacheNode implements Node{
   }
 
   public Node getParent() {
-    return new CacheNode(node().getParent(), registry, interval);
+    Node parent = node().getParent();
+    if(parent == null){
+      return null;
+    }
+    else{
+      return new CacheNode(parent, registry, interval, render);
+    }
   }
 
   public Map getProperties() {
@@ -138,7 +149,9 @@ public class CacheNode implements Node{
 
   public Map getProperties(Map values) {
      Map toReturn = props();
-     toReturn = Utils.replaceVars(new MapContext(values, new SystemContext(), false), toReturn);
+     if(render){
+       toReturn = Utils.replaceVars(new MapContext(values, new SystemContext(), false), toReturn);
+     }
      return node().getProperties(new RemoteMapProxy(values));
   }  
 
@@ -148,14 +161,18 @@ public class CacheNode implements Node{
     if(value == null){
       return new PropertyImpl(key, value);
     }
-    TemplateFactory fac = new TemplateFactory();
-    try {
-      TemplateContextIF ctx = new SystemContext();
-      value = fac.parse(value).render(ctx);
+    if(render){
+      TemplateFactory fac = new TemplateFactory();
+      try {
+        TemplateContextIF ctx = new SystemContext();
+        value = fac.parse(value).render(ctx);
+        return new CacheProperty(key, value, this);
+      }catch(TemplateException e){
+        throw new RuntimeException("Could not render property " + key + " from value '" + value + "' (current node is "+ getAbsolutePath() + ")", e);
+      }    
+    }else{
       return new CacheProperty(key, value, this);
-    }catch(TemplateException e){
-      throw new RuntimeException("Could not render property " + key + " from value '" + value + "' (current node is "+ getAbsolutePath() + ")", e);
-    }    
+    } 
   }
   
   public Property renderProperty(String key) {
@@ -260,7 +277,7 @@ public class CacheNode implements Node{
     List toReturn = new ArrayList(original.size());
     while(nodes.hasNext()){
       Node node = (Node)nodes.next();
-      toReturn.add(new CacheNode(node, registry, interval));
+      toReturn.add(new CacheNode(node, registry, interval, render));
     }
     return toReturn;
   }

@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 public class NodeImplTest extends TestCase {
   
   public void testGetAbsolutePath() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     RWNode child1 = (RWNode)parent.createChild("child1");
     RWNode child2 = (RWNode)child1.createChild("child2");
     
@@ -32,12 +32,12 @@ public class NodeImplTest extends TestCase {
     
   }
   public void testRoot() throws Exception{
-    NodeImpl root = new NodeImpl(null, "");
+    NodeImpl root = new NodeImpl(null, "", true);
     super.assertTrue(root.isRoot());
   }
 
   public void testCreateGetChild() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     Node child = parent.createChild("child");
     super.assertEquals(parent, child.getParent());
     try {
@@ -52,21 +52,21 @@ public class NodeImplTest extends TestCase {
   }
 
   public void testDeleteChild() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     parent.createChild("child");
     parent.deleteChild("child");
     super.assertTrue(parent.getChild("child") == null);
   }
 
   public void testGetChildren() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     parent.createChild("child1");
     parent.createChild("child2");
     super.assertEquals(2, parent.getChildren().size());
   }
   
   public void testInclude() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     Node child1 = parent.createChild("child1");
     Node child2 = parent.createChild("child2");
     RWNode child3 = (RWNode)parent.createChild("child3");
@@ -82,7 +82,7 @@ public class NodeImplTest extends TestCase {
   }  
   
   public void testInheritance() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     parent.setProperty("prop1", "value1");
     
     RWNode child = (RWNode)parent.createChild("child1");
@@ -93,13 +93,13 @@ public class NodeImplTest extends TestCase {
   }
   
   public void testLink() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     
     parent.setProperty("var", "${prop1},${prop2}");
     parent.setProperty("prop1", "value3");
-    RWNode link1 = new NodeImpl(null, "link1");
+    RWNode link1 = new NodeImpl(null, "link1", true);
     link1.setProperty("prop1", "value1");
-    RWNode link2 = new NodeImpl(null, "link1");
+    RWNode link2 = new NodeImpl(null, "link1", true);
     link2.setProperty("prop2", "value2");
     
     parent.prependLink(link1);
@@ -110,7 +110,7 @@ public class NodeImplTest extends TestCase {
   }  
   
   public void testInheritedLastModifChecksum() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     NodeImpl child1 = (NodeImpl)parent.createChild("child1");
     child1.setInheritsParent(true);
     NodeImpl child2 = (NodeImpl)child1.createChild("child2");
@@ -144,9 +144,9 @@ public class NodeImplTest extends TestCase {
   }
   
   public void testLinkedLastModifChecksum() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
-    NodeImpl link1  = new NodeImpl(null, "");
-    NodeImpl link2  = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
+    NodeImpl link1  = new NodeImpl(null, "", true);
+    NodeImpl link2  = new NodeImpl(null, "", true);
     parent.prependLink(link1);
     parent.appendLink(link2);
     
@@ -160,11 +160,11 @@ public class NodeImplTest extends TestCase {
   }
   
   public void testGetProperties(){
-    NodeImpl parent = new NodeImpl(null, "");
-    NodeImpl child1 = new NodeImpl(parent, "child1");    
-    NodeImpl child2 = new NodeImpl(child1, "child2");
-    NodeImpl link1  = new NodeImpl(null, "");
-    NodeImpl link2  = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
+    NodeImpl child1 = new NodeImpl(parent, "child1", true);    
+    NodeImpl child2 = new NodeImpl(child1, "child2", true);
+    NodeImpl link1  = new NodeImpl(null, "", true);
+    NodeImpl link2  = new NodeImpl(null, "", true);
 
     child1.setInheritsParent(true);
     child2.setInheritsParent(true);
@@ -190,7 +190,7 @@ public class NodeImplTest extends TestCase {
   }
   
   public void testGetNodesForQuery() throws Exception{
-    NodeImpl parent = new NodeImpl(null, "");
+    NodeImpl parent = new NodeImpl(null, "", true);
     NodeImpl child1 = (NodeImpl)parent.createChild("child1");
     NodeImpl subChild = (NodeImpl)child1.createChild("child1_1");
     subChild.setProperty("prop1", "value1");

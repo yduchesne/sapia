@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.sapia.regis.RWNode;
 import org.sapia.regis.Registry;
+import org.sapia.regis.RegistryContext;
 import org.sapia.regis.RegistryFactory;
 import org.sapia.regis.impl.NodeImpl;
 import org.sapia.regis.loader.RegistryConfigLoader;
@@ -50,7 +51,9 @@ public class LocalRegistryFactory implements RegistryFactory{
    * @return a <code>LocalRegistry</code> instance. 
    */
   public Registry connect(Properties props) throws Exception {
-    RWNode root = new NodeImpl();
+    String render = props.getProperty(RegistryContext.INTERPOLATION_ACTIVE, "true");    
+    
+    RWNode root = new NodeImpl(new Boolean(render).booleanValue());
 
     props = Utils.replaceVars(new PropertiesContext(props, new SystemContext()), props);
     String bootstrap = props.getProperty(BOOTSTRAP);
