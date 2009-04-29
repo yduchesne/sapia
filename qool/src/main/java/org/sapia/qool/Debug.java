@@ -103,6 +103,7 @@ public class Debug {
   }
   
   public Debug trace(String msg, Level l, Throwable err){
+    if(l == null) l = Level.DEBUG;
     if(globalLevel.isLoggable(l) && level.isLoggable(l)){
       Calendar cal = Calendar.getInstance();
       StringBuilder sb = new StringBuilder().append("[")
