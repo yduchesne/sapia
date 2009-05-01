@@ -1,159 +1,111 @@
 package org.sapia.cocoon.generation.chunk;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
-import org.apache.cocoon.ResourceNotFoundException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.generation.Generator;
 import org.apache.cocoon.sitemap.SitemapModelComponent;
 import org.apache.cocoon.xml.XMLConsumer;
-import org.apache.excalibur.source.Source;
-import org.sapia.cocoon.CocoonConsts;
-import org.xml.sax.Attributes;
+import org.sapia.cocoon.generation.chunk.exceptions.TemplateNotFoundException;
+import org.sapia.cocoon.generation.chunk.template.Template;
+import org.sapia.cocoon.generation.chunk.template.TemplateContext;
+import org.sapia.cocoon.generation.chunk.template.TemplateResolver;
+import org.sapia.cocoon.util.InputModuleStrLookup;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
-public class ChunkGenerator implements Generator, SitemapModelComponent{
-
-  // http://www.sapia-oss.org/cocoon/generator/chunk/2.2
-  public static final String NAMESPACE = CocoonConsts.NAMESPACE_URI + "/generator/chunk/2.2";
-  public static final String CHUNCK_ELEMENT_NAME = "chunk";
-  public static final String SRC_ATTR_LOCAL_NAME = "src";
-  public static final String SRC_ATTR_NAMESPACE = "";
+public class ChunkGenerator implements Generator, SitemapModelComponent, BeanFactoryAware{
 
   static final long DEFAULT_EXPIRES = -1;
   
   private XMLConsumer _consumer;
-  private Source _source;
-  private SourceResolver _resolver;
+  private SourceResolver _sources;
+  private TemplateResolver _templates;
+  private BeanFactory _beans;
+  private String _src;
+  private Map _objectModel;
   
   public void setConsumer(XMLConsumer consumer) {
     _consumer = consumer;
   }
   
+  public void setTemplates(TemplateResolver templates){
+    _templates = templates;
+  }
+  
+  public void setBeanFactory(BeanFactory beans) throws BeansException {
+    _beans = beans; 
+  }
+  
   public void setup(SourceResolver resolver, Map objectModel, String src, Parameters params) throws ProcessingException, SAXException, IOException {
-    _resolver = resolver;
-    _source = resolver.resolveURI(src);
-    if(!_source.exists()){
-      throw new ResourceNotFoundException(src);
+    if(_templates == null){
+      throw new IllegalStateException("TemplateResolver not set");
     }
+    _sources = resolver;
+    _src = src;
+    _objectModel = objectModel;
   }
   
   public void generate() throws IOException, SAXException, ProcessingException {
-    GeneratorContentHandler handler = new GeneratorContentHandler();
-    XMLReader reader = XMLReaderFactory.createXMLReader();
-    reader.setContentHandler(handler);
-    InputStream is = null;
-    try{
-      is = _source.getInputStream();
-      reader.parse(new InputSource(is));
-    }finally{
-      if(is != null){
-        is.close();
-      }
-    }
+    Template t = _templates.resolveTemplate(_src, _sources);
+    TemplateContext ctx = new TemplateContextImpl(
+        _consumer, 
+        _sources,
+        _templates, 
+        new InputModuleStrLookup(_beans, _objectModel));
+    t.render(ctx);
   }
   
-  /////// INNER CLASSES 
-  
-  public class GeneratorContentHandler implements ContentHandler{
+  static class TemplateContextImpl implements TemplateContext{
+    private SourceResolver sources;
+    private TemplateResolver templates;
+    private ContentHandler handler;
+    private InputModuleStrLookup lookup;
+    private boolean lenient = false;
     
-    private int _depth = 0;
+    public TemplateContextImpl(
+        ContentHandler handler, 
+        SourceResolver sources,
+        TemplateResolver templates, 
+        InputModuleStrLookup lookup) {
+      this.handler = handler;
+      this.sources = sources;
+      this.templates = templates;
+      this.lookup = lookup;
+    }
     
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-      if(uri != null && uri.length() > 0 && uri.equals(NAMESPACE) && localName.equals(CHUNCK_ELEMENT_NAME)){
-        String src = atts.getValue(SRC_ATTR_NAMESPACE, SRC_ATTR_LOCAL_NAME);
-        if(src == null){
-          throw new SAXException(SRC_ATTR_LOCAL_NAME + " attribute not set on " + CHUNCK_ELEMENT_NAME + "element");
-        }
-        Source nested = null;
-        try{
-          nested = _resolver.resolveURI(src);
-        }catch(IOException e){
-          throw new SAXException("Could not resolve " + src, e);
-        }
-        InputStream is = null; 
-        try{
-          is = nested.getInputStream();
-          InputSource input = new InputSource(is);
-          XMLReader reader = XMLReaderFactory.createXMLReader();
-          reader.setContentHandler(this);
-          reader.parse(input);
-        }catch(IOException e){
-          throw new SAXException("Could not open " + src, e);
-        }finally{
-          if(is != null){
-            try{
-              is.close();
-            }catch(IOException e){
-              // noop
-            }
-          }
-        }
-        
-      }
-      else{
-        _consumer.startElement(uri, localName, qName, atts);
+    public ContentHandler getContentHandler() {
+      return handler;
+    }
+    
+    public Template resolveTemplate(String uri) 
+      throws TemplateNotFoundException, SAXException, IOException{
+      return templates.resolveTemplate(uri, sources);
+    }
+    
+    public Object getValue(String prefix, String name) {
+      try{
+        return lookup.lookup(prefix, name);
+      }catch(ConfigurationException e){
+        throw new IllegalStateException("Could not acquire variable", e);
       }
     }
     
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-      if(uri != null && uri.length() > 0 && uri.equals(NAMESPACE) && localName.equals(CHUNCK_ELEMENT_NAME)){
-        // noop
-      }
-      else{
-        _consumer.endElement(uri, localName, qName);
-      }
-    }
-
-    public void startDocument() throws SAXException {
-      if(_depth == 0){
-        _consumer.startDocument();
-      }
-      _depth++;      
-    }
-
-    public void endDocument() throws SAXException {
-      _depth--;      
-      if(_depth == 0){
-        _consumer.endDocument();
-      }
+    public void setLenient(boolean lenient) {
+      this.lenient = lenient;
     }
     
-    public void characters(char[] ch, int start, int length) throws SAXException {
-      _consumer.characters(ch, start, length);
+    public boolean isLenient() {
+      return lenient;
     }
-
-    public void endPrefixMapping(String prefix) throws SAXException {
-      _consumer.endPrefixMapping(prefix);
-    }
-
-    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-      _consumer.ignorableWhitespace(ch, start, length);
-    }
-
-    public void processingInstruction(String target, String data) throws SAXException {
-      _consumer.processingInstruction(target, data);
-    }
-
-    public void setDocumentLocator(Locator locator) {
-      _consumer.setDocumentLocator(locator);
-    }
-
-    public void skippedEntity(String name) throws SAXException {
-      _consumer.skippedEntity(name);
-    }
-
-    public void startPrefixMapping(String prefix, String uri) throws SAXException {
-      _consumer.startPrefixMapping(prefix, uri);
-    }
+    
   }
+
 }

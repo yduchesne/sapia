@@ -4,20 +4,14 @@
 
 <beans>
 
-  <!-- PHP -->
-  <bean id="quercus" 
-        class="org.sapia.cocoon.php.QuercusBean" 
+  <!-- XML Template Resolver -->
+  <bean id="xmlTemplates" 
+        class="org.sapia.cocoon.generation.chunk.template.TemplateResolverBean" 
         scope="singleton">
-        
-        <!-- Set relatively to COB-INF/ -->
-        <property name="pwdDir" value="resource/php" />
-  </bean>
-  <bean name="org.apache.cocoon.generation.Generator/php" 
-        class="org.sapia.cocoon.php.QuercusGenerator" 
-        scope="prototype">
-	<property name="quercus"><ref bean="quercus"/></property>
-  </bean>
-  
+        <!-- property name="idleTimeSeconds" value="10" / -->
+        <property name="maxTemplates" value="3" />
+  </bean>    
+ 
   <!-- JRuby -->
   <bean id="jruby" 
         class="org.sapia.cocoon.ruby.JRubyBean" 
@@ -76,7 +70,9 @@
         
   <bean name="org.apache.cocoon.generation.Generator/chunk" 
         class="org.sapia.cocoon.generation.chunk.ChunkGenerator" 
-        scope="prototype" />                        
+        scope="prototype">
+        <property name="templates"><ref bean="xmlTemplates"/></property>
+  </bean>                        
         
   <!-- Readers -->        
   <bean name="org.apache.cocoon.reading.Reader/i18n" 
