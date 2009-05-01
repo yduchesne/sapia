@@ -29,7 +29,7 @@ public class TemplateCacheTest extends TestCase {
     String uri = "testTemplate.xml";
     cache.get(conf, uri, sources);
     Thread.sleep(100);
-    cache.getEntry(uri, sources).touch();
+    cache.getEntry(uri).touch();
     cache.get(conf, uri, sources);
     assertEquals(2, cache.refreshCount);
     cache.get(conf, uri, sources);
