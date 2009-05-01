@@ -1,0 +1,11 @@
+<message>
+	<header>
+		<from>$[from]</from>
+		<to>$[to]</to>
+		<subject>the subject: $[subject]</subject>
+	</header>
+	<body>
+		I think that XML has great potential. It will work very well and will
+		help many people to make much better use of the internet.
+	</body>
+</message>
