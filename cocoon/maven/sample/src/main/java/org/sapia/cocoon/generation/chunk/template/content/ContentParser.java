@@ -1,11 +1,12 @@
 package org.sapia.cocoon.generation.chunk.template.content;
 
+
 public class ContentParser {
 
-  public enum State{
+  public enum ParserStatus{
     INITIAL,
     IN_VAR,
-    END_DELIM_FOUND,
+    END_DELIM,
   }
   
   private String startDelim ="$[";
@@ -30,32 +31,51 @@ public class ContentParser {
   }
   
   private TemplateContent doParse(String rawContent){
-    int currentIndex = 0;
     CompositeContent toReturn = new CompositeContent();
-    while(currentIndex < rawContent.length()){
-      int i = rawContent.indexOf(startDelim, currentIndex);
-      if(i > -1){
-        int j = rawContent.indexOf(endDelim, currentIndex);
-        if(j > i+startDelim.length()){
-          if(i > currentIndex){
-            StringContent c = new StringContent(rawContent.substring(currentIndex, i));
-            toReturn.add(c);
+    ContentTokenizer ct = new ContentTokenizer(rawContent, '\\');
+    ContentTokenizer.State st;
+    StringBuilder temp = new StringBuilder();
+    ParserStatus status = ParserStatus.INITIAL;
+    while(ct.hasNext()){
+      if(status == ParserStatus.INITIAL){
+        st = ct.next(startDelim);
+        if(st.isDelimFound()){
+          if(st.isEscaped()){
+            temp.append(st.token()).append(startDelim);
           }
-          VarContent var = this.parseVar(rawContent.substring(i+startDelim.length(),j));
-          toReturn.add(var);
-          currentIndex = j+endDelim.length();
+          else{
+            temp.append(st.token());
+            StringContent content = new StringContent(temp.toString());
+            toReturn.add(content);
+            temp.delete(0, temp.length());
+            status = ParserStatus.IN_VAR;
+          }
         }
         else{
-          StringContent c = new StringContent(rawContent.substring(i));
-          toReturn.add(c);
-          currentIndex = rawContent.length();
+          temp.append(st.token());
         }
       }
-      else{
-        StringContent c = new StringContent(rawContent.substring(currentIndex));
-        toReturn.add(c);
-        currentIndex = rawContent.length();
-      }
+      else if(status == ParserStatus.IN_VAR){
+        st = ct.next(endDelim);
+        if(st.isDelimFound()){
+          if(st.isEscaped()){
+            temp.append(st.token()).append(endDelim);
+            status = ParserStatus.INITIAL;
+          }
+          else{
+            toReturn.add(parseVar(st.token()));
+            temp.delete(0, temp.length());
+            status = ParserStatus.INITIAL;
+          }
+        }
+        else{
+          temp.append(st.token());
+        }
+      }      
+    }
+    if(temp.length() > 0){
+      StringContent content = new StringContent(temp.toString());
+      toReturn.add(content);
     }
     return toReturn;
   }

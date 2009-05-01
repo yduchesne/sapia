@@ -51,4 +51,11 @@ public class ContentParserTest extends TestCase {
     String s = tc.render(new TestTemplateContext().put("var1", "foo").put("var2", "bar"));
     assertEquals("sna foo fu bar", s);
   }
+  
+  public void testEscapedContent(){
+    ContentParser p = new ContentParser();
+    TemplateContent tc = p.parse("sna \\$[var1] fu $[var2]");
+    String s = tc.render(new TestTemplateContext().put("var1", "foo").put("var2", "bar"));
+    assertEquals("sna $[var1] fu bar", s);
+  }
 }

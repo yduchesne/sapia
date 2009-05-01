@@ -5,7 +5,7 @@
 
   <groupId>org.sapia-oss</groupId>
   <artifactId>sapia_cocoon</artifactId>
-  <version>2.2b1</version>
+  <version>2.5</version>
   <packaging>jar</packaging>
   <name>Sapia Cocoon Components</name>
   <url>http://www.sapia-oss.org</url>
@@ -170,7 +170,32 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>      
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>core</classifier>
+              <excludes>
+                <exclude>.svn/**/*</exclude>
+				<exclude>**/.svn/**</exclude>
+                <exclude>COB-INF</exclude>
+                <exclude>COB-INF/**/*</exclude>
+                <exclude>META-INF</exclude>
+                <exclude>META-INF/**/*</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+            
     </plugins>
   </build>
 
