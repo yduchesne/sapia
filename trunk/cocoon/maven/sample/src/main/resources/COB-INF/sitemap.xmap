@@ -58,16 +58,11 @@
 	      <map:act type="output">
 	        <map:parameter name="module" value="attribute" />
 	        <map:parameter name="name" value="content-uri" />
-	        <map:parameter name="value" value="i18n:replace:resource/content/{1}.xhtml?user.locale={state:user.locale}" />
+	        <map:parameter name="value" value="i18n:resource/content/{1}.xhtml?user.locale={state:user.locale}" />
 	      </map:act>
-          <map:generate src="replace:resource/content/layout/container.xhtml" type="chunk" />
+          <map:generate src="resource/content/layout/container.xhtml" type="chunk" />
           <map:serialize type="html" />
 	    </map:match>     
-      
-        <map:match pattern="**.php">
-          <map:generate src="resource/content/{1}.php" type="php" />
-	      <map:serialize type="xhtml" />	      
-        </map:match>              
         
         <map:match pattern="**.rb">
           <map:generate src="resource/content/{1}.rb" type="ruby" />

@@ -33,11 +33,16 @@ public class InputModuleStrLookup extends StrLookup{
    * @param model Cocoon's object model (a {@link Map} of request, response, etc.).
    */
   public InputModuleStrLookup(BeanFactory factory){
-    _factory = factory;
-    _objectModel = ((ProcessInfoProvider)factory.getBean(ProcessInfoProvider.ROLE)).getObjectModel();
-    if(_objectModel == null){
-      throw new IllegalStateException("Could not find bean: " + ProcessInfoProvider.ROLE);
+    this(factory, 
+        ((ProcessInfoProvider)factory.getBean(ProcessInfoProvider.ROLE)).getObjectModel());
+  }
+  
+  public InputModuleStrLookup(BeanFactory factory, Map objectModel){
+    if(objectModel == null){
+      throw new IllegalStateException("object model cannot be null");
     }
+    _factory = factory;
+    _objectModel = objectModel;
   }
   
   public String lookup(String key) {
@@ -65,6 +70,14 @@ public class InputModuleStrLookup extends StrLookup{
     else{
       throw new IllegalArgumentException("Expected format: input_module_name:variable_name; got: " + key);
     }
+  }
+
+  public Object lookup(String prefix, String name) throws ConfigurationException{
+    InputModule module = (InputModule)_factory.getBean(InputModule.ROLE+"/"+prefix);
+    if(module == null){
+      throw new IllegalArgumentException("No input module found for: " + prefix);
+    }
+    return module.getAttribute(name, null, _objectModel);
   }
 }
 

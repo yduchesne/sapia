@@ -5,11 +5,28 @@ catalogues in JSON format.
 
 */
 
-var I18N = Class.create({
+I18N = Class.create({
   initialize: function(){
     this.catalogues = new Hash();
   	this.messages = new Hash();
   },
+  
+  get: function(key, catalogue) {
+	var tempMessages = this.catalogues.get(catalogue);
+	var msg;
+	if(tempMessages != undefined){
+	  msg = tempMessages.get(key);
+	}
+	if(msg == undefined){
+	  msg = this.messages.get(key);
+	}
+	if(msg == undefined){
+	  return "UNTRANSLATED";        
+	}
+	return msg;
+  },
+	  
+  
   load: function(root) {
     var catalogue = root.catalogues.catalogue;
     if(this.isArray(catalogue)){
@@ -43,22 +60,7 @@ var I18N = Class.create({
       }    
     }
   },
-  
-  get: function(key, catalogue) {
-    var tempMessages = this.catalogues.get(catalogue);
-    var msg;
-    if(tempMessages != undefined){
-	  msg = tempMessages.get(key);
-    }
-    if(msg == undefined){
-	  msg = this.messages.get(key);
-	}
-	if(msg == undefined){
-  	  return "UNTRANSLATED";        
-	}
-	return msg;
-  },
-  
+
   isArray: function(obj) {
     if (obj.constructor.toString().indexOf("Array") == -1){
       return false;

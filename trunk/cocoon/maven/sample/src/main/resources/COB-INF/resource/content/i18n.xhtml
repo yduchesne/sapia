@@ -28,7 +28,19 @@
 
     <h3>Translate</h3>
     <script>
-
+	    function selectLang(select){
+	      var lang = select.options[select.selectedIndex].value;
+	      if(lang.length > 0){
+		      document.location.href='i18n.html?user.locale=' + lang;
+	      }
+	    }
+	    var loadI18N = function(root){
+		    I18N.load(root);
+	    };
+	    function i18n(){
+		  var get = I18N.load;
+	      alert(I18N.get($('someText').value, 'messages'));
+		}
     </script>     
     <p>
       <select onChange="selectLang(this)">
@@ -41,7 +53,7 @@
      <input type="button" value="Reload Catalogues" onClick="evalJSON('catalogues.json', 'response', loadI18N);"/>
     </p>
     <input type="text" id="someText" />
-    <input type="button" value="Translate" onClick="alert(xn.get($('someText').value, 'messages'))" />
+    <input type="button" value="Translate" onClick="i18n()" />
     
     <p><a href="home.html">back to home</a></p>
   </div>
