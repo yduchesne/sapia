@@ -18,6 +18,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
@@ -60,6 +61,7 @@ public class TemplateParser {
     TemplateContentHandler handler = new TemplateContentHandler();
     XMLReader reader = XMLReaderFactory.createXMLReader();
     reader.setContentHandler(handler);
+    reader.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
     try{
       reader.parse(new InputSource(src));
     }finally{
@@ -74,18 +76,20 @@ public class TemplateParser {
   
   ///////////////// inner classes ///////////////////
   
-  class TemplateContentHandler implements ContentHandler{
+  class TemplateContentHandler extends DefaultHandler2{
     
     Node root;
     Stack<Node> nodeStack = new Stack<Node>();
     StringBuilder cdata = new StringBuilder();
-    
+  
+    @Override
     public void startDocument() throws SAXException {
       clearCdata();
       DocumentNode root = new DocumentNode();
       nodeStack.push(root);
     }
-    
+
+    @Override
     public void endDocument() throws SAXException {
       root = nodeStack.pop();
     }
@@ -94,6 +98,8 @@ public class TemplateParser {
       return root;
     }
 
+
+    @Override
     public void startElement(String uri, String localName, String name,
         Attributes atts) throws SAXException {
 
@@ -105,6 +111,7 @@ public class TemplateParser {
       add(element);
     }
     
+    @Override
     public void endElement(String uri, String localName, String name)
         throws SAXException {
       
@@ -113,19 +120,32 @@ public class TemplateParser {
 
       nodeStack.pop();
     }
+    
+    @Override
+    public void startCDATA() throws SAXException {
+      cdata.append("<![CDATA[");
+    }
+    
+    @Override
+    public void endCDATA() throws SAXException {
+      cdata.append("]]>");
+    }
 
+    @Override
     public void characters(char[] ch, int start, int length)
     throws SAXException {
       String chars = new String(ch, start, length);
       cdata.append(chars);
     }
 
+    @Override
     public void ignorableWhitespace(char[] ch, int start, int length)
     throws SAXException {
       String chars = new String(ch, start, length);
       cdata.append(chars);
     }
 
+    @Override
     public void startPrefixMapping(String prefix, String uri)
         throws SAXException {
       TemplateContent prefixContent = context.getContentParser().parse(prefix);
@@ -134,10 +154,12 @@ public class TemplateParser {
       add(node);
     }
     
+    @Override
     public void endPrefixMapping(String prefix) throws SAXException {
       nodeStack.pop();
     }
     
+    @Override
     public void processingInstruction(String target, String data)
         throws SAXException {
       ProcessingInstructionNode node = 
@@ -147,11 +169,13 @@ public class TemplateParser {
       add(node);
     }
     
+    @Override
     public void setDocumentLocator(Locator locator) {
       /*LocatorNode node = new LocatorNode(locator);
       add(node);*/
     }
     
+    @Override
     public void skippedEntity(String name) throws SAXException {
       SkippedEntityNode node = new SkippedEntityNode(name);
       add(node);
