@@ -30,6 +30,14 @@ public class TemplateResolverBean implements
   }
   
   /**
+   * @param reload if <code>true</code>, this instance will check for changes in template files and
+   * reload them if required; otherwise, no checks will be done (<code>true</code> by default).
+   */
+  public void setReloadEnabled(boolean reload){
+    cache.setReloadEnabled(reload);
+  }
+  
+  /**
    * @param millis the amount of time of idleness (in millis) after which templates that
    * have not been used must be removed from the cache - by default, the idleness is not
    * taken into account: templates are kept in cache indefinitely.

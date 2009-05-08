@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,10 +28,12 @@ public class TemplateCache {
   static final long CLEANUP_INTERVAL = 30000;
   
   private Map<String, TemplateEntry> entries = new ConcurrentHashMap<String, TemplateEntry>();
+  private Map<String, Source> sources= new ConcurrentHashMap<String, Source>();
   
   private int maxSize = NO_MAX;
   private long idleTime = NO_IDLE_TIME;
   private long cleanupInterval = CLEANUP_INTERVAL;
+  private boolean isReload = true;
   
   private Thread cleaner;
   
@@ -39,6 +42,10 @@ public class TemplateCache {
   
   public void setMaxSize(int max){
     maxSize = max;
+  }
+  
+  public void setReloadEnabled(boolean reload){
+    this.isReload = reload;
   }
   
   public void setCleanupInterval(long interval){
@@ -70,7 +77,7 @@ public class TemplateCache {
             Collection<TemplateEntry> toCheck = entries.values();
             for(TemplateEntry e:toCheck){
               if(e.isStale(idleTime)){
-                removeEntry(e.getUri());
+                removeEntry(e);
               }
             }
           }
@@ -94,7 +101,7 @@ public class TemplateCache {
             List<TemplateEntry> toRemove = sorted.subList(maxSize, sorted.size());
             synchronized(entries){
               for(TemplateEntry t:toRemove){
-                removeEntry(t.getUri());
+                removeEntry(t);
               }
             }
           }          
@@ -123,29 +130,59 @@ public class TemplateCache {
   public Template get(ParserConfig config, String uri, SourceResolver resolver) 
   throws SAXException, IOException{
     Source src = resolver.resolveURI(uri);
-    TemplateEntry entry = entries.get(uri);
-    if(entry == null || src.getLastModified() != entry.lastModified()){
-      TemplateParser parser = new TemplateParser(config);
-      Template t = parser.parse(src);
-      entry = new TemplateEntry(uri, t, src.getLastModified());
-      entries.put(uri, entry);
-      onLoad(entry);
+    TemplateEntry entry = entries.get(src.getURI());
+    if(entry == null){
+      entry = doGet(config, src, resolver);
+    }
+    else if (src.getLastModified() != entry.lastModified()){
+      entry = doGet(config, src, resolver);
     }
     onGet(entry);
     return entry.get();
   }
-
+  
+  private synchronized TemplateEntry doGet(ParserConfig config, Source src, SourceResolver resolver)
+    throws SAXException, IOException{
+    TemplateEntry entry = entries.get(src.getURI());
+    if(entry == null || src.getLastModified() != entry.lastModified() || isReload){
+      TemplateParser parser = new TemplateParser(config);
+      Template t = parser.parse(src);
+      entry = new TemplateEntry(src.getURI(), t, src.getLastModified());
+      synchronized(sources){
+        sources.put(entry.getGuid(), src);
+        synchronized(entries){
+          entries.put(src.getURI(), entry);
+        }
+      }
+      onLoad(entry);
+    }
+    return entry;
+  }
+  
   protected void onGet(TemplateEntry entry){}
   
   protected void onLoad(TemplateEntry entry){}
   
-  protected TemplateEntry getEntry(String uri)
+  protected TemplateEntry getEntry(String uri, SourceResolver resolver)
     throws IOException{
-    return entries.get(uri);
+    return entries.get(resolver.resolveURI(uri).getURI());
   }
   
-  protected void removeEntry(String uri){
-    entries.remove(uri);
+  protected boolean containsEntry(String uri, SourceResolver resolver)
+    throws IOException{
+    return getEntry(uri, resolver) != null;
+  }
+  
+  protected void removeEntry(TemplateEntry toRemove) {
+    Source s = sources.get(toRemove.getGuid());
+    if(s != null){
+      synchronized(sources){
+        sources.remove(toRemove.getUri());
+        synchronized(entries){
+          entries.remove(s.getURI());
+        }
+      }
+    }
   }
   
   //////////////////////// inner classes ////////////////////////////
@@ -155,12 +192,17 @@ public class TemplateCache {
     private AtomicLong lastAccess;
     private Template template;
     private String uri;
+    private String guid = UUID.randomUUID().toString();
     
     TemplateEntry(String uri, Template t, long lastModified){
       this.uri = uri;
       template = t;
       this.lastModified = lastModified;
       this.lastAccess = new AtomicLong(System.currentTimeMillis());
+    }
+    
+    String getGuid() {
+      return guid;
     }
     
     String getUri() {
