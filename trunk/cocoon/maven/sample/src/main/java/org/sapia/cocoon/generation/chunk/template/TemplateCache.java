@@ -148,12 +148,7 @@ public class TemplateCache {
       TemplateParser parser = new TemplateParser(config);
       Template t = parser.parse(src);
       entry = new TemplateEntry(src.getURI(), t, src.getLastModified());
-      synchronized(sources){
-        sources.put(entry.getGuid(), src);
-        synchronized(entries){
-          entries.put(src.getURI(), entry);
-        }
-      }
+      putEntry(src, entry);
       onLoad(entry);
     }
     return entry;
@@ -177,14 +172,22 @@ public class TemplateCache {
     Source s = sources.get(toRemove.getGuid());
     if(s != null){
       synchronized(sources){
-        sources.remove(toRemove.getUri());
+        sources.remove(toRemove.getGuid());
         synchronized(entries){
           entries.remove(s.getURI());
         }
       }
     }
   }
-  
+
+  protected void putEntry(Source src, TemplateEntry toAdd) {
+    synchronized(sources){
+      sources.put(toAdd.getGuid(), src);
+      synchronized(entries){
+        entries.put(src.getURI(), toAdd);
+      }
+    }
+  }
   //////////////////////// inner classes ////////////////////////////
   
   static class TemplateEntry{
