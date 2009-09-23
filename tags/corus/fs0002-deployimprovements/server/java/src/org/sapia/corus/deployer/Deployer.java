@@ -43,7 +43,7 @@ public interface Deployer extends java.rmi.Remote, Module {
    *
    * @return a <code>List</code> of <code>Distribution</code> instances.
    */
-  public List getDistributions();
+  public List<Distribution> getDistributions();
 
   /**
    * Returns the list of distributions with the given name.
@@ -51,7 +51,7 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @param name a distribution name.
    * @return a <code>List</code> of <code>Distribution</code> instances.
    */
-  public List getDistributions(CommandArg name);
+  public List<Distribution> getDistributions(CommandArg name);
   
   /**
    * Returns the list of distributions with the given name.
@@ -60,7 +60,7 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @param version a distribution version.
    * @return a <code>List</code> of <code>Distribution</code> instances.
    */
-  public List getDistributions(CommandArg name, CommandArg version);  
+  public List<Distribution> getDistributions(CommandArg name, CommandArg version);  
   
 
   /**

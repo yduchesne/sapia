@@ -83,8 +83,10 @@ public class Kill extends CorusCliCommand {
   
       version = cmd.assertOption(CorusCliCommand.VERSION_OPT, true).getValue();
   
-      profile = cmd.assertOption(CorusCliCommand.PROFILE_OPT, true).getValue();
-  
+      if(cmd.containsOption(CorusCliCommand.PROFILE_OPT, true)){
+        profile = cmd.assertOption(CorusCliCommand.PROFILE_OPT, true).getValue();
+      }
+      
       if (cmd.containsOption(CorusCliCommand.VM_NAME_OPT, true)) {
         vmName = cmd.assertOption(CorusCliCommand.VM_NAME_OPT, true).getValue();
       }

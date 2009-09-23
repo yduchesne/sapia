@@ -1,6 +1,8 @@
 package org.sapia.corus.admin;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.CorusException;
@@ -11,6 +13,7 @@ import org.sapia.corus.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.port.PortActiveException;
 import org.sapia.corus.port.PortRangeConflictException;
 import org.sapia.corus.port.PortRangeInvalidException;
+import org.sapia.corus.processor.ExecConfig;
 import org.sapia.corus.processor.ProcStatus;
 import org.sapia.corus.processor.Process;
 import org.sapia.corus.util.ProgressQueue;
@@ -82,6 +85,31 @@ public interface CorusFacade {
    * @return a <code>ProgressQueue</code>.
    */
   public ProgressQueue undeploy(String distName, String version, ClusterInfo cluster);
+
+  
+  /**
+   * Deploys the exec configuration whose file name is given.
+   * @param fileName the name of the file of the execution configuration to deploy.
+   * @param cluster
+   */
+  public void deployExecConfig(String fileName, ClusterInfo cluster) throws IOException, CorusException;
+
+  /**
+   * Undeploys the exec configurations matching the given name. 
+   * @param name the name of the exec config to undeploy.
+   * @param cluster
+   */
+  public void undeployExecConfig(String name, ClusterInfo cluster);
+  
+  /**
+   * Returns the {@link ExecConfig}s in the system.
+   * @param cluster a {@link ClusterInfo} instance.
+   * @return
+   * @throws IOException
+   * @throws CorusException
+   */
+  public  Results getExecConfigs(ClusterInfo cluster) 
+    throws IOException, CorusException;
 
   /**
    * Returns the list of distributions.
@@ -184,6 +212,15 @@ public interface CorusFacade {
                               String processName, ClusterInfo cluster);
 
   /**
+   * Starts process(es) corresponding to an existing execution configuration.
+   * 
+   * @param configName the name of an execution configuration
+   * @param cluster
+   * @return
+   */
+  public ProgressQueue exec(String configName, ClusterInfo cluster);
+
+  /**
    * Starts process(es) corresponding to the passed in parameters.
    *
    * @param distName the name of the distribution for which to start
@@ -226,7 +263,14 @@ public interface CorusFacade {
    * @return a <code>ProgressQueue</code>.
    */
   public ProgressQueue restart(ClusterInfo cluster);
-
+  
+  /**
+   * Restarts the process with the given process UD.
+   * @param pid a Corus process ID.
+   * @return a {@link ProgressQueue}
+   */
+  public void restart(String pid) throws LogicException;
+  
   /**
    * Kills the process(es) corresponding to the passed in parameters.
    *

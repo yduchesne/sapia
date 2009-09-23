@@ -1,5 +1,13 @@
 package org.sapia.corus.deployer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.sapia.corus.CorusException;
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.LogicException;
@@ -16,26 +24,16 @@ import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.corus.deployer.transport.DeploymentProcessor;
 import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.http.HttpModule;
-import org.sapia.corus.processor.ProcessorExtension;
+import org.sapia.corus.processor.Processor;
 import org.sapia.corus.taskmanager.TaskManager;
 import org.sapia.corus.util.IDGenerator;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 import org.sapia.corus.util.ProgressQueueLogger;
-
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.replication.ReplicationStrategy;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -75,8 +73,8 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   private String              _tmpDir      = DEFAULT_TMP_DIR;
   private Map                 _deployLocks = new HashMap();
   private Map                 _tmpLocks    = new HashMap();
-  private DistributionStore   _store       = new DistributionStore();
   private DeploymentProcessor _processor;
+  private DistributionStore   _store;
   private long                _timeout     = DEFAULT_FILELOCK_TIMEOUT;
 
   /**
@@ -104,6 +102,9 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
    * @see org.sapia.soto.Service#init()
    */
   public void init() throws Exception {
+    
+    _store = new DistributionStore();
+    
     String pattern = CorusRuntime.getCorus().getDomain() + '_' +
       ((TCPAddress) CorusRuntime.getTransport().getServerAddress()).getPort();
 
@@ -135,7 +136,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
 
     try {
       ProgressQueueLogger.transferMessages(_log,
-        tm.execSyncTask("BuildDistTask", new BuildDistTask(_deployDir, _store)));
+        tm.execSyncTask("BuildDistTask", new BuildDistTask(_deployDir, getDistributionStore())));
     } catch (Throwable t) {
       throw new CorusException(t);
     }
@@ -193,27 +194,30 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
 
   public Distribution getDistribution(CommandArg name, CommandArg version)
     throws LogicException {
-    return _store.getDistribution(name, version);
+    return getDistributionStore().getDistribution(name, version);
   }
 
-  public List getDistributions() {
-    return _store.getDistributions();
+  public List<Distribution> getDistributions() {
+    return getDistributionStore().getDistributions();
   }
 
-  public List getDistributions(CommandArg name) {
-    return _store.getDistributions(name);
+  public List<Distribution> getDistributions(CommandArg name) {
+    return getDistributionStore().getDistributions(name);
   }
   
-  public List getDistributions(CommandArg name, CommandArg version) {
-    return _store.getDistributions(name, version);
+  public List<Distribution> getDistributions(CommandArg name, CommandArg version) {
+    return getDistributionStore().getDistributions(name, version);
   }
 
   public ProgressQueue undeploy(CommandArg distName, CommandArg version) {
     try {
       TaskManager tm = (TaskManager) env().lookup(TaskManager.ROLE);
-
+      Processor proc = (Processor) env().lookup(Processor.ROLE);
+      if(proc.getProcesses(distName, version).size() > 0){
+        throw new LogicException("Processes for selected configuration are currently running; kill them prior to undeploying");
+      }
       return tm.execSyncTask("UndeployTask",
-        new UndeployTask(_store, distName, version));
+        new UndeployTask(getDistributionStore(), distName, version));
     } catch (Throwable e) {
       ProgressQueueImpl q = new ProgressQueueImpl();
       q.error(e);
@@ -392,7 +396,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
       TaskManager tm = (TaskManager) env().lookup(TaskManager.ROLE);
 
       return tm.execSyncTask("DeployTask",
-        new DeployTask(_store, fileName, _tmpDir, _deployDir));
+        new DeployTask(getDistributionStore(), fileName, _tmpDir, _deployDir));
     } catch (Throwable e) {
       _log.error("Could not deploy", e);
 

@@ -14,7 +14,7 @@ import org.sapia.corus.db.HashDbMap;
  */
 public class TestProcessDB extends ProcessDB {
   public TestProcessDB() {
-    super(new ProcessStore(new HashDbMap()), new ProcessStore(new HashDbMap()),
+    super(new ProcessStore(new HashDbMap<String, Process>()), new ProcessStore(new HashDbMap()),
           new ProcessStore(new HashDbMap()));
   }
 }

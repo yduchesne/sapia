@@ -1,5 +1,6 @@
 package org.sapia.corus.deployer.config;
 
+import org.apache.tools.ant.DirectoryScanner;
 import org.sapia.console.CmdLine;
 
 import org.sapia.corus.LogicException;
@@ -122,7 +123,7 @@ public class Java extends BaseJavaStarter {
     String starterLib  = baseDir + File.separator + "lib"  + File.separator + "sapia_corus_starter.jar";
     String starterDist = baseDir + File.separator + "dist" + File.separator + "sapia_corus_starter.jar";
     String starterCp = starterLib + pathSep + starterDist;
-    _cp = starterCp + pathSep + _cp;
+    _cp = starterCp + pathSep + _cp + pathSep + getMainCp();
     
     try {
       TemplateElementIF template = fac.parse(_cp);
@@ -149,5 +150,26 @@ public class Java extends BaseJavaStarter {
     }
     
     return cmd;
+  }
+  
+  private String getMainCp() {
+    DirectoryScanner ds      = new DirectoryScanner();
+    String           basedir = _corusHome + File.separator + "vm-boot-lib";
+    ds.setBasedir(basedir);
+    ds.setIncludes(new String[] { "**/*.jar" });
+    ds.scan();
+
+    String[]     jars = ds.getIncludedFiles();
+    StringBuffer buf = new StringBuffer();
+
+    for (int i = 0; i < jars.length; i++) {
+      buf.append(basedir).append(File.separator).append(jars[i]);
+
+      if (i < (jars.length - 1)) {
+        buf.append(System.getProperty("path.separator"));
+      }
+    }
+
+    return buf.toString();
   }
 }

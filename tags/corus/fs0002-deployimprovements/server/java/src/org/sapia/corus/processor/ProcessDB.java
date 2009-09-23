@@ -6,7 +6,6 @@ import java.util.List;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArg;
 
-
 /**
  * An instance of this class holds the <code>ProcessStore</code>s that
  * contain <code>Process</code>es in different states.
@@ -62,6 +61,18 @@ public class ProcessDB {
   public synchronized ProcessStore getProcessesToRestart() {
     return _toRestart;
   }
+  
+  /**
+   * @param processRef a {@link ProcessRef}
+   * @return the number of processes for the given process reference
+   */
+  public synchronized int getProcessCountFor(ProcessRef processRef){
+    return getActiveProcesses().getProcesses(
+        processRef.getDist().getName(), 
+        processRef.getDist().getVersion(),
+        processRef.getProcessConfig().getName(), 
+        processRef.getProfile()).size();
+  }
 
   /**
    * @return the <code>List</code> of <code>Process</code> instances that
@@ -69,8 +80,8 @@ public class ProcessDB {
    *
    * @see Process
    */
-  public synchronized List getProcesses() {
-    List procs = new ArrayList();
+  public synchronized List<Process> getProcesses() {
+    List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses());
     procs.addAll(_suspended.getProcesses());
     procs.addAll(_toRestart.getProcesses());
@@ -108,8 +119,8 @@ public class ProcessDB {
    *
    * @see Process
    */
-  public synchronized List getProcesses(CommandArg distName) {
-    List procs = new ArrayList();
+  public synchronized List<Process> getProcesses(CommandArg distName) {
+    List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName));
     procs.addAll(_suspended.getProcesses(distName));
     procs.addAll(_toRestart.getProcesses(distName));
@@ -128,8 +139,8 @@ public class ProcessDB {
    *
    * @see Process
    */
-  public synchronized List getProcesses(CommandArg distName, CommandArg version) {
-    List procs = new ArrayList();
+  public synchronized List<Process> getProcesses(CommandArg distName, CommandArg version) {
+    List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName, version));
     procs.addAll(_suspended.getProcesses(distName, version));
     procs.addAll(_toRestart.getProcesses(distName, version));
@@ -150,9 +161,9 @@ public class ProcessDB {
    *
    * @see Process
    */
-  public synchronized List getProcesses(CommandArg distName, CommandArg version,
+  public synchronized List<Process> getProcesses(CommandArg distName, CommandArg version,
                                         String profile) {
-    List procs = new ArrayList();
+    List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName, version, profile));
     procs.addAll(_suspended.getProcesses(distName, version, profile));
     procs.addAll(_toRestart.getProcesses(distName, version, profile));
@@ -174,9 +185,9 @@ public class ProcessDB {
    *
    * @see Process
    */
-  public synchronized List getProcesses(CommandArg distName, CommandArg version,
+  public synchronized List<Process> getProcesses(CommandArg distName, CommandArg version,
                                         String profile, CommandArg procName) {
-    List procs = new ArrayList();
+    List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName, version, profile, procName));
     procs.addAll(_suspended.getProcesses(distName, version, profile, procName));
     procs.addAll(_toRestart.getProcesses(distName, version, profile, procName));

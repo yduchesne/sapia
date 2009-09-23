@@ -9,6 +9,7 @@ import org.sapia.taskman.Task;
 import org.sapia.taskman.TaskContext;
 
 import java.io.File;
+import java.util.List;
 
 
 /**
@@ -37,22 +38,21 @@ public class UndeployTask implements Task {
    */
   public void exec(TaskContext ctx) {
     try {
-      Distribution dist    = _store.getDistribution(_name, _version);
-      File         distDir = new File(dist.getBaseDir());
-      ctx.getTaskOutput().info("Undeploying distribution " + _name + ", version: " +
-                 _version);
-      //ctx.execSyncNestedTask("DeleteDirTask", TaskFactory.newDeleteDirTask(distDir) );
-      TaskFactory.newDeleteDirTask(distDir).exec(ctx);
-      _store.removeDistribution(_name, _version);
-
-      if (!distDir.exists()) {
-        ctx.getTaskOutput().info("Undeployment successful");
-      } else {
-        ctx.getTaskOutput().warning(distDir.getAbsolutePath() +
-                      " could not be completely removed");
+      List<Distribution> dists    = _store.getDistributions(_name, _version);
+      for(Distribution dist:dists){
+        File         distDir = new File(dist.getBaseDir());
+        ctx.getTaskOutput().info("Undeploying distribution " + _name + ", version: " +
+                   _version);
+        TaskFactory.newDeleteDirTask(distDir).exec(ctx);
+        _store.removeDistribution(_name, _version);
+  
+        if (!distDir.exists()) {
+          ctx.getTaskOutput().info("Undeployment successful");
+        } else {
+          ctx.getTaskOutput().warning(distDir.getAbsolutePath() +
+                        " could not be completely removed");
+        }
       }
-    } catch (LogicException e) {
-      ctx.getTaskOutput().error("Specified distribution does not exist");
     } finally {
       ctx.getTaskOutput().close();
     }

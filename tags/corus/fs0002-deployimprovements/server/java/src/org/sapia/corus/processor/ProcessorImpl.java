@@ -6,6 +6,7 @@ import org.sapia.corus.LogicException;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.StringCommandArg;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.deployer.Deployer;
 import org.sapia.corus.deployer.DeployerImpl;
@@ -21,6 +22,7 @@ import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 
 import org.sapia.taskman.PeriodicTaskDescriptor;
+import org.sapia.taskman.TaskDescriptor;
 
 import org.sapia.ubik.net.TCPAddress;
 
@@ -79,6 +81,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   
   private ProcessDB       _db;
   private PortManager     _ports;
+  private ExecConfigStore _execConfigs;
   private int             _procTimeout     = DEFAULT_PROCESS_TIMEOUT;
   private int             _checkInterval   = DEFAULT_CHECK_INTERVAL;
   private int             _killInterval    = DEFAULT_KILL_INTERVAL;
@@ -122,47 +125,63 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     _restartInterval = interval;
   }
   
-  /**
-   * @see org.sapia.soto.Service#init()
-   */
   public void init() throws Exception {
     instance   = this;
 
     _httpPort = ((TCPAddress) CorusRuntime.getTransport().getServerAddress()).getPort();
-
-    ProcessStore suspended = new ProcessStore(((DbModule) CorusRuntime.getCorus()
-                                                                      .lookup(DbModule.ROLE)).getDbMap(
-          "processor.suspended"));
-    ProcessStore active = new ProcessStore(((DbModule) CorusRuntime.getCorus()
-                                                                   .lookup(DbModule.ROLE)).getDbMap(
-          "processor.active"));
     
+    DbModule db = (DbModule) CorusRuntime.getCorus().lookup(DbModule.ROLE);
+    _execConfigs = new ExecConfigStore(db.getDbMap("processor.execConfigs"));
+
+    ProcessStore suspended = new ProcessStore(db.getDbMap("processor.suspended"));
+    ProcessStore active = new ProcessStore(db.getDbMap("processor.active"));
+    ProcessStore toRestart = new ProcessStore(db.getDbMap("processor.toRestart"));
+
     _ports = (PortManager)CorusRuntime.getCorus().lookup(PortManager.ROLE);
 
     // here we "touch" the process objects to prevent their automatic 
     // termination (the Corus server might have been down for a period
     // of time that is longer then some process' tolerated idle delay).                                                                    
-    List    processes = (List) active.getProcesses();
+    List<Process>    processes = (List<Process>) active.getProcesses();
     Process proc;
 
     for (int i = 0; i < processes.size(); i++) {
       proc = (Process) processes.get(i);
       proc.touch();
     }
-
-    ProcessStore toRestart = new ProcessStore(((DbModule) CorusRuntime.getCorus()
-                                                                      .lookup(DbModule.ROLE)).getDbMap(
-          "processor.toRestart"));
+ 
     _db = new ProcessDB(suspended, active, toRestart);
 
-    TaskManager      tm    = (TaskManager) env().lookup(TaskManager.ROLE);
-    ProcessCheckTask check = new ProcessCheckTask((TCPAddress) CorusRuntime.getTransport()
-                                                                           .getServerAddress(),
-        _httpPort, _db, _killInterval * 1000, _procTimeout * 1000,
-        _restartInterval * 1000, _ports);
-    PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("ProcessCheckTask",
+    TaskManager      tm       = (TaskManager) env().lookup(TaskManager.ROLE);
+    Deployer         deployer = (Deployer) env().lookup(Deployer.ROLE);
+    TCPAddress       address = (TCPAddress) CorusRuntime.getTransport().getServerAddress();
+    
+    StartBootConfigsTask boot = new StartBootConfigsTask(
+        address,
+        _httpPort,
+        _ports,
+        tm,
+        deployer,
+        this,
+        _execConfigs,
+        _db,
+        _startLock
+    );
+    PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("StartBootConfigsTask",
+        35000, boot);
+    tm.execTaskFor(ptd);
+    
+    ProcessCheckTask check = new ProcessCheckTask(
+        address,
+        _httpPort, 
+        _db, 
+        _killInterval * 1000, _procTimeout * 1000,
+        _restartInterval * 1000, 
+        _ports);
+    ptd = new PeriodicTaskDescriptor("ProcessCheckTask",
         _checkInterval * 1000, check);
     tm.execTaskFor(ptd);
+    
   }
   
   public void start() throws Exception {
@@ -191,20 +210,85 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   /*////////////////////////////////////////////////////////////////////
                        Processor INTERFACE METHODS
   ////////////////////////////////////////////////////////////////////*/
+  
+  public ProgressQueue exec(String execConfigName) {
+    ProgressQueue progress = new ProgressQueueImpl();
+    ProcessDependencyFilter filter = new ProcessDependencyFilter(progress);
+    Deployer     deployer = null;
+    TaskManager  taskman = null;
+    try{
+      deployer = (Deployer) CorusRuntime.getCorus().lookup(Deployer.ROLE);
+      taskman  = ((TaskManager) CorusRuntime.getCorus().lookup(TaskManager.ROLE)); 
+    }catch(CorusException  e){
+      progress.error(e);
+      progress.close();
+      return progress;
+    }
+    ExecConfig conf = this._execConfigs.getConfigFor(execConfigName);
+    if(conf == null){
+      progress.error("No execution configuration for: " + execConfigName);
+      progress.close();
+      return progress;
+    }
+    else{
+      progress.error("Executing process configuration: " + execConfigName);
+      for(ProcessDef def:conf.getProcesses()){
+        List<Distribution> dists = deployer.getDistributions(
+            new StringCommandArg(def.getDist()), 
+            new StringCommandArg(def.getVersion()));
+        if (dists.size() == 0) {
+          progress.warning("No distribution for " + def.getDist() + ", " +
+            def.getVersion());
+        }
+        for(Distribution dist:dists){
+          List<ProcessConfig> configs;
+          if(def.getProcess() == null){
+            configs = dist.getProcesses();
+          }
+          else{
+            configs = dist.getProcesses(new StringCommandArg(def.getProcess()));
+          }
+          if(configs.size() == 0){
+            progress.warning("Could not find any process to start for: " + 
+                def.getDist() + ", " + 
+                def.getVersion() + ", " + def.getProcess());
+          }
+          else{
+            for(ProcessConfig config:configs){
+              filter.addRootProcess(dist, config, def.getProfile());
+            }
+          }
+        }
+        
+      }
+      filter.filterDependencies(deployer, this);
+      for(ProcessRef processRef:filter.getFilteredProcesses()){
+        progress.info("Scheduling process execution for distribution: " + processRef.getDist().getName() + ", " + processRef.getDist().getVersion());
+      }
+      TCPAddress    addr = (TCPAddress) CorusRuntime.getTransport().getServerAddress(); 
+      MultiExecTask  exec = new MultiExecTask(addr, _httpPort, _db, _startLock, filter.getFilteredProcesses(), _ports, taskman, 1);
+      PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("MultiExecProcessTask", EXEC_TASK_INTERVAL, exec);            
+      taskman.execTaskFor(ptd);
+    }
+    progress.close();
+    return progress;
+    
+  }
 
   public ProgressQueue exec(CommandArg distName, CommandArg version, String profile,
     CommandArg processName, int instances) {
     try {
       Deployer     deployer = (Deployer) CorusRuntime.getCorus().lookup(Deployer.ROLE);
-      List dists = deployer.getDistributions(distName, version);
+      List<Distribution> dists = deployer.getDistributions(distName, version);
       if (dists.size() == 0) {
         throw new LogicException("No distribution for " + distName + ", " +
           version);
       }
       ProgressQueueImpl q = new ProgressQueueImpl();      
+      ProcessDependencyFilter filter = new ProcessDependencyFilter(q);
       for(int i = 0; i < dists.size(); i++){
-        Distribution dist = (Distribution)dists.get(i);
-        List configs;
+        Distribution dist = dists.get(i);
+        List<ProcessConfig> configs;
         if(processName == null){
           configs = dist.getProcesses();
         }
@@ -216,17 +300,21 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
               + ", " + processName);
         }
         else{
-          TCPAddress    addr = (TCPAddress) CorusRuntime.getTransport()
-                                                        .getServerAddress();
-          q.info("Scheduling process execution for distribution: " + dist.getName() + ", " 
-              + dist.getVersion());
-          
-          TaskManager taskman = ((TaskManager) env().lookup(TaskManager.ROLE)); 
-          MultiExecTask  exec = new MultiExecTask(addr, _httpPort, _db, _startLock, dist, configs, processName.toString(), profile, _ports, taskman, instances);
-          PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("MultiExecProcessTask", EXEC_TASK_INTERVAL, exec);            
-          taskman.execTaskFor(ptd);
+          for(ProcessConfig config:configs){
+            filter.addRootProcess(dist, config, profile);
+          }
         }
       }
+      filter.filterDependencies(deployer, this);
+      for(ProcessRef processRef:filter.getFilteredProcesses()){
+        q.info("Scheduling process execution for distribution: " + processRef.getDist().getName() + ", " + processRef.getDist().getVersion());
+      }
+      TCPAddress    addr = (TCPAddress) CorusRuntime.getTransport().getServerAddress(); 
+      TaskManager taskman = ((TaskManager) env().lookup(TaskManager.ROLE)); 
+      MultiExecTask  exec = new MultiExecTask(addr, _httpPort, _db, _startLock, filter.getFilteredProcesses(), _ports, taskman, instances);
+      PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("MultiExecProcessTask", EXEC_TASK_INTERVAL, exec);            
+      taskman.execTaskFor(ptd);
+      
       q.close();
       return q;
     } catch (Exception e) {
@@ -242,10 +330,25 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     int instances) {
     return exec(distName, version, profile, null, instances);
   }
+  
+  public void addExecConfig(ExecConfig conf) throws LogicException{
+    if(conf.getName() == null) {
+      throw new LogicException("Execution configuration must have a name");
+    }
+    this._execConfigs.addConfig(conf);
+  }
+  
+  public List<ExecConfig> getExecConfigs() {
+    return _execConfigs.getConfigs();
+  }
+  
+  public void removeExecConfig(CommandArg name) {
+    _execConfigs.removeConfigsFor(name);
+  }
 
   public void kill(CommandArg distName, CommandArg version, String profile,
       CommandArg processName, boolean suspend) throws CorusException {
-    List procs = _db.getActiveProcesses().getProcesses(distName, version,
+    List<Process> procs = _db.getActiveProcesses().getProcesses(distName, version,
         profile, processName);
     TaskManager tm;
     KillTask kill;
@@ -280,9 +383,13 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     }
   }
 
+  public void kill(CommandArg distName, CommandArg version, 
+      boolean suspend) throws CorusException {
+    kill(distName, version, null, suspend);
+  }
   public void kill(CommandArg distName, CommandArg version, String profile,
     boolean suspend) throws CorusException {
-    List                   procs = _db.getActiveProcesses().getProcesses(distName,
+    List<Process>          procs = _db.getActiveProcesses().getProcesses(distName,
         version, profile);
     TaskManager            tm;
     KillTask               kill;
@@ -318,9 +425,6 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     }
   }
 
-  /**
-   * @see Processor#kill(String, boolean)
-   */
   public void kill(String corusPid, boolean suspend) throws CorusException {
     try {
       TCPAddress             addr = (TCPAddress) CorusRuntime.getTransport()
@@ -348,21 +452,27 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     }
   }
 
-  /**
-   * @see Processor#restart(String)
-   */
-  public void restart(String dynId) throws CorusException {
+  public void restartByAdmin(String pid) throws CorusException {
+    doRestart(pid, Process.KILL_REQUESTOR_ADMIN);
+  }
+
+  public void restart(String pid) throws CorusException {
+    doRestart(pid, Process.KILL_REQUESTOR_PROCESS);
+  }
+  
+  private void doRestart(String dynId, String origin) throws CorusException {
     try {
       Process     proc    = _db.getActiveProcesses().getProcess(dynId);
       RestartTask restart = new RestartTask((TCPAddress) CorusRuntime.getTransport()
                                                                      .getServerAddress(),
-          _httpPort, Process.KILL_REQUESTOR_PROCESS, _db,
+          _httpPort, origin, _db,
           ((DeployerImpl) CorusRuntime.getCorus().lookup(Deployer.ROLE)).getDistributionStore(),
           dynId, proc.getMaxKillRetry(), _ports);
 
       PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("RestartProcessTask",
           _killInterval * 1000, restart);
       ((TaskManager) env().lookup(TaskManager.ROLE)).execTaskFor(ptd);
+      
     } catch (CorusException e) {
       throw e;
     } catch (Exception e) {
@@ -370,11 +480,8 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     }
   }
 
-  /**
-   * @see org.sapia.corus.processor.Processor#resume()
-   */
   public ProgressQueue resume() {
-    Iterator    procs  = _db.getSuspendedProcesses().getProcesses().iterator();
+    Iterator<Process>    procs  = _db.getSuspendedProcesses().getProcesses().iterator();
     TaskManager tm;
     ResumeTask  resume;
     Process     proc;
@@ -463,32 +570,32 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return _db.getActiveProcesses().getProcess(corusPid);
   }
 
-  public List getProcesses() {
+  public List<Process> getProcesses() {
     return _db.getProcesses();
   }
 
-  public List getProcesses(CommandArg distName, CommandArg version, String profile,
+  public List<Process> getProcesses(CommandArg distName, CommandArg version, String profile,
     CommandArg processName) {
     return _db.getProcesses(distName, version, profile, processName);
   }
 
-  public List getProcesses(CommandArg distName, CommandArg version, String profile) {
+  public List<Process> getProcesses(CommandArg distName, CommandArg version, String profile) {
     return _db.getProcesses(distName, version, profile);
   }
   
-  public List getProcesses(CommandArg distName, CommandArg version) {
+  public List<Process> getProcesses(CommandArg distName, CommandArg version) {
     return _db.getProcesses(distName, version);
   }
 
-  public List getProcesses(CommandArg distName) {
+  public List<Process> getProcesses(CommandArg distName) {
     return _db.getProcesses(distName);
   }
   
-  public List getProcessesWithPorts() {
-    List toReturn = new ArrayList();
-    List processes = _db.getProcesses();
+  public List<Process> getProcessesWithPorts() {
+    List<Process> toReturn = new ArrayList<Process>();
+    List<Process> processes = _db.getProcesses();
     for(int i = 0; i < processes.size(); i++){
-      Process p = (Process)processes.get(i);
+      Process p = processes.get(i);
       if(p.getActivePorts().size() > 0){
         toReturn.add(p);
       }
@@ -496,59 +603,43 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return toReturn;
   }  
 
-  /**
-   * @see org.sapia.corus.processor.Processor#getStatus()
-   */
-  public List getStatus() {
+  public List<Status> getStatus() {
     return copyStatus(getProcesses());
   }
 
-  /**
-   * @see org.sapia.corus.processor.Processor#getStatus(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-   */
-  public List getStatus(CommandArg distName, CommandArg version, String profile,
+  public List<Status> getStatus(CommandArg distName, CommandArg version, String profile,
     CommandArg processName) {
     return copyStatus(getProcesses(distName, version, profile, processName));
   }
-
-  /**
-   * @see org.sapia.corus.processor.Processor#getStatus(java.lang.String, java.lang.String, java.lang.String)
-   */
-  public List getStatus(CommandArg distName, CommandArg version, String profile) {
+  
+  public List<Status> getStatus(CommandArg distName, CommandArg version, String profile) {
     return copyStatus(getProcesses(distName, version, profile));
   }
 
-  /**
-   * @see org.sapia.corus.processor.Processor#getStatus(java.lang.String, java.lang.String)
-   */
-  public List getStatus(CommandArg distName, CommandArg version) {
+  public List<Status> getStatus(CommandArg distName, CommandArg version) {
     return copyStatus(getProcesses(distName, version));
   }
 
-  /**
-   * @see org.sapia.corus.processor.Processor#getStatus(java.lang.String)
-   */
-  public List getStatus(CommandArg distName) {
+  public List<Status> getStatus(CommandArg distName) {
     return copyStatus(getProcesses(distName));
   }
 
-  /**
-   * @see org.sapia.corus.processor.Processor#getStatusFor(java.lang.String)
-   */
   public ProcStatus getStatusFor(String corusPid) throws LogicException {
     Process proc = getProcess(corusPid);
 
-    return new ProcStatus(proc);
+    return copyStatus(proc);
   }
 
-  private List copyStatus(List processes) {
-    List   stat   = new ArrayList(processes.size());
-    Status status;
-
-    for (int i = 0; i < processes.size(); i++) {
-      stat.add(new ProcStatus((Process) processes.get(i)));
+  private List<Status> copyStatus(List<Process> processes) {
+    List<Status>   stat   = new ArrayList<Status>(processes.size());
+    for (Process p:processes) {
+      stat.add(copyStatus(p));
     }
 
     return stat;
+  }
+  
+  private ProcStatus copyStatus(Process p) {
+    return new ProcStatus(p);
   }
 }

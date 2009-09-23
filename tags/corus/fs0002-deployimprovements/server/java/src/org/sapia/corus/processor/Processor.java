@@ -4,6 +4,7 @@ import org.sapia.corus.CorusException;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.Module;
 import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.interop.Status;
 import org.sapia.corus.util.ProgressQueue;
 
 import java.util.List;
@@ -57,6 +58,14 @@ public interface Processor extends java.rmi.Remote, Module {
                             CommandArg processName, int instances);
 
   /**
+   * 
+   * @param execConfigName the name of the execution configuration from which to start
+   * processes.
+   * @return a {@link ProgressQueue}
+   */
+  public ProgressQueue exec(String execConfigName);
+
+  /**
    * Resumes all suspended processes.
    *
    * @return a <code>ProgressQueue</code>.
@@ -68,7 +77,13 @@ public interface Processor extends java.rmi.Remote, Module {
    *
    * @param a corus pid..
    */
-  public void restart(String corusPid) throws CorusException;
+  public void restartByAdmin(String pid) throws CorusException;
+  
+  /**
+   * Shuts down and restarts the process with the given ID.
+   * @see Processor#restart(String)
+   */
+  public void restart(String pid) throws CorusException;
 
   /**
    * Kill the process(es) corresponding to the passed in parameters.
@@ -119,7 +134,7 @@ public interface Processor extends java.rmi.Remote, Module {
    *
    * @return a <code>List</code> of <code>Process</code> instances.
    */
-  public List getProcesses();
+  public List<Process> getProcesses();
 
   /**
    * Returns all processes corresponding to the given parameters.
@@ -127,7 +142,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param distName the name of the distribution for which to return processes.
    * @return a <code>List</code> of <code>Process</code> instances.
    */
-  public List getProcesses(CommandArg distName);
+  public List<Process> getProcesses(CommandArg distName);
 
   /**
    * Returns all processes corresponding to the given parameters.
@@ -136,7 +151,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param version the version of the distribution for which to return processes.
    * @return a <code>List</code> of <code>Process</code> instances.
    */
-  public List getProcesses(CommandArg distName, CommandArg version);
+  public List<Process> getProcesses(CommandArg distName, CommandArg version);
 
   /**
    * Returns all processes corresponding to the given parameters.
@@ -146,7 +161,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param profile the profile for which to return processes.
    * @return a <code>List</code> of <code>Process</code> instances.
    */
-  public List getProcesses(CommandArg distName, CommandArg version, String profile);
+  public List<Process> getProcesses(CommandArg distName, CommandArg version, String profile);
 
   /**
    * Returns all processes corresponding to the given parameters.
@@ -157,14 +172,14 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param processName the name of the process for which to return process instances.
    * @return a <code>List</code> of <code>Process</code> instances.
    */
-  public List getProcesses(CommandArg distName, CommandArg version, String profile,
+  public List<Process> getProcesses(CommandArg distName, CommandArg version, String profile,
       CommandArg processName);
   
   /**
    * Return the status of the process whose identifier is given..
    *
    * @param corusPid a process identifier.
-   * @return a <code>ProcStatus</code> instance.
+   * @return a <code>Status</code> instance.
    */
   public ProcStatus getStatusFor(String corusPid) throws LogicException;
 
@@ -173,24 +188,24 @@ public interface Processor extends java.rmi.Remote, Module {
    *
    * @return a <code>List</code> of <code>Status</code> instances.
    */
-  public List getStatus();
+  public List<Status> getStatus();
 
   /**
    * Returns the status of all processes corresponding to the given parameters.
    *
    * @param distName the name of the distribution for which process should have their status returned.
-   * @return a <code>List</code> of <code>ProcStatus</code> instances.
+   * @return a <code>List</code> of <code>Status</code> instances.
    */
-  public List getStatus(CommandArg distName);
+  public List<Status> getStatus(CommandArg distName);
 
   /**
    * Returns the status of all processes corresponding to the given parameters.
    *
    * @param distName the name of the distribution for which to return process status.
    * @param version the version of the distribution for which to return process status.
-   * @return a <code>List</code> of <code>ProcStatus</code> instances.
+   * @return a <code>List</code> of <code>Status</code> instances.
    */
-  public List getStatus(CommandArg distName, CommandArg version);
+  public List<Status> getStatus(CommandArg distName, CommandArg version);
 
   /**
    * Returns the status of all processes corresponding to the given parameters.
@@ -198,9 +213,9 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param distName the name of the distribution for which to return process status.
    * @param version the version of the distribution for which to return process status.
    * @param profile the profile for which to return process status.
-   * @return a <code>List</code> of <code>ProcStatus</code> instances.
+   * @return a <code>List</code> of <code>Status</code> instances.
    */
-  public List getStatus(CommandArg distName, CommandArg version, String profile);
+  public List<Status> getStatus(CommandArg distName, CommandArg version, String profile);
 
   /**
    * Returns the status of all processes corresponding to the given parameters.
@@ -209,9 +224,9 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param version the version of the distribution for which to return process status.
    * @param profile the profile for which to return process status.
    * @param processName the name of the process for which to return process status.
-   * @return a <code>List</code> of <code>ProcStatus</code> instances.
+   * @return a <code>List</code> of <code>Status</code> instances.
    */
-  public List getStatus(CommandArg distName, CommandArg version, String profile,
+  public List<Status> getStatus(CommandArg distName, CommandArg version, String profile,
       CommandArg processName);
   
   /**
@@ -219,7 +234,21 @@ public interface Processor extends java.rmi.Remote, Module {
    *
    * @return a <code>List</code> of <code>Process</code> instances.
    */  
-  public List getProcessesWithPorts();
+  public List<Process> getProcessesWithPorts();
   
+ 
+  /**
+   * @param conf adds an {@link ExecConfig} to this instance.
+   */
+  public void addExecConfig(ExecConfig conf) throws LogicException;
   
+  /**
+   * @return the list of {@link ExecConfig}s that are contained in this instance.
+   */
+  public List<ExecConfig> getExecConfigs();
+  
+  /**
+   * @param name removes the {@link ExecConfig} whose name matches the given argument.
+   */
+  public void removeExecConfig(CommandArg name);
 }

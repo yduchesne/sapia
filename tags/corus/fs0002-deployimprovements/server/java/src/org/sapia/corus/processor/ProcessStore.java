@@ -20,12 +20,12 @@ import java.util.List;
  * </dl>
  */
 public class ProcessStore {
-  private DbMap _processes;
+  private DbMap<String, Process> _processes;
 
   /**
    * @param map a <code>DbMap</code>.
    */
-  public ProcessStore(DbMap map) {
+  public ProcessStore(DbMap<String, Process> map) {
     _processes = map;
   }
   
@@ -53,8 +53,8 @@ public class ProcessStore {
    */
   public synchronized void removeProcesses(CommandArg name, CommandArg version) {
     Process  current;
-    Iterator processes = _processes.values();
-    List     toRemove  = new ArrayList();
+    Iterator<Process> processes = _processes.values();
+    List<Process>     toRemove  = new ArrayList<Process>();
 
     for (; processes.hasNext();) {
       current = (Process) processes.next();
@@ -74,9 +74,9 @@ public class ProcessStore {
    * @return the <code>List</code> of <code>Process</code>es held by
    * this instance.
    */
-  public synchronized List getProcesses() {
-    List     toReturn  = new ArrayList();
-    Iterator processes = _processes.values();
+  public synchronized List<Process> getProcesses() {
+    List<Process>     toReturn  = new ArrayList<Process>();
+    Iterator<Process> processes = _processes.values();
 
     for (; processes.hasNext();) {
       toReturn.add((Process) processes.next());
@@ -92,10 +92,10 @@ public class ProcessStore {
    * @param name a distribution name.
    * @return a <code>List</code> of processes.
    */
-  public synchronized List getProcesses(CommandArg name) {
-    List     toReturn  = new ArrayList();
+  public synchronized List<Process> getProcesses(CommandArg name) {
+    List<Process> toReturn  = new ArrayList<Process>();
     Process  current;
-    Iterator processes = _processes.values();
+    Iterator<Process> processes = _processes.values();
 
     for (; processes.hasNext();) {
       current = (Process) processes.next();
@@ -116,10 +116,10 @@ public class ProcessStore {
    * @param version a distribution version. 
    * @return a <code>List</code> of processes.
    */  
-  public synchronized List getProcesses(CommandArg name, CommandArg version) {
-    List     toReturn  = new ArrayList();
+  public synchronized List<Process> getProcesses(CommandArg name, CommandArg version) {
+    List<Process>     toReturn  = new ArrayList<Process>();
     Process  current;
-    Iterator processes = _processes.values();
+    Iterator<Process> processes = _processes.values();
 
     for (; processes.hasNext();) {
       current = (Process) processes.next();
@@ -132,7 +132,31 @@ public class ProcessStore {
 
     return toReturn;
   }
+  
+  /**
+   * @param name a distribution name
+   * @param version a distribution version.
+   * @return
+   */
+  public synchronized List<Process> getProcesses(String name, String version, String processName, String profile) {
+    List<Process>     toReturn  = new ArrayList<Process>();
+    Process  current;
+    Iterator<Process> processes = _processes.values();
 
+    for (; processes.hasNext();) {
+      current = (Process) processes.next();
+
+      if (name.equals(current.getDistributionInfo().getName()) &&
+          version.equals(current.getDistributionInfo().getVersion()) &&
+          profile.equals(current.getDistributionInfo().getProfile()) &&
+          processName.equals(current.getDistributionInfo().getProcessName())) {
+        toReturn.add(current);
+      }
+    }
+
+    return toReturn;
+  }
+  
   /**
    * Returns the list of processes corresponding to the distribution
    * whose name, version and profile are given.
@@ -142,17 +166,17 @@ public class ProcessStore {
    * @param profile a distribution . 
    * @return a <code>List</code> of processes.
    */    
-  public synchronized List getProcesses(CommandArg name, CommandArg version, String profile) {
-    List     toReturn  = new ArrayList();
+  public synchronized List<Process> getProcesses(CommandArg name, CommandArg version, String profile) {
+    List<Process>     toReturn  = new ArrayList<Process>();
     Process  current;
-    Iterator processes = _processes.values();
+    Iterator<Process> processes = _processes.values();
 
     for (; processes.hasNext();) {
       current = (Process) processes.next();
 
       if (name.matches(current.getDistributionInfo().getName()) &&
           version.matches(current.getDistributionInfo().getVersion()) &&
-            current.getDistributionInfo().getProfile().equals(profile)) {
+            (profile == null || current.getDistributionInfo().getProfile().equals(profile))) {
         toReturn.add(current);
       }
     }
@@ -170,29 +194,19 @@ public class ProcessStore {
    * @param processName a process config name.
    * @return a <code>List</code> of processes.
    */    
-  public synchronized List getProcesses(CommandArg name, CommandArg version, String profile,
+  public synchronized List<Process> getProcesses(CommandArg name, CommandArg version, String profile,
                                  CommandArg processName) {
-    List     toReturn  = new ArrayList();
+    List<Process>     toReturn  = new ArrayList<Process>();
     Process  current;
-    Iterator processes = _processes.values();
+    Iterator<Process> processes = _processes.values();
 
     for (; processes.hasNext();) {
       current = (Process) processes.next();
-      if(profile != null){
-        if (name.matches(current.getDistributionInfo().getName()) &&
-            version.matches(current.getDistributionInfo().getVersion()) &&
-            current.getDistributionInfo().getProfile().equals(profile) &&
-            processName.matches(current.getDistributionInfo().getProcessName())) {
-          toReturn.add(current);
-        }
-        
-      }
-      else{
-        if (name.matches(current.getDistributionInfo().getName()) &&
-            version.matches(current.getDistributionInfo().getVersion()) &&
-            processName.matches(current.getDistributionInfo().getProcessName())) {
-          toReturn.add(current);
-        }
+      if (name.matches(current.getDistributionInfo().getName()) &&
+          version.matches(current.getDistributionInfo().getVersion()) &&
+          (profile == null || current.getDistributionInfo().getProfile().equals(profile)) &&
+          processName.matches(current.getDistributionInfo().getProcessName())) {
+        toReturn.add(current);
       }
     }
 

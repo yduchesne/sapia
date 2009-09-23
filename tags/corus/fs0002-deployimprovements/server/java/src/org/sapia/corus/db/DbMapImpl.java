@@ -16,7 +16,7 @@ import java.util.Iterator;
  *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
  * </dl>
  */
-public class DbMapImpl implements DbMap {
+public class DbMapImpl<K, V> implements DbMap<K, V> {
   private JDBMHashtable _hashtable;
 
   /**
@@ -40,9 +40,9 @@ public class DbMapImpl implements DbMap {
   /**
    * @see org.sapia.corus.db.DbMap#get(Object)
    */
-  public Object get(Object key) {
+  public V get(K key) {
     try {
-      return _hashtable.get(key);
+      return (V)_hashtable.get(key);
     } catch (IOException e) {
       throw new IORuntimeException(e);
     }
@@ -51,7 +51,7 @@ public class DbMapImpl implements DbMap {
   /**
    * @see org.sapia.corus.db.DbMap#keys()
    */
-  public Iterator keys() {
+  public Iterator<K> keys() {
     try {
       return new DbIterator(_hashtable.keys());
     } catch (IOException e) {
@@ -95,7 +95,7 @@ public class DbMapImpl implements DbMap {
   /*//////////////////////////////////////////////////
                     INNER CLASSES
   //////////////////////////////////////////////////*/
-  public static class DbIterator implements Iterator {
+  public static class DbIterator<V> implements Iterator<V> {
     private JDBMEnumeration _enum;
 
     DbIterator(JDBMEnumeration anEnum) {
@@ -110,9 +110,9 @@ public class DbMapImpl implements DbMap {
       }
     }
 
-    public Object next() {
+    public V next() {
       try {
-        return _enum.nextElement();
+        return (V)_enum.nextElement();
       } catch (IOException e) {
         throw new IORuntimeException(e);
       }

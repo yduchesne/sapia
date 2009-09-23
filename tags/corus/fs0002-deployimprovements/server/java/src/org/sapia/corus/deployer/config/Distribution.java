@@ -34,8 +34,8 @@ public class Distribution implements java.io.Serializable {
   private String              _version;
   private String              _baseDir;
   private String              _commonDir;
-  private String              _vmsDir;
-  private List                _vms       = new ArrayList();
+  private String              _processesDir;
+  private List<ProcessConfig> _processConfigs = new ArrayList<ProcessConfig>();
 
   /**
    * Sets this distribution's name.
@@ -78,8 +78,8 @@ public class Distribution implements java.io.Serializable {
    *
    * @param a <code>Process</code> instance, representing a process configuration.
    */
-  public void addProcess(ProcessConfig vm) {
-    _vms.add(vm);
+  public void addProcess(ProcessConfig conf) {
+    _processConfigs.add(conf);
   }
 
   /**
@@ -88,8 +88,8 @@ public class Distribution implements java.io.Serializable {
    * @return the <code>List</code> of <code>Vm</code>
    * instances in this distribution.
    */
-  public List getProcesses() {
-    return _vms;
+  public List<ProcessConfig> getProcesses() {
+    return _processConfigs;
   }
   
   /**
@@ -102,14 +102,11 @@ public class Distribution implements java.io.Serializable {
   public boolean containsProcess(String name) {
     ProcessConfig vm;
 
-    for (int i = 0; i < _vms.size(); i++) {
-      vm = (ProcessConfig) _vms.get(i);
-
-      if (vm.getName().equals(name)) {
+    for(ProcessConfig pc: _processConfigs){
+      if(pc.getName().equals(name)){
         return true;
       }
     }
-
     return false;
   }
 
@@ -122,28 +119,20 @@ public class Distribution implements java.io.Serializable {
    */  
   public ProcessConfig getProcess(String name) {
     ProcessConfig vm;
-
-    for (int i = 0; i < _vms.size(); i++) {
-      vm = (ProcessConfig) _vms.get(i);
-
-      if (vm.getName().equals(name)) {
-        return vm;
+    for (ProcessConfig pc: _processConfigs) {
+      if (name.matches(pc.getName())) {
+        return pc;
       }
     }
-
     return null;
   }
   
-  public List getProcesses(CommandArg name) {
-    List toReturn = new ArrayList();
+  public List<ProcessConfig> getProcesses(CommandArg name) {
+    List<ProcessConfig> toReturn = new ArrayList<ProcessConfig>();
     
-    ProcessConfig vm;
-
-    for (int i = 0; i < _vms.size(); i++) {
-      vm = (ProcessConfig) _vms.get(i);
-
-      if (name.matches(vm.getName())) {
-        toReturn.add(vm);
+    for (ProcessConfig pc: _processConfigs) {
+      if (name.matches(pc.getName())) {
+        toReturn.add(pc);
       }
     }
     return toReturn;
@@ -157,7 +146,7 @@ public class Distribution implements java.io.Serializable {
   public void setBaseDir(String baseDir) {
     _baseDir   = baseDir;
     _commonDir = baseDir + File.separator + "common";
-    _vmsDir    = baseDir + File.separator + "processes";
+    _processesDir = baseDir + File.separator + "processes";
   }
 
   /**
@@ -176,7 +165,7 @@ public class Distribution implements java.io.Serializable {
    * @return the full path to the process process directory.
    */
   public String getProcessesDir() {
-    return _vmsDir;
+    return _processesDir;
   }
 
   /**
@@ -233,12 +222,22 @@ public class Distribution implements java.io.Serializable {
   }
 
   public String toString() {
-    return "[ name=" + _name + ", version=" + _version + ", vm configs=" +
-           _vms.toString() + " ]";
+    return "[ name=" + _name + ", version=" + _version + ", processes=" +
+           _processConfigs.toString() + " ]";
+  }
+  
+  public int hashCode(){
+    return _name.hashCode() ^ _version.hashCode();
+  }
+  
+  public boolean equals(Object other){
+    if(other instanceof Distribution){
+      Distribution otherDist = (Distribution)other;
+      return _name.equals(otherDist.getName()) && _version.equals(otherDist.getVersion());
+    }
+    else{
+      return false;
+    }
   }
 
-  public static void main(String[] args) throws Throwable {
-    Distribution d = Distribution.newInstance("dist/dummyDist2.jar");
-    System.out.println(d.getName());
-  }
 }

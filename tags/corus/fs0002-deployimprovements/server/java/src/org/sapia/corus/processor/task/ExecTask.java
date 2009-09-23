@@ -1,7 +1,6 @@
 package org.sapia.corus.processor.task;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.sapia.corus.deployer.config.Distribution;
 import org.sapia.corus.deployer.config.ProcessConfig;

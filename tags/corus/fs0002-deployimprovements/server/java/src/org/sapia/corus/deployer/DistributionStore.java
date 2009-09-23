@@ -25,7 +25,7 @@ import java.util.TreeMap;
  * </dl>
  */
 public class DistributionStore {
-  private Map _distsByName = new TreeMap();
+  private Map<String, Map<String, Distribution>> _distsByName = new TreeMap<String, Map<String, Distribution>>();
 
   /**
    * Adds a distribution to this instance.
@@ -35,10 +35,10 @@ public class DistributionStore {
    */
   public synchronized void addDistribution(Distribution dist)
                                     throws DuplicateDistributionException {
-    Map distsByVersion;
+    Map<String, Distribution> distsByVersion;
 
-    if ((distsByVersion = (Map) _distsByName.get(dist.getName())) == null) {
-      distsByVersion = new TreeMap();
+    if ((distsByVersion = _distsByName.get(dist.getName())) == null) {
+      distsByVersion = new TreeMap<String, Distribution>();
       _distsByName.put(dist.getName(), distsByVersion);
     }
 
@@ -71,7 +71,7 @@ public class DistributionStore {
    * @return
    */
   public synchronized boolean containsDistribution(String name, String version) {
-    Map distsByVersion = (Map)_distsByName.get(name);
+    Map<String, Distribution> distsByVersion = (Map<String, Distribution>)_distsByName.get(name);
     if(distsByVersion == null){
       return false;
     }
@@ -91,11 +91,11 @@ public class DistributionStore {
    * to the given name and version.
    */
   public synchronized void removeDistribution(CommandArg name, CommandArg version) {
-    Map distsByVersion;
-    List dists = select(name, version);
+    Map<String, Distribution> distsByVersion;
+    List<Distribution> dists = select(name, version);
     for(int i = 0; i < dists.size(); i++){
       Distribution dist = (Distribution)dists.get(i);
-      if ((distsByVersion = (Map) _distsByName.get(dist.getName())) != null) {
+      if ((distsByVersion = _distsByName.get(dist.getName())) != null) {
         if (distsByVersion.get(dist.getVersion()) != null) {
           distsByVersion.remove(dist.getVersion());
           if (distsByVersion.size() == 0) {
@@ -112,12 +112,12 @@ public class DistributionStore {
    * 
    * @return a <code>List</code> of <code>Distribution</code>s.
    */
-  public synchronized List getDistributions() {
-    List   dists = new ArrayList();
+  public synchronized List<Distribution> getDistributions() {
+    List<Distribution>   dists = new ArrayList<Distribution>();
     String name;
 
-    for (Iterator iter = _distsByName.keySet().iterator(); iter.hasNext();) {
-      name = (String) iter.next();
+    for (Iterator<String> iter = _distsByName.keySet().iterator(); iter.hasNext();) {
+      name = iter.next();
       dists.addAll(getDistributions(CommandArgParser.parse(name)));
     }
 
@@ -131,8 +131,8 @@ public class DistributionStore {
    * @param name the name of the distribution.
    * @return a <code>List</code> of <code>Distribution</code>s.
    */  
-  public synchronized List getDistributions(CommandArg name) {
-    List lst            = new ArrayList();
+  public synchronized List<Distribution> getDistributions(CommandArg name) {
+    List<Distribution> lst            = new ArrayList<Distribution>();
     lst.addAll(select(name, null));
     return lst;
   }
@@ -145,8 +145,8 @@ public class DistributionStore {
    * @param version the version of the distribution.
    * @return a <code>List</code> of <code>Distribution</code>s.
    */    
-  public synchronized List getDistributions(CommandArg name, CommandArg version) {
-    List lst            = new ArrayList();
+  public synchronized List<Distribution> getDistributions(CommandArg name, CommandArg version) {
+    List<Distribution> lst            = new ArrayList<Distribution>();
     lst.addAll(select(name, version));
     return lst;
   }
@@ -162,7 +162,7 @@ public class DistributionStore {
    */   
   public synchronized Distribution getDistribution(CommandArg name, CommandArg version)
                                             throws LogicException {
-    List dists = select(name, version);
+    List<Distribution> dists = select(name, version);
     if(dists.size() == 0){
       throw new LogicException("No distribution for version " + version +
           " under " + name);
@@ -176,14 +176,14 @@ public class DistributionStore {
     }
   }
   
-  private List select(CommandArg nameToken, CommandArg versionToken){
-    Iterator names = _distsByName.keySet().iterator();
-    List dists = new ArrayList();
+  private List<Distribution> select(CommandArg nameToken, CommandArg versionToken){
+    Iterator<String> names = _distsByName.keySet().iterator();
+    List<Distribution> dists = new ArrayList<Distribution>();
     while(names.hasNext()){
       String name = (String)names.next();
       if(nameToken.matches(name)){
-        Map distsByVersion = (Map)_distsByName.get(name);
-        Iterator versions = distsByVersion.keySet().iterator();
+        Map<String, Distribution> distsByVersion = _distsByName.get(name);
+        Iterator<String> versions = distsByVersion.keySet().iterator();
         while(versions.hasNext()){
           String version = (String)versions.next();
           if(versionToken == null || versionToken.matches(version)){

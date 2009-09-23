@@ -8,6 +8,7 @@ import org.sapia.util.xml.confix.ConfigurationException;
 import org.sapia.util.xml.confix.ObjectHandlerIF;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -26,8 +27,9 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
   public static final int DEFAULT_POLL_INTERVAL   = 10;
   public static final int DEFAULT_STATUS_INTERVAL = 30;
   private boolean         _invoke;
-  private List            _starters               = new ArrayList();
-  private List            _ports                  = new ArrayList();
+  private List<Starter>     _starters             = new ArrayList<Starter>();
+  private List<Port>        _ports                = new ArrayList<Port>();
+  private List<Dependency>  _dependencies         = new ArrayList<Dependency>();
   private int             _maxKillRetry           = -1;
   private int             _shutDownTimeout        = -1;
   private String          _name;
@@ -179,9 +181,25 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
   }
   
   /**
+   * @return creates a {@link Dependency} and returns it.
+   */
+  public Dependency createDependency(){
+    Dependency d = new Dependency();
+    _dependencies.add(d);
+    return d;
+  }
+  
+  /**
+   * @return the list of {@link Dependency} instances containes within this instance.
+   */
+  public List<Dependency> getDependencies(){
+    return Collections.unmodifiableList(_dependencies);
+  }
+  
+  /**
    * @return the <code>List<code> of this instance's <code>Port</code>.
    */
-  public List getPorts(){
+  public List<Port> getPorts(){
     return _ports;
   }
 
@@ -208,16 +226,26 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
    *
    * @return a <code>List</code> of profile names.
    */
-  public List getProfiles() {
-    List    profiles = new ArrayList();
-    Starter st;
-
-    for (int i = 0; i < _starters.size(); i++) {
-      st = (Starter) _starters.get(i);
+  public List<String> getProfiles() {
+    List<String> profiles = new ArrayList<String>();
+    for (Starter st:_starters) {
       profiles.add(st.getProfile());
     }
 
     return profiles;
+  }
+  
+  /**
+   * @param profile the name of a profile
+   * @return <code>true</code> if this instance has the given profile.
+   */
+  public boolean containsProfile(String profile){
+    for (Starter st:_starters) {
+      if(st.getProfile().equals(profile)){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -226,12 +254,16 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
   public void handleObject(String elementName, Object starter)
                     throws ConfigurationException {
     if (starter instanceof Starter) {
-      _starters.add(starter);
+      addStarter((Starter)starter);
     } else {
       throw new ConfigurationException(starter.getClass().getName() +
                                        " does not implement the " +
                                        Starter.class.getName() + " interface");
     }
+  }
+  
+  public void addStarter(Starter starter){
+    _starters.add(starter);
   }
 
   private Starter findFor(String profile) {
@@ -256,5 +288,18 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
     return "[ name=" + _name + ", maxKillRetry=" + _maxKillRetry +
            ", shutDownTimeout=" + _shutDownTimeout + " java=" + _starters +
            ", deleteOnKill=" + _deleteOnKill + " ]";
+  }
+  
+  public int hashCode(){
+    return _name.hashCode();
+  }
+  
+  public boolean equals(Object other){
+    if(other instanceof ProcessConfig){
+      return _name.equals(((ProcessConfig)other).getName());
+    }
+    else{
+      return false;
+    }
   }
 }
