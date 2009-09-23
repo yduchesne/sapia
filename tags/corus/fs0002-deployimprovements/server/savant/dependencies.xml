@@ -7,12 +7,20 @@
     <delete includeEmptyDirs="true">
       <fileset dir="${project.libraryDir}" includes="**/*" />
       <fileset dir="${project.magnet-libraryDir}" includes="**/*" />
+      <fileset dir="${project.demo-libraryDir}" includes="**/*" />
       <fileset dir="${project.vmBootLibDir}" includes="**/*" />
     </delete>
     <savant:dependency>
       <savant:artifactgroup id="buildtime_libs">
         <savant:artifact group="junit" projectname="junit" name="junit" version="3.8.1" type="jar"/>      
       </savant:artifactgroup>
+
+      <savant:artifactgroup id="demo_libs"> 
+        <savant:artifact group="dom4j"   projectname="dom4j"     name="dom4j"           version="1.6"   type="jar"/>
+        <savant:artifact group="sapia"   projectname="corus_iop" name="sapia_corus_iop" version="${corus.iop.version}"   type="jar"/>
+        <savant:artifact group="sapia"   projectname="utils"     name="sapia_utils"     version="1.6" type="jar"/>
+		<savant:artifact group="log4j"   projectname="log4j"     name="log4j"           version="1.2.8" type="jar"/>
+     </savant:artifactgroup>
       
       <savant:artifactgroup id="runtime_libs">
         <!-- soto -->                
@@ -21,7 +29,7 @@
         <savant:artifact group="sapia"   projectname="taskman"   name="sapia_taskman"   version="1.2.1" type="jar"/>
         <savant:artifact group="sapia"   projectname="corus_iop" name="sapia_corus_iop" version="${corus.iop.version}"   type="jar"/>
         <savant:artifact group="sapia"   projectname="corus_iop" name="sapia_corus_iop_api" version="${corus.iop.version}"   type="jar"/>
-        <savant:artifact group="ant"     projectname="ant"       name="ant"             version="1.6.2" type="jar"/>
+        <savant:artifact group="ant"     projectname="ant"       name="ant"             version="1.7.1" type="jar"/>
         <savant:artifact group="dom4j"   projectname="dom4j"     name="dom4j"           version="1.6"   type="jar"/>
         <savant:artifact group="log4j"   projectname="log4j"     name="log4j"           version="1.2.8" type="jar"/>
         <savant:artifact group="logkit"  projectname="logkit"    name="logkit"          version="2.0"   type="jar"/>
@@ -54,7 +62,7 @@
         <savant:artifact group="log4j" projectname="log4j"     name="log4j"           version="1.2.8" type="jar" />
         <savant:artifact group="piccolo" projectname="piccolo" name="piccolo"         version="1.0.4" type="jar" />
         <savant:artifact group="bsh" projectname="bsh"         name="bsh"             version="1.2b7" type="jar" />
-        <savant:artifact group="ant" projectname="ant"         name="ant"             version="1.6.2" type="jar" />
+        <savant:artifact group="ant" projectname="ant"         name="ant"             version="1.7.1" type="jar" />
         <savant:artifact group="jdom" projectname="jdom"       name="jdom"            version="1.0b9" type="jar" />
       </savant:artifactgroup>      
       
@@ -73,6 +81,9 @@
     </savant:artifactcopy>
     <savant:artifactcopy todir="${project.magnet-libraryDir}" flatten="true">
       <savant:artifactgroup refid="magnet_libs" />
+    </savant:artifactcopy>    
+    <savant:artifactcopy todir="${project.demo-libraryDir}" flatten="true">
+      <savant:artifactgroup refid="demo_libs" />
     </savant:artifactcopy>    
     <savant:artifactcopy todir="${project.savantDir}" flatten="true">
       <savant:artifactgroup refid="buildtime_libs" />
