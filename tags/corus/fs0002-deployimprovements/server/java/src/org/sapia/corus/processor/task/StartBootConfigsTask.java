@@ -5,6 +5,7 @@ import java.util.List;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.StringCommandArg;
+import org.sapia.corus.configurator.Configurator;
 import org.sapia.corus.deployer.Deployer;
 import org.sapia.corus.deployer.config.Distribution;
 import org.sapia.corus.deployer.config.ProcessConfig;
@@ -37,6 +38,7 @@ public class StartBootConfigsTask implements Task, Abortable{
   TaskManager taskman;
   Deployer deployer;
   Processor processor;
+  Configurator configurator;
   ExecConfigStore execConfigs;
   ProcessDB processes;
   StartupLock lock;
@@ -51,6 +53,7 @@ public class StartBootConfigsTask implements Task, Abortable{
     TaskManager taskman,
     Deployer deployer,
     Processor processor,
+    Configurator configurator,
     ExecConfigStore execConfigs,
     ProcessDB processes,
     StartupLock lock
@@ -61,6 +64,7 @@ public class StartBootConfigsTask implements Task, Abortable{
     this.taskman = taskman;
     this.deployer = deployer;
     this.processor = processor;
+    this.configurator = configurator;
     this.execConfigs = execConfigs;
     this.processes = processes;
     this.lock = lock;
@@ -141,6 +145,7 @@ public class StartBootConfigsTask implements Task, Abortable{
         filteredProcesses, 
         ports,
         taskman,
+        configurator,
         1);
     PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("MultiExecTask", ProcessorImpl.EXEC_TASK_INTERVAL, exec);                
     ctx.execTaskFor(ptd);

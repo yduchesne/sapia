@@ -9,7 +9,9 @@ import org.sapia.util.xml.confix.ObjectHandlerIF;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -36,6 +38,7 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
   private int             _statusInterval         = DEFAULT_STATUS_INTERVAL;
   private int             _pollInterval           = DEFAULT_POLL_INTERVAL;
   private boolean         _deleteOnKill           = false;
+  private String[]          _tags;
   /**
    * Sets this process config's name.
    *
@@ -54,6 +57,29 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
     return _name;
   }
 
+  /**
+   * Sets this instance's tags.
+   * @param tagList
+   */
+  public void setTags(String tagList){
+    _tags = tagList.split(",");
+    for(int i = 0; i < _tags.length; i++){
+      _tags[i] = _tags[i].trim();
+    }
+  }
+  
+  /**
+   * @return the set of tags held by this instance.
+   */
+  public Set<String> getTagSet(){
+    Set<String> set = new HashSet<String>();
+    if(_tags != null){
+      for(String t:_tags){
+        set.add(t);
+      }
+    }
+    return set;
+  }
   /**
    * Sets the maximum number of successive times the Corus
    * server should try to kill a process instance corresponding to

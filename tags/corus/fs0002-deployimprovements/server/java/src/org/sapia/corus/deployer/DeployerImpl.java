@@ -27,9 +27,12 @@ import org.sapia.corus.http.HttpModule;
 import org.sapia.corus.processor.Processor;
 import org.sapia.corus.taskmanager.TaskManager;
 import org.sapia.corus.util.IDGenerator;
+import org.sapia.corus.util.LongProperty;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 import org.sapia.corus.util.ProgressQueueLogger;
+import org.sapia.corus.util.Property;
+import org.sapia.corus.util.StringProperty;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
@@ -69,33 +72,35 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
    * The default file lock timeout (2 minutes).
    */
   public static final long    DEFAULT_FILELOCK_TIMEOUT = 120000;
-  private String              _deployDir   = DEFAULT_DEPLOY_DIR;
-  private String              _tmpDir      = DEFAULT_TMP_DIR;
+
+  private Property            _deployDir   = new StringProperty(DEFAULT_DEPLOY_DIR);
+  private Property            _tmpDir      = new StringProperty(DEFAULT_TMP_DIR);
+  private Property            _timeout     = new LongProperty(DEFAULT_FILELOCK_TIMEOUT);
+
   private Map                 _deployLocks = new HashMap();
   private Map                 _tmpLocks    = new HashMap();
   private DeploymentProcessor _processor;
   private DistributionStore   _store;
-  private long                _timeout     = DEFAULT_FILELOCK_TIMEOUT;
 
   /**
    * @param deployDir the path to the deployment directory.
    */
-  public void setDeployDir(String deployDir) {
+  public void setDeployDir(Property deployDir) {
     _deployDir = deployDir;
   }
 
   /**
    * @param tmpDir the path to the temporary directory.
    */
-  public void setTempDir(String tmpDir) {
+  public void setTempDir(Property tmpDir) {
     _tmpDir = tmpDir;
   }
 
   /**
    * @param timeout the amount of time (in millis) that deployed files are locked before extraction.
    */
-  public void setFileLockTimeout(long timeout) {
-    _timeout = timeout;
+  public void setFileLockTimeout(Property timeout) {
+    _timeout = new LongProperty(timeout.getLongValue());
   }
 
   /**
@@ -109,22 +114,22 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
       ((TCPAddress) CorusRuntime.getTransport().getServerAddress()).getPort();
 
     if (_deployDir != null) {
-      _deployDir = _deployDir + File.separator + pattern;
+      _deployDir = new StringProperty(_deployDir.getValue() + File.separator + pattern);
     } else {
-      _deployDir = DEFAULT_DEPLOY_DIR + File.separator + pattern;
+      _deployDir = new StringProperty(DEFAULT_DEPLOY_DIR + File.separator + pattern);
     }
 
     if (_tmpDir != null) {
-      _tmpDir = _tmpDir + File.separator + pattern;
+      _tmpDir = new StringProperty(_tmpDir.getValue() + File.separator + pattern);
     } else {
-      _tmpDir = DEFAULT_TMP_DIR + File.separator + pattern;
+      _tmpDir = new StringProperty(DEFAULT_TMP_DIR + File.separator + pattern);
     }
 
-    File f = new File(new File(_deployDir).getAbsolutePath());
+    File f = new File(new File(_deployDir.getValue()).getAbsolutePath());
     f.mkdirs();
     assertFile(f);
 
-    f = new File(new File(_tmpDir).getAbsolutePath());
+    f = new File(new File(_tmpDir.getValue()).getAbsolutePath());
     f.mkdirs();
     assertFile(f);
 
@@ -136,7 +141,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
 
     try {
       ProgressQueueLogger.transferMessages(_log,
-        tm.execSyncTask("BuildDistTask", new BuildDistTask(_deployDir, getDistributionStore())));
+        tm.execSyncTask("BuildDistTask", new BuildDistTask(_deployDir.getValue(), getDistributionStore())));
     } catch (Throwable t) {
       throw new CorusException(t);
     }
@@ -396,7 +401,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
       TaskManager tm = (TaskManager) env().lookup(TaskManager.ROLE);
 
       return tm.execSyncTask("DeployTask",
-        new DeployTask(getDistributionStore(), fileName, _tmpDir, _deployDir));
+        new DeployTask(getDistributionStore(), fileName, _tmpDir.getValue(), _deployDir.getValue()));
     } catch (Throwable e) {
       _log.error("Could not deploy", e);
 
@@ -412,7 +417,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     FileLock fLock = (FileLock) locks.get(fileName);
 
     if (fLock == null) {
-      fLock = new FileLock(fileName, _timeout);
+      fLock = new FileLock(fileName, _timeout.getLongValue());
       locks.put(fileName, fLock);
     }
 

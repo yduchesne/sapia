@@ -59,4 +59,9 @@ public interface DbMap<K, V> {
    * or <code>null</code> if no object could be found.
    */
   public V get(K key);
+  
+  /**
+   * Clears this instance's values.
+   */
+  public void clear();
 }

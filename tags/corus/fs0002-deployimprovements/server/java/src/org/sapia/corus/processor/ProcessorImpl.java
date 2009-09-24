@@ -1,5 +1,9 @@
 package org.sapia.corus.processor;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.sapia.corus.CorusException;
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.LogicException;
@@ -7,6 +11,7 @@ import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.CommandArgParser;
 import org.sapia.corus.admin.StringCommandArg;
+import org.sapia.corus.configurator.Configurator;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.deployer.Deployer;
 import org.sapia.corus.deployer.DeployerImpl;
@@ -16,19 +21,21 @@ import org.sapia.corus.deployer.config.ProcessConfig;
 import org.sapia.corus.http.HttpModule;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.port.PortManager;
-import org.sapia.corus.processor.task.*;
+import org.sapia.corus.processor.task.KillTask;
+import org.sapia.corus.processor.task.MultiExecTask;
+import org.sapia.corus.processor.task.ProcessCheckTask;
+import org.sapia.corus.processor.task.RestartTask;
+import org.sapia.corus.processor.task.ResumeTask;
+import org.sapia.corus.processor.task.StartBootConfigsTask;
+import org.sapia.corus.processor.task.SuspendTask;
 import org.sapia.corus.taskmanager.TaskManager;
+import org.sapia.corus.util.IntProperty;
+import org.sapia.corus.util.LongProperty;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
-
+import org.sapia.corus.util.Property;
 import org.sapia.taskman.PeriodicTaskDescriptor;
-import org.sapia.taskman.TaskDescriptor;
-
 import org.sapia.ubik.net.TCPAddress;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -73,56 +80,55 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
    */
   public static final int DEFAULT_RESTART_INTERVAL = 120;
   
-  
   public static final long EXEC_TASK_INTERVAL = 10000;
-  
   
   static ProcessorImpl    instance;
   
   private ProcessDB       _db;
   private PortManager     _ports;
+  private Configurator    _conf;
   private ExecConfigStore _execConfigs;
-  private int             _procTimeout     = DEFAULT_PROCESS_TIMEOUT;
-  private int             _checkInterval   = DEFAULT_CHECK_INTERVAL;
-  private int             _killInterval    = DEFAULT_KILL_INTERVAL;
-  private int             _restartInterval = DEFAULT_RESTART_INTERVAL;
-  private int             _httpPort;
+  private Property _procTimeout     = new IntProperty(DEFAULT_PROCESS_TIMEOUT);
+  private Property _checkInterval   = new IntProperty(DEFAULT_CHECK_INTERVAL);
+  private Property _killInterval    = new IntProperty(DEFAULT_KILL_INTERVAL);
+  private Property _restartInterval = new IntProperty(DEFAULT_RESTART_INTERVAL);
+  private int      _httpPort;
   private StartupLock     _startLock       = new StartupLock(DEFAULT_START_INTERVAL);  
 
   /**
    * @param seconds the delay after which processes are considered in timeout.
    */
-  public void setProcessTimeout(int seconds) {
-    _procTimeout = seconds;
+  public void setProcessTimeout(Property seconds) {
+    _procTimeout = new IntProperty(seconds.getIntValue());
   }
 
   /**
    * @param interval the interval (in seconds) at which processes are checked for timeout.
    */
-  public void setCheckInterval(int interval) {
-    _checkInterval = interval;
+  public void setCheckInterval(Property interval) {
+    _checkInterval = new IntProperty(interval.getIntValue());
   }
 
   /**
    * @param interval the interval (in seconds) at which kill attempts are performed.
    */
-  public void setKillInterval(int interval) {
-    _killInterval = interval;
+  public void setKillInterval(Property interval) {
+    _killInterval = new IntProperty(interval.getIntValue());
   }
 
   /**
    * @param interval the interval (in seconds) to wait for between process startups.
    */
-  public void setStartInterval(int interval) {
-    _startLock.setInterval(interval*1000);
+  public void setStartInterval(Property interval) {
+    _startLock.setInterval(interval.getIntValue()*1000);
   }  
 
   /**
    * @param interval the interval (in seconds) within which the last restart attempt must have
    * occurred for the next one to be triggered.
    */
-  public void setRestartInterval(int interval) {
-    _restartInterval = interval;
+  public void setRestartInterval(Property interval) {
+    _restartInterval = new IntProperty(interval.getIntValue());
   }
   
   public void init() throws Exception {
@@ -131,6 +137,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     _httpPort = ((TCPAddress) CorusRuntime.getTransport().getServerAddress()).getPort();
     
     DbModule db = (DbModule) CorusRuntime.getCorus().lookup(DbModule.ROLE);
+    _conf = (Configurator)CorusRuntime.getCorus().lookup(Configurator.ROLE);
     _execConfigs = new ExecConfigStore(db.getDbMap("processor.execConfigs"));
 
     ProcessStore suspended = new ProcessStore(db.getDbMap("processor.suspended"));
@@ -163,6 +170,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         tm,
         deployer,
         this,
+        _conf,
         _execConfigs,
         _db,
         _startLock
@@ -175,11 +183,11 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         address,
         _httpPort, 
         _db, 
-        _killInterval * 1000, _procTimeout * 1000,
-        _restartInterval * 1000, 
+        _killInterval.getIntValue() * 1000, _procTimeout.getIntValue() * 1000,
+        _restartInterval.getIntValue() * 1000, 
         _ports);
     ptd = new PeriodicTaskDescriptor("ProcessCheckTask",
-        _checkInterval * 1000, check);
+        _checkInterval.getIntValue() * 1000, check);
     tm.execTaskFor(ptd);
     
   }
@@ -266,7 +274,16 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         progress.info("Scheduling process execution for distribution: " + processRef.getDist().getName() + ", " + processRef.getDist().getVersion());
       }
       TCPAddress    addr = (TCPAddress) CorusRuntime.getTransport().getServerAddress(); 
-      MultiExecTask  exec = new MultiExecTask(addr, _httpPort, _db, _startLock, filter.getFilteredProcesses(), _ports, taskman, 1);
+      MultiExecTask  exec = new MultiExecTask(
+          addr, 
+          _httpPort, 
+          _db, 
+          _startLock, 
+          filter.getFilteredProcesses(), 
+          _ports, 
+          taskman, 
+          _conf,
+          1);
       PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("MultiExecProcessTask", EXEC_TASK_INTERVAL, exec);            
       taskman.execTaskFor(ptd);
     }
@@ -290,7 +307,13 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         Distribution dist = dists.get(i);
         List<ProcessConfig> configs;
         if(processName == null){
-          configs = dist.getProcesses();
+          configs = new ArrayList<ProcessConfig>();
+          List<ProcessConfig> temp = dist.getProcesses();
+          for(ProcessConfig pc: temp){
+            if(!pc.isInvoke()){
+              configs.add(pc);
+            }
+          }
         }
         else{
           configs = dist.getProcesses(processName);
@@ -311,7 +334,16 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       }
       TCPAddress    addr = (TCPAddress) CorusRuntime.getTransport().getServerAddress(); 
       TaskManager taskman = ((TaskManager) env().lookup(TaskManager.ROLE)); 
-      MultiExecTask  exec = new MultiExecTask(addr, _httpPort, _db, _startLock, filter.getFilteredProcesses(), _ports, taskman, instances);
+      MultiExecTask  exec = new MultiExecTask(
+          addr, 
+          _httpPort, 
+          _db, 
+          _startLock, 
+          filter.getFilteredProcesses(), 
+          _ports, 
+          taskman, 
+          _conf,
+          instances);
       PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("MultiExecProcessTask", EXEC_TASK_INTERVAL, exec);            
       taskman.execTaskFor(ptd);
       
@@ -370,14 +402,14 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
             Process.KILL_REQUESTOR_ADMIN, proc.getProcessID(), _db,
             proc.getMaxKillRetry(), _ports);
         ptd = new PeriodicTaskDescriptor("SuspendProcessTask",
-            _killInterval * 1000, susp);
+            _killInterval.getIntValue() * 1000, susp);
         tm.execTaskFor(ptd);
       } else {
         kill   = new KillTask(addr, _httpPort, Process.KILL_REQUESTOR_ADMIN,
             proc.getProcessID(), _db, proc.getMaxKillRetry(),
-            _restartInterval * 1000, _ports);
+            _restartInterval.getIntValue() * 1000, _ports);
         ptd = new PeriodicTaskDescriptor("KillProcessTask",
-            _killInterval * 1000, kill);
+            _killInterval.getIntValue() * 1000, kill);
         tm.execTaskFor(ptd);
       }
     }
@@ -412,14 +444,14 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
             Process.KILL_REQUESTOR_ADMIN, proc.getProcessID(), _db,
             proc.getMaxKillRetry(), _ports);
         ptd = new PeriodicTaskDescriptor("SuspendProcessTask",
-            _killInterval * 1000, susp);
+            _killInterval.getIntValue() * 1000, susp);
         tm.execTaskFor(ptd);
       } else {
         kill   = new KillTask(addr, _httpPort, Process.KILL_REQUESTOR_ADMIN,
             proc.getProcessID(), _db, proc.getMaxKillRetry(),
-            _restartInterval * 1000, _ports);
+            _restartInterval.getIntValue() * 1000, _ports);
         ptd    = new PeriodicTaskDescriptor("KillProcessTask",
-            _killInterval * 1000, kill);
+            _killInterval.getIntValue() * 1000, kill);
         tm.execTaskFor(ptd);
       }
     }
@@ -438,13 +470,13 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         SuspendTask susp = new SuspendTask(addr, _httpPort,
             Process.KILL_REQUESTOR_ADMIN, corusPid, _db, proc.getMaxKillRetry(), _ports);
         ptd = new PeriodicTaskDescriptor("SuspendProcessTask",
-            _killInterval * 1000, susp);
+            _killInterval.getIntValue() * 1000, susp);
         ((TaskManager) env().lookup(TaskManager.ROLE)).execTaskFor(ptd);
       } else {
         kill   = new KillTask(addr, _httpPort, Process.KILL_REQUESTOR_ADMIN,
-            corusPid, _db, proc.getMaxKillRetry(), _restartInterval * 1000, _ports);
+            corusPid, _db, proc.getMaxKillRetry(), _restartInterval.getIntValue() * 1000, _ports);
         ptd    = new PeriodicTaskDescriptor("KillProcessTask",
-            _killInterval * 1000, kill);
+            _killInterval.getIntValue() * 1000, kill);
         ((TaskManager) env().lookup(TaskManager.ROLE)).execTaskFor(ptd);
       }
     } catch (Exception e) {
@@ -470,7 +502,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
           dynId, proc.getMaxKillRetry(), _ports);
 
       PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("RestartProcessTask",
-          _killInterval * 1000, restart);
+          _killInterval.getIntValue() * 1000, restart);
       ((TaskManager) env().lookup(TaskManager.ROLE)).execTaskFor(ptd);
       
     } catch (CorusException e) {

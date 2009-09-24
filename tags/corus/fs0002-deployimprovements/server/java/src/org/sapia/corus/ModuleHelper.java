@@ -28,7 +28,10 @@ public abstract class ModuleHelper implements Service, EnvAware, Module{
    */
   public void setEnv(Env env) {
     _env = env;
+    preInit();
   }
+  
+  public void preInit(){}
 
   /**
    * @see org.sapia.soto.Service#start()

@@ -39,4 +39,8 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
   public Iterator<V> values() {
     return _map.values().iterator();
   }
+  
+  public void clear() {
+    _map.clear();
+  }
 }

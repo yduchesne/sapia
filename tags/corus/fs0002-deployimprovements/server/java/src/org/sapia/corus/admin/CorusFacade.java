@@ -3,10 +3,13 @@ package org.sapia.corus.admin;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.CorusException;
 import org.sapia.corus.LogicException;
+import org.sapia.corus.configurator.Configurator.PropertyScope;
 import org.sapia.corus.cron.CronJobInfo;
 import org.sapia.corus.cron.InvalidTimeException;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
@@ -211,6 +214,56 @@ public interface CorusFacade {
   public Results getProcesses(String distName, String version, String profile,
                               String processName, ClusterInfo cluster);
 
+  
+  /**
+   * Adds a given property to the Corus server.
+   * @param scope a {@link PropertyScope}
+   * @param name the name of the property to add.
+   * @param value the value of the property to add.
+   */
+  public void addProperty(PropertyScope scope, String name, String value, ClusterInfo cluster);
+  
+  /**
+   * @param scope a {@link PropertyScope}
+   * @return the {@link Properties} held within the Corus server.
+   */
+  public Results getProperties(PropertyScope scope, ClusterInfo cluster);
+  
+  /**
+   * @param scope a {@link PropertyScope}
+   * @param name the name of the property to remove.
+   */
+  public void removeProperty(PropertyScope scope, CommandArg name, ClusterInfo cluster);
+  
+  /**
+   * Adds the given tag to the Corus server.
+   * 
+   * @param tag a tag
+   * @param cluster
+   */
+  public void addTag(String tag, ClusterInfo cluster);
+
+  /**
+   * Adds the given tags to the Corus server.
+   *  
+   * @param tags a {@link Set} of tags.
+   * @param cluster
+   */
+  public void addTags(Set<String> tags, ClusterInfo cluster);
+  
+  /**
+   * Removes the given tag from the Corus server.
+   * @param tag a tag pattern.
+   */
+  public void removeTag(CommandArg tag, ClusterInfo cluster);
+  
+  /**
+   * The tags of the Corus server.
+   * 
+   * @return the a {@link List} of tags.
+   */
+  public Results getTags(ClusterInfo cluster);
+  
   /**
    * Starts process(es) corresponding to an existing execution configuration.
    * 

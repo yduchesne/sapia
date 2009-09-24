@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.sapia.corus.ClusterInfo;
@@ -22,6 +23,8 @@ import org.sapia.corus.CorusRuntimeException;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.cluster.ClusterInterceptor;
 import org.sapia.corus.cluster.ClusterManager;
+import org.sapia.corus.configurator.Configurator;
+import org.sapia.corus.configurator.Configurator.PropertyScope;
 import org.sapia.corus.cron.CronJobInfo;
 import org.sapia.corus.cron.CronModule;
 import org.sapia.corus.cron.InvalidTimeException;
@@ -616,6 +619,82 @@ public class CorusFacadeImpl implements CorusFacade {
     
     return res;
   }
+
+  public synchronized void addTag(String tag, ClusterInfo cluster) {
+    refresh();
+    ClusterInterceptor.clusterCurrentThread(cluster);
+    getConfigurator().addTag(tag);
+  }
+  
+  public synchronized void addTags(Set<String> tags, ClusterInfo cluster) {
+    refresh();
+    ClusterInterceptor.clusterCurrentThread(cluster);
+    getConfigurator().addTags(tags);
+  }
+  
+  public synchronized void removeTag(CommandArg tag, ClusterInfo cluster) {
+    refresh();
+    ClusterInterceptor.clusterCurrentThread(cluster);
+    getConfigurator().removeTag(tag);
+  }
+
+  public synchronized Results getTags(ClusterInfo cluster) {
+    refresh();
+    ClusterInterceptor.clusterCurrentThread(cluster);
+    refresh();
+    Results  res = new Results();
+    HostList lst = new HostList(_addr);
+    lst.addAll(getConfigurator().getTags());
+    res.addResult(lst);
+    
+    if (cluster.isClustered() && (_otherHosts.size() > 0)) {
+      applyToCluster(res, 
+          Configurator.class, 
+          "getTags", 
+          new Object[0],
+          new Class[0], 
+          cluster);
+    } else {
+      res.complete();
+    }
+    
+    return res;
+  }
+  
+  public synchronized void addProperty(PropertyScope scope, String name, String value,
+      ClusterInfo cluster) {
+    refresh();
+    ClusterInterceptor.clusterCurrentThread(cluster);
+    getConfigurator().addProperty(scope, name, value);
+  }
+  
+  public synchronized void removeProperty(PropertyScope scope, CommandArg name,
+      ClusterInfo cluster) {
+    refresh();
+    ClusterInterceptor.clusterCurrentThread(cluster);
+    getConfigurator().removeProperty(scope, name);    
+  }
+  
+  public synchronized Results getProperties(PropertyScope scope, ClusterInfo cluster) {
+    refresh();
+    Results  res = new Results();
+    HostList lst = new HostList(_addr);
+    lst.addAll(getConfigurator().getPropertiesAsNameValuePairs(scope));
+    res.addResult(lst);
+    
+    if (cluster.isClustered() && (_otherHosts.size() > 0)) {
+      applyToCluster(res, 
+          Configurator.class, 
+          "getPropertiesAsNameValuePairs", 
+          new Object[]{scope},
+          new Class[]{PropertyScope.class}, 
+          cluster);
+    } else {
+      res.complete();
+    }
+    
+    return res;
+  }
   
   public synchronized ProgressQueue exec(String distName, ClusterInfo cluster){
     refresh();
@@ -896,6 +975,10 @@ public class CorusFacadeImpl implements CorusFacade {
   
   protected PortManager getPorts(){
     return (PortManager) lookup(PortManager.ROLE);
+  }
+  
+  protected Configurator getConfigurator(){
+    return (Configurator) lookup(Configurator.ROLE);
   }
   
   protected void applyToCluster(final Results res, final Class moduleInterface,

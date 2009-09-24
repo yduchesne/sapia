@@ -92,6 +92,13 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
     }
   }
 
+  public void clear() {
+    Iterator<?> keys = keys();    
+    while(keys.hasNext()){
+      this.remove(keys.next());
+    }
+  }
+  
   /*//////////////////////////////////////////////////
                     INNER CLASSES
   //////////////////////////////////////////////////*/

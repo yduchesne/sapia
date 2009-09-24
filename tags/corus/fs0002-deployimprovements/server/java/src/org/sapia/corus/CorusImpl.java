@@ -3,6 +3,7 @@ package org.sapia.corus;
 import java.rmi.RemoteException;
 import org.apache.log.Hierarchy;
 import org.sapia.corus.naming.JndiModule;
+import org.sapia.corus.util.PropertyContainer;
 
 import org.sapia.soto.SotoContainer;
 import org.sapia.soto.util.Utils;
@@ -48,7 +49,7 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     _cont = new SotoContainer();
     
     // loading default properties.
-    Properties props = new Properties();
+    final Properties props = new Properties();
     InputStream defaults = Thread.currentThread().getContextClassLoader().getResourceAsStream("org/sapia/corus/default.properties");
     if(defaults == null){
       throw new IllegalStateException("Resource 'org/sapia/corus/default.properties' not found");
@@ -63,7 +64,18 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     tmp = Utils.replaceVars(new MapContext(props, new SystemContext(), false), config, "config/corus.properties");
     config.close();
     props.load(tmp);
-    _cont.load("org/sapia/corus/corus.conf", props);
+    
+   
+    InitContext.attach(new PropertyContainer(){
+      public String getProperty(String name) {
+        return props.getProperty(name);
+      }
+    });
+    try{
+      _cont.load("org/sapia/corus/corus.conf", props);
+    }finally{
+      InitContext.unattach();
+    }
   }
   
   public static void start() throws Exception {

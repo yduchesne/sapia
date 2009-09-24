@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -35,6 +37,7 @@ public class Distribution implements java.io.Serializable {
   private String              _baseDir;
   private String              _commonDir;
   private String              _processesDir;
+  private String[]            _tags;
   private List<ProcessConfig> _processConfigs = new ArrayList<ProcessConfig>();
 
   /**
@@ -44,6 +47,30 @@ public class Distribution implements java.io.Serializable {
    */
   public void setName(String name) {
     _name = name;
+  }
+  
+  /**
+   * Sets this instance's tags.
+   * @param tagList
+   */
+  public void setTags(String tagList){
+    _tags = tagList.split(",");
+    for(int i = 0; i < _tags.length; i++){
+      _tags[i] = _tags[i].trim();
+    }
+  }
+  
+  /**
+   * @return the set of tags held by this instance.
+   */
+  public Set<String> getTagSet(){
+    Set<String> set = new HashSet<String>();
+    if(_tags != null){
+      for(String t:_tags){
+        set.add(t);
+      }
+    }
+    return set;
   }
 
   /**
