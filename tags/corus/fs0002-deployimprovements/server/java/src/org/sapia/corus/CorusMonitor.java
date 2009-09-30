@@ -1,17 +1,15 @@
 package org.sapia.corus;
 
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.List;
+
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-
 import org.sapia.corus.taskmanager.CorusTaskManager;
 import org.sapia.corus.util.ProgressMsg;
 import org.sapia.corus.util.ProgressQueue;
-
 import org.sapia.ubik.rmi.server.Hub;
-
-import java.lang.reflect.UndeclaredThrowableException;
-import java.util.List;
 
 
 /**
@@ -75,9 +73,9 @@ public class CorusMonitor {
       return;
     }
     
-    ProgressQueue queue = taskman.getProgressQueue(level);
-    List          msgs;
-    ProgressMsg   msg;
+    ProgressQueue       queue = taskman.getProgressQueue(level);
+    List<ProgressMsg>   msgs;
+    ProgressMsg         msg;
     display();
     System.out.println("Waiting for Corus server output...");
     System.out.println();
@@ -166,9 +164,7 @@ public class CorusMonitor {
   static void center(String text) {
     int margin = (80 - text.length()) / 2;
     System.out.print("*");
-    
-    StringBuffer b = new StringBuffer();
-    
+       
     for (int i = 0; i < (margin - 1); i++) {
       System.out.print(" ");
     }

@@ -1,7 +1,5 @@
 package org.sapia.corus.taskmanager.core;
 
-import org.sapia.corus.taskmanager.core.TaskLog;
-import org.sapia.corus.taskmanager.core.Task;
 
 public class TestTaskLog implements TaskLog{
 

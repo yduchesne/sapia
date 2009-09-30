@@ -2,9 +2,9 @@ package org.sapia.corus.security;
 
 import java.net.InetAddress;
 
-import org.sapia.corus.util.StringProperty;
-
 import junit.framework.TestCase;
+
+import org.sapia.corus.util.StringProperty;
 
 /**
  * @author Yanick Duchesne

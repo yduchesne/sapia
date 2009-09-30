@@ -1,17 +1,16 @@
 package org.sapia.corus.admin.cli.command;
 
+import java.util.List;
+
 import org.sapia.console.AbortException;
 import org.sapia.console.Command;
 import org.sapia.console.Console;
 import org.sapia.console.Context;
 import org.sapia.console.InputException;
-
 import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.util.ProgressMsg;
 import org.sapia.corus.util.ProgressQueue;
-
-import java.util.List;
 
 
 /**

@@ -1,11 +1,11 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sapia.util.xml.confix.CreationStatus;
 import org.sapia.util.xml.confix.ObjectCreationException;
 import org.sapia.util.xml.confix.ReflectionFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**

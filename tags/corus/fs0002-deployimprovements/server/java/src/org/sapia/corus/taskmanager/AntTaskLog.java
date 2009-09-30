@@ -3,8 +3,8 @@ package org.sapia.corus.taskmanager;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.sapia.corus.taskmanager.core.TaskLog;
 import org.sapia.corus.taskmanager.core.Task;
+import org.sapia.corus.taskmanager.core.TaskLog;
 
 /**
  * Redirects Ant logging information to a wrapped {@link TaskLog}.

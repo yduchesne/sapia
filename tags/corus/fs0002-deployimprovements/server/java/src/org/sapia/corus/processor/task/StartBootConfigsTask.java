@@ -18,8 +18,8 @@ import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.server.processor.ExecConfigDatabase;
 import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.ProgressQueueTaskLog;
-import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.Task;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 public class StartBootConfigsTask extends Task{
 

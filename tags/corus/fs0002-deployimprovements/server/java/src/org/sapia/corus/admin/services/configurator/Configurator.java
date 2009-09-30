@@ -1,8 +1,8 @@
 package org.sapia.corus.admin.services.configurator;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.List;
 
 import org.sapia.corus.Module;
 import org.sapia.corus.admin.CommandArg;

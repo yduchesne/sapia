@@ -1,17 +1,11 @@
 package org.sapia.corus.admin.cli.command;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.sapia.console.AbortException;
 import org.sapia.console.InputException;
-
 import org.sapia.corus.admin.cli.CliContext;
-import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
-import org.sapia.util.xml.ProcessingException;
 
 
 /**

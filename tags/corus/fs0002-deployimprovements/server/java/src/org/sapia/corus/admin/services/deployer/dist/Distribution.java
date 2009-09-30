@@ -1,21 +1,19 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
-import org.sapia.corus.admin.CommandArg;
-import org.sapia.corus.deployer.DeploymentException;
-import org.sapia.corus.util.ZipUtils;
-
-import org.sapia.util.xml.ProcessingException;
-import org.sapia.util.xml.confix.Dom4jProcessor;
-import org.sapia.util.xml.confix.ReflectionFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.deployer.DeploymentException;
+import org.sapia.corus.util.ZipUtils;
+import org.sapia.util.xml.ProcessingException;
+import org.sapia.util.xml.confix.Dom4jProcessor;
+import org.sapia.util.xml.confix.ReflectionFactory;
 
 
 /**

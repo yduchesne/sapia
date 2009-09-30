@@ -5,8 +5,8 @@ import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.processor.LockException;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.Task;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
  * Absract class that provides convenient basic behavior for process-terminating tasks.

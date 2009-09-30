@@ -45,7 +45,7 @@ public interface CorusFacade {
    *
    * @return a <code>Collection</code> of<code>ServerAddress</code>es.
    */
-  public Collection getServerAddresses();
+  public Collection<ServerAddress> getServerAddresses();
 
   /**
    * Returns the domain name of this instance's Corus server.

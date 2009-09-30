@@ -1,14 +1,11 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
-import org.apache.tools.ant.DirectoryScanner;
-
-import org.sapia.console.CmdLine;
-
-import org.sapia.corus.LogicException;
-
-import org.sapia.util.ApplicationStarter;
-
 import java.io.File;
+
+import org.apache.tools.ant.DirectoryScanner;
+import org.sapia.console.CmdLine;
+import org.sapia.corus.LogicException;
+import org.sapia.util.ApplicationStarter;
 
 
 /**

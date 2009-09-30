@@ -1,17 +1,17 @@
 package org.sapia.corus.deployer;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.CommandArgParser;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.server.deployer.DuplicateDistributionException;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 
 /**

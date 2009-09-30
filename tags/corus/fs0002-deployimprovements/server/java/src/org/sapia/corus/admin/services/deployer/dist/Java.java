@@ -1,21 +1,18 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.tools.ant.DirectoryScanner;
 import org.sapia.console.CmdLine;
-
 import org.sapia.corus.LogicException;
 import org.sapia.corus.starter.Starter;
-
 import org.sapia.util.text.MapContext;
 import org.sapia.util.text.SystemContext;
 import org.sapia.util.text.TemplateElementIF;
 import org.sapia.util.text.TemplateException;
 import org.sapia.util.text.TemplateFactory;
-
-import java.io.File;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**

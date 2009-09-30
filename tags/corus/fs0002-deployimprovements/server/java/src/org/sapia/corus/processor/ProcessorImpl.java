@@ -40,8 +40,6 @@ import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
-import org.sapia.taskman.PeriodicTaskDescriptor;
-
 
 /**
  * Implements the <code>Processor</code> interface.
@@ -276,7 +274,6 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         profile, processName);
     TaskManager tm;
     KillTask kill;
-    PeriodicTaskDescriptor ptd;
     Process proc;
 
     try {
@@ -314,7 +311,6 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         version, profile);
     TaskManager          tm;
     KillTask               kill;
-    PeriodicTaskDescriptor ptd;
     Process                proc;
     try {
       tm = lookup(TaskManager.class);
@@ -344,7 +340,6 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     try {
 
       KillTask               kill;
-      PeriodicTaskDescriptor ptd;
       Process                proc = _processes.getActiveProcesses().getProcess(corusPid);
 
       if (suspend) {

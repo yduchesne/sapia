@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import org.sapia.archie.NotFoundException;
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.CommandArgParser;

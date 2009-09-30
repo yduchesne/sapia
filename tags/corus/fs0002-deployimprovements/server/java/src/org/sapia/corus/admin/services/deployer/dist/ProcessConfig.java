@@ -1,17 +1,15 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
-import org.sapia.console.CmdLine;
-
-import org.sapia.corus.LogicException;
-
-import org.sapia.util.xml.confix.ConfigurationException;
-import org.sapia.util.xml.confix.ObjectHandlerIF;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.sapia.console.CmdLine;
+import org.sapia.corus.LogicException;
+import org.sapia.util.xml.confix.ConfigurationException;
+import org.sapia.util.xml.confix.ObjectHandlerIF;
 
 
 /**

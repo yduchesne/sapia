@@ -1,12 +1,12 @@
 package org.sapia.corus.admin.services.deployer;
 
+import java.util.List;
+
 import org.sapia.corus.LogicException;
 import org.sapia.corus.Module;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.util.ProgressQueue;
-
-import java.util.List;
 
 /**
  * The deployer is in charge of processing incoming deployment .jars; it stores

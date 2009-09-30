@@ -10,7 +10,6 @@
 
 package org.sapia.corus.admin.cli.command;
 
-import java.util.List;
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;

@@ -1,11 +1,10 @@
 package org.sapia.corus.db;
 
+import java.io.IOException;
+import java.util.Iterator;
+
 import jdbm.JDBMEnumeration;
 import jdbm.JDBMHashtable;
-
-import java.io.IOException;
-
-import java.util.Iterator;
 
 
 /**

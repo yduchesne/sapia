@@ -2,15 +2,10 @@ package org.sapia.corus.taskmanager.core;
 
 import java.lang.reflect.InvocationTargetException;
 
+import junit.framework.TestCase;
+
 import org.apache.log.Hierarchy;
 import org.sapia.corus.TestServerContext;
-import org.sapia.corus.taskmanager.core.TaskExecutionContext;
-import org.sapia.corus.taskmanager.core.TaskListener;
-import org.sapia.corus.taskmanager.core.TaskLog;
-import org.sapia.corus.taskmanager.core.TaskManagerImpl;
-import org.sapia.corus.taskmanager.core.Task;
-
-import junit.framework.TestCase;
 
 public class TaskManagerImplTest extends TestCase {
 

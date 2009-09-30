@@ -1,12 +1,11 @@
 package org.sapia.corus.taskmanager.tasks;
 
+import java.io.File;
+
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Expand;
-
 import org.sapia.corus.taskmanager.AntTaskHelper;
 import org.sapia.corus.taskmanager.core.Task;
-
-import java.io.File;
 
 
 /**

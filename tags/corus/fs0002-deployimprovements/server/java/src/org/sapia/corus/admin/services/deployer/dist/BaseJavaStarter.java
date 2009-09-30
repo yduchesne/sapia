@@ -1,7 +1,6 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.List;
 

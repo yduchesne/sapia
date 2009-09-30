@@ -4,11 +4,11 @@ import org.apache.log.Logger;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.ServerContext;
 import org.sapia.corus.taskmanager.core.FutureResult;
+import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskListener;
 import org.sapia.corus.taskmanager.core.TaskLog;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TaskManagerImpl;
-import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 
@@ -29,7 +29,6 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   public void init() throws Exception {
     _delegate = new TaskManagerImpl(logger(), serverContext());
     serverContext().getServices().bind(TaskManager.class, this);
-    serverContext().getServices().bind(CorusTaskManager.class, this);
   }
 
   /**
