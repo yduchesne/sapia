@@ -15,19 +15,7 @@ import org.sapia.corus.taskmanager.v2.TaskV2;
  *
  */
 public abstract class ProcessTerminationTask extends TaskV2 {
-  /**
-   * This constant specifies the default maximum amount of times
-   * the Corus server should try killing a given process; its value
-   * is 3.
-   */
-  public static final int DEFAULT_MAX_RETRY = 3;
 
-  /**
-   * This constant speficies the default delay (in seconds)
-   * between each VM kill attempt; value is 10 (seconds).
-   */
-  public static final int DEFAULT_RETRY_INTERVAL = 10;
-  
   private String                      _corusPid;
   private ProcessTerminationRequestor _requestor;
 
@@ -60,13 +48,13 @@ public abstract class ProcessTerminationTask extends TaskV2 {
       abort(ctx);
       return null;
     }
-
     try {
       Process proc = ctx.getServerContext()
         .getServices()
         .getProcesses()
         .getActiveProcesses()
         .getProcess(_corusPid);
+      
       if (proc.getStatus() == Process.KILL_CONFIRMED) {
         proc.releasePorts(ctx.getServerContext().getServices().lookup(PortManager.class));
         onKillConfirmed(ctx);
@@ -102,7 +90,7 @@ public abstract class ProcessTerminationTask extends TaskV2 {
     try{
       ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid).releaseLock(this);
     }catch(Throwable err){
-      ctx.error(err);
+      //ctx.error(err);
     } 
   }
   
