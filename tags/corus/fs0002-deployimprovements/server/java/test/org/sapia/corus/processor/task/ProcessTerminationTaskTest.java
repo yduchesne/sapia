@@ -25,13 +25,13 @@ public class ProcessTerminationTaskTest extends BaseTaskTest{
                                                                      ProcessTerminationRequestor.KILL_REQUESTOR_PROCESS,
                                                                      proc.getProcessID(),
                                                                      3);
-    tm.executeAndWait(task);
-    tm.executeAndWait(task);
-    tm.executeAndWait(task);
-    tm.executeAndWait(task);
-    tm.executeAndWait(task);
+    tm.executeAndWait(task).get();
+    tm.executeAndWait(task).get();
+    tm.executeAndWait(task).get();
+    tm.executeAndWait(task).get();
+    tm.executeAndWait(task).get();
 
     super.assertEquals(3, task.onExec);
-    super.assertEquals(1, task.onMaxRetry);
+    super.assertEquals(2, task.onMaxRetry);
   }
 }

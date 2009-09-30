@@ -20,15 +20,18 @@ public class TestProcessTerminationTask extends ProcessTerminationTask {
   protected void cleanupProcess(Process proc, TaskExecutionContext ctx) {
   }
   
+
+  @Override
   protected void onExec(TaskExecutionContext ctx) {
     onExec++;
   }
 
-  protected boolean onMaxRetry(TaskExecutionContext ctx) {
+  @Override
+  protected void onMaxExecutionReached(TaskExecutionContext ctx)
+      throws Throwable {
     onMaxRetry++;
-
-    return false;
   }
   
+  @Override
   protected void onKillConfirmed(TaskExecutionContext ctx) {}
 }

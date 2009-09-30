@@ -31,7 +31,7 @@ public class ProcessCheckTaskTest extends BaseTaskTest {
 
     TestVmCheck t = new TestVmCheck();
    // proc.confirmKilled();
-    tm.executeAndWait(t);
+    tm.executeAndWait(t).get();
     super.assertTrue(t.killed);
   }
 

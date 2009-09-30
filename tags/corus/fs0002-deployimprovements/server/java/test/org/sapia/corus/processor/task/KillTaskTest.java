@@ -10,8 +10,8 @@ import org.sapia.corus.admin.services.processor.Process.ProcessTerminationReques
 import org.sapia.corus.processor.TestProcessor;
 import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.util.IntProperty;
 import org.sapia.corus.util.PropertyFactory;
-import org.sapia.taskman.TaskContext;
 
 /**
  * @author Yanick Duchesne
@@ -26,6 +26,7 @@ public class KillTaskTest extends BaseTaskTest{
     super(arg0);
   }
   
+  
   public void testKillFromCorusNotConfirmed() throws Exception {
     DistributionInfo dist = new DistributionInfo("test", "1.0", "test", "testVm");
     Process          proc = new Process(dist);
@@ -33,28 +34,22 @@ public class KillTaskTest extends BaseTaskTest{
 
     TestKill kill = new TestKill(ProcessTerminationRequestor.KILL_REQUESTOR_SERVER,
                                  proc.getProcessID());
-    tm.executeAndWait(kill);
-    tm.executeAndWait(kill);
-    tm.executeAndWait(kill);
+    tm.executeAndWait(kill).get();
     super.assertTrue(kill.killed != true);
   }
-
+  
   public void testKillFromCorusConfirmed() throws Exception {
-    TestServerContext ctx = TestServerContext.create();
-    ProcessRepository db   = ctx.getServices().getProcesses();    
     DistributionInfo dist = new DistributionInfo("test", "1.0", "test", "testVm");
     Process          proc = new Process(dist);
     db.getActiveProcesses().addProcess(proc);
-
+    
     TestKill kill = new TestKill(
         ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, 
         proc.getProcessID());
     
     proc.confirmKilled();
-      
-    tm.executeAndWait(kill);
-    tm.executeAndWait(kill);    
-    tm.executeAndWait(kill);    
+
+    tm.executeAndWait(kill).get();  
     super.assertTrue(kill.killed);
 
     try {
@@ -68,7 +63,6 @@ public class KillTaskTest extends BaseTaskTest{
   }
 
   public void testKillMaxAttemptReached() throws Exception {
-
     DistributionInfo dist = new DistributionInfo("test", "1.0", "test", "testVm");
     Process          proc = new Process(dist);
     db.getActiveProcesses().addProcess(proc);
@@ -79,15 +73,15 @@ public class KillTaskTest extends BaseTaskTest{
         ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, 
         proc.getProcessID());
 
-    tm.executeAndWait(kill);
+    tm.executeAndWait(kill).get();
     super.assertTrue(!kill.killed);
     super.assertTrue(!kill.restart);
-    tm.executeAndWait(kill);
+    tm.executeAndWait(kill).get();
     super.assertTrue(!kill.killed);
     super.assertTrue(!kill.restart);
-    tm.executeAndWait(kill);
+    tm.executeAndWait(kill).get();
     proc.confirmKilled();    
-    tm.executeAndWait(kill);    
+    tm.executeAndWait(kill).get();    
     super.assertTrue(kill.killed);
 
     try {
@@ -112,7 +106,7 @@ public class KillTaskTest extends BaseTaskTest{
     TestKill kill = new TestKill(ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, 
                                  proc.getProcessID());
     proc.confirmKilled();
-    tm.executeAndWait(kill);
+    tm.executeAndWait(kill).get();
     super.assertTrue(kill.killed);
     super.assertTrue(kill.restart);
 
@@ -123,6 +117,7 @@ public class KillTaskTest extends BaseTaskTest{
       //ok
     }
   }
+  
 
   public void testRestartDenied() throws Exception {
     DistributionInfo dist = new DistributionInfo("test", "1.0", "test", "testVm");
@@ -131,9 +126,9 @@ public class KillTaskTest extends BaseTaskTest{
     Thread.sleep(500);
 
     TestKill kill = new TestKill(
-        ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, proc.getProcessID()/*, 5000L*/);
+        ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, proc.getProcessID());
     proc.confirmKilled();
-    tm.executeAndWait(kill);
+    tm.executeAndWait(kill).get();
     super.assertTrue(kill.killed);
     super.assertTrue(kill.restart == false);
 
@@ -157,9 +152,10 @@ public class KillTaskTest extends BaseTaskTest{
       super(requestor, vmId, 3);
     }
     
-    protected void onKillConfirmed(TaskExecutionContext ctx) throws Throwable{
-      super.onKillConfirmed(ctx);
+    @Override
+    protected void onKillConfirmed(TaskExecutionContext ctx) throws Throwable {
       killed = true;
+      super.onKillConfirmed(ctx);
     }
     
     @Override
