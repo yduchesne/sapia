@@ -5,8 +5,7 @@ import java.io.IOException;
 
 import org.sapia.console.CmdLine;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.processor.task.v2.ProcessorTaskStrategyImpl;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 public class TestProcessorTaskStrategy extends ProcessorTaskStrategyImpl{
   

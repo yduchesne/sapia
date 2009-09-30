@@ -1,7 +1,7 @@
 package org.sapia.corus.processor.task;
 
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 
 /**

@@ -8,20 +8,19 @@ import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.processor.task.v2.ProcessorTaskStrategy;
 import org.sapia.corus.server.processor.ProcessRepository;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskManagerV2;
-import org.sapia.corus.taskmanager.v2.TaskV2;
-import org.sapia.corus.taskmanager.v2.TestTaskLog;
-import org.sapia.corus.taskmanager.v2.TestTaskManagerV2;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.TaskManager;
+import org.sapia.corus.taskmanager.core.Task;
+import org.sapia.corus.taskmanager.core.TestTaskLog;
+import org.sapia.corus.taskmanager.core.TestTaskManager;
 import org.sapia.corus.util.IntProperty;
 
 public class ProcessorTaskStrategyTest extends TestCase{
 
   protected DistributionInfo dist;
   protected TestServerContext ctx;
-  protected TestTaskManagerV2 tm;
+  protected TestTaskManager tm;
   protected TaskExecutionContext taskContext;
   protected TestProcessorTaskStrategy strategy;
   protected ProcessRepository processes;
@@ -37,12 +36,12 @@ public class ProcessorTaskStrategyTest extends TestCase{
     dist = new DistributionInfo("test", "1.0", "test", "testVm");
     ctx = TestServerContext.create();
     processes = ctx.getServices().getProcesses();
-    tm = (TestTaskManagerV2)ctx.lookup(TaskManagerV2.class);
+    tm = (TestTaskManager)ctx.lookup(TaskManager.class);
     strategy = (TestProcessorTaskStrategy)ctx.lookup(ProcessorTaskStrategy.class);
     processor = ctx.lookup(Processor.class);
     processorConf = (ProcessorConfigurationImpl)processor.getConfiguration();
     taskContext = new TaskExecutionContext(
-        new TaskV2(){
+        new Task(){
           @Override
           public Object execute(TaskExecutionContext ctx) throws Throwable {
             return null;

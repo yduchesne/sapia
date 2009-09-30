@@ -5,7 +5,7 @@ import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.processor.TestProcessor;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.util.PropertyFactory;
 
 /**
