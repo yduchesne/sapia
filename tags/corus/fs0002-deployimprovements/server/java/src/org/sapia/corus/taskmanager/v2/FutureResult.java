@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class FutureResult {
   
-  private boolean completed = false;
+  private volatile boolean completed = false;
   private Object result;
 
   public synchronized Object get() throws InterruptedException, InvocationTargetException{
@@ -21,7 +21,10 @@ public class FutureResult {
   }
 
   private synchronized Object doGet(long timeout) throws InterruptedException, InvocationTargetException{
-    while(!completed) wait(timeout);
+    while(!completed){
+      if(timeout <= 0) wait();
+      else wait(timeout);
+    }
     if(result != null){
       if(result instanceof InvocationTargetException){
         throw (InvocationTargetException)result;
@@ -37,13 +40,18 @@ public class FutureResult {
   
   synchronized void completed(Object result){
     if(result != null && result instanceof Throwable){
-      this.result = new InvocationTargetException((Throwable)result);
+      if(result instanceof InvocationTargetException){
+        this.result = result;
+      }
+      else{
+        this.result = new InvocationTargetException((Throwable)result);
+      }
     }
     else{
       this.result = result;
     }
     completed = true;
-    notifyAll();
+    notify();
   }
   
   
