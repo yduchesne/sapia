@@ -11,48 +11,39 @@ import java.util.Set;
 import org.sapia.console.CmdLine;
 import org.sapia.corus.Consts;
 import org.sapia.corus.LogicException;
-import org.sapia.corus.deployer.config.Distribution;
-import org.sapia.corus.deployer.config.Env;
-import org.sapia.corus.deployer.config.Port;
-import org.sapia.corus.deployer.config.ProcessConfig;
-import org.sapia.corus.deployer.config.Property;
-import org.sapia.corus.port.PortManager;
-import org.sapia.corus.port.PortUnavailableException;
-import org.sapia.corus.processor.ActivePort;
-import org.sapia.corus.processor.Process;
+import org.sapia.corus.admin.services.configurator.Configurator;
+import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.Env;
+import org.sapia.corus.admin.services.deployer.dist.Port;
+import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.admin.services.deployer.dist.Property;
+import org.sapia.corus.admin.services.port.PortManager;
+import org.sapia.corus.admin.services.port.PortUnavailableException;
+import org.sapia.corus.admin.services.processor.ActivePort;
+import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.processor.ProcessInfo;
+import org.sapia.corus.processor.task.TaskConfig;
 import org.sapia.corus.taskmanager.Action;
 import org.sapia.taskman.TaskContext;
-import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.naming.remote.RemoteInitialContextFactory;
 import org.sapia.ubik.util.Localhost;
 
 /**
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class ExecProcessAction implements Action{
   
-  private TCPAddress _dynSvr;
-  private int _httpPort;
+  private TaskConfig  _config;
   private ProcessInfo _info;
-  private Properties _processProperties;
-  private PortManager _ports;
+  private Properties  _processProperties;
   
-  public ExecProcessAction(TCPAddress dynSvrAddr, 
-                           int httpPort, 
+  public ExecProcessAction(TaskConfig config, 
                            ProcessInfo info,
-                           Properties processProperties,
-                           PortManager ports){
-    _dynSvr = dynSvrAddr;
+                           Properties processProperties){
+    _config = config;
     _info = info;
-    _httpPort = httpPort;
     _processProperties = processProperties;
-    _ports = ports;
   }
   
   /**
@@ -62,6 +53,7 @@ public class ExecProcessAction implements Action{
     ProcessConfig conf    = _info.getConfig();
     Process       process = _info.getProcess();
     Distribution  dist    = _info.getDistribution();
+    PortManager   ports   = _config.getServices().lookup(PortManager.class);
 
     if (conf.getMaxKillRetry() >= 0) {
       process.setMaxKillRetry(conf.getMaxKillRetry());
@@ -90,7 +82,7 @@ public class ExecProcessAction implements Action{
                       process.getProcessDir(),
                       getProcessProps(conf, process, dist, ctx));
     }catch(PortUnavailableException e){
-      process.releasePorts(_ports);
+      process.releasePorts(ports);
       ctx.getTaskOutput().error(e);
       return false;
     }
@@ -99,7 +91,7 @@ public class ExecProcessAction implements Action{
     try{
       cmd = conf.toCmdLine(env);
     }catch(LogicException e){
-      process.releasePorts(_ports);      
+      process.releasePorts(ports);      
       ctx.getTaskOutput().error(e);
       return false;
     }
@@ -113,7 +105,7 @@ public class ExecProcessAction implements Action{
     ctx.getTaskOutput().info("Executing process under: " + processDir + " ---> " + cmd.toString());
     boolean executed = ActionFactory.newExecCmdLineAction(processDir, cmd, process).execute(ctx);
     if(!executed){
-      process.releasePorts(_ports);
+      process.releasePorts(ports);
     }
     return executed;
   }
@@ -121,15 +113,18 @@ public class ExecProcessAction implements Action{
   private Property[] getProcessProps(ProcessConfig conf, Process proc,
                                      Distribution dist, TaskContext ctx) 
     throws PortUnavailableException{
-    List   props    = new ArrayList(10);
+    
+    Configurator configurator = _config.getServices().lookup(Configurator.class);
+    PortManager  portmgr      = _config.getServices().lookup(PortManager.class);
+    
+    List<Property>  props    = new ArrayList<Property>(10);
     String host     = null;
     try{
       host = Localhost.getLocalAddress().getHostAddress();
     }catch(Exception e){
-      host = _dynSvr.getHost();
+      host = _config.getServerAddress().getHost();
     }
-    int    port     = _dynSvr.getPort();
-    int    httpPort = port + 1;
+    int    port     = _config.getServerAddress().getPort();
     props.add(new Property("corus.server.host", host));
     props.add(new Property("corus.server.port", "" + port));
     if(System.getProperty(Consts.PROPERTY_CORUS_DOMAIN) != null){
@@ -148,8 +143,19 @@ public class ExecProcessAction implements Action{
                            proc.getDistributionInfo().getProfile()));
     props.add(new Property("user.dir", dist.getCommonDir()));
     
-    Enumeration names = _processProperties.propertyNames();
     
+    Properties allProps = new Properties(_processProperties);
+    Properties confProps =  configurator.getProperties(PropertyScope.PROCESS);
+
+    Enumeration names = confProps.propertyNames();
+    
+    while(names.hasMoreElements()){
+      String name = (String)names.nextElement();
+      allProps.put(name, confProps.getProperty(name));
+    }
+    
+    names = _processProperties.propertyNames();
+     
     // process properties...
     while(names.hasMoreElements()){
       String name = (String)names.nextElement();
@@ -158,7 +164,7 @@ public class ExecProcessAction implements Action{
         if(value.indexOf(' ') > 0){
           value = "\"" + value + "\"";
         }
-        ctx.getTaskOutput().info("Passing process properties: " + name + "=" + value);
+        ctx.getTaskOutput().info("Passing process property: " + name + "=" + value);
         props.add(new Property(name, value));  
       }
     }
@@ -169,7 +175,7 @@ public class ExecProcessAction implements Action{
     for(int i = 0; i < ports.size(); i++){
       Port p = (Port)ports.get(i);
       if(!added.contains(p.getName())){
-        int portInt = _ports.aquirePort(p.getName());
+        int portInt = portmgr.aquirePort(p.getName());
         props.add(new Property("corus.process.port." + p.getName(), Integer.toString(portInt)));
         proc.addActivePort(new ActivePort(p.getName(), portInt));
         added.add(p.getName());

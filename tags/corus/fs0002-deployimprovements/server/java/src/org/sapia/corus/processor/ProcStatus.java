@@ -3,6 +3,7 @@ package org.sapia.corus.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.interop.Status;
 
 /**

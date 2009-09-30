@@ -9,16 +9,16 @@ import java.util.Set;
 import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.CorusException;
 import org.sapia.corus.LogicException;
-import org.sapia.corus.configurator.Configurator.PropertyScope;
+import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.admin.services.port.PortActiveException;
+import org.sapia.corus.admin.services.port.PortRangeConflictException;
+import org.sapia.corus.admin.services.port.PortRangeInvalidException;
+import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.cron.CronJobInfo;
 import org.sapia.corus.cron.InvalidTimeException;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
-import org.sapia.corus.port.PortActiveException;
-import org.sapia.corus.port.PortRangeConflictException;
-import org.sapia.corus.port.PortRangeInvalidException;
-import org.sapia.corus.processor.ExecConfig;
 import org.sapia.corus.processor.ProcStatus;
-import org.sapia.corus.processor.Process;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.ubik.net.ServerAddress;
 
@@ -160,7 +160,7 @@ public interface CorusFacade {
    *
    * @param cluster a <code>ClusterInfo</code> instance.
    * @return a <code>Results</code> instance containing <code>ServerAddress</code>es of <code>Process</code> instances.
-   * @see org.sapia.corus.processor.Process
+   * @see org.sapia.corus.admin.services.processor.Process
    */
   public Results getProcesses(ClusterInfo cluster);
 
@@ -171,7 +171,7 @@ public interface CorusFacade {
    * @param cluster a <code>ClusterInfo</code> instance.
    * 
    * @return a <code>Results</code> instance containing <code>ServerAddress</code>es of <code>Process</code> instances.
-   * @see org.sapia.corus.processor.Process
+   * @see org.sapia.corus.admin.services.processor.Process
    */
   public Results getProcesses(String distName, ClusterInfo cluster);
 
@@ -183,7 +183,7 @@ public interface CorusFacade {
    * @param cluster a <code>ClusterInfo</code> instance.
    * 
    * @return a <code>Results</code> instance containing <code>ServerAddress</code>es of <code>Process</code> instances.
-   * @see org.sapia.corus.processor.Process
+   * @see org.sapia.corus.admin.services.processor.Process
    */
   public Results getProcesses(String distName, String version, ClusterInfo cluster);
 
@@ -195,7 +195,7 @@ public interface CorusFacade {
    * @param profile the profile for which to return VM processes.
    * @param cluster a <code>ClusterInfo</code> instance.
    * @return a <code>Results</code> instance containing <code>ServerAddress</code>es of <code>Process</code> instances.
-   * @see org.sapia.corus.processor.Process
+   * @see org.sapia.corus.admin.services.processor.Process
    */
   public Results getProcesses(String distName, String version, String profile,
                               ClusterInfo cluster);
@@ -209,7 +209,7 @@ public interface CorusFacade {
    * @param processName the name of the VM for which to return process instances.
    * @param cluster a <code>ClusterInfo</code> instance.
    * @return a <code>Results</code> instance containing <code>ServerAddress</code>es of <code>Process</code> instances.
-   * @see org.sapia.corus.processor.Process
+   * @see org.sapia.corus.admin.services.processor.Process
    */
   public Results getProcesses(String distName, String version, String profile,
                               String processName, ClusterInfo cluster);

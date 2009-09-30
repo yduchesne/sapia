@@ -1,6 +1,8 @@
 package org.sapia.corus.deployer;
 
-import org.sapia.corus.deployer.config.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.server.deployer.DistributionDatabase;
+import org.sapia.corus.server.deployer.DuplicateDistributionException;
 import org.sapia.taskman.Task;
 import org.sapia.taskman.TaskContext;
 
@@ -24,9 +26,9 @@ import java.io.FileNotFoundException;
  */
 public class BuildDistTask implements Task {
   private String            _deployDir;
-  private DistributionStore _store;
+  private DistributionDatabase _store;
 
-  BuildDistTask(String deployDir, DistributionStore store) {
+  BuildDistTask(String deployDir, DistributionDatabase store) {
     _deployDir = deployDir;
     _store     = store;
   }

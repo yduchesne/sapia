@@ -7,6 +7,9 @@ import junit.framework.TestCase;
 
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.services.processor.DistributionInfo;
+import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.server.processor.ProcessRepository;
 
 
 /**
@@ -15,7 +18,7 @@ import org.sapia.corus.admin.CommandArgParser;
  */
 public class ProcessorStoreTest extends TestCase {
   
-  ProcessDB        db;
+  ProcessRepository        db;
   
   List procs = new ArrayList();
   
@@ -28,7 +31,7 @@ public class ProcessorStoreTest extends TestCase {
   }
   
   protected void setUp() throws Exception {
-    db = new TestProcessDB();
+    db = new TestProcessRepository();
     DistributionInfo dist1 = new DistributionInfo("test", "1.0", "test",
     "testVm");
     DistributionInfo dist2 = new DistributionInfo("test", "1.1", "test",
@@ -106,7 +109,7 @@ public class ProcessorStoreTest extends TestCase {
   }    
 
   public void testRemoveProcess() throws Exception {
-    ProcessDB        db   = new TestProcessDB();
+    ProcessRepository        db   = new TestProcessRepository();
     DistributionInfo dist = new DistributionInfo("test", "1.0", "test", "testVm");
     Process          proc = new Process(dist);
     db.getActiveProcesses().addProcess(proc);

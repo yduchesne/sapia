@@ -2,6 +2,8 @@ package org.sapia.corus.taskmanager;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.taskmanager.v2.TaskV2;
 import org.sapia.taskman.TaskContext;
 
 
@@ -17,29 +19,28 @@ import org.sapia.taskman.TaskContext;
  */
 public class AntTaskHelper {
   
-  public static org.sapia.taskman.Task init(Task antTask) {
+  public static TaskV2 init(Task antTask) {
     return new DynAntTask(antTask);
   }
 
-  static class DynAntTask implements org.sapia.taskman.Task{
+  static class DynAntTask extends TaskV2{
     private Task _antTask;
 
     DynAntTask(Task antTask) {
       _antTask = antTask;
     }
     
-    /**
-     * @see org.sapia.taskman.Task#exec(org.sapia.taskman.TaskContext)
-     */
-    public void exec(TaskContext ctx) {
+    @Override
+    public Object execute(TaskExecutionContext ctx) throws Throwable {
       try {
         Project p = new Project();
-        p.addBuildListener(new AntTaskoutput(ctx.getTaskOutput()));
+        p.addBuildListener(new AntTaskoutput(this, ctx.getLog()));
         _antTask.setProject(p);
         _antTask.execute();
       } catch (Throwable t) {
-        ctx.getTaskOutput().error(t);
+        ctx.error(t);
       }
+      return null;
     }
   }
 }

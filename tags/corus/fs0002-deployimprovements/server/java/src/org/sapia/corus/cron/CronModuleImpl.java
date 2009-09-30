@@ -9,9 +9,9 @@ import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
-import org.sapia.corus.deployer.Deployer;
 import org.sapia.corus.util.IDGenerator;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
       _log.info("adding cron job: " + info);
     }
 
-    Deployer dep = (Deployer) CorusRuntime.getCorus().lookup(Deployer.ROLE);
+    Deployer dep = lookup(Deployer.class);
 
     if (!dep.getDistribution(CommandArgParser.parse(info.getDistribution()), 
         CommandArgParser.parse(info.getVersion())).containsProcess(info.getVmName())) {

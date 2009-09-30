@@ -12,6 +12,8 @@ import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.http.HttpContext;
 import org.sapia.corus.http.HttpExtension;
 import org.sapia.corus.http.HttpExtensionInfo;

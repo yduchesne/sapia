@@ -1,5 +1,7 @@
 package org.sapia.corus.util;
 
+import java.io.Serializable;
+
 
 /**
  * Implements the {@link Property} interface: encapsulates a string
@@ -8,7 +10,9 @@ package org.sapia.corus.util;
  * @author yduchesne
  *
  */
-public class StringProperty implements Property{
+public class StringProperty implements Property, Serializable{
+  
+  static final long serialVersionUID = 1L;
   
   private String value;
   

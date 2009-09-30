@@ -8,10 +8,11 @@ import java.util.Set;
 
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.StringCommandArg;
-import org.sapia.corus.deployer.Deployer;
-import org.sapia.corus.deployer.config.Dependency;
-import org.sapia.corus.deployer.config.Distribution;
-import org.sapia.corus.deployer.config.ProcessConfig;
+import org.sapia.corus.admin.services.deployer.Deployer;
+import org.sapia.corus.admin.services.deployer.dist.Dependency;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.util.ProgressQueue;
 
 public class ProcessDependencyFilter {

@@ -1,11 +1,15 @@
 package org.sapia.corus.util;
 
+import java.io.Serializable;
+
 /**
  * Implements the {@link Property} interface over an {@link Integer}
  * @author yduchesne
  *
  */
-public class IntProperty implements Property{
+public class IntProperty implements Property, Serializable{
+  
+  static final long serialVersionUID = 1L;
   
   private int value;
   

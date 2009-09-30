@@ -4,40 +4,29 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.port.PortManager;
+import org.sapia.corus.admin.services.port.PortManager;
+import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.NativeProcessFactory;
-import org.sapia.corus.processor.Process;
-import org.sapia.corus.processor.ProcessDB;
+import org.sapia.corus.processor.task.TaskConfig;
+import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.Action;
 import org.sapia.taskman.TaskContext;
-import org.sapia.ubik.net.TCPAddress;
 
 /**
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class ForcefulKillAction implements Action{
   
-  private TCPAddress _dynSvr;
-  private int        _httpPort;
-  private String    _requestor;
-  private ProcessDB _db;
-  private String    _corusPid;
-  private long      _restartIntervalMillis;
-  private PortManager _ports;
+  private TaskConfig                     _config;
+  private ProcessTerminationRequestor    _requestor;
+  private String                         _corusPid;
   
-  public ForcefulKillAction(TCPAddress dynSvrAddress, int httpPort, String requestor, ProcessDB db, String corusPid, long restartIntervalMillis, PortManager ports){
-    _dynSvr = dynSvrAddress;
-    _httpPort = httpPort;
+  public ForcefulKillAction(TaskConfig config, ProcessTerminationRequestor requestor, String corusPid){
+    _config = config;
     _requestor = requestor;
-    _db = db;
     _corusPid = corusPid;
-    _restartIntervalMillis = restartIntervalMillis;
-    _ports = ports;
   }
   
   /**
@@ -47,9 +36,11 @@ public class ForcefulKillAction implements Action{
     boolean killSuccessful = false;
 
     try {
-      
-      Process process = _db.getActiveProcesses().getProcess(_corusPid);
-      
+
+      PortManager ports   = _config.getServices().lookup(PortManager.class);
+      Processor processor = _config.getServices().lookup(Processor.class);
+      ProcessRepository processes = _config.getServices().getProcesses();
+      Process process = processes.getActiveProcesses().getProcess(_corusPid);
 
       ctx.getTaskOutput().warning("Process " + process.getProcessID() +
                     " did not confirm kill: " + process + "; requestor: " + _requestor);
@@ -69,20 +60,20 @@ public class ForcefulKillAction implements Action{
                       " is stalled but could not be killed");
       }
       
-      process.releasePorts(_ports);
+      process.releasePorts(ports);
 
-      if(!ActionFactory.newCleanupProcessAction(_db, process).execute(ctx)){
+      if(!ActionFactory.newCleanupProcessAction(_config, process).execute(ctx)){
         ctx.getTaskOutput().warning("Process " + process.getProcessID() + " will not be restarted");
         return false;
       }
 
       // if shutdown was initiated by Corus server, restart process
       // automatically (if restarted interval threshold is respected)
-      if (_requestor.equals(Process.KILL_REQUESTOR_SERVER) && _restartIntervalMillis > 0) {
+      if (_requestor == ProcessTerminationRequestor.KILL_REQUESTOR_SERVER && processor.getConfiguration().getRestartIntervalMillis() > 0) {
         ctx.getTaskOutput().debug("Preparing for restart");
         ctx.getTaskOutput().debug("Process creation time: " + new Date(process.getCreationTime()));
         ctx.getTaskOutput().debug("Current time: " + new Date());
-        ctx.getTaskOutput().debug("Restart interval: " + (double)(_restartIntervalMillis/1000) + " seconds");
+        ctx.getTaskOutput().debug("Restart interval: " + processor.getConfiguration().getRestartInterval() + " seconds");
         // if no OS pid, then process could not be forcefully killed...
         if (process.getOsPid() == null) {
           ctx.getTaskOutput().warning("Not restarting process: " + process.getProcessID() +
@@ -90,12 +81,12 @@ public class ForcefulKillAction implements Action{
           ctx.getTaskOutput().warning("Could not be forcefully killed (because it does not have an OS pid)");
           ctx.getTaskOutput().warning("Might be stalled... Make sure that you do not have a process in limbo");
           onNoOsPid();
-        } else if (((System.currentTimeMillis() - process.getCreationTime()) < _restartIntervalMillis)) {
+        } else if (((System.currentTimeMillis() - process.getCreationTime()) < processor.getConfiguration().getRestartIntervalMillis())) {
           ctx.getTaskOutput().warning("Process will not be restarted; not enough time since last restart");
           onRestartThresholdInvalid();
         } else {
           ctx.getTaskOutput().warning("Restarting Process: " + process);
-          killSuccessful = ActionFactory.newRestartVmAction(_dynSvr, _httpPort, _db, process, _ports).execute(ctx);
+          killSuccessful = ActionFactory.newRestartVmAction(_config, process).execute(ctx);
           onRestarted();
         }
       } else {

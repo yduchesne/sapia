@@ -13,6 +13,7 @@ public class InitContext {
 
   private static ThreadLocal<InitContext> currentContext = new ThreadLocal<InitContext>();
   private PropertyContainer properties;
+  private ServerContext serverContext;
   
   /**
    * @return the {@link PropertyContainer} held by this instance.
@@ -29,11 +30,20 @@ public class InitContext {
   public void setProperties(PropertyContainer properties) {
     this.properties = properties;
   }
+
+  /**
+   * @return the internal server context held by this instance.
+   */
+  public ServerContext getServerContext(){
+    return serverContext;
+  }
+
   
-  static void attach(PropertyContainer properties){
+  static void attach(PropertyContainer properties, ServerContext serverContext){
     if(currentContext.get() == null){
       InitContext ctx = new InitContext();
       ctx.setProperties(properties);
+      ctx.serverContext = serverContext;
       currentContext.set(ctx);
     }
   }

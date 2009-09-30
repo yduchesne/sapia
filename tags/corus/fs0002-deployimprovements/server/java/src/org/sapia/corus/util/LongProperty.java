@@ -1,12 +1,16 @@
 package org.sapia.corus.util;
 
+import java.io.Serializable;
+
 /**
  * Implements the {@link Property} interface over a {@link Long}
  * 
  * @author yduchesne
  *
  */
-public class LongProperty implements Property{
+public class LongProperty implements Property, Serializable{
+  
+  static final long serialVersionUID = 1L;
   
   private long value;
   

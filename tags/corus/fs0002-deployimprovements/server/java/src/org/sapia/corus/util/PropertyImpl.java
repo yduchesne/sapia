@@ -1,5 +1,7 @@
 package org.sapia.corus.util;
 
+import java.io.Serializable;
+
 import org.sapia.corus.InitContext;
 
 /**
@@ -8,7 +10,9 @@ import org.sapia.corus.InitContext;
  * @author yduchesne
  *
  */
-public class PropertyImpl implements Property{
+public class PropertyImpl implements Property, Serializable{
+  
+  static final long serialVersionUID = 1L;
   
   private String value;
   

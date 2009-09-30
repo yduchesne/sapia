@@ -1,7 +1,7 @@
 package org.sapia.corus.processor;
 
-import org.sapia.corus.deployer.config.Distribution;
-import org.sapia.corus.deployer.config.ProcessConfig;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 
 public class ProcessRef implements Comparable<ProcessRef> {
 
@@ -21,6 +21,14 @@ public class ProcessRef implements Comparable<ProcessRef> {
   
   public int getInstanceCount() {
     return instanceCount;
+  }
+  
+  public void setInstanceCount(int instanceCount){
+    this.instanceCount = instanceCount;
+  }
+  
+  public void setInstances(int count){
+    this.instanceCount = count;
   }
 
   public String getProfile() {

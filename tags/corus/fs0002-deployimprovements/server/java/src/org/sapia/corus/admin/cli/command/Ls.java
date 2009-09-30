@@ -13,10 +13,10 @@ import org.sapia.corus.admin.HostItem;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
-import org.sapia.corus.deployer.config.Distribution;
-import org.sapia.corus.deployer.config.ProcessConfig;
-import org.sapia.corus.processor.ExecConfig;
-import org.sapia.corus.processor.ProcessDef;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.admin.services.processor.ProcessDef;
 import org.sapia.ubik.net.ServerAddress;
 
 

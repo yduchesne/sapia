@@ -8,11 +8,6 @@ import org.sapia.taskman.TaskContext;
 
 /**
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class MakeProcessDirAction implements Action{
   
@@ -22,10 +17,7 @@ public class MakeProcessDirAction implements Action{
   public MakeProcessDirAction(ProcessInfo info){
     _info = info;
   } 
-  
-  /**
-   * @see org.sapia.corus.taskmanager.Action#execute(org.sapia.taskman.TaskContext)
-   */
+
   public boolean execute(TaskContext ctx) {
     File processDir = new File(_info.getDistribution().getProcessesDir() +
                                File.separator +

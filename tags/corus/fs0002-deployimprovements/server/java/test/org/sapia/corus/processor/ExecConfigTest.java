@@ -3,6 +3,8 @@ package org.sapia.corus.processor;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.sapia.corus.admin.services.processor.ExecConfig;
+
 import junit.framework.TestCase;
 
 public class ExecConfigTest extends TestCase {

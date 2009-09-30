@@ -57,8 +57,7 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
     
     addHttpExtension(new FileSystemExtension());
     addHttpExtension(new JmxExtension());    
-    SoapExtension ext = new SoapExtension();
-    ext.init();
+    SoapExtension ext = new SoapExtension(serverContext());
     addHttpExtension(ext);    
     
     _httpExt.start();

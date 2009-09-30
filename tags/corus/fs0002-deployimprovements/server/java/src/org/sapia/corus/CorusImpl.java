@@ -1,20 +1,18 @@
 package org.sapia.corus;
 
+import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.util.Properties;
+
 import org.apache.log.Hierarchy;
 import org.sapia.corus.naming.JndiModule;
 import org.sapia.corus.util.PropertyContainer;
-
 import org.sapia.soto.SotoContainer;
 import org.sapia.soto.util.Utils;
 import org.sapia.ubik.rmi.naming.remote.RemoteContext;
 import org.sapia.ubik.rmi.naming.remote.RemoteContextProvider;
-
 import org.sapia.util.text.MapContext;
 import org.sapia.util.text.SystemContext;
-
-import java.io.InputStream;
-import java.util.Properties;
 
 
 /**
@@ -42,7 +40,7 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     return _domain;
   }
   
-  public static void init(Hierarchy h, InputStream config, String domain,
+  public static ServerContext init(Hierarchy h, InputStream config, String domain,
                           CorusTransport aTransport, String corusHome) throws java.io.IOException, Exception {
     _instance = new CorusImpl(domain);
     CorusRuntime.init(_instance, corusHome, aTransport);
@@ -65,17 +63,21 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     config.close();
     props.load(tmp);
     
-   
+    InternalServiceContext services = new InternalServiceContext();
+    ServerContext serverContext = new ServerContext(domain, corusHome,  services);
     InitContext.attach(new PropertyContainer(){
       public String getProperty(String name) {
         return props.getProperty(name);
       }
-    });
+    },
+    serverContext);
     try{
       _cont.load("org/sapia/corus/corus.conf", props);
     }finally{
       InitContext.unattach();
     }
+    
+    return serverContext;
   }
   
   public static void start() throws Exception {
@@ -90,10 +92,11 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     try {
       return _cont.lookup(module);
     } catch (Exception e) {
+      e.printStackTrace();
       throw new CorusException(e);
     }
   }
-
+  
   public static CorusImpl getInstance() {
     if (_instance == null) {
       throw new IllegalStateException("corus not initialized");

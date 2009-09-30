@@ -1,10 +1,10 @@
 package org.sapia.corus.processor;
 
+import org.sapia.corus.admin.services.deployer.dist.Dependency;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.Java;
+import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.deployer.TestDeployer;
-import org.sapia.corus.deployer.config.Dependency;
-import org.sapia.corus.deployer.config.Distribution;
-import org.sapia.corus.deployer.config.Java;
-import org.sapia.corus.deployer.config.ProcessConfig;
 import org.sapia.corus.util.ProgressQueueImpl;
 import org.sapia.corus.util.TestProgressQueue;
 
@@ -99,10 +99,10 @@ public class ProcessDependencyFilterTest extends TestCase {
     dependantProc2.addStarter(starter);
     dependantDist2.addProcess(dependantProc2);
     
-    deployer.getDistributionStore().addDistribution(maindist);
-    deployer.getDistributionStore().addDistribution(maindist2);
-    deployer.getDistributionStore().addDistribution(dependantDist);
-    deployer.getDistributionStore().addDistribution(dependantDist2);
+    deployer.getDistributionDatabase().addDistribution(maindist);
+    deployer.getDistributionDatabase().addDistribution(maindist2);
+    deployer.getDistributionDatabase().addDistribution(dependantDist);
+    deployer.getDistributionDatabase().addDistribution(dependantDist2);
     
     filter = new ProcessDependencyFilter(new TestProgressQueue());
   }

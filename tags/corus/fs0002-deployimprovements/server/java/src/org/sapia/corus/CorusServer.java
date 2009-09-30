@@ -8,7 +8,6 @@ import java.util.Properties;
 import org.apache.log.Hierarchy;
 import org.apache.log.Priority;
 import org.apache.log.format.Formatter;
-import org.apache.log.format.PatternFormatter;
 import org.apache.log.output.io.rotate.RevolvingFileStrategy;
 import org.apache.log.output.io.rotate.RotateStrategyByTime;
 import org.apache.log.output.io.rotate.RotatingFileTarget;
@@ -38,7 +37,6 @@ public class CorusServer {
   public static final String PORT_OPT        = "p";
   public static final String DOMAIN_OPT      = "d";
   public static final String BIND_ADDR_OPT   = "a";
-  public static final String HTTP_TRANSPORT  = "http";
   public static final String DEBUG_VERBOSITY = "v";
   public static final String FILE            = "f";
   public static final String HELP            = "help";
@@ -198,32 +196,21 @@ public class CorusServer {
       
       String host = Localhost.getLocalAddress().getHostAddress();
 
-      CorusTransport aTransport;
-      if (cmd.containsOption(HTTP_TRANSPORT, false)) {
-        System.setProperty(Consts.PROPERTY_CORUS_TRANSPORT, Consts.CORUS_TRANSPORT_HTTP);
-        aTransport = new HttpCorusTransport(host, port);
-      } else {
-        System.setProperty(Consts.PROPERTY_CORUS_TRANSPORT, Consts.CORUS_TRANSPORT_TCP);
-        aTransport = new TcpCorusTransport(host, port);
-      }
-      
-      
+      CorusTransport aTransport = new TcpCorusTransport(host, port);
+   
       // Initialize Corus, export it and start it
-      CorusImpl.init(h, new FileInputStream(aFilename), domain, aTransport, corusHome);
+      ServerContext context = CorusImpl.init(h, new FileInputStream(aFilename), domain, aTransport, corusHome);
       aTransport.exportObject(CorusImpl.getInstance());
       CorusImpl.start();
       
-      host = ((TCPAddress) aTransport.getServerAddress()).getHost();
-      /*
-      try{
-        host = Localhost.getLocalAddress().getHostAddress();
-      }catch(Exception e){
-      }*/
+      TCPAddress addr = ((TCPAddress) aTransport.getServerAddress());
       
-      System.out.println("Corus server started on: " + host + ":" + port +
+      context.setServerAddress(addr);
+      
+      System.out.println("Corus server started on: " + addr + ":" + port +
         ", domain: " + domain);
       
-      EventDispatcher dispatcher = (EventDispatcher) CorusRuntime.getCorus().lookup(EventDispatcher.ROLE);
+      EventDispatcher dispatcher = context.lookup(EventDispatcher.class);
       dispatcher.dispatch(new ServerStartedEvent(aTransport.getServerAddress()));
       
       Runtime.getRuntime().addShutdownHook(new ShutdownHook(h));

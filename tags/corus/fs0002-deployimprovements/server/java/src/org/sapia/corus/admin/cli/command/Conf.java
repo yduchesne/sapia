@@ -12,7 +12,7 @@ import org.sapia.corus.admin.HostItem;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
-import org.sapia.corus.configurator.Configurator.PropertyScope;
+import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.util.NameValuePair;
 import org.sapia.ubik.net.ServerAddress;
 

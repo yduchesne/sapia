@@ -6,14 +6,28 @@ import java.util.List;
 import org.sapia.corus.CorusException;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
+import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.interop.Status;
+import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 
 public class TestProcessor implements Processor{
   
-  private ProcessDB db = new TestProcessDB();
-
+  private TestProcessRepository db = new TestProcessRepository();
+  private ProcessorConfiguration configuration = new  ProcessorConfigurationImpl();
+  
+  public TestProcessRepository getProcessRepository(){
+    return db;
+  }
+  
+  public ProcessorConfiguration getConfiguration() {
+    return configuration;
+  }
   
   public ProgressQueue exec(CommandArg distName, CommandArg version,
       String profile, CommandArg processName, int instances) {
@@ -129,7 +143,7 @@ public class TestProcessor implements Processor{
     return Processor.ROLE;
   }
 
-  public ProcessDB getProcessDB(){
+  public ProcessRepository getProcessDB(){
     return db;
   }
 }

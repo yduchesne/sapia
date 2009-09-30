@@ -21,29 +21,29 @@ import org.sapia.corus.Corus;
 import org.sapia.corus.CorusException;
 import org.sapia.corus.CorusRuntimeException;
 import org.sapia.corus.LogicException;
+import org.sapia.corus.admin.services.configurator.Configurator;
+import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.admin.services.deployer.Deployer;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.port.PortActiveException;
+import org.sapia.corus.admin.services.port.PortManager;
+import org.sapia.corus.admin.services.port.PortRangeConflictException;
+import org.sapia.corus.admin.services.port.PortRangeInvalidException;
+import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.cluster.ClusterInterceptor;
 import org.sapia.corus.cluster.ClusterManager;
-import org.sapia.corus.configurator.Configurator;
-import org.sapia.corus.configurator.Configurator.PropertyScope;
 import org.sapia.corus.cron.CronJobInfo;
 import org.sapia.corus.cron.CronModule;
 import org.sapia.corus.cron.InvalidTimeException;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.deployer.DeployOsAdapter;
 import org.sapia.corus.deployer.DeployOutputStream;
-import org.sapia.corus.deployer.Deployer;
 import org.sapia.corus.deployer.DeploymentMetadata;
-import org.sapia.corus.deployer.config.Distribution;
 import org.sapia.corus.deployer.transport.ClientDeployOutputStream;
 import org.sapia.corus.deployer.transport.DeploymentClientFactory;
-import org.sapia.corus.port.PortActiveException;
-import org.sapia.corus.port.PortManager;
-import org.sapia.corus.port.PortRangeConflictException;
-import org.sapia.corus.port.PortRangeInvalidException;
-import org.sapia.corus.processor.ExecConfig;
 import org.sapia.corus.processor.ProcStatus;
-import org.sapia.corus.processor.Process;
-import org.sapia.corus.processor.Processor;
 import org.sapia.corus.util.ProgressMsg;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
@@ -827,7 +827,7 @@ public class CorusFacadeImpl implements CorusFacade {
   public void restart(String pid) throws LogicException {
     refresh();
     try{
-      getProcessor().restart(pid);
+      getProcessor().restartByAdmin(pid);
     }catch(CorusException e){
       if(e instanceof LogicException){
         throw (LogicException)e;

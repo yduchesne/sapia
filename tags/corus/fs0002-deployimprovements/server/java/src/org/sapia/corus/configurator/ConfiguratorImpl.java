@@ -9,10 +9,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.InitContext;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.util.NameValuePair;
@@ -20,7 +20,9 @@ import org.sapia.corus.util.PropertyContainer;
 
 public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   
-  private PropertyStore processProperties, serverProperties;
+  public static final String PROP_SERVER_NAME = "corus.server.name";
+  
+  private PropertyStore processProperties, serverProperties, internalProperties;
   private DbMap<String, String> tags;
   
   public String getRoleName() {
@@ -30,9 +32,11 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   @Override
   public void preInit() {
     try{
-      DbModule db = (DbModule) CorusRuntime.getCorus().lookup(DbModule.ROLE);
-      processProperties = new PropertyStore(db.getDbMap("configurator.properties.process"));
-      serverProperties  = new PropertyStore(db.getDbMap("configurator.properties.server"));
+      DbModule db = lookup(DbModule.class);
+      processProperties   = new PropertyStore(db.getDbMap("configurator.properties.process"));
+      serverProperties    = new PropertyStore(db.getDbMap("configurator.properties.server"));
+      internalProperties  = new PropertyStore(db.getDbMap("configurator.properties.internal"));
+
       tags       = db.getDbMap("configurator.tags");
       InitContext.get().setProperties(new ConfigPropertyContainer(InitContext.get().getProperties()));
     }catch(Exception e){
@@ -40,7 +44,15 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
     }
   }
 
-  public void init() throws Exception {}
+  public void init() throws Exception {
+    String serverName = internalProperties.getProperty(PROP_SERVER_NAME);
+    if(serverName == null){
+      internalProperties.addProperty(PROP_SERVER_NAME, serverContext().getServerName());
+    }
+    else{
+      serverContext().setServerName(serverName);
+    }
+  }
   
   public void dispose() {}
 

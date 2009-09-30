@@ -9,8 +9,8 @@ import org.sapia.console.AbortException;
 import org.sapia.console.InputException;
 
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
-import org.sapia.corus.processor.ExecConfig;
 import org.sapia.util.xml.ProcessingException;
 
 

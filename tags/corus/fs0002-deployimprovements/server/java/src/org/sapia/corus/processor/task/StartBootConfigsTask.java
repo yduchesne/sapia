@@ -5,93 +5,41 @@ import java.util.List;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.StringCommandArg;
-import org.sapia.corus.configurator.Configurator;
-import org.sapia.corus.deployer.Deployer;
-import org.sapia.corus.deployer.config.Distribution;
-import org.sapia.corus.deployer.config.ProcessConfig;
-import org.sapia.corus.port.PortManager;
-import org.sapia.corus.processor.ExecConfig;
-import org.sapia.corus.processor.ExecConfigStore;
-import org.sapia.corus.processor.Process;
-import org.sapia.corus.processor.ProcessDB;
-import org.sapia.corus.processor.ProcessDef;
+import org.sapia.corus.admin.services.deployer.Deployer;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.admin.services.processor.ProcessDef;
+import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.processor.ProcessDependencyFilter;
 import org.sapia.corus.processor.ProcessRef;
-import org.sapia.corus.processor.Processor;
-import org.sapia.corus.processor.ProcessorImpl;
 import org.sapia.corus.processor.StartupLock;
-import org.sapia.corus.taskmanager.TaskManager;
-import org.sapia.corus.taskmanager.TaskProgressQueue;
-import org.sapia.taskman.Abortable;
-import org.sapia.taskman.PeriodicTaskDescriptor;
-import org.sapia.taskman.Task;
-import org.sapia.taskman.TaskContext;
-import org.sapia.ubik.net.TCPAddress;
+import org.sapia.corus.server.processor.ExecConfigDatabase;
+import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.taskmanager.v2.ProgressQueueTaskLog;
+import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.taskmanager.v2.TaskV2;
 
-public class StartBootConfigsTask implements Task, Abortable{
+public class StartBootConfigsTask extends TaskV2{
 
+  private StartupLock lock;
   
-  public static final long START_DELAY = 30000;
-  TCPAddress address;
-  int httpPort;
-  PortManager ports;
-  TaskManager taskman;
-  Deployer deployer;
-  Processor processor;
-  Configurator configurator;
-  ExecConfigStore execConfigs;
-  ProcessDB processes;
-  StartupLock lock;
-  private boolean aborted = false;
-  private long startTime  = System.currentTimeMillis();
-  private long startDelay = START_DELAY;
-  
-  public StartBootConfigsTask(
-    TCPAddress address,
-    int httpPort,
-    PortManager ports,
-    TaskManager taskman,
-    Deployer deployer,
-    Processor processor,
-    Configurator configurator,
-    ExecConfigStore execConfigs,
-    ProcessDB processes,
-    StartupLock lock
-    ) {
-    this.address = address;
-    this.httpPort = httpPort;
-    this.ports = ports;
-    this.taskman = taskman;
-    this.deployer = deployer;
-    this.processor = processor;
-    this.configurator = configurator;
-    this.execConfigs = execConfigs;
-    this.processes = processes;
+  public StartBootConfigsTask(StartupLock lock) {
+    super.setMaxExecution(1);
     this.lock = lock;
   }
   
-  public boolean isAborted() {
-    return aborted;
-  }
-  
-  public void exec(TaskContext ctx) {
-    if(System.currentTimeMillis() - startTime >= startDelay){
-      ctx.getTaskOutput().warning("Starting up bootstrap processes...");
-      try{
-        doExec(ctx);
-      }finally{
-        aborted = true;
-      }
-    }
-    else{
-      ctx.getTaskOutput().warning("Waiting a while for Corus startup completion...");
-    }
-  }
-  
-  private void doExec(TaskContext ctx){
+  @Override
+  public Object execute(TaskExecutionContext ctx) throws Throwable {
+    ProcessRepository processes = ctx.getServerContext().getServices().getProcesses();
+    ExecConfigDatabase execConfigs = ctx.getServerContext().getServices().getExecConfigs();
+    Deployer deployer = ctx.getServerContext().getServices().lookup(Deployer.class);
+    Processor processor = ctx.getServerContext().getServices().lookup(Processor.class);
+    
     List<ExecConfig> configsToStart = execConfigs.getBootstrapConfigs();
     
-    ProcessDependencyFilter filter = new ProcessDependencyFilter(new TaskProgressQueue(ctx.getTaskOutput()));
+    ProcessDependencyFilter filter = new ProcessDependencyFilter(new ProgressQueueTaskLog(this, ctx.getLog()));
     
     for(ExecConfig ec:configsToStart){
       for(ProcessDef pd:ec.getProcesses()){
@@ -111,7 +59,7 @@ public class StartBootConfigsTask implements Task, Abortable{
           try{
               dist = deployer.getDistribution(distName, version);
           }catch(LogicException e){
-            ctx.getTaskOutput().warning("No distribution found for " + pd);
+            ctx.warn("No distribution found for " + pd);
           }
           if(dist != null){
             for(ProcessConfig conf: dist.getProcesses(processName)){
@@ -120,17 +68,17 @@ public class StartBootConfigsTask implements Task, Abortable{
                 filter.addRootProcess(dist, conf, pd.getProfile());
               }
               else{
-                ctx.getTaskOutput().warning("No profile " + profile + " found for " + pd.getProfile());
-                ctx.getTaskOutput().warning("Got profiles " + conf.getProfiles());
+                ctx.warn("No profile " + profile + " found for " + pd.getProfile());
+                ctx.warn("Got profiles " + conf.getProfiles());
               }
             }
           }
           else{
-            ctx.getTaskOutput().warning("No distribution found for " + pd);
+            ctx.warn("No distribution found for " + pd);
           }
         }
         else{
-          ctx.getTaskOutput().warning("Process already started for: " + pd);
+          ctx.warn("Process already started for: " + pd);
         }
       }
     }
@@ -138,17 +86,11 @@ public class StartBootConfigsTask implements Task, Abortable{
     filter.filterDependencies(deployer, processor);
 
     List<ProcessRef> filteredProcesses = filter.getFilteredProcesses();
-    MultiExecTask exec = new MultiExecTask( 
-        address, httpPort, 
-        processes, 
-        lock,
-        filteredProcesses, 
-        ports,
-        taskman,
-        configurator,
-        1);
-    PeriodicTaskDescriptor ptd = new PeriodicTaskDescriptor("MultiExecTask", ProcessorImpl.EXEC_TASK_INTERVAL, exec);                
-    ctx.execTaskFor(ptd);
-    
+    MultiExecTask exec = new MultiExecTask(lock, filteredProcesses);
+    ctx.getTaskManager().executeBackground(
+        0, 
+        processor.getConfiguration().getExecIntervalMillis(), 
+        exec);
+    return null;
   }
 }

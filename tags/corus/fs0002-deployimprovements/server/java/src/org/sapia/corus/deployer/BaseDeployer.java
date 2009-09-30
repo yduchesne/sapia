@@ -4,13 +4,22 @@ import java.util.List;
 
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.CommandArg;
-import org.sapia.corus.deployer.config.Distribution;
+import org.sapia.corus.admin.services.deployer.Deployer;
+import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
+import org.sapia.corus.admin.services.deployer.DeployerConfigurationImpl;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 
 public class BaseDeployer implements Deployer{
 
-  private DistributionStore   _store       = new DistributionStore();
+  protected DeployerConfigurationImpl _configuration = new DeployerConfigurationImpl();
+  private DistributionDatabase        _store         = new DistributionDatabaseImpl();
+  
+  public DeployerConfiguration getConfiguration() {
+    return _configuration;
+  }
   
   public Distribution getDistribution(CommandArg name, CommandArg version)
       throws LogicException {
@@ -39,7 +48,7 @@ public class BaseDeployer implements Deployer{
     return Deployer.ROLE;
   }
   
-  protected DistributionStore getDistributionStore(){
+  protected DistributionDatabase getDistributionDatabase(){
     return _store;
   }
   

@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.sapia.console.CmdLine;
+import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.processor.NativeProcess;
 import org.sapia.corus.processor.NativeProcessFactory;
-import org.sapia.corus.processor.Process;
 import org.sapia.corus.taskmanager.Action;
 import org.sapia.taskman.TaskContext;
 
@@ -18,7 +18,8 @@ import org.sapia.taskman.TaskContext;
  *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
  * </dl>
  */
-public class ExecCmdLineAction implements Action{
+public class ExecCmdLineAction
+implements Action{
   
   private CmdLine _cmd;
   private File    _procDir;
