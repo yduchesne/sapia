@@ -17,11 +17,11 @@ import org.sapia.corus.processor.ProcessRef;
 import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.server.processor.ExecConfigDatabase;
 import org.sapia.corus.server.processor.ProcessRepository;
-import org.sapia.corus.taskmanager.v2.ProgressQueueTaskLog;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskV2;
+import org.sapia.corus.taskmanager.core.ProgressQueueTaskLog;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 
-public class StartBootConfigsTask extends TaskV2{
+public class StartBootConfigsTask extends Task{
 
   private StartupLock lock;
   

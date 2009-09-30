@@ -7,10 +7,10 @@ import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.processor.ProcessRef;
 import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.server.processor.ProcessRepository;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskV2;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 
-public class MultiExecTask extends TaskV2{
+public class MultiExecTask extends Task{
   
   private List<ProcessRef>  _processRefs;
   private StartupLock       _lock;

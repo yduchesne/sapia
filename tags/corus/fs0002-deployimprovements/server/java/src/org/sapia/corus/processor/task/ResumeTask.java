@@ -8,10 +8,9 @@ import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.LockException;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.processor.ProcessInfo;
-import org.sapia.corus.processor.task.v2.ProcessorTaskStrategy;
 import org.sapia.corus.server.processor.ProcessRepository;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskV2;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 
 
 /**
@@ -19,7 +18,7 @@ import org.sapia.corus.taskmanager.v2.TaskV2;
  * 
  * @author Yanick Duchesne
  */
-public class ResumeTask extends TaskV2{
+public class ResumeTask extends Task{
   private Process       _process;
   private Distribution  _dist;
   private ProcessConfig _conf;

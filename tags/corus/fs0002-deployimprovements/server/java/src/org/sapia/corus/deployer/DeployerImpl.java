@@ -29,13 +29,11 @@ import org.sapia.corus.deployer.transport.DeploymentProcessor;
 import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.http.HttpModule;
 import org.sapia.corus.server.deployer.DistributionDatabase;
-import org.sapia.corus.taskmanager.TaskManager;
-import org.sapia.corus.taskmanager.v2.TaskLogProgressQueue;
-import org.sapia.corus.taskmanager.v2.TaskManagerV2;
+import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
+import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.IDGenerator;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
-import org.sapia.corus.util.ProgressQueueLogger;
 import org.sapia.corus.util.StringProperty;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
@@ -124,11 +122,10 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
 
     logger().info("Initializing: rebuilding distribution objects");
 
-    TaskManager tm = (TaskManager) env().lookup(TaskManager.ROLE);
+    TaskManager tm = serverContext().lookup(TaskManager.class);
 
     try {
-      ProgressQueueLogger.transferMessages(_log,
-        tm.execSyncTask("BuildDistTask", new BuildDistTask(_configuration.getDeployDir().getValue(), getDistributionStore())));
+      tm.executeAndWait(new BuildDistTask(_configuration.getDeployDir().getValue(), getDistributionStore()));
     } catch (Throwable t) {
       throw new CorusException(t);
     }
@@ -204,7 +201,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   public ProgressQueue undeploy(CommandArg distName, CommandArg version) {
     ProgressQueueImpl progress = new ProgressQueueImpl();
     try {
-      TaskManagerV2 tm = (TaskManagerV2) lookup(TaskManagerV2.class);
+      TaskManager tm = (TaskManager) lookup(TaskManager.class);
       Processor proc = lookup(Processor.class);
 
       if(proc.getProcesses(distName, version).size() > 0){
@@ -385,7 +382,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     releaseFileLock(_deployLocks, fileName);
     ProgressQueue progress = new ProgressQueueImpl();
     try {
-      TaskManagerV2 tm = lookup(TaskManagerV2.class);
+      TaskManager tm = lookup(TaskManager.class);
       
       tm.executeAndWait(
         new DeployTask(

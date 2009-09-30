@@ -5,9 +5,9 @@ import java.io.File;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.server.deployer.DistributionDatabase;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.tasks.TaskFactory;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskV2;
 
 
 /**
@@ -27,7 +27,7 @@ import org.sapia.corus.taskmanager.v2.TaskV2;
  *
  * @author Yanick Duchesne
  */
-public class DeployTask extends TaskV2 {
+public class DeployTask extends Task {
   private String            _fName;
   private String            _tmpDir;
   private String            _deployDir;
@@ -90,7 +90,7 @@ public class DeployTask extends TaskV2 {
 
         vms.mkdirs();
 
-        TaskV2 unjar = TaskFactory.newUnjarTask(src, dest);
+        Task unjar = TaskFactory.newUnjarTask(src, dest);
         //ctx.execSyncNestedTask("UnjarTask", unjar);
         ctx.getTaskManager().executeAndWait(unjar);
 
@@ -104,7 +104,7 @@ public class DeployTask extends TaskV2 {
     } catch (DeploymentException e) {
       ctx.error(e);
     } finally {
-      TaskV2 deleteFile = TaskFactory.newDeleteFileTask(new File(_tmpDir +
+      Task deleteFile = TaskFactory.newDeleteFileTask(new File(_tmpDir +
                                                                File.separator +
                                                                _fName));
       ctx.getTaskManager().executeAndWait(deleteFile);

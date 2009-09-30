@@ -4,9 +4,8 @@ import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.processor.task.v2.ProcessorTaskStrategy;
 import org.sapia.corus.server.processor.ProcessRepository;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
  * This task suspends an active process.

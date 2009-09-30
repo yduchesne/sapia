@@ -5,8 +5,8 @@ import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.processor.LockException;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskV2;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 
 /**
  * Absract class that provides convenient basic behavior for process-terminating tasks.
@@ -14,7 +14,7 @@ import org.sapia.corus.taskmanager.v2.TaskV2;
  * @author Yanick Duchesne
  *
  */
-public abstract class ProcessTerminationTask extends TaskV2 {
+public abstract class ProcessTerminationTask extends Task {
 
   private String                      _corusPid;
   private ProcessTerminationRequestor _requestor;

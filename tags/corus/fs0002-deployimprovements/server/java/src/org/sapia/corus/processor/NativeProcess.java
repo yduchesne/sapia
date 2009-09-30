@@ -1,7 +1,7 @@
 package org.sapia.corus.processor;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.taskman.TaskContext;
 
 import java.io.File;

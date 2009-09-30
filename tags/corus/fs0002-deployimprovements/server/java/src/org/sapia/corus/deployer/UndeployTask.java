@@ -1,18 +1,14 @@
 package org.sapia.corus.deployer;
 
-import org.sapia.corus.LogicException;
+import java.io.File;
+import java.util.List;
+
 import org.sapia.corus.admin.CommandArg;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.server.deployer.DistributionDatabase;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.tasks.TaskFactory;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskV2;
-
-import org.sapia.taskman.Task;
-import org.sapia.taskman.TaskContext;
-
-import java.io.File;
-import java.util.List;
 
 
 /**
@@ -20,7 +16,7 @@ import java.util.List;
  * 
  * @author Yanick Duchesne
  */
-public class UndeployTask extends TaskV2 {
+public class UndeployTask extends Task {
   private CommandArg      _name;
   private CommandArg      _version;
   private DistributionDatabase _store;
@@ -38,7 +34,7 @@ public class UndeployTask extends TaskV2 {
       File         distDir = new File(dist.getBaseDir());
       ctx.info("Undeploying distribution " + _name + ", version: " +
                  _version);
-      TaskV2 deleteDir = TaskFactory.newDeleteDirTask(distDir);
+      Task deleteDir = TaskFactory.newDeleteDirTask(distDir);
       ctx.getTaskManager().executeAndWait(deleteDir);
       _store.removeDistribution(_name, _version);
 

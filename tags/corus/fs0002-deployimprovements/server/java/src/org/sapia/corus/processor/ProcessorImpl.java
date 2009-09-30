@@ -27,17 +27,17 @@ import org.sapia.corus.interop.Status;
 import org.sapia.corus.processor.task.KillTask;
 import org.sapia.corus.processor.task.MultiExecTask;
 import org.sapia.corus.processor.task.ProcessCheckTask;
+import org.sapia.corus.processor.task.ProcessorTaskStrategy;
+import org.sapia.corus.processor.task.ProcessorTaskStrategyImpl;
 import org.sapia.corus.processor.task.RestartTask;
 import org.sapia.corus.processor.task.ResumeTask;
 import org.sapia.corus.processor.task.StartBootConfigsTask;
 import org.sapia.corus.processor.task.SuspendTask;
-import org.sapia.corus.processor.task.v2.ProcessorTaskStrategy;
-import org.sapia.corus.processor.task.v2.ProcessorTaskStrategyImpl;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.server.processor.ExecConfigDatabase;
 import org.sapia.corus.server.processor.ProcessDatabase;
 import org.sapia.corus.server.processor.ProcessRepository;
-import org.sapia.corus.taskmanager.v2.TaskManagerV2;
+import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 import org.sapia.taskman.PeriodicTaskDescriptor;
@@ -98,7 +98,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   }
   
   public void start() throws Exception {
-    TaskManagerV2  tm     = lookup(TaskManagerV2.class);
+    TaskManager  tm     = lookup(TaskManager.class);
     HttpModule   module = lookup(HttpModule.class);
     ProcessorExtension ext = new ProcessorExtension(this);
     module.addHttpExtension(ext);
@@ -140,7 +140,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     ProgressQueue progress = new ProgressQueueImpl();
     ProcessDependencyFilter filter = new ProcessDependencyFilter(progress);
     Deployer     deployer = lookup(Deployer.class);
-    TaskManagerV2  taskman = lookup(TaskManagerV2.class);
+    TaskManager  taskman = lookup(TaskManager.class);
     
     ExecConfig conf = this._execConfigs.getConfigFor(execConfigName);
     if(conf == null){
@@ -235,7 +235,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         copy.setInstanceCount(instances);
         toStart.add(copy);
       }
-      TaskManagerV2 taskman = lookup(TaskManagerV2.class); 
+      TaskManager taskman = lookup(TaskManager.class); 
       MultiExecTask  exec = new MultiExecTask(_startLock, toStart);
       taskman.executeBackground(0, _configuration.getExecIntervalMillis(), exec);
       
@@ -274,13 +274,13 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       CommandArg processName, boolean suspend) throws CorusException {
     List<Process> procs = _processes.getActiveProcesses().getProcesses(distName, version,
         profile, processName);
-    TaskManagerV2 tm;
+    TaskManager tm;
     KillTask kill;
     PeriodicTaskDescriptor ptd;
     Process proc;
 
     try {
-      tm = lookup(TaskManagerV2.class);
+      tm = lookup(TaskManager.class);
     } catch (Exception e) {
       throw new CorusException(e);
     }
@@ -312,12 +312,12 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     boolean suspend) throws CorusException {
     List<Process>          procs = _processes.getActiveProcesses().getProcesses(distName,
         version, profile);
-    TaskManagerV2          tm;
+    TaskManager          tm;
     KillTask               kill;
     PeriodicTaskDescriptor ptd;
     Process                proc;
     try {
-      tm = lookup(TaskManagerV2.class);
+      tm = lookup(TaskManager.class);
     } catch (Exception e) {
       throw new CorusException(e);
     }
@@ -351,12 +351,12 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         SuspendTask susp = new SuspendTask(
             ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN, 
             corusPid, proc.getMaxKillRetry());
-        lookup(TaskManagerV2.class).executeBackground(0, _configuration.getKillIntervalMillis(), susp);
+        lookup(TaskManager.class).executeBackground(0, _configuration.getKillIntervalMillis(), susp);
       } else {
         kill   = new KillTask(
             ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN,
             corusPid, proc.getMaxKillRetry());
-        lookup(TaskManagerV2.class).executeBackground(0, _configuration.getKillIntervalMillis(), kill);
+        lookup(TaskManager.class).executeBackground(0, _configuration.getKillIntervalMillis(), kill);
       }
     } catch (Exception e) {
       throw new CorusException(e);
@@ -378,7 +378,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
           origin, 
           dynId, proc.getMaxKillRetry());
 
-      lookup(TaskManagerV2.class).executeBackground(0, _configuration.getKillIntervalMillis(), restart);
+      lookup(TaskManager.class).executeBackground(0, _configuration.getKillIntervalMillis(), restart);
       
     } catch (CorusException e) {
       throw e;
@@ -389,12 +389,12 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
   public ProgressQueue resume() {
     Iterator<Process>    procs  = _processes.getSuspendedProcesses().getProcesses().iterator();
-    TaskManagerV2 tm;
+    TaskManager tm;
     ResumeTask  resume;
     Process     proc;
 
     try {
-      tm = lookup(TaskManagerV2.class);
+      tm = lookup(TaskManager.class);
     } catch (Exception e) {
       ProgressQueue q = new ProgressQueueImpl();
       q.error(e);

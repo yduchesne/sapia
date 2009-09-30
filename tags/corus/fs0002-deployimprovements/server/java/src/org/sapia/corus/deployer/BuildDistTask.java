@@ -1,14 +1,14 @@
 package org.sapia.corus.deployer;
 
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.server.deployer.DistributionDatabase;
-import org.sapia.corus.server.deployer.DuplicateDistributionException;
-import org.sapia.taskman.Task;
-import org.sapia.taskman.TaskContext;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.server.deployer.DistributionDatabase;
+import org.sapia.corus.server.deployer.DuplicateDistributionException;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 
 
 /**
@@ -18,13 +18,8 @@ import java.io.FileNotFoundException;
  * from the information that is contained in the corus.xml file.
  *
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
-public class BuildDistTask implements Task {
+public class BuildDistTask extends Task {
   private String            _deployDir;
   private DistributionDatabase _store;
 
@@ -33,28 +28,23 @@ public class BuildDistTask implements Task {
     _store     = store;
   }
 
-  /**
-   * @see org.sapia.taskman.Task#exec(org.sapia.taskman.TaskContext)
-   */
-  public void exec(TaskContext ctx) {
-    try {
-      File   f = new File(_deployDir);
+  @Override
+  public Object execute(TaskExecutionContext ctx) throws Throwable {
+    File   f = new File(_deployDir);
 
-      File[] distDirs = f.listFiles();
+    File[] distDirs = f.listFiles();
 
-      if ((distDirs != null) && (distDirs.length > 0)) {
-        for (int i = 0; i < distDirs.length; i++) {
-          processDistDir(ctx, distDirs[i]);
-        }
-      } else {
-        ctx.getTaskOutput().info("No distributions");
+    if ((distDirs != null) && (distDirs.length > 0)) {
+      for (int i = 0; i < distDirs.length; i++) {
+        processDistDir(ctx, distDirs[i]);
       }
-    } finally {
-      ctx.getTaskOutput().close();
+    } else {
+      ctx.info("No distributions");
     }
+    return null;
   }
 
-  private void processDistDir(TaskContext ctx, File distDir) {
+  private void processDistDir(TaskExecutionContext ctx, File distDir) {
     File[] versionDirs = distDir.listFiles();
 
     if ((versionDirs != null) && (versionDirs.length > 0)) {
@@ -66,7 +56,7 @@ public class BuildDistTask implements Task {
     }
   }
 
-  private void processVersionDir(TaskContext ctx, File versionDir) {
+  private void processVersionDir(TaskExecutionContext ctx, File versionDir) {
     File corusXML = new File(versionDir.getAbsolutePath() + File.separator +
                               "common" + File.separator + "META-INF" +
                               File.separator + "corus.xml");
@@ -76,16 +66,16 @@ public class BuildDistTask implements Task {
         Distribution dist = Distribution.newInstance(new FileInputStream(corusXML));
         dist.setBaseDir(versionDir.getAbsolutePath());
         _store.addDistribution(dist);
-        ctx.getTaskOutput().info("Adding distribution: " + dist.getName() + ", " + dist.getVersion());
+        ctx.info("Adding distribution: " + dist.getName() + ", " + dist.getVersion());
       } catch (FileNotFoundException e) {
-        ctx.getTaskOutput().error(e);
+        ctx.error(e);
       } catch (DeploymentException e) {
-        ctx.getTaskOutput().error(e);
+        ctx.error(e);
       } catch (DuplicateDistributionException e) {
-        ctx.getTaskOutput().error(e);
+        ctx.error(e);
       }
     } else {
-      ctx.getTaskOutput().error("File " + corusXML.getAbsolutePath() + " does not exist");
+      ctx.error("File " + corusXML.getAbsolutePath() + " does not exist");
     }
   }
 }

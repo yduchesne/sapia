@@ -6,9 +6,8 @@ import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.DistributionInfo;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.processor.ProcessInfo;
-import org.sapia.corus.processor.task.v2.ProcessorTaskStrategy;
-import org.sapia.corus.taskmanager.v2.TaskExecutionContext;
-import org.sapia.corus.taskmanager.v2.TaskV2;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.Task;
 
 
 /**
@@ -16,7 +15,7 @@ import org.sapia.corus.taskmanager.v2.TaskV2;
  *
  * @author Yanick Duchesne
  */
-public class ExecTask extends TaskV2{
+public class ExecTask extends Task{
   private Distribution  _dist;
   private ProcessConfig _processConf;
   private String        _profile;
