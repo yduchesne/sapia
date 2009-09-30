@@ -2,8 +2,8 @@ package org.sapia.corus.taskmanager.v2;
 
 public abstract class TaskV2 {
 
-  private boolean aborted;
-  private int executionCount, maxExecution;
+  private volatile boolean aborted;
+  private volatile int executionCount, maxExecution;
   private String name;
 
   public TaskV2() {
@@ -26,6 +26,10 @@ public abstract class TaskV2 {
   
   boolean isAborted() {
     return aborted;
+  }
+  
+  boolean isMaxExecutionReached(){
+    return maxExecution > 0 && executionCount >= maxExecution;
   }
   
   public abstract Object execute(TaskExecutionContext ctx) throws Throwable;

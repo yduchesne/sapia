@@ -29,57 +29,107 @@ public class TaskManagerV2Impl implements TaskManagerV2{
   }
   
   public void execute(final TaskV2 task) {
-    sequential.execute(new Runnable(){
-      public void run() {
-        TaskExecutionContext ctx = new TaskExecutionContext(
-            task,
-            createLogFor(task), 
-            serverContext, 
-            self());
-        try{
-          task.execute(ctx);
-        }catch(Throwable t){
-          ctx.getLog().error(task, "Problem occurred executing task", t);
-        }
+    if(task.isMaxExecutionReached()){
+      TaskExecutionContext ctx = new TaskExecutionContext(
+          task,
+          createLogFor(task), 
+          serverContext, 
+          self());
+      try{
+        task.onMaxExecutionReached(ctx);
+      }catch(Throwable err){
+        ctx.error(err);
       }
-    });
+    }
+    else{
+      sequential.execute(new Runnable(){
+        public void run() {
+          TaskExecutionContext ctx = new TaskExecutionContext(
+              task,
+              createLogFor(task), 
+              serverContext, 
+              self());
+          try{
+            task.execute(ctx);
+          }catch(Throwable t){
+            ctx.getLog().error(task, "Problem occurred executing task", t);
+          }finally{
+            task.incrementExecutionCount();
+          }
+        }
+      });
+    }
   }
   
   public FutureResult executeAndWait(final TaskV2 task) {
     final FutureResult result = new FutureResult();
-    sequential.execute(new Runnable(){
-      public void run() {
-        try{
-          Object o = task.execute(new TaskExecutionContext(
-              task,
-              createLogFor(task), 
-              serverContext, 
-              self()));
-          result.completed(o);
-        }catch(Throwable t){
-          result.completed(t);
-        }
+    if(task.isMaxExecutionReached()){
+      TaskExecutionContext ctx = new TaskExecutionContext(
+          task,
+          createLogFor(task), 
+          serverContext, 
+          self());
+      try{
+        task.onMaxExecutionReached(ctx);
+        result.completed(null);
+      }catch(Throwable err){
+        result.completed(err);
       }
-    });
+    }
+    else{
+      sequential.execute(new Runnable(){
+        public void run() {
+          try{
+            Object o = task.execute(new TaskExecutionContext(
+                task,
+                createLogFor(task), 
+                serverContext, 
+                self()));
+            result.completed(o);
+          }catch(Throwable t){
+            result.completed(t);
+          }finally{
+            task.incrementExecutionCount();
+          }
+        }
+      });
+    }
     return result;
   }
   
   public FutureResult executeAndWait(final TaskV2 task, final TaskLog parentLog) {
     final FutureResult result = new FutureResult();
-    sequential.execute(new Runnable(){
-      public void run() {
-        try{
-          Object o = task.execute(new TaskExecutionContext(
-              task,
-              createLogFor(task, parentLog), 
-              serverContext, 
-              self()));
-          result.completed(o);
-        }catch(Throwable t){
-          result.completed(t);
-        }
+    if(task.isMaxExecutionReached()){
+      TaskExecutionContext ctx = new TaskExecutionContext(
+          task,
+          createLogFor(task), 
+          serverContext, 
+          self());
+      try{
+        task.onMaxExecutionReached(ctx);
+        result.completed(null);
+      }catch(Throwable err){
+        result.completed(err);
       }
-    });
+    }
+    else{
+      sequential.execute(new Runnable(){
+        public void run() {
+          try{
+            Object o = task.execute(new TaskExecutionContext(
+                task,
+                createLogFor(task, parentLog), 
+                serverContext, 
+                self()));
+            result.completed(o);
+          }catch(Throwable t){
+            result.completed(t);
+          }finally{
+            task.incrementExecutionCount();
+          }
+        }
+      });
+    }
     return result;
   }
   
@@ -92,7 +142,7 @@ public class TaskManagerV2Impl implements TaskManagerV2{
           super.cancel();
           background.purge();
         }
-        else if(task.getMaxExecution() > 0 && task.getExecutionCount() >= task.getMaxExecution()){
+        else if(task.isMaxExecutionReached()){
           TaskExecutionContext ctx = new TaskExecutionContext(
               task,
               createLogFor(task), 
@@ -100,7 +150,6 @@ public class TaskManagerV2Impl implements TaskManagerV2{
               self());
           try{
             task.onMaxExecutionReached(ctx);
-            
           }catch(Throwable err){
             ctx.getLog().error(task, "Error terminating task");
           }
@@ -126,38 +175,69 @@ public class TaskManagerV2Impl implements TaskManagerV2{
   }
   
   public void fork(final TaskV2 task) {
-    parallel.execute(new Runnable(){
-      public void run() {
-        TaskExecutionContext ctx = new TaskExecutionContext(
-            task,
-            createLogFor(task), 
-            serverContext, 
-            self());
-        try{
-          task.execute(ctx);
-        }catch(Throwable t){
-          ctx.getLog().error(task, "Problem occurred executing task", t);
-        }
+    if(task.isMaxExecutionReached()){
+      TaskExecutionContext ctx = new TaskExecutionContext(
+          task,
+          createLogFor(task), 
+          serverContext, 
+          self());
+      try{
+        task.onMaxExecutionReached(ctx);
+      }catch(Throwable err){
+        ctx.error(err);
       }
-    });
-    
+    }
+    else{
+      parallel.execute(new Runnable(){
+        public void run() {
+          TaskExecutionContext ctx = new TaskExecutionContext(
+              task,
+              createLogFor(task), 
+              serverContext, 
+              self());
+          try{
+            task.execute(ctx);
+          }catch(Throwable t){
+            ctx.getLog().error(task, "Problem occurred executing task", t);
+          }finally{
+            task.incrementExecutionCount();
+          }
+        }
+      });
+    }
   }
   
   public void fork(final TaskV2 task, final TaskListener listener) {
-    parallel.execute(new Runnable(){
-      public void run() {
-        try{
-          Object o = task.execute(new TaskExecutionContext(
-              task,
-              createLogFor(task),
-              serverContext, 
-              self()));
-          listener.executionSucceeded(task, o);
-        }catch(Throwable t){
-          listener.executionFailed(task, t);
-        }
+    if(task.isMaxExecutionReached()){
+      TaskExecutionContext ctx = new TaskExecutionContext(
+          task,
+          createLogFor(task), 
+          serverContext, 
+          self());
+      try{
+        task.onMaxExecutionReached(ctx);
+      }catch(Throwable err){
+        ctx.error(err);
       }
-    });
+    }
+    else{
+      parallel.execute(new Runnable(){
+        public void run() {
+          try{
+            Object o = task.execute(new TaskExecutionContext(
+                task,
+                createLogFor(task),
+                serverContext, 
+                self()));
+            listener.executionSucceeded(task, o);
+          }catch(Throwable t){
+            listener.executionFailed(task, t);
+          }finally{
+            task.incrementExecutionCount();
+          }
+        }
+      });
+    }
   }
   
   public void shutdown(){
