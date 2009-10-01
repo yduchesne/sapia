@@ -21,13 +21,11 @@ import org.sapia.util.xml.confix.ReflectionFactory;
  * corus.xml file.
  *
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class Distribution implements java.io.Serializable {
+  
+  static final long serialVersionUID = 1L;
+
   private static final String DEPLOYMENT_DESCRIPTOR = "META-INF/corus.xml";
   private static final int    CAPACITY   = 4096;
   private String              _name;
@@ -125,8 +123,6 @@ public class Distribution implements java.io.Serializable {
    * with the given name.
    */
   public boolean containsProcess(String name) {
-    ProcessConfig vm;
-
     for(ProcessConfig pc: _processConfigs){
       if(pc.getName().equals(name)){
         return true;
@@ -143,7 +139,6 @@ public class Distribution implements java.io.Serializable {
    * or <code>null</code> if none could be found.
    */  
   public ProcessConfig getProcess(String name) {
-    ProcessConfig vm;
     for (ProcessConfig pc: _processConfigs) {
       if (name.matches(pc.getName())) {
         return pc;

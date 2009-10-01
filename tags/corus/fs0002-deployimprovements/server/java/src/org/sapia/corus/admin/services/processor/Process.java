@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sapia.corus.admin.services.port.PortManager;
+import org.sapia.corus.exceptions.LockException;
 import org.sapia.corus.interop.Shutdown;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.interop.client.CyclicIdGenerator;

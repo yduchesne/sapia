@@ -7,10 +7,10 @@ import org.sapia.console.AbortException;
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-import org.sapia.corus.CorusException;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.cli.help.Help;
 import org.sapia.corus.admin.cli.help.NoHelpException;
+import org.sapia.corus.exceptions.CorusException;
 
 /**
  * @author Yanick Duchesne

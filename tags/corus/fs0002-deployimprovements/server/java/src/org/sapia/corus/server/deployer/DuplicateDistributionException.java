@@ -1,6 +1,6 @@
 package org.sapia.corus.server.deployer;
 
-import org.sapia.corus.LogicException;
+import org.sapia.corus.exceptions.LogicException;
 
 
 /**

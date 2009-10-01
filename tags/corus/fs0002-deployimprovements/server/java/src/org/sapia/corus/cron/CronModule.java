@@ -2,9 +2,9 @@ package org.sapia.corus.cron;
 
 import java.util.List;
 
-import org.sapia.corus.CorusException;
-import org.sapia.corus.LogicException;
-import org.sapia.corus.Module;
+import org.sapia.corus.admin.Module;
+import org.sapia.corus.exceptions.CorusException;
+import org.sapia.corus.exceptions.LogicException;
 
 
 /**

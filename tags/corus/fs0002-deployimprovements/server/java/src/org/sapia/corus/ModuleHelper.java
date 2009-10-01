@@ -2,6 +2,7 @@ package org.sapia.corus;
 
 import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
+import org.sapia.corus.admin.Module;
 import org.sapia.soto.Env;
 import org.sapia.soto.EnvAware;
 import org.sapia.soto.Service;

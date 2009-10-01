@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.http.HttpContext;
 import org.sapia.corus.http.HttpExtension;
 import org.sapia.corus.http.HttpExtensionInfo;

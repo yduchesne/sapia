@@ -15,6 +15,7 @@ import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.event.EventDispatcher;
+import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.log.CompositeTarget;
 import org.sapia.corus.log.FormatterFactory;
 import org.sapia.corus.log.StdoutTarget;

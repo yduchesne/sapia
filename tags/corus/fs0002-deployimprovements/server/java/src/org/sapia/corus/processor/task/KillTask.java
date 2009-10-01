@@ -1,10 +1,10 @@
 package org.sapia.corus.processor.task;
 
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 

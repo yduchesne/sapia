@@ -9,13 +9,13 @@ import org.sapia.console.table.Cell;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
 import org.sapia.corus.ClusterInfo;
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.admin.services.processor.ProcStatus;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Context;
 import org.sapia.corus.interop.Param;
-import org.sapia.corus.processor.ProcStatus;
 import org.sapia.ubik.net.ServerAddress;
 
 

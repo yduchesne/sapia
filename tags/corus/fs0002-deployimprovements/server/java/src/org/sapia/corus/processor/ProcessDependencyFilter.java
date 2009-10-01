@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.StringArg;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Dependency;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.util.ProgressQueue;
 
 public class ProcessDependencyFilter {

@@ -5,7 +5,9 @@ import java.rmi.RemoteException;
 import java.util.Properties;
 
 import org.apache.log.Hierarchy;
-import org.sapia.corus.naming.JndiModule;
+import org.sapia.corus.admin.Corus;
+import org.sapia.corus.admin.services.naming.JndiModule;
+import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.util.PropertyContainer;
 import org.sapia.soto.SotoContainer;
 import org.sapia.soto.util.Utils;

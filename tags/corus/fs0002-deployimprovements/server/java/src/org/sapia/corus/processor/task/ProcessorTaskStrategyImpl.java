@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.sapia.console.CmdLine;
 import org.sapia.corus.Consts;
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.configurator.Configurator;
@@ -24,16 +23,18 @@ import org.sapia.corus.admin.services.deployer.dist.Port;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.deployer.dist.Property;
 import org.sapia.corus.admin.services.port.PortManager;
-import org.sapia.corus.admin.services.port.PortUnavailableException;
 import org.sapia.corus.admin.services.processor.ActivePort;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.exceptions.PortUnavailableException;
 import org.sapia.corus.processor.NativeProcess;
 import org.sapia.corus.processor.NativeProcessFactory;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.tasks.TaskFactory;
 import org.sapia.ubik.rmi.naming.remote.RemoteInitialContextFactory;
@@ -337,8 +338,11 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     ProcessorConfiguration processorConf = ctx.getServerContext().getServices()
         .lookup(Processor.class).getConfiguration();
     KillTask kill = new KillTask(requestor, proc.getProcessID(), proc.getMaxKillRetry());
-    ctx.getTaskManager().executeBackground(0,
-        processorConf.getKillIntervalMillis(), kill);
+    ctx.getTaskManager().executeBackground(
+        kill, 
+        BackgroundTaskConfig.create()
+          .setExecDelay(0)
+          .setExecInterval(processorConf.getKillIntervalMillis()));
   }
 
   public File makeProcessDir(TaskExecutionContext ctx, ProcessInfo info) {

@@ -2,9 +2,9 @@ package org.sapia.corus.server.processor;
 
 import java.util.List;
 
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.exceptions.LogicException;
 
 public interface ProcessDatabase {
 

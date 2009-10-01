@@ -3,13 +3,14 @@ package org.sapia.corus.processor.task;
 import java.io.IOException;
 
 import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.exceptions.LockException;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.server.processor.ProcessRepository;
@@ -75,7 +76,7 @@ public class RestartTask extends ProcessTerminationTask {
         ctx.getTaskManager().fork(restart);
         
       }
-    } catch (LogicException e) {
+    } catch (Exception e) {
       ctx.error(e);
     } finally {
       super.abort(ctx);

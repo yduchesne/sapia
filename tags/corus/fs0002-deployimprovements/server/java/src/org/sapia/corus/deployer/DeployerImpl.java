@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.sapia.corus.CorusException;
 import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.LogicException;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.ServerStartedEvent;
 import org.sapia.corus.admin.Arg;
@@ -27,8 +25,11 @@ import org.sapia.corus.deployer.transport.DeploymentClientFactory;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.corus.deployer.transport.DeploymentProcessor;
 import org.sapia.corus.event.EventDispatcher;
+import org.sapia.corus.exceptions.CorusException;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.http.HttpModule;
 import org.sapia.corus.server.deployer.DistributionDatabase;
+import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.IDGenerator;
@@ -45,11 +46,6 @@ import org.sapia.ubik.rmi.replication.ReplicationStrategy;
  * This component implements the <code>Deployer</code> interface.
  *
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class DeployerImpl extends ModuleHelper implements Deployer,
   DeploymentConnector, Interceptor {
@@ -171,7 +167,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.Module#getRoleName()
+   * @see org.sapia.corus.admin.Module#getRoleName()
    */
   public String getRoleName() {
     return Deployer.ROLE;
@@ -208,7 +204,8 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
         throw new LogicException("Processes for selected configuration are currently running; kill them prior to undeploying");
       }
 
-      tm.executeAndWait(new UndeployTask(getDistributionStore(), distName, version), new TaskLogProgressQueue(progress));
+      TaskConfig cfg = TaskConfig.create(new TaskLogProgressQueue(progress));
+      tm.executeAndWait(new UndeployTask(getDistributionStore(), distName, version), cfg);
     } catch (Throwable e) {
       progress.error(e);
     }
@@ -390,7 +387,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
             fileName, 
             _configuration.getTempDir().getValue(), 
             _configuration.getDeployDir().getValue()),
-            new TaskLogProgressQueue(progress));
+            TaskConfig.create(new TaskLogProgressQueue(progress)));
       
     } catch (Throwable e) {
       _log.error("Could not deploy", e);

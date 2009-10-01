@@ -6,6 +6,7 @@ import java.util.List;
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
+import org.sapia.corus.admin.Corus;
 import org.sapia.corus.taskmanager.CorusTaskManager;
 import org.sapia.corus.util.ProgressMsg;
 import org.sapia.corus.util.ProgressQueue;

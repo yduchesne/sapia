@@ -16,7 +16,7 @@ import org.sapia.ubik.rmi.interceptor.MultiDispatcher;
 public class EventDispatcherImpl extends MultiDispatcher implements EventDispatcher, Service{
 	
   /**
-   * @see org.sapia.corus.Module#getRoleName()
+   * @see org.sapia.corus.admin.Module#getRoleName()
    */
   public String getRoleName() {
     return ROLE;

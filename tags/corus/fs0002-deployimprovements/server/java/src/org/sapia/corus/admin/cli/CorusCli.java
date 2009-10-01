@@ -11,9 +11,9 @@ import org.sapia.console.ConsoleListener;
 import org.sapia.console.Context;
 import org.sapia.console.InputException;
 import org.sapia.console.ReflectCommandFactory;
-import org.sapia.corus.CorusException;
 import org.sapia.corus.admin.CorusFacade;
 import org.sapia.corus.admin.CorusFacadeImpl;
+import org.sapia.corus.exceptions.CorusException;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.util.Localhost;
 
@@ -89,8 +89,8 @@ public class CorusCli extends CommandConsole {
       help();
     } catch (Exception e) {
       if(e instanceof CorusException && 
-         ((CorusException)e).getNestedError() != null && 
-         ((CorusException)e).getNestedError() instanceof RemoteException){
+         ((CorusException)e).getCause() != null && 
+         ((CorusException)e).getCause() instanceof RemoteException){
         System.out.println("No server listening at " + host + ":" + port);
       }
       else{

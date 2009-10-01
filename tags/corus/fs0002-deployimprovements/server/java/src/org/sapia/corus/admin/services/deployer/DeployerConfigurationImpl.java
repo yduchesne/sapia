@@ -7,7 +7,7 @@ import org.sapia.corus.util.Property;
 
 public class DeployerConfigurationImpl implements Serializable, DeployerConfiguration{
   
-  static final long serialVersionID = 1L;
+  static final long serialVersionUID = 1L;
 
   public static final Property DEFAULT_FILELOCK_TIMEOUT = new LongProperty(120000L);
 

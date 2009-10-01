@@ -2,12 +2,12 @@ package org.sapia.corus.taskmanager.core;
 
 public class Tasks {
   
-  public static StandardTaskConfig createStandardConfig(){
-    return new StandardTaskConfig();
+  public static SequentialTaskConfig createSequentialTaskConfig(){
+    return new SequentialTaskConfig();
   }
 
-  public static StandardTaskConfig createStandardConfig(TaskListener listener){
-    StandardTaskConfig c = createStandardConfig();
+  public static SequentialTaskConfig createSequentialTaskConfig(TaskListener listener){
+    SequentialTaskConfig c = createSequentialTaskConfig();
     c.setListener(listener);
     return c;
   }

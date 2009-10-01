@@ -10,22 +10,19 @@ import java.util.List;
  * launch Java processes.
  * 
  * @author Yanick Duchesne
- *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public abstract class BaseJavaStarter implements Starter, Serializable {
+  
+  static final long serialVersionUID = 1L;
+
   protected String _javaHome   = System.getProperty("java.home");
   protected String _javaCmd    = "java";
   protected String _vmType; 
   protected String _profile;
   protected String _corusHome = System.getProperty("corus.home");
-  protected List   _vmProps    = new ArrayList();
-  protected List   _options    = new ArrayList();
-  protected List   _xoptions   = new ArrayList();
+  protected List<Property>   _vmProps   = new ArrayList<Property>();
+  protected List<Option>    _options    = new ArrayList<Option>();
+  protected List<XOption>   _xoptions   = new ArrayList<XOption>();
 
   /**
    * Sets the Corus home.

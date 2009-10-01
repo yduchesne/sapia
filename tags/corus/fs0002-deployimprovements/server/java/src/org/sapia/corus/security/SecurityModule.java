@@ -2,7 +2,7 @@ package org.sapia.corus.security;
 
 import java.rmi.Remote;
 
-import org.sapia.corus.Module;
+import org.sapia.corus.admin.Module;
 import org.sapia.corus.util.Property;
 
 /**

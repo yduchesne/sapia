@@ -93,30 +93,29 @@ public class TaskExecutionContext {
       taskManager.execute(task);
     }
     
+    public void execute(Task task, SequentialTaskConfig conf) {
+      taskManager.execute(task, conf);
+    }
+    
     public FutureResult executeAndWait(Task task) {
       return taskManager.executeAndWait(task);
     }
     
-    public FutureResult executeAndWait(Task task, TaskLog parent) {
-      return taskManager.executeAndWait(task, parent);
+    public FutureResult executeAndWait(Task task, TaskConfig conf) {
+      return taskManager.executeAndWait(task, conf);
     }
     
-    public void executeBackground(long startDelay, long execInterval,
-        Task task) {
-      taskManager.executeBackground(startDelay, execInterval, task);
-    }
     
-    public void executeBackground(long startDelay, long execInterval,
-        Task task, BackgroundTaskListener listener) {
-      taskManager.executeBackground(startDelay, execInterval, task, listener);
+    public void executeBackground(Task task, BackgroundTaskConfig conf) {
+      taskManager.executeBackground(task, conf);
     }
     
     public void fork(Task task) {
       taskManager.fork(task);
     }
     
-    public void fork(Task task, TaskListener listener) {
-      taskManager.fork(task, listener);
+    public void fork(Task task, ForkedTaskConfig conf) {
+      taskManager.fork(task, conf);
     }
     
   }

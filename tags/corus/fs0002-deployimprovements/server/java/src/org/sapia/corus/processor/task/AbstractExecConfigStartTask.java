@@ -14,6 +14,7 @@ import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.BackgroundTaskListener;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
@@ -73,7 +74,10 @@ public abstract class AbstractExecConfigStartTask extends Task{
         ctx.warn("Found old processes; proceeding to kill");
         ProcessorConfiguration conf = ctx.getServerContext().getServices().getProcessor().getConfiguration();
         KillTask kill = new KillTask(ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, p.getProcessID(), p.getMaxKillRetry());
-        ctx.getTaskManager().executeBackground(0, conf.getKillIntervalMillis(), kill, listener);      
+        ctx.getTaskManager().executeBackground(
+            kill, 
+            BackgroundTaskConfig.create(listener).setExecDelay(0).setExecInterval(conf.getKillIntervalMillis())
+        );      
       }
     }
     return null;

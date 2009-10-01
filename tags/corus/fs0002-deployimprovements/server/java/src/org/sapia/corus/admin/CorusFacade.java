@@ -7,18 +7,18 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sapia.corus.ClusterInfo;
-import org.sapia.corus.CorusException;
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
-import org.sapia.corus.admin.services.port.PortActiveException;
-import org.sapia.corus.admin.services.port.PortRangeConflictException;
-import org.sapia.corus.admin.services.port.PortRangeInvalidException;
 import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.cron.CronJobInfo;
 import org.sapia.corus.cron.InvalidTimeException;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
-import org.sapia.corus.processor.ProcStatus;
+import org.sapia.corus.exceptions.CorusException;
+import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.exceptions.PortActiveException;
+import org.sapia.corus.exceptions.PortRangeConflictException;
+import org.sapia.corus.exceptions.PortRangeInvalidException;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.ubik.net.ServerAddress;
 

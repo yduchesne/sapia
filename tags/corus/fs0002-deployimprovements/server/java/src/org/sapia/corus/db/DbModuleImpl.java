@@ -76,7 +76,7 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.Module#getRoleName()
+   * @see org.sapia.corus.admin.Module#getRoleName()
    */
   public String getRoleName() {
     return DbModule.ROLE;

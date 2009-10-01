@@ -1,7 +1,7 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.LogicException;
+import org.sapia.corus.exceptions.LogicException;
 
 
 /**

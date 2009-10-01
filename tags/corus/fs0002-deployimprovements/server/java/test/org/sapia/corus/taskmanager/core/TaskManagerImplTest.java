@@ -49,13 +49,14 @@ public class TaskManagerImplTest extends TestCase {
   public void testExecuteAndWaitTaskWithLog() throws Exception{
     TestTask t = new TestTask();
     TestTaskLog log = new TestTaskLog();
-    tm.executeAndWait(t, log).get();
+
+    tm.executeAndWait(t, new TaskConfig().setLog(log)).get();
     assertTrue("Parent log was not called", log.logged);
   }
 
   public void testExecuteBackground() throws Exception{
     TestTask t = new TestTask();
-    tm.executeBackground(200, 200, t);
+    tm.executeBackground(t, BackgroundTaskConfig.create().setExecDelay(200).setExecInterval(200));
     Thread.sleep(1000);
     assertTrue("Task executed only once or less", t.getExecutionCount() > 1);
   }
@@ -63,7 +64,7 @@ public class TaskManagerImplTest extends TestCase {
   public void testExecuteBackgroundWithMax() throws Exception{
     TestTask t = new TestTask();
     t.setMaxExecution(3);
-    tm.executeBackground(200, 200, t);
+    tm.executeBackground(t, BackgroundTaskConfig.create().setExecDelay(200).setExecInterval(200));
     Thread.sleep(1000);
     assertTrue("Task executed more than max", t.getExecutionCount() > 0 && t.getExecutionCount() <= 3);
   }
@@ -78,7 +79,8 @@ public class TaskManagerImplTest extends TestCase {
   public void testForkTaskWithListener() throws Exception{
     TestTask t = new TestTask();
     TestTaskListener ls = new TestTaskListener();
-    tm.fork(t, ls);
+    
+    tm.fork(t, ForkedTaskConfig.create(ls));
     t.waitFor();
     assertTrue("Task listener not called", ls.succeeded);
   }
@@ -86,7 +88,7 @@ public class TaskManagerImplTest extends TestCase {
   public void testForkTaskErrorWithListener() throws Exception{
     ErrorTask t = new ErrorTask();
     TestTaskListener ls = new TestTaskListener();
-    tm.fork(t, ls);
+    tm.fork(t, ForkedTaskConfig.create(ls));
     t.waitFor();
     assertTrue("Task listener not called", ls.failed);
   }

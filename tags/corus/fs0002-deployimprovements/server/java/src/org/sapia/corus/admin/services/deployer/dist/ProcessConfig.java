@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.LogicException;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.util.xml.confix.ConfigurationException;
 import org.sapia.util.xml.confix.ObjectHandlerIF;
 
@@ -24,6 +24,9 @@ import org.sapia.util.xml.confix.ObjectHandlerIF;
  * </dl>
  */
 public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
+  
+  static final long serialVersionUID = 1L;
+
   public static final int DEFAULT_POLL_INTERVAL   = 10;
   public static final int DEFAULT_STATUS_INTERVAL = 30;
   private boolean         _invoke;

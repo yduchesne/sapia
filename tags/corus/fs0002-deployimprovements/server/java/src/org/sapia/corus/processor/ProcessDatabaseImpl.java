@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.db.DbMap;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.server.processor.ProcessDatabase;
 
 

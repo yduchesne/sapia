@@ -2,8 +2,8 @@ package org.sapia.corus.deployer;
 
 import java.io.File;
 
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;

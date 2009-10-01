@@ -16,14 +16,14 @@ import java.util.List;
 
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.admin.services.port.PortActiveException;
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.port.PortRange;
-import org.sapia.corus.admin.services.port.PortRangeConflictException;
-import org.sapia.corus.admin.services.port.PortRangeInvalidException;
-import org.sapia.corus.admin.services.port.PortUnavailableException;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
+import org.sapia.corus.exceptions.PortActiveException;
+import org.sapia.corus.exceptions.PortRangeConflictException;
+import org.sapia.corus.exceptions.PortRangeInvalidException;
+import org.sapia.corus.exceptions.PortUnavailableException;
 import org.sapia.soto.Service;
 
 /**

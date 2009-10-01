@@ -9,6 +9,9 @@ import java.io.Serializable;
  * @author Yanick Duchesne
  */
 public class DistributionInfo implements Serializable {
+  
+  static final long serialVersionUID = 1L;
+
   private String _name;
   private String _version;
   private String _profile;

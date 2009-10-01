@@ -44,7 +44,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   private boolean _isRunning = false;
   
   /**
-   * @see org.sapia.corus.Module#getRoleName()
+   * @see org.sapia.corus.admin.Module#getRoleName()
    */
   public String getRoleName() {
     return ROLE;

@@ -3,10 +3,12 @@ package org.sapia.corus.taskmanager;
 import org.apache.log.Logger;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.ServerContext;
-import org.sapia.corus.taskmanager.core.BackgroundTaskListener;
+import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
+import org.sapia.corus.taskmanager.core.ForkedTaskConfig;
 import org.sapia.corus.taskmanager.core.FutureResult;
+import org.sapia.corus.taskmanager.core.SequentialTaskConfig;
 import org.sapia.corus.taskmanager.core.Task;
-import org.sapia.corus.taskmanager.core.TaskListener;
+import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLog;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TaskManagerImpl;
@@ -43,7 +45,7 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.Module#getRoleName()
+   * @see org.sapia.corus.admin.Module#getRoleName()
    */
   public String getRoleName() {
     return CorusTaskManager.ROLE;
@@ -57,29 +59,28 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
     _delegate.execute(task);
   }
   
+  public void execute(Task task, SequentialTaskConfig conf) {
+    _delegate.execute(task, conf);
+  }
+  
   public FutureResult executeAndWait(Task task) {
     return _delegate.executeAndWait(task);
   }
   
-  public FutureResult executeAndWait(Task task, TaskLog parent) {
-    return _delegate.executeAndWait(task, parent);
+  public FutureResult executeAndWait(Task task, TaskConfig cfg) {
+    return _delegate.executeAndWait(task, cfg);
   }
   
-  public void executeBackground(long startDelay, long execInterval, Task task) {
-    _delegate.executeBackground(startDelay, execInterval, task);
-  }
-  
-  public void executeBackground(long startDelay, long execInterval, Task task,
-      BackgroundTaskListener listener) {
-    _delegate.executeBackground(startDelay, execInterval, task, listener);
+  public void executeBackground(Task task, BackgroundTaskConfig cfg) {
+    _delegate.executeBackground(task, cfg);
   }
   
   public void fork(Task task) {
     _delegate.fork(task);
   }
   
-  public void fork(Task task, TaskListener listener) {
-    _delegate.fork(task, listener);
+  public void fork(Task task, ForkedTaskConfig cfg) {
+    _delegate.fork(task, cfg);
   }
 
   public ProgressQueue getProgressQueue(int level){
@@ -92,11 +93,6 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
     
     public InternalTaskManager(Logger logger, ServerContext ctx) {
       super(logger, ctx);
-    }
-    
-    @Override
-    protected TaskLog createLogFor(Task task) {
-      return new ServerTaskLog(_queues, super.createLogFor(task));
     }
     
     @Override

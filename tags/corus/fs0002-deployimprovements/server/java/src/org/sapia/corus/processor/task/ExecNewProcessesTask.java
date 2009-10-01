@@ -3,7 +3,6 @@ package org.sapia.corus.processor.task;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.LogicException;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.StringArg;
 import org.sapia.corus.admin.services.deployer.Deployer;
@@ -12,10 +11,12 @@ import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.ProcessDef;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.ProcessDependencyFilter;
 import org.sapia.corus.processor.ProcessRef;
 import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.ProgressQueueTaskLog;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
@@ -85,9 +86,10 @@ public class ExecNewProcessesTask extends Task{
     List<ProcessRef> filteredProcesses = filter.getFilteredProcesses();
     MultiExecTask exec = new MultiExecTask(lock, filteredProcesses);
     ctx.getTaskManager().executeBackground(
-        0, 
-        processor.getConfiguration().getExecIntervalMillis(), 
-        exec);
+        exec, 
+        BackgroundTaskConfig.create()
+          .setExecDelay(0)
+          .setExecInterval(processor.getConfiguration().getExecIntervalMillis()));
     return null;
   }
 }

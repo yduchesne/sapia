@@ -19,6 +19,8 @@ import org.sapia.util.xml.confix.ObjectCreationCallback;
  */
 public class Port implements java.io.Serializable, ObjectCreationCallback{
   
+  static final long serialVersionUID = 1L;
+
   private String _name;
   
   /** Creates a new instance of Port */

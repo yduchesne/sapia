@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.sapia.corus.Module;
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.Module;
 import org.sapia.corus.util.NameValuePair;
 
 /**

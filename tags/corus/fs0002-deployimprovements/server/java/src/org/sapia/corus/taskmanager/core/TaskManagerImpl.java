@@ -28,11 +28,15 @@ public class TaskManagerImpl implements TaskManager{
     this.sequential = Executors.newFixedThreadPool(1);
   }
   
-  public void execute(final Task task) {
+  public void execute(Task task) {
+    this.execute(task, SequentialTaskConfig.create());
+  }
+  
+  public void execute(final Task task, final SequentialTaskConfig conf) {
     if(task.isMaxExecutionReached()){
       TaskExecutionContext ctx = new TaskExecutionContext(
           task,
-          createLogFor(task), 
+          createLogFor(task, conf.getLog()), 
           serverContext, 
           self());
       try{
@@ -46,13 +50,19 @@ public class TaskManagerImpl implements TaskManager{
         public void run() {
           TaskExecutionContext ctx = new TaskExecutionContext(
               task,
-              createLogFor(task), 
+              createLogFor(task, conf.getLog()), 
               serverContext, 
               self());
           try{
-            task.execute(ctx);
+            Object result = task.execute(ctx);
+            if(conf.getListener() != null){
+              conf.getListener().executionSucceeded(task, result);
+            }
           }catch(Throwable t){
             ctx.getLog().error(task, "Problem occurred executing task", t);
+            if(conf.getListener() != null){
+              conf.getListener().executionFailed(task, t);
+            }
           }finally{
             task.incrementExecutionCount();
           }
@@ -61,12 +71,16 @@ public class TaskManagerImpl implements TaskManager{
     }
   }
   
-  public FutureResult executeAndWait(final Task task) {
+  public FutureResult executeAndWait(Task task) {
+    return executeAndWait(task, new TaskConfig());
+  }
+  
+  public FutureResult executeAndWait(final Task task, final TaskConfig conf) {
     final FutureResult result = new FutureResult();
     if(task.isMaxExecutionReached()){
       TaskExecutionContext ctx = new TaskExecutionContext(
           task,
-          createLogFor(task), 
+          createLogFor(task, conf.getLog()), 
           serverContext, 
           self());
       try{
@@ -74,6 +88,11 @@ public class TaskManagerImpl implements TaskManager{
         result.completed(null);
       }catch(Throwable err){
         result.completed(err);
+      }finally{
+        task.incrementExecutionCount();
+        if(conf.getLog() != null){
+          conf.getLog().close();
+        }
       }
     }
     else{
@@ -82,7 +101,7 @@ public class TaskManagerImpl implements TaskManager{
           try{
             Object o = task.execute(new TaskExecutionContext(
                 task,
-                createLogFor(task), 
+                createLogFor(task, conf.getLog()), 
                 serverContext, 
                 self()));
             result.completed(o);
@@ -97,6 +116,7 @@ public class TaskManagerImpl implements TaskManager{
     return result;
   }
   
+  /*
   public FutureResult executeAndWait(final Task task, final TaskLog parentLog) {
     final FutureResult result = new FutureResult();
     if(task.isMaxExecutionReached()){
@@ -134,24 +154,24 @@ public class TaskManagerImpl implements TaskManager{
       });
     }
     return result;
-  }
+  }*/
+
   
-  
-  public void executeBackground(long startDelay, long execInterval, final Task task, final BackgroundTaskListener listener) {
+  public void executeBackground(final Task task, final BackgroundTaskConfig config){
     background.schedule(new TimerTask(){  
       @Override
       public void run() {
         if(task.isAborted()){
           super.cancel();
           background.purge();
-          if(listener != null){
-            listener.executionAborted(task);
+          if(config.getListener() != null){
+            config.getListener().executionAborted(task);
           }
         }
         else if(task.isMaxExecutionReached()){
           TaskExecutionContext ctx = new TaskExecutionContext(
               task,
-              createLogFor(task), 
+              createLogFor(task, config.getLog()), 
               serverContext, 
               self());
           try{
@@ -161,14 +181,14 @@ public class TaskManagerImpl implements TaskManager{
           }
           super.cancel();
           background.purge();
-          if(listener != null){
-            listener.executionAborted(task);
+          if(config.getListener() != null){
+            config.getListener().executionAborted(task);
           }
         }
         else{
           TaskExecutionContext ctx = new TaskExecutionContext(
               task,
-              createLogFor(task), 
+              createLogFor(task, config.getLog()), 
               serverContext, 
               self());
           try{
@@ -180,51 +200,18 @@ public class TaskManagerImpl implements TaskManager{
           }
         }
       }
-    }, startDelay, execInterval);
-  }
-  
-  public void executeBackground(long startDelay, long execInterval, Task task) {
-    this.executeBackground(startDelay, execInterval, task, null);
+    }, config.getExecDelay(), config.getExecInterval());
   }
   
   public void fork(final Task task) {
-    if(task.isMaxExecutionReached()){
-      TaskExecutionContext ctx = new TaskExecutionContext(
-          task,
-          createLogFor(task), 
-          serverContext, 
-          self());
-      try{
-        task.onMaxExecutionReached(ctx);
-      }catch(Throwable err){
-        ctx.error(err);
-      }
-    }
-    else{
-      parallel.execute(new Runnable(){
-        public void run() {
-          TaskExecutionContext ctx = new TaskExecutionContext(
-              task,
-              createLogFor(task), 
-              serverContext, 
-              self());
-          try{
-            task.execute(ctx);
-          }catch(Throwable t){
-            ctx.getLog().error(task, "Problem occurred executing task", t);
-          }finally{
-            task.incrementExecutionCount();
-          }
-        }
-      });
-    }
+    fork(task, ForkedTaskConfig.create());
   }
   
-  public void fork(final Task task, final TaskListener listener) {
+  public void fork(final Task task, final ForkedTaskConfig config) {
     if(task.isMaxExecutionReached()){
       TaskExecutionContext ctx = new TaskExecutionContext(
           task,
-          createLogFor(task), 
+          createLogFor(task, config.getLog()), 
           serverContext, 
           self());
       try{
@@ -239,12 +226,16 @@ public class TaskManagerImpl implements TaskManager{
           try{
             Object o = task.execute(new TaskExecutionContext(
                 task,
-                createLogFor(task),
+                createLogFor(task, config.getLog()),
                 serverContext, 
                 self()));
-            listener.executionSucceeded(task, o);
+            if(config.getListener() != null){
+              config.getListener().executionSucceeded(task, o);
+            }
           }catch(Throwable t){
-            listener.executionFailed(task, t);
+            if(config.getListener() != null){
+              config.getListener().executionFailed(task, t);
+            }
           }finally{
             task.incrementExecutionCount();
           }
@@ -256,10 +247,6 @@ public class TaskManagerImpl implements TaskManager{
   public void shutdown(){
     sequential.shutdown();
     parallel.shutdown();
-  }
-  
-  protected TaskLog createLogFor(Task task){
-    return new TaskLogImpl(logger, null);
   }
   
   protected TaskLog createLogFor(Task task, TaskLog parent){

@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
-import org.sapia.corus.CorusException;
 import org.sapia.corus.ServerContext;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.http.HttpContext;
 import org.sapia.corus.http.HttpExtension;
 import org.sapia.corus.http.HttpExtensionInfo;

@@ -1,7 +1,5 @@
 package org.sapia.corus.taskmanager.core;
 
-import org.sapia.corus.util.ProgressQueue;
-
 public interface TaskManager {
 
   /**
@@ -15,17 +13,23 @@ public interface TaskManager {
    * Executes the given task in parallel (execution order is not guaranteed).
    * 
    * @param task the task to execute.
-   * @param listener a {@link TaskListener}
+   * @param conf a {@link ForkedTaskConfig}
    */
-  public void fork(Task task, TaskListener listener);
+  public void fork(Task task, ForkedTaskConfig conf);
   
   /**
    * Executes the given task sequentially (execution order with other
    * sequential tasks is guaranteed).
    * 
-   * @param task the task to execute.
+   * @param task the {@link Task} to execute.
    */
   public void execute(Task task);
+  
+  /**
+   * @param task the {@link Task} to execute.
+   * @param conf a {@link SequentialTaskConfig}
+   */
+  public void execute(Task task, SequentialTaskConfig conf);
   
   /**
    * Executes the given task sequentially (execution order with other
@@ -41,24 +45,15 @@ public interface TaskManager {
    * This method takes a task log that will be used by the given
    * task to log its activity, upon execution.
    * 
-   * @param progress the {@link ProgressQueue} to log to.
+   * @param a {@link TaskConfig}
    * @see #executeAndWait(Task)
    */
-  public FutureResult executeAndWait(Task task, TaskLog parent);
+  public FutureResult executeAndWait(Task task, TaskConfig conf);
  
   /**
    * Executes the given task in the background, indefinitely.
-   * 
-   * @param startDelay the delay to wait for until actually executing 
-   * the task for the first time.
-   * @param execInterval the interval at which the given task 
-   * is to be executed.
    * @param task the task to execute.
+   * @param config a {@link BackgroundTaskConfig}.
    */
-  public void executeBackground(long startDelay, long execInterval, Task task);
-  
-  /**
-   * @see #executeBackground(long, long, Task)
-   */
-  public void executeBackground(long startDelay, long execInterval, Task task, BackgroundTaskListener listener);
+  public void executeBackground(Task task, BackgroundTaskConfig config);
 }
