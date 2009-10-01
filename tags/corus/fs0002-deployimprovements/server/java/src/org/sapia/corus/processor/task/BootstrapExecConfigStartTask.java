@@ -1,0 +1,32 @@
+package org.sapia.corus.processor.task;
+
+import java.util.List;
+
+import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.processor.StartupLock;
+import org.sapia.corus.server.processor.ExecConfigDatabase;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+
+/**
+ * This tasks starts processes corresponding to {@link ExecConfig} instances, provided that the processes 
+ * are bootstrappable.
+ * <p>
+ * It will proceed to killing currently "older" processes (of a different version) if any are running.
+ * 
+ * @author yduchesne
+ *
+ */
+public class BootstrapExecConfigStartTask extends AbstractExecConfigStartTask{
+
+  public BootstrapExecConfigStartTask(StartupLock lock) {
+    super(lock);
+    super.setMaxExecution(1);
+  }
+  
+  @Override
+  protected List<ExecConfig> getExecConfigsToStart(TaskExecutionContext ctx) {
+    ExecConfigDatabase execConfigs = ctx.getServerContext().getServices().getExecConfigs();
+    return execConfigs.getBootstrapConfigs();
+  }
+  
+}
