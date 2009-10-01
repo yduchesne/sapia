@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
-import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
@@ -51,8 +51,8 @@ public class RestartTask extends ProcessTerminationTask {
       ProcessRepository processes = ctx.getServerContext().getServices().getProcesses();
       Process      process = processes.getActiveProcesses().getProcess(corusPid());
 
-      CommandArg nameArg = CommandArgParser.exact(process.getDistributionInfo().getName());
-      CommandArg versionArg = CommandArgParser.exact(process.getDistributionInfo().getVersion());      
+      Arg nameArg = ArgFactory.exact(process.getDistributionInfo().getName());
+      Arg versionArg = ArgFactory.exact(process.getDistributionInfo().getVersion());      
       Distribution dist = dists.getDistribution(nameArg, versionArg);
       ProcessConfig conf = dist.getProcess(process.getDistributionInfo()
                                                   .getProcessName());

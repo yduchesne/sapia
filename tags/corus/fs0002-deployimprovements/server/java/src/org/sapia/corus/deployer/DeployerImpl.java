@@ -13,7 +13,7 @@ import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.ServerStartedEvent;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
 import org.sapia.corus.admin.services.deployer.DeployerConfigurationImpl;
@@ -181,7 +181,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
                     Deployer INTERFACE IMPLEMENTATION
   ////////////////////////////////////////////////////////////////////*/
 
-  public Distribution getDistribution(CommandArg name, CommandArg version)
+  public Distribution getDistribution(Arg name, Arg version)
     throws LogicException {
     return getDistributionStore().getDistribution(name, version);
   }
@@ -190,15 +190,15 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     return getDistributionStore().getDistributions();
   }
 
-  public List<Distribution> getDistributions(CommandArg name) {
+  public List<Distribution> getDistributions(Arg name) {
     return getDistributionStore().getDistributions(name);
   }
   
-  public List<Distribution> getDistributions(CommandArg name, CommandArg version) {
+  public List<Distribution> getDistributions(Arg name, Arg version) {
     return getDistributionStore().getDistributions(name, version);
   }
 
-  public ProgressQueue undeploy(CommandArg distName, CommandArg version) {
+  public ProgressQueue undeploy(Arg distName, Arg version) {
     ProgressQueueImpl progress = new ProgressQueueImpl();
     try {
       TaskManager tm = (TaskManager) lookup(TaskManager.class);

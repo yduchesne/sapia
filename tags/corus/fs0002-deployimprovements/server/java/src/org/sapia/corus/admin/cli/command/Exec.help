@@ -1,11 +1,13 @@
 <help>
   <section title="Description">
-   <p>Executes processes "from" a deployed distribution.</p>
+   <p>Executes processes "from" a deployed distribution, or processes corresponding to a given 
+   execution configuration</p>
   </section>
   <section title="Syntax">
     <p>exec -d distribution_name -v version -p profile [-n process_name] [-i instances] [-cluster]</p>
     <p/>
     <p>or:</p>
+    <p/>
     <p>exec -e exec_config_name [-cluster]</p>
     <p/>
     <p>Where:</p>

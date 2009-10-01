@@ -3,7 +3,7 @@ package org.sapia.corus.deployer;
 import java.util.List;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
 import org.sapia.corus.admin.services.deployer.DeployerConfigurationImpl;
@@ -21,7 +21,7 @@ public class BaseDeployer implements Deployer{
     return _configuration;
   }
   
-  public Distribution getDistribution(CommandArg name, CommandArg version)
+  public Distribution getDistribution(Arg name, Arg version)
       throws LogicException {
     return _store.getDistribution(name, version);
   }
@@ -30,15 +30,15 @@ public class BaseDeployer implements Deployer{
     return _store.getDistributions();
   }
   
-  public List<Distribution> getDistributions(CommandArg name) {
+  public List<Distribution> getDistributions(Arg name) {
     return _store.getDistributions(name);
   }
   
-  public List<Distribution> getDistributions(CommandArg name, CommandArg version) {
+  public List<Distribution> getDistributions(Arg name, Arg version) {
     return _store.getDistributions(name, version);
   }
   
-  public ProgressQueue undeploy(CommandArg distName, CommandArg version) {
+  public ProgressQueue undeploy(Arg distName, Arg version) {
     ProgressQueue q = new ProgressQueueImpl();
     q.close();
     return q;

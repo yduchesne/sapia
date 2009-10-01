@@ -1,5 +1,6 @@
 package org.sapia.corus.processor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -7,16 +8,14 @@ import java.util.List;
 import org.sapia.corus.CorusException;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.admin.CommandArg;
-import org.sapia.corus.admin.CommandArgParser;
-import org.sapia.corus.admin.StringCommandArg;
+import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.LockException;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.ProcessDef;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
@@ -24,6 +23,8 @@ import org.sapia.corus.admin.services.processor.Process.ProcessTerminationReques
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.http.HttpModule;
 import org.sapia.corus.interop.Status;
+import org.sapia.corus.processor.task.BootstrapExecConfigStartTask;
+import org.sapia.corus.processor.task.EndUserExecConfigStartTask;
 import org.sapia.corus.processor.task.KillTask;
 import org.sapia.corus.processor.task.MultiExecTask;
 import org.sapia.corus.processor.task.ProcessCheckTask;
@@ -31,12 +32,12 @@ import org.sapia.corus.processor.task.ProcessorTaskStrategy;
 import org.sapia.corus.processor.task.ProcessorTaskStrategyImpl;
 import org.sapia.corus.processor.task.RestartTask;
 import org.sapia.corus.processor.task.ResumeTask;
-import org.sapia.corus.processor.task.StartBootConfigsTask;
 import org.sapia.corus.processor.task.SuspendTask;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.server.processor.ExecConfigDatabase;
 import org.sapia.corus.server.processor.ProcessDatabase;
 import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
@@ -101,7 +102,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     ProcessorExtension ext = new ProcessorExtension(this);
     module.addHttpExtension(ext);
     
-    StartBootConfigsTask boot = new StartBootConfigsTask(_startLock);
+    BootstrapExecConfigStartTask boot = new BootstrapExecConfigStartTask(_startLock);
     
     tm.executeBackground(
         _configuration.getBootExecDelayMillis(),
@@ -136,13 +137,21 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   
   public ProgressQueue exec(String execConfigName) {
     ProgressQueue progress = new ProgressQueueImpl();
-    ProcessDependencyFilter filter = new ProcessDependencyFilter(progress);
-    Deployer     deployer = lookup(Deployer.class);
     TaskManager  taskman = lookup(TaskManager.class);
-    
+    EndUserExecConfigStartTask start = new EndUserExecConfigStartTask(execConfigName, _startLock);
+    try{
+      taskman.executeAndWait(start, new TaskLogProgressQueue(progress)).get();
+    }catch(InvocationTargetException e){
+      // noop
+    }catch(InterruptedException e){
+      progress.error(e);
+      progress.close();
+    }
+
+    /*
     ExecConfig conf = this._execConfigs.getConfigFor(execConfigName);
     if(conf == null){
-      progress.error("No execution configuration for: " + execConfigName);
+      progress.error("No execution configuration for: " + execCofigName);
       progress.close();
       return progress;
     }
@@ -184,13 +193,13 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       MultiExecTask  exec = new MultiExecTask(_startLock, filter.getFilteredProcesses());
       taskman.executeBackground(0, _configuration.getExecIntervalMillis(), exec);
     }
-    progress.close();
+    progress.close();*/
     return progress;
     
   }
 
-  public ProgressQueue exec(CommandArg distName, CommandArg version, String profile,
-    CommandArg processName, int instances) {
+  public ProgressQueue exec(Arg distName, Arg version, String profile,
+    Arg processName, int instances) {
     try {
       Deployer     deployer = lookup(Deployer.class);
       List<Distribution> dists = deployer.getDistributions(distName, version);
@@ -248,7 +257,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     }
   }
 
-  public ProgressQueue exec(CommandArg distName, CommandArg version, String profile,
+  public ProgressQueue exec(Arg distName, Arg version, String profile,
     int instances) {
     return exec(distName, version, profile, null, instances);
   }
@@ -264,12 +273,12 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return _execConfigs.getConfigs();
   }
   
-  public void removeExecConfig(CommandArg name) {
+  public void removeExecConfig(Arg name) {
     _execConfigs.removeConfigsFor(name);
   }
 
-  public void kill(CommandArg distName, CommandArg version, String profile,
-      CommandArg processName, boolean suspend) throws CorusException {
+  public void kill(Arg distName, Arg version, String profile,
+      Arg processName, boolean suspend) throws CorusException {
     List<Process> procs = _processes.getActiveProcesses().getProcesses(distName, version,
         profile, processName);
     TaskManager tm;
@@ -301,11 +310,11 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     }
   }
 
-  public void kill(CommandArg distName, CommandArg version, 
+  public void kill(Arg distName, Arg version, 
       boolean suspend) throws CorusException {
     kill(distName, version, null, suspend);
   }
-  public void kill(CommandArg distName, CommandArg version, String profile,
+  public void kill(Arg distName, Arg version, String profile,
     boolean suspend) throws CorusException {
     List<Process>          procs = _processes.getActiveProcesses().getProcesses(distName,
         version, profile);
@@ -406,8 +415,8 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
     while (procs.hasNext()) {
       proc = (Process) procs.next();
-      CommandArg nameArg = CommandArgParser.exact(proc.getDistributionInfo().getName());
-      CommandArg versionArg = CommandArgParser.exact(proc.getDistributionInfo().getVersion());      
+      Arg nameArg = ArgFactory.exact(proc.getDistributionInfo().getName());
+      Arg versionArg = ArgFactory.exact(proc.getDistributionInfo().getVersion());      
       try {
  
         dist = store.getDistribution(nameArg, versionArg);
@@ -464,20 +473,20 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return _processes.getProcesses();
   }
 
-  public List<Process> getProcesses(CommandArg distName, CommandArg version, String profile,
-    CommandArg processName) {
+  public List<Process> getProcesses(Arg distName, Arg version, String profile,
+    Arg processName) {
     return _processes.getProcesses(distName, version, profile, processName);
   }
 
-  public List<Process> getProcesses(CommandArg distName, CommandArg version, String profile) {
+  public List<Process> getProcesses(Arg distName, Arg version, String profile) {
     return _processes.getProcesses(distName, version, profile);
   }
   
-  public List<Process> getProcesses(CommandArg distName, CommandArg version) {
+  public List<Process> getProcesses(Arg distName, Arg version) {
     return _processes.getProcesses(distName, version);
   }
 
-  public List<Process> getProcesses(CommandArg distName) {
+  public List<Process> getProcesses(Arg distName) {
     return _processes.getProcesses(distName);
   }
   
@@ -497,20 +506,20 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return copyStatus(getProcesses());
   }
 
-  public List<Status> getStatus(CommandArg distName, CommandArg version, String profile,
-    CommandArg processName) {
+  public List<Status> getStatus(Arg distName, Arg version, String profile,
+    Arg processName) {
     return copyStatus(getProcesses(distName, version, profile, processName));
   }
   
-  public List<Status> getStatus(CommandArg distName, CommandArg version, String profile) {
+  public List<Status> getStatus(Arg distName, Arg version, String profile) {
     return copyStatus(getProcesses(distName, version, profile));
   }
 
-  public List<Status> getStatus(CommandArg distName, CommandArg version) {
+  public List<Status> getStatus(Arg distName, Arg version) {
     return copyStatus(getProcesses(distName, version));
   }
 
-  public List<Status> getStatus(CommandArg distName) {
+  public List<Status> getStatus(Arg distName) {
     return copyStatus(getProcesses(distName));
   }
 

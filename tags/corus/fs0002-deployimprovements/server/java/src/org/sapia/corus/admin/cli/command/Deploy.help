@@ -1,11 +1,12 @@
 <help>
   <section title="Description">
-   <p>Deploys a distribution to a given Corus server.</p>
+   <p>Deploys a distribution or an execution configuration to a given Corus server.</p>
   </section>
   <section title="Syntax">
     <p>deploy distribution_archive [-cluster]</p>
     <p/>
     <p>or:</p>
+	<p/>
     <p>deploy -e exec_config_file [-cluster]</p>
     <p/>
     <p>Where:</p>

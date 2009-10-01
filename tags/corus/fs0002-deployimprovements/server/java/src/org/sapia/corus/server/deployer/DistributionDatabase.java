@@ -3,7 +3,7 @@ package org.sapia.corus.server.deployer;
 import java.util.List;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 
 public interface DistributionDatabase {
@@ -27,8 +27,8 @@ public interface DistributionDatabase {
    * @return <code>true</code> if this instance contains the distribution correponding
    * to the given name and version.
    */
-  public abstract boolean containsDistribution(CommandArg name,
-      CommandArg version);
+  public abstract boolean containsDistribution(Arg name,
+      Arg version);
 
   /**
    * @param name a distribution name.
@@ -47,7 +47,7 @@ public interface DistributionDatabase {
    * @return <code>true</code> if this instance contains the distribution correponding
    * to the given name and version.
    */
-  public abstract void removeDistribution(CommandArg name, CommandArg version);
+  public abstract void removeDistribution(Arg name, Arg version);
 
   /**
    * Returns a list of distributions.
@@ -63,7 +63,7 @@ public interface DistributionDatabase {
    * @param name the name of the distribution.
    * @return a <code>List</code> of <code>Distribution</code>s.
    */
-  public abstract List<Distribution> getDistributions(CommandArg name);
+  public abstract List<Distribution> getDistributions(Arg name);
 
   /**
    * Returns a list of distributions that match the given distribution
@@ -73,8 +73,8 @@ public interface DistributionDatabase {
    * @param version the version of the distribution.
    * @return a <code>List</code> of <code>Distribution</code>s.
    */
-  public abstract List<Distribution> getDistributions(CommandArg name,
-      CommandArg version);
+  public abstract List<Distribution> getDistributions(Arg name,
+      Arg version);
 
   /**
    * Returns the distribution that matches the given distribution
@@ -85,7 +85,7 @@ public interface DistributionDatabase {
    * 
    * @return a <code>Distribution</code>.
    */
-  public abstract Distribution getDistribution(CommandArg name,
-      CommandArg version) throws LogicException;
+  public abstract Distribution getDistribution(Arg name,
+      Arg version) throws LogicException;
 
 }

@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 import org.sapia.corus.InitContext;
 import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
@@ -68,7 +68,7 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
     return value;
   }
   
-  public void removeProperty(PropertyScope scope, CommandArg name) {
+  public void removeProperty(PropertyScope scope, Arg name) {
     store(scope).removeProperty(name);
   }
   
@@ -111,7 +111,7 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
     tags.remove(tag);
   }
   
-  public void removeTag(CommandArg tag) {
+  public void removeTag(Arg tag) {
     for(String t:getTags()){
       if(tag.matches(t)){
         removeTag(t);

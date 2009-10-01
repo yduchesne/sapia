@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.util.NameValuePair;
 
@@ -44,10 +44,10 @@ public class TestConfigurator implements Configurator{
     return new HashSet<String>();
   }
 
-  public void removeProperty(PropertyScope scope, CommandArg name) {
+  public void removeProperty(PropertyScope scope, Arg name) {
   }
 
-  public void removeTag(CommandArg tag) {
+  public void removeTag(Arg tag) {
   }
 
   public void removeTag(String tag) {

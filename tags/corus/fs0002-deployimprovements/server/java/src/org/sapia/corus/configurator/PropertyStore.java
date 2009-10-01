@@ -3,7 +3,7 @@ package org.sapia.corus.configurator;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.db.DbMap;
 
 public class PropertyStore {
@@ -26,7 +26,7 @@ public class PropertyStore {
     properties.remove(name); 
   }
 
-  public void removeProperty(CommandArg pattern) {
+  public void removeProperty(Arg pattern) {
     Iterator<String> names = properties.keys();
     while(names.hasNext()){
       String name = names.next();

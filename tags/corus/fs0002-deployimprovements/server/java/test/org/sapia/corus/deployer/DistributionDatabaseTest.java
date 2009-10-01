@@ -2,7 +2,7 @@ package org.sapia.corus.deployer;
 
 import junit.framework.TestCase;
 
-import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.server.deployer.DuplicateDistributionException;
@@ -40,8 +40,8 @@ public class DistributionDatabaseTest extends TestCase {
   public void testContainsDistribution() throws Exception {
     super.assertTrue(_store.containsDistribution("test2", "1.0"));
     super.assertTrue(_store.containsDistribution(
-        CommandArgParser.parse("test*"), 
-        CommandArgParser.parse("1.0")));    
+        ArgFactory.parse("test*"), 
+        ArgFactory.parse("1.0")));    
   }
 
   public void testAddDuplicate() throws Exception {
@@ -61,14 +61,14 @@ public class DistributionDatabaseTest extends TestCase {
     d.setName("test1");
     d.setVersion("1.0");
     
-    _store.removeDistribution(CommandArgParser.parse("test1"), 
-        CommandArgParser.parse("1.0"));
+    _store.removeDistribution(ArgFactory.parse("test1"), 
+        ArgFactory.parse("1.0"));
     _store.addDistribution(d);
   }
   
   public void testRemoveDistributionForName() throws Exception {
-    _store.removeDistribution(CommandArgParser.parse("test*"), 
-        CommandArgParser.parse("1.0"));
+    _store.removeDistribution(ArgFactory.parse("test*"), 
+        ArgFactory.parse("1.0"));
     assertEquals(0, _store.getDistributions().size());
   }  
   
@@ -78,8 +78,8 @@ public class DistributionDatabaseTest extends TestCase {
     d.setVersion("2.0");
     _store.addDistribution(d);
     
-    _store.removeDistribution(CommandArgParser.parse("test1"), 
-        CommandArgParser.parse("*"));
+    _store.removeDistribution(ArgFactory.parse("test1"), 
+        ArgFactory.parse("*"));
     assertEquals(1, _store.getDistributions().size());
   }  
 
@@ -92,7 +92,7 @@ public class DistributionDatabaseTest extends TestCase {
     d.setName("dist");
     d.setVersion("1.0");
     _store.addDistribution(d);
-    super.assertEquals(2, _store.getDistributions(CommandArgParser.parse("test*")).size());
+    super.assertEquals(2, _store.getDistributions(ArgFactory.parse("test*")).size());
   }
   
   public void testGetDistributionsForNameVersion() throws Exception{
@@ -101,7 +101,7 @@ public class DistributionDatabaseTest extends TestCase {
     d.setVersion("2.0");
     _store.addDistribution(d);
     super.assertEquals(2, _store.getDistributions(
-        CommandArgParser.parse("*"), CommandArgParser.parse("1.0")).size());
+        ArgFactory.parse("*"), ArgFactory.parse("1.0")).size());
   }
   
   

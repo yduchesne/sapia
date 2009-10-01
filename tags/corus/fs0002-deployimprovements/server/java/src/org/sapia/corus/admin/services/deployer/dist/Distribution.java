@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.deployer.DeploymentException;
 import org.sapia.corus.util.ZipUtils;
 import org.sapia.util.xml.ProcessingException;
@@ -152,7 +152,7 @@ public class Distribution implements java.io.Serializable {
     return null;
   }
   
-  public List<ProcessConfig> getProcesses(CommandArg name) {
+  public List<ProcessConfig> getProcesses(Arg name) {
     List<ProcessConfig> toReturn = new ArrayList<ProcessConfig>();
     
     for (ProcessConfig pc: _processConfigs) {

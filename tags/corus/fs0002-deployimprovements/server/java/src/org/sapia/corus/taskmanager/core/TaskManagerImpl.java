@@ -137,13 +137,16 @@ public class TaskManagerImpl implements TaskManager{
   }
   
   
-  public void executeBackground(long startDelay, long execInterval, final Task task) {
+  public void executeBackground(long startDelay, long execInterval, final Task task, final BackgroundTaskListener listener) {
     background.schedule(new TimerTask(){  
       @Override
       public void run() {
         if(task.isAborted()){
           super.cancel();
           background.purge();
+          if(listener != null){
+            listener.executionAborted(task);
+          }
         }
         else if(task.isMaxExecutionReached()){
           TaskExecutionContext ctx = new TaskExecutionContext(
@@ -158,6 +161,9 @@ public class TaskManagerImpl implements TaskManager{
           }
           super.cancel();
           background.purge();
+          if(listener != null){
+            listener.executionAborted(task);
+          }
         }
         else{
           TaskExecutionContext ctx = new TaskExecutionContext(
@@ -175,6 +181,10 @@ public class TaskManagerImpl implements TaskManager{
         }
       }
     }, startDelay, execInterval);
+  }
+  
+  public void executeBackground(long startDelay, long execInterval, Task task) {
+    this.executeBackground(startDelay, execInterval, task, null);
   }
   
   public void fork(final Task task) {

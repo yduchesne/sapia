@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.StringCommandArg;
+import org.sapia.corus.admin.StringArg;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Dependency;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
@@ -63,16 +63,16 @@ public class ProcessDependencyFilter {
           String currentVersion = dep.getVersion() != null ? dep.getVersion() : defaultVersion;
           String currentProfile = dep.getProfile() != null ? dep.getProfile() : defaultProfile;
           try {
-            Distribution dist = deployer.getDistribution(new StringCommandArg(
-                dep.getDist()), new StringCommandArg(currentVersion));
+            Distribution dist = deployer.getDistribution(new StringArg(
+                dep.getDist()), new StringArg(currentVersion));
             if (dist != null) {
               ProcessConfig depProcess = dist.getProcess(dep.getProcess());
               if (depProcess != null) {
                 if (depProcess.containsProfile(currentProfile)) {
                   if (processor.getProcesses(
-                      new StringCommandArg(dist.getName()),
-                      new StringCommandArg(currentVersion), currentProfile,
-                      new StringCommandArg(dep.getProcess())).size() == 0) {
+                      new StringArg(dist.getName()),
+                      new StringArg(currentVersion), currentProfile,
+                      new StringArg(dep.getProcess())).size() == 0) {
                     ProcessRef ref = new ProcessRef(dist, depProcess,
                         defaultProfile, currentIndex++);
                     if (processes.add(ref)) {

@@ -56,4 +56,9 @@ public interface TaskManager {
    * @param task the task to execute.
    */
   public void executeBackground(long startDelay, long execInterval, Task task);
+  
+  /**
+   * @see #executeBackground(long, long, Task)
+   */
+  public void executeBackground(long startDelay, long execInterval, Task task, BackgroundTaskListener listener);
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.server.processor.ExecConfigDatabase;
@@ -47,7 +47,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ExecConfigDatabase#getConfigsFor(org.sapia.corus.admin.CommandArg)
    */
-  public List<ExecConfig> getConfigsFor(CommandArg arg){
+  public List<ExecConfig> getConfigsFor(Arg arg){
     Iterator<ExecConfig> configs = _configs.values();
     List<ExecConfig> toReturn = new ArrayList<ExecConfig>();
     while(configs.hasNext()){
@@ -62,7 +62,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ExecConfigDatabase#removeConfigsFor(org.sapia.corus.admin.CommandArg)
    */
-  public void removeConfigsFor(CommandArg arg){
+  public void removeConfigsFor(Arg arg){
     List<ExecConfig> configs = getConfigsFor(arg);
     for(ExecConfig c:configs){
       _configs.remove(c.getName());

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.sapia.corus.LogicException;
 import org.sapia.corus.Module;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.util.ProgressQueue;
 
@@ -41,7 +41,7 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @param version  the name of the version to undeploy.
    * @return a <code>ProgressQueue</code>.
    */
-  public ProgressQueue undeploy(CommandArg distName, CommandArg version);
+  public ProgressQueue undeploy(Arg distName, Arg version);
 
   /**
    * Returns the list of distributions that this instance contains.
@@ -56,7 +56,7 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @param name a distribution name.
    * @return a <code>List</code> of <code>Distribution</code> instances.
    */
-  public List<Distribution> getDistributions(CommandArg name);
+  public List<Distribution> getDistributions(Arg name);
   
   /**
    * Returns the list of distributions with the given name.
@@ -65,7 +65,7 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @param version a distribution version.
    * @return a <code>List</code> of <code>Distribution</code> instances.
    */
-  public List<Distribution> getDistributions(CommandArg name, CommandArg version);  
+  public List<Distribution> getDistributions(Arg name, Arg version);  
   
 
   /**
@@ -76,6 +76,6 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @return a <code>Distribution</code> instance.
    * @throws LogicException if no corresponding distribution could be found.
    */
-  public Distribution getDistribution(CommandArg name, CommandArg version)
+  public Distribution getDistribution(Arg name, Arg version)
                                throws LogicException;
 }

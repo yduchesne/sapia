@@ -106,6 +106,11 @@ public class TaskExecutionContext {
       taskManager.executeBackground(startDelay, execInterval, task);
     }
     
+    public void executeBackground(long startDelay, long execInterval,
+        Task task, BackgroundTaskListener listener) {
+      taskManager.executeBackground(startDelay, execInterval, task, listener);
+    }
+    
     public void fork(Task task) {
       taskManager.fork(task);
     }

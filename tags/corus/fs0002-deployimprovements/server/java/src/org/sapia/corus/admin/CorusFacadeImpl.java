@@ -132,13 +132,13 @@ public class CorusFacadeImpl implements CorusFacade {
     refresh();
     final ProgressQueueImpl queue = new ProgressQueueImpl();
     
-    if(CommandArgParser.isPattern(fileName)){
+    if(ArgFactory.isPattern(fileName)){
       Thread deployer = new Thread(new Runnable(){
           public void run() {
             try{
               Object[] baseDirAndFilePattern = split(fileName);
               File baseDir = (File)baseDirAndFilePattern[0];
-              CommandArg pattern = CommandArgParser.parse((String)baseDirAndFilePattern[1]);
+              Arg pattern = ArgFactory.parse((String)baseDirAndFilePattern[1]);
               File[] files = baseDir.listFiles();
               ProgressQueue tmp = null;
               int fileCount = 0;
@@ -243,8 +243,8 @@ public class CorusFacadeImpl implements CorusFacade {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
     
-    return getDeployer().undeploy(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version));
+    return getDeployer().undeploy(ArgFactory.parse(distName), 
+        ArgFactory.parse(version));
   }
   
   public synchronized void deployExecConfig(String fileName, ClusterInfo cluster) 
@@ -264,7 +264,7 @@ public class CorusFacadeImpl implements CorusFacade {
   public synchronized void undeployExecConfig(String fileName, ClusterInfo cluster){
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
-    getProcessor().removeExecConfig(CommandArgParser.parse(fileName));
+    getProcessor().removeExecConfig(ArgFactory.parse(fileName));
   }
 
   public synchronized Results getExecConfigs(ClusterInfo cluster) 
@@ -315,7 +315,7 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getDeployer().getDistributions(CommandArgParser.parse(name)));
+    lst.addAll(getDeployer().getDistributions(ArgFactory.parse(name)));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -340,8 +340,8 @@ public class CorusFacadeImpl implements CorusFacade {
     Distribution dist;
     
     try {
-      dist = getDeployer().getDistribution(CommandArgParser.parse(name),
-          CommandArgParser.parse(version));
+      dist = getDeployer().getDistribution(ArgFactory.parse(name),
+          ArgFactory.parse(version));
 
       lst.add(dist);
       res.addResult(lst);
@@ -400,7 +400,7 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getProcesses(CommandArgParser.parse(distName)));
+    lst.addAll(getProcessor().getProcesses(ArgFactory.parse(distName)));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -422,8 +422,8 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getProcesses(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version)));
+    lst.addAll(getProcessor().getProcesses(ArgFactory.parse(distName), 
+        ArgFactory.parse(version)));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -446,8 +446,8 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getProcesses(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version), profile));
+    lst.addAll(getProcessor().getProcesses(ArgFactory.parse(distName), 
+        ArgFactory.parse(version), profile));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -471,8 +471,8 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getProcesses(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version), profile, CommandArgParser.parse(vmName)));
+    lst.addAll(getProcessor().getProcesses(ArgFactory.parse(distName), 
+        ArgFactory.parse(version), profile, ArgFactory.parse(vmName)));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -526,7 +526,7 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getStatus(CommandArgParser.parse(distName)));
+    lst.addAll(getProcessor().getStatus(ArgFactory.parse(distName)));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -548,8 +548,8 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getStatus(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version)));
+    lst.addAll(getProcessor().getStatus(ArgFactory.parse(distName), 
+        ArgFactory.parse(version)));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -572,8 +572,8 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getStatus(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version), profile));
+    lst.addAll(getProcessor().getStatus(ArgFactory.parse(distName), 
+        ArgFactory.parse(version), profile));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -597,8 +597,8 @@ public class CorusFacadeImpl implements CorusFacade {
     
     Results  res = new Results();
     HostList lst = new HostList(_addr);
-    lst.addAll(getProcessor().getStatus(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version), profile, CommandArgParser.parse(vmName)));
+    lst.addAll(getProcessor().getStatus(ArgFactory.parse(distName), 
+        ArgFactory.parse(version), profile, ArgFactory.parse(vmName)));
     res.addResult(lst);
     
     if (cluster.isClustered() && (_otherHosts.size() > 0)) {
@@ -626,7 +626,7 @@ public class CorusFacadeImpl implements CorusFacade {
     getConfigurator().addTags(tags);
   }
   
-  public synchronized void removeTag(CommandArg tag, ClusterInfo cluster) {
+  public synchronized void removeTag(Arg tag, ClusterInfo cluster) {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
     getConfigurator().removeTag(tag);
@@ -662,7 +662,7 @@ public class CorusFacadeImpl implements CorusFacade {
     getConfigurator().addProperty(scope, name, value);
   }
   
-  public synchronized void removeProperty(PropertyScope scope, CommandArg name,
+  public synchronized void removeProperty(PropertyScope scope, Arg name,
       ClusterInfo cluster) {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
@@ -702,8 +702,8 @@ public class CorusFacadeImpl implements CorusFacade {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
     
-    return getProcessor().exec(CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version), profile, instances);
+    return getProcessor().exec(ArgFactory.parse(distName), 
+        ArgFactory.parse(version), profile, instances);
   }
   
   public synchronized ProgressQueue exec(String distName, String version,
@@ -713,9 +713,9 @@ public class CorusFacadeImpl implements CorusFacade {
     ClusterInterceptor.clusterCurrentThread(cluster);
     
     return getProcessor().exec(
-        CommandArgParser.parse(distName), 
-        CommandArgParser.parse(version), profile, 
-        CommandArgParser.parse(vmName), instances);
+        ArgFactory.parse(distName), 
+        ArgFactory.parse(version), profile, 
+        ArgFactory.parse(vmName), instances);
   }
   
   /**
@@ -737,7 +737,7 @@ public class CorusFacadeImpl implements CorusFacade {
     ClusterInterceptor.clusterCurrentThread(cluster);
     
     try {
-      getProcessor().kill(CommandArgParser.parse(distName), CommandArgParser.parse(version), profile, false);
+      getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), profile, false);
     } catch (CorusException e) {
       // noop
     }
@@ -752,8 +752,8 @@ public class CorusFacadeImpl implements CorusFacade {
     ClusterInterceptor.clusterCurrentThread(cluster);
     
     try {
-      getProcessor().kill(CommandArgParser.parse(distName), 
-          CommandArgParser.parse(version), profile, CommandArgParser.parse(vmName), false);
+      getProcessor().kill(ArgFactory.parse(distName), 
+          ArgFactory.parse(version), profile, ArgFactory.parse(vmName), false);
     } catch (CorusException e) {
       // noop
     }
@@ -783,7 +783,7 @@ public class CorusFacadeImpl implements CorusFacade {
     ClusterInterceptor.clusterCurrentThread(cluster);
     
     try {
-      getProcessor().kill(CommandArgParser.parse(distName), CommandArgParser.parse(version), profile, true);
+      getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), profile, true);
     } catch (CorusException e) {
       // noop
     }
@@ -798,8 +798,8 @@ public class CorusFacadeImpl implements CorusFacade {
     ClusterInterceptor.clusterCurrentThread(cluster);
     
     try {
-      getProcessor().kill(CommandArgParser.parse(distName), CommandArgParser.parse(version), 
-          profile, CommandArgParser.parse(vmName), true);
+      getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), 
+          profile, ArgFactory.parse(vmName), true);
     } catch (CorusException e) {
       // noop
     }
@@ -1042,18 +1042,18 @@ public class CorusFacadeImpl implements CorusFacade {
   }
   
   static Object[] split(String fileName){
-    if(fileName.startsWith(CommandArgParser.PATTERN)){
+    if(fileName.startsWith(ArgFactory.PATTERN)){
       return new Object[]{new File(System.getProperty("user.dir")), fileName};
     }
     else{
-      String baseDirName = fileName.substring(0, fileName.indexOf(CommandArgParser.PATTERN));
+      String baseDirName = fileName.substring(0, fileName.indexOf(ArgFactory.PATTERN));
       int idx;
       if((idx = baseDirName.lastIndexOf("/")) > 0 || (idx = baseDirName.lastIndexOf("\\")) > 0){
         baseDirName = fileName.substring(0, idx);
         idx = idx+1;
       }
       else{
-        idx = fileName.indexOf(CommandArgParser.PATTERN);
+        idx = fileName.indexOf(ArgFactory.PATTERN);
       }
       File baseDir = new File(baseDirName);
      

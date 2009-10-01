@@ -3,7 +3,7 @@ package org.sapia.corus.server.processor;
 import java.util.List;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.processor.ProcessRef;
 
@@ -57,7 +57,7 @@ public interface ProcessRepository {
    *
    * @see Process
    */
-  public abstract List<Process> getProcesses(CommandArg distName);
+  public abstract List<Process> getProcesses(Arg distName);
 
   /**
    * @return the <code>List</code> of <code>Process</code> instances that
@@ -71,8 +71,8 @@ public interface ProcessRepository {
    *
    * @see Process
    */
-  public abstract List<Process> getProcesses(CommandArg distName,
-      CommandArg version);
+  public abstract List<Process> getProcesses(Arg distName,
+      Arg version);
 
   /**
    * @return the <code>List</code> of <code>Process</code> instances that
@@ -87,8 +87,8 @@ public interface ProcessRepository {
    *
    * @see Process
    */
-  public abstract List<Process> getProcesses(CommandArg distName,
-      CommandArg version, String profile);
+  public abstract List<Process> getProcesses(Arg distName,
+      Arg version, String profile);
 
   /**
    * @return the <code>List</code> of <code>Process</code> instances that
@@ -104,7 +104,7 @@ public interface ProcessRepository {
    *
    * @see Process
    */
-  public abstract List<Process> getProcesses(CommandArg distName,
-      CommandArg version, String profile, CommandArg procName);
+  public abstract List<Process> getProcesses(Arg distName,
+      Arg version, String profile, Arg procName);
 
 }

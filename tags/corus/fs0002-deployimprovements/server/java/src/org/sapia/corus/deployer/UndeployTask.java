@@ -3,7 +3,7 @@ package org.sapia.corus.deployer;
 import java.io.File;
 import java.util.List;
 
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.taskmanager.core.Task;
@@ -17,11 +17,11 @@ import org.sapia.corus.taskmanager.tasks.TaskFactory;
  * @author Yanick Duchesne
  */
 public class UndeployTask extends Task {
-  private CommandArg      _name;
-  private CommandArg      _version;
+  private Arg      _name;
+  private Arg      _version;
   private DistributionDatabase _store;
 
-  UndeployTask(DistributionDatabase store, CommandArg name, CommandArg version) {
+  UndeployTask(DistributionDatabase store, Arg name, Arg version) {
     _store   = store;
     _name    = name;
     _version = version;

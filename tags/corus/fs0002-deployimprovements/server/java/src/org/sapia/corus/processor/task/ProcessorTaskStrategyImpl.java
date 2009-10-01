@@ -13,8 +13,8 @@ import java.util.Set;
 import org.sapia.console.CmdLine;
 import org.sapia.corus.Consts;
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
-import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.admin.services.deployer.Deployer;
@@ -370,8 +370,8 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     try{
       Deployer deployer = ctx.getServerContext().getServices().lookup(Deployer.class);
       
-      CommandArg nameArg = CommandArgParser.exact(process.getDistributionInfo().getName());
-      CommandArg versionArg = CommandArgParser.exact(process.getDistributionInfo().getVersion());      
+      Arg nameArg = ArgFactory.exact(process.getDistributionInfo().getName());
+      Arg versionArg = ArgFactory.exact(process.getDistributionInfo().getVersion());      
       
       dist = deployer.getDistribution(nameArg, versionArg);
     }catch(LogicException e){

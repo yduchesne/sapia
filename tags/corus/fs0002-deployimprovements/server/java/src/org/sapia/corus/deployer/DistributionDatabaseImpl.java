@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
-import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.server.deployer.DuplicateDistributionException;
@@ -53,7 +53,7 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.deployer.DistributionDatabase#containsDistribution(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
    */
-  public synchronized boolean containsDistribution(CommandArg name, CommandArg version) {
+  public synchronized boolean containsDistribution(Arg name, Arg version) {
     return select(name, version).size() > 0;
   }
 
@@ -73,7 +73,7 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.deployer.DistributionDatabase#removeDistribution(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
    */
-  public synchronized void removeDistribution(CommandArg name, CommandArg version) {
+  public synchronized void removeDistribution(Arg name, Arg version) {
     Map<String, Distribution> distsByVersion;
     List<Distribution> dists = select(name, version);
     for(int i = 0; i < dists.size(); i++){
@@ -99,7 +99,7 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
 
     for (Iterator<String> iter = _distsByName.keySet().iterator(); iter.hasNext();) {
       name = iter.next();
-      dists.addAll(getDistributions(CommandArgParser.parse(name)));
+      dists.addAll(getDistributions(ArgFactory.parse(name)));
     }
 
     return dists;
@@ -108,7 +108,7 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.deployer.DistributionDatabase#getDistributions(org.sapia.corus.admin.CommandArg)
    */  
-  public synchronized List<Distribution> getDistributions(CommandArg name) {
+  public synchronized List<Distribution> getDistributions(Arg name) {
     List<Distribution> lst            = new ArrayList<Distribution>();
     lst.addAll(select(name, null));
     return lst;
@@ -117,7 +117,7 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.deployer.DistributionDatabase#getDistributions(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
    */    
-  public synchronized List<Distribution> getDistributions(CommandArg name, CommandArg version) {
+  public synchronized List<Distribution> getDistributions(Arg name, Arg version) {
     List<Distribution> lst            = new ArrayList<Distribution>();
     lst.addAll(select(name, version));
     return lst;
@@ -126,7 +126,7 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.deployer.DistributionDatabase#getDistribution(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
    */   
-  public synchronized Distribution getDistribution(CommandArg name, CommandArg version)
+  public synchronized Distribution getDistribution(Arg name, Arg version)
                                             throws LogicException {
     List<Distribution> dists = select(name, version);
     if(dists.size() == 0){
@@ -142,7 +142,7 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
     }
   }
   
-  private List<Distribution> select(CommandArg nameToken, CommandArg versionToken){
+  private List<Distribution> select(Arg nameToken, Arg versionToken){
     Iterator<String> names = _distsByName.keySet().iterator();
     List<Distribution> dists = new ArrayList<Distribution>();
     while(names.hasNext()){

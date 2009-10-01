@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.server.processor.ProcessDatabase;
@@ -48,7 +48,7 @@ public class ProcessDatabaseImpl implements ProcessDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#removeProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
    */
-  public synchronized void removeProcesses(CommandArg name, CommandArg version) {
+  public synchronized void removeProcesses(Arg name, Arg version) {
     Process  current;
     Iterator<Process> processes = _processes.values();
     List<Process>     toRemove  = new ArrayList<Process>();
@@ -84,7 +84,7 @@ public class ProcessDatabaseImpl implements ProcessDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg)
    */
-  public synchronized List<Process> getProcesses(CommandArg name) {
+  public synchronized List<Process> getProcesses(Arg name) {
     List<Process> toReturn  = new ArrayList<Process>();
     Process  current;
     Iterator<Process> processes = _processes.values();
@@ -103,7 +103,7 @@ public class ProcessDatabaseImpl implements ProcessDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
    */  
-  public synchronized List<Process> getProcesses(CommandArg name, CommandArg version) {
+  public synchronized List<Process> getProcesses(Arg name, Arg version) {
     List<Process>     toReturn  = new ArrayList<Process>();
     Process  current;
     Iterator<Process> processes = _processes.values();
@@ -145,7 +145,7 @@ public class ProcessDatabaseImpl implements ProcessDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg, java.lang.String)
    */    
-  public synchronized List<Process> getProcesses(CommandArg name, CommandArg version, String profile) {
+  public synchronized List<Process> getProcesses(Arg name, Arg version, String profile) {
     List<Process>     toReturn  = new ArrayList<Process>();
     Process  current;
     Iterator<Process> processes = _processes.values();
@@ -166,8 +166,8 @@ public class ProcessDatabaseImpl implements ProcessDatabase {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg, java.lang.String, org.sapia.corus.admin.CommandArg)
    */    
-  public synchronized List<Process> getProcesses(CommandArg name, CommandArg version, String profile,
-                                 CommandArg processName) {
+  public synchronized List<Process> getProcesses(Arg name, Arg version, String profile,
+                                 Arg processName) {
     List<Process>     toReturn  = new ArrayList<Process>();
     Process  current;
     Iterator<Process> processes = _processes.values();

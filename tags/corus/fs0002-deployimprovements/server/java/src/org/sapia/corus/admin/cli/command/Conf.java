@@ -7,7 +7,7 @@ import org.sapia.console.AbortException;
 import org.sapia.console.InputException;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.HostItem;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
@@ -89,7 +89,7 @@ public class Conf extends CorusCliCommand{
     }
     else if(op == Op.DELETE){
       String toRemove = ctx.getCommandLine().assertOption(OPT_TAG, true).getValue();
-      ctx.getCorus().removeTag(CommandArgParser.parse(toRemove), getClusterInfo(ctx));
+      ctx.getCorus().removeTag(ArgFactory.parse(toRemove), getClusterInfo(ctx));
     }
     else if(op == Op.LIST){
       displayTagResults(ctx.getCorus().getTags(getClusterInfo(ctx)), ctx);
@@ -122,7 +122,7 @@ public class Conf extends CorusCliCommand{
     }
     else if(op == Op.DELETE){
       String name = ctx.getCommandLine().assertOption(OPT_PROPERTY, true).getValue();
-      ctx.getCorus().removeProperty(scope, CommandArgParser.parse(name), getClusterInfo(ctx));
+      ctx.getCorus().removeProperty(scope, ArgFactory.parse(name), getClusterInfo(ctx));
     }
     else if(op == Op.LIST){
       displayPropertyResults(ctx.getCorus().getProperties(scope, getClusterInfo(ctx)), ctx);

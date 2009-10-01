@@ -7,7 +7,7 @@ import java.util.List;
 import org.sapia.corus.CorusException;
 import org.sapia.corus.LogicException;
 import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.admin.CommandArgParser;
+import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
@@ -76,8 +76,8 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
 
     Deployer dep = lookup(Deployer.class);
 
-    if (!dep.getDistribution(CommandArgParser.parse(info.getDistribution()), 
-        CommandArgParser.parse(info.getVersion())).containsProcess(info.getVmName())) {
+    if (!dep.getDistribution(ArgFactory.parse(info.getDistribution()), 
+        ArgFactory.parse(info.getVersion())).containsProcess(info.getVmName())) {
       throw new LogicException("Invalid VM name: " + info.getVmName());
     }
 

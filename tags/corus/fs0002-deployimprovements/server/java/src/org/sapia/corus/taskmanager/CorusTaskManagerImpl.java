@@ -3,6 +3,7 @@ package org.sapia.corus.taskmanager;
 import org.apache.log.Logger;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.ServerContext;
+import org.sapia.corus.taskmanager.core.BackgroundTaskListener;
 import org.sapia.corus.taskmanager.core.FutureResult;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskListener;
@@ -66,6 +67,11 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   
   public void executeBackground(long startDelay, long execInterval, Task task) {
     _delegate.executeBackground(startDelay, execInterval, task);
+  }
+  
+  public void executeBackground(long startDelay, long execInterval, Task task,
+      BackgroundTaskListener listener) {
+    _delegate.executeBackground(startDelay, execInterval, task, listener);
   }
   
   public void fork(Task task) {

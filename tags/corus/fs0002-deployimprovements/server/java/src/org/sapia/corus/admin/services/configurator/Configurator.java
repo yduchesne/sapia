@@ -5,7 +5,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sapia.corus.Module;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.util.NameValuePair;
 
 /**
@@ -34,7 +34,7 @@ public interface Configurator extends java.rmi.Remote, Module {
   /**
    * @param name the name of the property to remove.
    */
-  public void removeProperty(PropertyScope scope, CommandArg name);
+  public void removeProperty(PropertyScope scope, Arg name);
  
   /**
    * Returns a property value.
@@ -86,9 +86,9 @@ public interface Configurator extends java.rmi.Remote, Module {
   /**
    * Removes the tags matching the given argument from this instance.
    * 
-   * @param tag a {@link CommandArg} corresponding to the tags to remove.
+   * @param tag a {@link Arg} corresponding to the tags to remove.
    */
-  public void removeTag(CommandArg tag);
+  public void removeTag(Arg tag);
   
   /**
    * @return a {@link Set} of {@link String}s corresponding to the tags

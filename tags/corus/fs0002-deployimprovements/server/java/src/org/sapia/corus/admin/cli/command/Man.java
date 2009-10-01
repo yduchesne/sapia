@@ -25,6 +25,7 @@ public class Man extends CorusCliCommand{
   private static Map _commands = new HashMap();
   
   static{
+    _commands.put("conf", Conf.class);
     _commands.put("cron", Cron.class);
     _commands.put("deploy", Deploy.class);
     _commands.put("exec", Exec.class);
@@ -34,6 +35,7 @@ public class Man extends CorusCliCommand{
     _commands.put("kill", Kill.class);
     _commands.put("ls", Ls.class);
     _commands.put("ps", Ps.class);
+    _commands.put("restart", Resume.class);
     _commands.put("resume", Resume.class);
     _commands.put("suspend", Suspend.class);
     _commands.put("undeploy", Undeploy.class);

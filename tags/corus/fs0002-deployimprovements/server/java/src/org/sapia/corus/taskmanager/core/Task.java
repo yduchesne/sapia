@@ -1,5 +1,13 @@
 package org.sapia.corus.taskmanager.core;
 
+/**
+ * This class is to be inherited by concrete tasks. 
+ * 
+ * @see TaskManager
+ * 
+ * @author yduchesne
+ *
+ */
 public abstract class Task {
 
   private volatile boolean aborted;

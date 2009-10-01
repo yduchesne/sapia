@@ -24,12 +24,10 @@ import org.sapia.ubik.net.ServerAddress;
 
 
 /**
+ * This interface specifies a facade allowing to communicate with a 
+ * Corus server.
+ * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public interface CorusFacade {
   /**
@@ -233,7 +231,7 @@ public interface CorusFacade {
    * @param scope a {@link PropertyScope}
    * @param name the name of the property to remove.
    */
-  public void removeProperty(PropertyScope scope, CommandArg name, ClusterInfo cluster);
+  public void removeProperty(PropertyScope scope, Arg name, ClusterInfo cluster);
   
   /**
    * Adds the given tag to the Corus server.
@@ -255,7 +253,7 @@ public interface CorusFacade {
    * Removes the given tag from the Corus server.
    * @param tag a tag pattern.
    */
-  public void removeTag(CommandArg tag, ClusterInfo cluster);
+  public void removeTag(Arg tag, ClusterInfo cluster);
   
   /**
    * The tags of the Corus server.

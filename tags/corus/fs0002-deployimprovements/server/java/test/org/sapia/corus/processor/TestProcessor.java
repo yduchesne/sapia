@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.sapia.corus.CorusException;
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
@@ -29,8 +29,8 @@ public class TestProcessor implements Processor{
     return configuration;
   }
   
-  public ProgressQueue exec(CommandArg distName, CommandArg version,
-      String profile, CommandArg processName, int instances) {
+  public ProgressQueue exec(Arg distName, Arg version,
+      String profile, Arg processName, int instances) {
     ProgressQueue q = new ProgressQueueImpl();
     return q;
   }
@@ -40,7 +40,7 @@ public class TestProcessor implements Processor{
     return q;
   }  
 
-  public ProgressQueue exec(CommandArg distName, CommandArg version,
+  public ProgressQueue exec(Arg distName, Arg version,
       String profile, int instances) {
     ProgressQueue q = new ProgressQueueImpl();
     return q;
@@ -54,21 +54,21 @@ public class TestProcessor implements Processor{
     return db.getProcesses();
   }
   
-  public List<Process> getProcesses(CommandArg distName) {
+  public List<Process> getProcesses(Arg distName) {
     return db.getProcesses(distName);
   }
   
-  public List<Process> getProcesses(CommandArg distName, CommandArg version) {
+  public List<Process> getProcesses(Arg distName, Arg version) {
     return db.getProcesses(distName, version);
   }
   
-  public List<Process> getProcesses(CommandArg distName, CommandArg version,
+  public List<Process> getProcesses(Arg distName, Arg version,
       String profile) {
     return db.getProcesses(distName, version, profile);
   }
   
-  public List<Process> getProcesses(CommandArg distName, CommandArg version,
-      String profile, CommandArg processName) {
+  public List<Process> getProcesses(Arg distName, Arg version,
+      String profile, Arg processName) {
     return db.getProcesses(distName, version, profile, processName);
   }
   
@@ -80,21 +80,21 @@ public class TestProcessor implements Processor{
     return new ArrayList<Status>();
   }
   
-  public List<Status> getStatus(CommandArg distName) {
+  public List<Status> getStatus(Arg distName) {
     return getStatus();
   }
   
-  public List<Status> getStatus(CommandArg distName, CommandArg version) {
+  public List<Status> getStatus(Arg distName, Arg version) {
     return getStatus();
   }
   
-  public List<Status> getStatus(CommandArg distName, CommandArg version,
+  public List<Status> getStatus(Arg distName, Arg version,
       String profile) {
     return getStatus();
   }
   
-  public List<Status> getStatus(CommandArg distName, CommandArg version,
-      String profile, CommandArg processName) {
+  public List<Status> getStatus(Arg distName, Arg version,
+      String profile, Arg processName) {
     return getStatus();
   }
   
@@ -102,12 +102,12 @@ public class TestProcessor implements Processor{
     return new ProcStatus(getProcess(corusPid));
   }
   
-  public void kill(CommandArg distName, CommandArg version, String profile,
+  public void kill(Arg distName, Arg version, String profile,
       boolean suspend) throws CorusException {
   }
   
-  public void kill(CommandArg distName, CommandArg version, String profile,
-      CommandArg processName, boolean suspend) throws CorusException {
+  public void kill(Arg distName, Arg version, String profile,
+      Arg processName, boolean suspend) throws CorusException {
   }
   
   public void kill(String corusPid, boolean suspend) throws CorusException {
@@ -134,7 +134,7 @@ public class TestProcessor implements Processor{
     return null;
   }
   
-  public void removeExecConfig(CommandArg name) {
+  public void removeExecConfig(Arg name) {
     // TODO Auto-generated method stub
     
   }

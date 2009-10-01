@@ -3,7 +3,7 @@ package org.sapia.corus.server.processor;
 import java.util.List;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.Process;
 
 public interface ProcessDatabase {
@@ -26,7 +26,7 @@ public interface ProcessDatabase {
    * @param name the name of the distribution from which to remove processes.
    * @param version the version of the distribution from which to remove processes. 
    */
-  public abstract void removeProcesses(CommandArg name, CommandArg version);
+  public abstract void removeProcesses(Arg name, Arg version);
 
   /**
    * @return the <code>List</code> of <code>Process</code>es held by
@@ -41,7 +41,7 @@ public interface ProcessDatabase {
    * @param name a distribution name.
    * @return a <code>List</code> of processes.
    */
-  public abstract List<Process> getProcesses(CommandArg name);
+  public abstract List<Process> getProcesses(Arg name);
 
   /**
    * Returns the list of processes corresponding to the distribution
@@ -51,7 +51,7 @@ public interface ProcessDatabase {
    * @param version a distribution version. 
    * @return a <code>List</code> of processes.
    */
-  public abstract List<Process> getProcesses(CommandArg name, CommandArg version);
+  public abstract List<Process> getProcesses(Arg name, Arg version);
 
   /**
    * @param name a distribution name
@@ -70,8 +70,8 @@ public interface ProcessDatabase {
    * @param profile a distribution . 
    * @return a <code>List</code> of processes.
    */
-  public abstract List<Process> getProcesses(CommandArg name,
-      CommandArg version, String profile);
+  public abstract List<Process> getProcesses(Arg name,
+      Arg version, String profile);
 
   /**
    * Returns the list of processes corresponding to the distribution
@@ -83,8 +83,8 @@ public interface ProcessDatabase {
    * @param processName a process config name.
    * @return a <code>List</code> of processes.
    */
-  public abstract List<Process> getProcesses(CommandArg name,
-      CommandArg version, String profile, CommandArg processName);
+  public abstract List<Process> getProcesses(Arg name,
+      Arg version, String profile, Arg processName);
 
   public abstract void removeProcess(String corusPid);
 

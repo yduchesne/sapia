@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sapia.corus.LogicException;
-import org.sapia.corus.admin.CommandArg;
+import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.server.processor.ProcessDatabase;
 import org.sapia.corus.server.processor.ProcessRepository;
@@ -99,7 +99,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg)
    */
-  public synchronized List<Process> getProcesses(CommandArg distName) {
+  public synchronized List<Process> getProcesses(Arg distName) {
     List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName));
     procs.addAll(_suspended.getProcesses(distName));
@@ -110,7 +110,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
    */
-  public synchronized List<Process> getProcesses(CommandArg distName, CommandArg version) {
+  public synchronized List<Process> getProcesses(Arg distName, Arg version) {
     List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName, version));
     procs.addAll(_suspended.getProcesses(distName, version));
@@ -122,7 +122,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg, java.lang.String)
    */
-  public synchronized List<Process> getProcesses(CommandArg distName, CommandArg version,
+  public synchronized List<Process> getProcesses(Arg distName, Arg version,
                                         String profile) {
     List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName, version, profile));
@@ -135,8 +135,8 @@ public class ProcessRepositoryImpl implements ProcessRepository {
   /* (non-Javadoc)
    * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg, java.lang.String, org.sapia.corus.admin.CommandArg)
    */
-  public synchronized List<Process> getProcesses(CommandArg distName, CommandArg version,
-                                        String profile, CommandArg procName) {
+  public synchronized List<Process> getProcesses(Arg distName, Arg version,
+                                        String profile, Arg procName) {
     List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName, version, profile, procName));
     procs.addAll(_suspended.getProcesses(distName, version, profile, procName));
