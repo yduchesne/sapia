@@ -26,7 +26,6 @@
         <!-- soto -->                
         <savant:artifact group="sapia"   projectname="soto"      name="sapia_soto"      version="3.0b7" type="jar"/>
         <savant:artifact group="sapia"   projectname="utils"     name="sapia_utils"     version="1.6" type="jar"/>
-        <savant:artifact group="sapia"   projectname="taskman"   name="sapia_taskman"   version="1.2.1" type="jar"/>
         <savant:artifact group="sapia"   projectname="corus_iop" name="sapia_corus_iop" version="${corus.iop.version}"   type="jar"/>
         <savant:artifact group="sapia"   projectname="corus_iop" name="sapia_corus_iop_api" version="${corus.iop.version}"   type="jar"/>
         <savant:artifact group="ant"     projectname="ant"       name="ant"             version="1.7.1" type="jar"/>
