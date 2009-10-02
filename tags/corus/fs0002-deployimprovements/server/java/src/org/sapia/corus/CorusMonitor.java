@@ -1,6 +1,7 @@
 package org.sapia.corus;
 
 import java.lang.reflect.UndeclaredThrowableException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.sapia.console.Arg;
@@ -11,13 +12,14 @@ import org.sapia.corus.taskmanager.CorusTaskManager;
 import org.sapia.corus.util.ProgressMsg;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.ubik.rmi.server.Hub;
+import org.sapia.ubik.util.Localhost;
 
 
 /**
  * @author Yanick Duchesne
  */
 public class CorusMonitor {
-  public static final String HOST = "h";
+  public static final String HOST = "help";
   
   public static void main(String[] args) {
     int     port = CorusServer.DEFAULT_PORT;
@@ -25,13 +27,23 @@ public class CorusMonitor {
     
     CmdLine cmd = CmdLine.parse(args);
     
-    try {
-      host = cmd.assertOption(HOST, true).getValue();
-    } catch (InputException e) {
-      System.out.println("Host (-h) not specified");
-      help();
-      
-      return;
+    if(cmd.containsOption(HOST, false)){
+      try {
+        host = cmd.assertOption(HOST, true).getValue();
+      } catch (InputException e) {
+        System.out.println("Host (-h) not specified");
+        help();
+        
+        return;
+      }
+    }
+    else{
+      try{
+        host = Localhost.getLocalAddress().getHostAddress();
+      }catch(UnknownHostException e){
+        e.printStackTrace();
+        return;
+      }
     }
     
     CmdLine argsCmd = cmd.filterArgs();

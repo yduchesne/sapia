@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.tasks.TaskFactory;

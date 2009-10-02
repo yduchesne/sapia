@@ -33,7 +33,7 @@ import org.sapia.corus.exceptions.PortUnavailableException;
 import org.sapia.corus.processor.NativeProcess;
 import org.sapia.corus.processor.NativeProcessFactory;
 import org.sapia.corus.processor.ProcessInfo;
-import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.tasks.TaskFactory;
@@ -50,7 +50,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
 
   public boolean attemptKill(TaskExecutionContext ctx,
       ProcessTerminationRequestor requestor, Process proc, int currentRetryCount) {
-    if (proc.getStatus() == Process.KILL_CONFIRMED) {
+    if (proc.getStatus() == Process.LifeCycleStatus.KILL_CONFIRMED) {
       ctx.info("Process " + proc.getProcessID() + " has confirmed shutdown");
       return true;
     }
@@ -230,10 +230,10 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     }
 
     // process ports...
-    List ports = conf.getPorts();
-    Set added = new HashSet();
+    List<Port> ports = conf.getPorts();
+    Set<String> added = new HashSet<String>();
     for (int i = 0; i < ports.size(); i++) {
-      Port p = (Port) ports.get(i);
+      Port p = ports.get(i);
       if (!added.contains(p.getName())) {
         int portInt = portmgr.aquirePort(p.getName());
         props.add(new Property("corus.process.port." + p.getName(), Integer

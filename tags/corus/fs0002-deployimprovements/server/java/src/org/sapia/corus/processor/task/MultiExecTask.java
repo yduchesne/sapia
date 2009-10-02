@@ -5,8 +5,8 @@ import java.util.Set;
 
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.processor.ProcessRef;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.StartupLock;
-import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 

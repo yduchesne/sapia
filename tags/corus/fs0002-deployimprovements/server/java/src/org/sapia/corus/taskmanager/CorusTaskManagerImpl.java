@@ -1,5 +1,7 @@
 package org.sapia.corus.taskmanager;
 
+import java.rmi.Remote;
+
 import org.apache.log.Logger;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.ServerContext;
@@ -21,7 +23,7 @@ import org.sapia.corus.util.ProgressQueueImpl;
  * 
  * @author Yanick Duchesne
  */
-public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManager{
+public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManager, Remote{
   
   private TaskManagerImpl _delegate; 
   private ProgressQueues _queues = new ProgressQueues();

@@ -12,20 +12,29 @@ import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.ProcessDef;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.StartupLock;
-import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.BackgroundTaskListener;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.TaskManager;
 
+/**
+ * Implements the bulk of the behavior pertaining to the startup of 
+ * execution configs.
+ * 
+ * @author yduchesne
+ *
+ */
 public abstract class AbstractExecConfigStartTask extends Task{
   
   protected StartupLock lock;
+  private boolean stopExistingProcesses;
   
-  public AbstractExecConfigStartTask(StartupLock lock) {
+  public AbstractExecConfigStartTask(StartupLock lock, boolean stopExistingProcesses) {
     this.lock = lock;
+    this.stopExistingProcesses = stopExistingProcesses;
   }
   
   @Override
@@ -39,6 +48,7 @@ public abstract class AbstractExecConfigStartTask extends Task{
     
     // finding processes for versions other than the one configured 
     // as part of the exec configuration
+    
     for(ExecConfig ec:configsToStart){
       for(ProcessDef pd:ec.getProcesses()){
         Arg distName = new StringArg(pd.getDist());
@@ -54,7 +64,9 @@ public abstract class AbstractExecConfigStartTask extends Task{
             processName);
         for(Process p:activeProcesses){
           if(!p.getDistributionInfo().getVersion().equals(pd.getVersion())){
-            toStop.add(p);
+            if(stopExistingProcesses){
+              toStop.add(p);
+            }
           }
           else{
             toStart.add(pd);
@@ -73,10 +85,17 @@ public abstract class AbstractExecConfigStartTask extends Task{
       for(Process p:toStop){
         ctx.warn("Found old processes; proceeding to kill");
         ProcessorConfiguration conf = ctx.getServerContext().getServices().getProcessor().getConfiguration();
-        KillTask kill = new KillTask(ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, p.getProcessID(), p.getMaxKillRetry());
+        
+        KillTask kill = new KillTask(
+            ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, 
+            p.getProcessID(), 
+            p.getMaxKillRetry());
+        
         ctx.getTaskManager().executeBackground(
             kill, 
-            BackgroundTaskConfig.create(listener).setExecDelay(0).setExecInterval(conf.getKillIntervalMillis())
+            BackgroundTaskConfig.create(listener)
+              .setExecDelay(0)
+              .setExecInterval(conf.getKillIntervalMillis())
         );      
       }
     }

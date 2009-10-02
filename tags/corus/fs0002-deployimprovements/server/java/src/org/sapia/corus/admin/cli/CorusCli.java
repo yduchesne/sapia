@@ -88,6 +88,7 @@ public class CorusCli extends CommandConsole {
       System.out.println(e.getMessage());
       help();
     } catch (Exception e) {
+      e.printStackTrace();
       if(e instanceof CorusException && 
          ((CorusException)e).getCause() != null && 
          ((CorusException)e).getCause() instanceof RemoteException){

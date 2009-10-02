@@ -9,11 +9,11 @@ import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.exceptions.LockException;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.ProcessInfo;
-import org.sapia.corus.server.deployer.DistributionDatabase;
-import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
@@ -59,7 +59,7 @@ public class RestartTask extends ProcessTerminationTask {
                                                   .getProcessName());
 
       synchronized (dists) {
-        process.setStatus(Process.RESTARTING);        
+        process.setStatus(Process.LifeCycleStatus.RESTARTING);        
         processes.getProcessesToRestart().addProcess(process);
         processes.getActiveProcesses().removeProcess(process.getProcessID());
       }
@@ -114,7 +114,7 @@ public class RestartTask extends ProcessTerminationTask {
         if(strategy.execProcess(ctx, new ProcessInfo(_process, _dist, _conf, true), CorusRuntime.getProcessProperties())){
           repository.getProcessesToRestart().removeProcess(_process.getProcessID());
           _process.touch();
-          _process.setStatus(Process.ACTIVE);        
+          _process.setStatus(Process.LifeCycleStatus.ACTIVE);        
           repository.getActiveProcesses().addProcess(_process);
         }
       } catch(IOException e) {

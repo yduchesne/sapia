@@ -3,8 +3,8 @@ package org.sapia.corus.processor.task;
 import java.util.List;
 
 import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.processor.ExecConfigDatabase;
 import org.sapia.corus.processor.StartupLock;
-import org.sapia.corus.server.processor.ExecConfigDatabase;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
@@ -19,8 +19,14 @@ import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 public class BootstrapExecConfigStartTask extends AbstractExecConfigStartTask{
 
   public BootstrapExecConfigStartTask(StartupLock lock) {
-    super(lock);
+    super(lock, true);
     super.setMaxExecution(1);
+  }
+  
+  @Override
+  public Object execute(TaskExecutionContext ctx) throws Throwable {
+    ctx.info("Checking for bootstrap processes; will start if any is found");
+    return super.execute(ctx);
   }
   
   @Override

@@ -31,17 +31,17 @@ public class ProcessCheckTask extends Task{
     for (int i = 0; i < processes.size(); i++) {
       proc = (Process) processes.get(i);
 
-      if ((proc.getStatus() == Process.ACTIVE) &&
+      if ((proc.getStatus() == Process.LifeCycleStatus.ACTIVE) &&
             proc.isTimedOut(processorConf.getProcessTimeoutMillis())) {
         if (proc.isLocked()) {
           ctx.warn("Process timed out but locked, probably terminating or restarting: " + proc);
         } else {
-          proc.setStatus(Process.KILL_REQUESTED);
+          proc.setStatus(Process.LifeCycleStatus.KILL_REQUESTED);
           ctx.warn("Process timed out - ordering kill: " + proc);
           strategy.killProcess(ctx, Process.ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, proc);
           onTimeout(ctx);
         }
-      } else if (proc.getStatus() == Process.KILL_CONFIRMED) {
+      } else if (proc.getStatus() == Process.LifeCycleStatus.KILL_CONFIRMED) {
         // will cleanup process dir, remove process from 
         // process store.
         if (!proc.isLocked()) {

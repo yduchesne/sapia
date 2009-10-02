@@ -7,14 +7,12 @@ import org.sapia.corus.admin.services.processor.Process.ProcessTerminationReques
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
-
 /**
  * This task insures the destruction of a given process.
  *
  * @author Yanick Duchesne
  */
 public class KillTask extends ProcessTerminationTask {
-  
   
   /**
    * Constructs an instance of this class with the given params.

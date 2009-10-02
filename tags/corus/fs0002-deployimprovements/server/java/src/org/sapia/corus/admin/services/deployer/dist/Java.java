@@ -1,7 +1,10 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.DirectoryScanner;
@@ -25,7 +28,6 @@ public class Java extends BaseJavaStarter {
   static final long serialVersionUID = 1L;
 
   protected String _mainClass;
-  protected String _cp;
   protected String _args;
   protected String _mainArgs;
   
@@ -41,16 +43,6 @@ public class Java extends BaseJavaStarter {
    */
   public void setMainClass(String main) {
     _mainClass = main;
-  }
-  
-  /**
-   * Sets the classpath to pass to the "java" executable, as would be
-   * specified at the command line (but excluding the "-cp" string).
-   *
-   * @param cp sets the classpath to pass to the "java" executable.
-   */
-  public void setCp(String cp) {
-    _cp = cp;
   }
   
   /**
@@ -109,18 +101,15 @@ public class Java extends BaseJavaStarter {
       cmd.addElement(props[i].convert());
     }
     
-    if (_cp == null) {
-      _cp = "";
-    }
     String pathSep = System.getProperty("path.separator");
     String baseDir = System.getProperty("corus.home") == null ? System.getProperty("user.dir") : System.getProperty("corus.home");
     String starterLib  = baseDir + File.separator + "lib"  + File.separator + "sapia_corus_starter.jar";
     String starterDist = baseDir + File.separator + "dist" + File.separator + "sapia_corus_starter.jar";
     String starterCp = starterLib + pathSep + starterDist;
-    _cp = starterCp + pathSep + _cp + pathSep + getMainCp();
+    String classpath = starterCp + pathSep + getProcessCp(env.getCommonDir()) + pathSep + getMainCp();
     
     try {
-      TemplateElementIF template = fac.parse(_cp);
+      TemplateElementIF template = fac.parse(classpath);
       cmd.addOpt("cp", template.render(context).replace(';', System.getProperty("path.separator").charAt(0)));
     } catch (TemplateException e) {
       throw new LogicException("Could not replace variables in 'cp'", e);
@@ -148,7 +137,7 @@ public class Java extends BaseJavaStarter {
   
   private String getMainCp() {
     DirectoryScanner ds      = new DirectoryScanner();
-    String           basedir = _corusHome + File.separator + "vm-boot-lib";
+    String           basedir = (_corusHome == null ? System.getProperty("user.dir") : _corusHome) + File.separator + "vm-boot-lib";
     ds.setBasedir(basedir);
     ds.setIncludes(new String[] { "**/*.jar" });
     ds.scan();
@@ -159,6 +148,37 @@ public class Java extends BaseJavaStarter {
     for (int i = 0; i < jars.length; i++) {
       buf.append(basedir).append(File.separator).append(jars[i]);
 
+      if (i < (jars.length - 1)) {
+        buf.append(System.getProperty("path.separator"));
+      }
+    }
+
+    return buf.toString();
+  }
+  
+  private String getProcessCp(String processUserDir) {
+    if(!new File(processUserDir).exists()){
+      processUserDir = System.getProperty("user.dir");
+    }
+    DirectoryScanner ds      = new DirectoryScanner();
+    String           basedir = processUserDir;
+    ds.setBasedir(basedir);
+    ds.setIncludes(new String[] { "lib/**/*.jar", "lib/**/*.zip" });
+    ds.scan();
+    
+    String[]     jars = ds.getIncludedFiles();
+    Arrays.sort(jars);
+    
+    List<String> path = new ArrayList<String>();
+    // adding classes dir
+    path.add(processUserDir+File.separator+"classes"+File.separator);
+    for(String jar:jars){
+      path.add(jar);
+    }
+    StringBuffer buf = new StringBuffer();
+    
+    for (int i = 0; i < path.size(); i++) {
+      buf.append(basedir).append(File.separator).append(path.get(i));
       if (i < (jars.length - 1)) {
         buf.append(System.getProperty("path.separator"));
       }

@@ -9,7 +9,6 @@ import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.processor.DistributionInfo;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.server.processor.ProcessRepository;
 
 
 /**

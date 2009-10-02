@@ -9,9 +9,8 @@ import java.util.TreeMap;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.exceptions.DuplicateDistributionException;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.server.deployer.DistributionDatabase;
-import org.sapia.corus.server.deployer.DuplicateDistributionException;
 
 
 /**

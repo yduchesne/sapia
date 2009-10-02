@@ -13,7 +13,6 @@ import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Status;
-import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 

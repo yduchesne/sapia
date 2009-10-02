@@ -4,7 +4,7 @@ import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
@@ -45,7 +45,7 @@ public class SuspendTask extends ProcessTerminationTask {
       process.releasePorts(ports);
 
       synchronized (processes) {
-        process.setStatus(Process.SUSPENDED);        
+        process.setStatus(Process.LifeCycleStatus.SUSPENDED);        
         processes.getSuspendedProcesses().addProcess(process);
         processes.getActiveProcesses().removeProcess(process.getProcessID());
       }

@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.deployer.DistributionDatabase;
+import org.sapia.corus.processor.ExecConfigDatabase;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.task.ProcessorTaskStrategy;
-import org.sapia.corus.server.deployer.DistributionDatabase;
-import org.sapia.corus.server.processor.ExecConfigDatabase;
-import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.TaskManager;
 
 /**

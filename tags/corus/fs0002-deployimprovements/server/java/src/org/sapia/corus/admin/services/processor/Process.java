@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.exceptions.LockException;
+import org.sapia.corus.interop.AbstractCommand;
 import org.sapia.corus.interop.Shutdown;
-import org.sapia.corus.interop.Status;
 import org.sapia.corus.interop.client.CyclicIdGenerator;
 import org.sapia.corus.util.IDGenerator;
 
@@ -40,35 +40,38 @@ public class Process implements java.io.Serializable {
     }
   }
   
-  /**
-   * Corresponds to the "active" status: the process is up and running.
-   * @see #getStatus()
-   */
-  public static final int    ACTIVE                        = 0;
+  public enum LifeCycleStatus{
   
-  /**
-   * Corresponds to the "kill requested" status: the process is shutting down.
-   * @see #getStatus() 
-   */
-  public static final int    KILL_REQUESTED                = 1;
-
-  /**
-   * Corresponds to the "kill confirmed" status: the process has terminated.
-   * @see #getStatus() 
-   */
-  public static final int    KILL_CONFIRMED                = 2;
-
-  /**
-   * Corresponds to the "restarting" status: the process is in the "restarting" queue.
-   * @see #getStatus() 
-   */
-  public static final int    RESTARTING                    = 3;
-
-  /**
-   * Corresponds to the "suspended" status: the process is in the "suspended" queue.
-   * @see #getStatus() 
-   */
-  public static final int    SUSPENDED                     = 4;  
+    /**
+     * Corresponds to the "active" status: the process is up and running.
+     * @see #getStatus()
+     */
+     ACTIVE,
+    
+    /**
+     * Corresponds to the "kill requested" status: the process is shutting down.
+     * @see #getStatus() 
+     */
+    KILL_REQUESTED,
+  
+    /**
+     * Corresponds to the "kill confirmed" status: the process has terminated.
+     * @see #getStatus() 
+     */
+    KILL_CONFIRMED,
+  
+    /**
+     * Corresponds to the "restarting" status: the process is in the "restarting" queue.
+     * @see #getStatus() 
+     */
+    RESTARTING,
+  
+    /**
+     * Corresponds to the "suspended" status: the process is in the "suspended" queue.
+     * @see #getStatus() 
+     */
+    SUSPENDED;  
+  }
   
   public static final int    DEFAULT_SHUTDOWN_TIMEOUT_SECS = 30;
   public static final int    DEFAULT_KILL_RETRY            = 3;
@@ -82,10 +85,10 @@ public class Process implements java.io.Serializable {
   private long               _lastAccess                   = System.currentTimeMillis();
   private int                _shutDownTimeout              = DEFAULT_SHUTDOWN_TIMEOUT_SECS;
   private int                _maxKillRetry                 = DEFAULT_KILL_RETRY;
-  private int                _status                       = ACTIVE;
-  private transient List     _commands                     = new ArrayList();
-  private List<ActivePort>   _activePorts      = new ArrayList<ActivePort>();
-  private Status             _interopStatus;
+  private LifeCycleStatus             _status                       = LifeCycleStatus.ACTIVE;
+  private transient List<AbstractCommand>  _commands       = new ArrayList<AbstractCommand>();
+  private List<ActivePort>   _activePorts                  = new ArrayList<ActivePort>();
+  private org.sapia.corus.interop.Status             _interopStatus;
 
   /**
    * Creates an instance of this class.
@@ -294,10 +297,10 @@ public class Process implements java.io.Serializable {
    *
    * @return the <code>List</code> of pending commands for the process.
    */
-  public synchronized List poll() {
+  public synchronized List<AbstractCommand> poll() {
     _lastAccess = System.currentTimeMillis();
 
-    List commands = new ArrayList(commands());
+    List<AbstractCommand> commands = new ArrayList<AbstractCommand>(commands());
     commands().clear();
 
     return commands;
@@ -309,11 +312,11 @@ public class Process implements java.io.Serializable {
    *
    * @return the <code>List</code> of pending commands for the process.
    */
-  public synchronized List status(Status stat) {
+  public synchronized List<AbstractCommand> status(org.sapia.corus.interop.Status stat) {
     _lastAccess    = System.currentTimeMillis();
     _interopStatus = stat;
 
-    List commands  = new ArrayList(commands());
+    List<AbstractCommand> commands  = new ArrayList<AbstractCommand>(commands());
     commands().clear();
 
     return commands;
@@ -325,7 +328,7 @@ public class Process implements java.io.Serializable {
    *
    * @return the <code>Status</code> of this process instance.
    */
-  public synchronized Status getProcessStatus() {
+  public synchronized org.sapia.corus.interop.Status getProcessStatus() {
     return _interopStatus;
   }
 
@@ -341,8 +344,8 @@ public class Process implements java.io.Serializable {
   	 * poll/status request. We can thus support multiple
   	 * kill attempts on a given process.
   	 */
-    if (_status == ACTIVE || _status == KILL_REQUESTED) {
-      _status = KILL_REQUESTED;
+    if (_status == LifeCycleStatus.ACTIVE || _status == LifeCycleStatus.KILL_REQUESTED) {
+      _status = LifeCycleStatus.KILL_REQUESTED;
 
       Shutdown shutdown = new Shutdown();
       shutdown.setCommandId(CyclicIdGenerator.newRequestId());
@@ -358,7 +361,7 @@ public class Process implements java.io.Serializable {
    * the process shuts down).
    */
   public synchronized void confirmKilled() {
-    _status = KILL_CONFIRMED;
+    _status = LifeCycleStatus.KILL_CONFIRMED;
   }
 
   /**
@@ -419,7 +422,7 @@ public class Process implements java.io.Serializable {
    * @see #SUSPENDED
    * @return a status corresponding to one of the status constants of this class.
    */
-  public int getStatus() {
+  public LifeCycleStatus getStatus() {
     return _status;
   }
   
@@ -432,7 +435,7 @@ public class Process implements java.io.Serializable {
    * @see #SUSPENDED
    * @param status a status constant value.
    */
-  public void setStatus(int status){
+  public void setStatus(LifeCycleStatus status){
     _status = status;
   }
 
@@ -457,8 +460,8 @@ public class Process implements java.io.Serializable {
     return (System.currentTimeMillis() - _lastAccess) > _shutDownTimeout;
   }
   
-  private List commands(){
-    return _commands == null ? _commands = new ArrayList() : _commands;
+  private List<AbstractCommand> commands(){
+    return _commands == null ? _commands = new ArrayList<AbstractCommand>(1) : _commands;
   }
 
   public String toString() {

@@ -8,7 +8,6 @@ import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
 import org.sapia.corus.admin.services.deployer.DeployerConfigurationImpl;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.server.deployer.DistributionDatabase;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
 

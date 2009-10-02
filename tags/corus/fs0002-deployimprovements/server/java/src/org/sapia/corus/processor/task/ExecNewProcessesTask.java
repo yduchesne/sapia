@@ -14,8 +14,8 @@ import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.ProcessDependencyFilter;
 import org.sapia.corus.processor.ProcessRef;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.StartupLock;
-import org.sapia.corus.server.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.ProgressQueueTaskLog;
 import org.sapia.corus.taskmanager.core.Task;
@@ -39,6 +39,12 @@ public class ExecNewProcessesTask extends Task{
   
   @Override
   public Object execute(TaskExecutionContext ctx) throws Throwable {
+    
+    if(toStart.size() == 0){
+      ctx.info("No processes to start, aborting");
+      return null;
+    }
+    
     Deployer deployer = ctx.getServerContext().lookup(Deployer.class);
     Processor processor = ctx.getServerContext().lookup(Processor.class);
     ProcessRepository processes = ctx.getServerContext().lookup(ProcessRepository.class);

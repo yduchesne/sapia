@@ -55,7 +55,7 @@ public abstract class ProcessTerminationTask extends Task {
         .getActiveProcesses()
         .getProcess(_corusPid);
       
-      if (proc.getStatus() == Process.KILL_CONFIRMED) {
+      if (proc.getStatus() == Process.LifeCycleStatus.KILL_CONFIRMED) {
         proc.releasePorts(ctx.getServerContext().getServices().lookup(PortManager.class));
         onKillConfirmed(ctx);
         abort(ctx);

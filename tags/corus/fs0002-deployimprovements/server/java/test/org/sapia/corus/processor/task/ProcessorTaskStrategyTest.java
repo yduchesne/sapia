@@ -8,7 +8,7 @@ import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.TaskManager;

@@ -6,8 +6,6 @@ import java.util.List;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.server.processor.ProcessDatabase;
-import org.sapia.corus.server.processor.ProcessRepository;
 
 /**
  * An instance of this class holds the {@link ProcessDatabase}s that

@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import org.sapia.corus.TestServerContext;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
-import org.sapia.corus.server.processor.ProcessRepository;
+import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.TaskManager;
 
 /**
