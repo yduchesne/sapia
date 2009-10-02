@@ -1,6 +1,6 @@
 <project name="soto" basedir="." xmlns:savant="inversoft:savant">
 
-  <property name="corus.iop.version" value="1.6.2" />
+  <property name="corus.iop.version" value="1.7" />
 
   <target name="do-get-libs">
 
@@ -24,7 +24,7 @@
       
       <savant:artifactgroup id="runtime_libs">
         <!-- soto -->                
-        <savant:artifact group="sapia"   projectname="soto"      name="sapia_soto"      version="3.0b7" type="jar"/>
+        <savant:artifact group="sapia"   projectname="soto"      name="sapia_soto"      version="3.1" type="jar"/>
         <savant:artifact group="sapia"   projectname="utils"     name="sapia_utils"     version="1.6" type="jar"/>
         <savant:artifact group="sapia"   projectname="corus_iop" name="sapia_corus_iop" version="${corus.iop.version}"   type="jar"/>
         <savant:artifact group="sapia"   projectname="corus_iop" name="sapia_corus_iop_api" version="${corus.iop.version}"   type="jar"/>
@@ -49,7 +49,8 @@
         <savant:artifact group="simpleweb"  projectname="simple"     name="simple"         version="2.6"   type="jar" />
 		
       	<!-- misc -->
-        <savant:artifact group="sun"  projectname="activation"     name="activation"  version="1.0.2"   type="jar" />        	
+        <savant:artifact group="sun"  projectname="activation"     name="activation"  version="1.0.2"   type="jar" />
+        <savant:artifact group="misc"  projectname="syslog4j"      name="syslog4j"  version="0.9.30-bin"   type="jar" />        	
       	
       </savant:artifactgroup>
       
