@@ -90,8 +90,7 @@ public class DeployTask extends Task {
         vms.mkdirs();
 
         Task unjar = TaskFactory.newUnjarTask(src, dest);
-        //ctx.execSyncNestedTask("UnjarTask", unjar);
-        ctx.getTaskManager().executeAndWait(unjar);
+        ctx.getTaskManager().executeAndWait(unjar).get();
 
         try {
           _store.addDistribution(dist);
@@ -106,7 +105,7 @@ public class DeployTask extends Task {
       Task deleteFile = TaskFactory.newDeleteFileTask(new File(_tmpDir +
                                                                File.separator +
                                                                _fName));
-      ctx.getTaskManager().executeAndWait(deleteFile);
+      ctx.getTaskManager().executeAndWait(deleteFile).get();
     }
     return null;
   }

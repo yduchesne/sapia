@@ -20,7 +20,7 @@ public class TaskExecutionContext {
     this.task = t;
     this.log = log;
     this.serverContext = ctx;
-    this.taskManager = new InnerTaskManager(taskMan);
+    this.taskManager = new InnerTaskManager(t, log, taskMan);
   }
 
   /**
@@ -81,41 +81,56 @@ public class TaskExecutionContext {
   
   ///////////// Inner task manager impl
   
-  static class InnerTaskManager implements TaskManager{
+  class InnerTaskManager implements TaskManager{
     
     TaskManager taskManager;
-    
-    public InnerTaskManager(TaskManager delegate) {
+    Task task;
+    TaskLog log;
+    public InnerTaskManager(Task task, TaskLog log, TaskManager delegate) {
+      this.task = task;
       this.taskManager = delegate;
+      this.log = log;
     }
     
-    public void execute(Task task) {
-      taskManager.execute(task);
+    public void execute(Task child) {
+      execute(child, SequentialTaskConfig.create());
     }
     
-    public void execute(Task task, SequentialTaskConfig conf) {
-      taskManager.execute(task, conf);
+    public void execute(Task child, SequentialTaskConfig conf) {
+      task.addChild(child);
+      initLog(conf);
+      taskManager.execute(child, conf);
     }
     
-    public FutureResult executeAndWait(Task task) {
-      return taskManager.executeAndWait(task);
+    public FutureResult executeAndWait(Task child) {
+      return executeAndWait(child, new TaskConfig());
     }
     
-    public FutureResult executeAndWait(Task task, TaskConfig conf) {
-      return taskManager.executeAndWait(task, conf);
+    public FutureResult executeAndWait(Task child, TaskConfig conf) {
+      task.addChild(child);
+      initLog(conf);
+      return taskManager.executeAndWait(child, conf);
     }
     
     
-    public void executeBackground(Task task, BackgroundTaskConfig conf) {
-      taskManager.executeBackground(task, conf);
+    public void executeBackground(Task child, BackgroundTaskConfig conf) {
+      taskManager.executeBackground(child, conf);
     }
     
-    public void fork(Task task) {
-      taskManager.fork(task);
+    public void fork(Task child) {
+      fork(child, ForkedTaskConfig.create());
     }
     
-    public void fork(Task task, ForkedTaskConfig conf) {
-      taskManager.fork(task, conf);
+    public void fork(Task child, ForkedTaskConfig conf) {
+      task.addChild(child);
+      initLog(conf);
+      taskManager.fork(child, conf);
+    }
+    
+    private void initLog(TaskConfig conf){
+      if(conf.getLog() == null){
+        conf.setLog(log);
+      }
     }
     
   }

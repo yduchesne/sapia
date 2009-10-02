@@ -98,8 +98,13 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
     }
     
     @Override
-    protected TaskLog createLogFor(Task task, TaskLog parent) {
-      return new ServerTaskLog(_queues, super.createLogFor(task, parent));
+    protected TaskLog createLogFor(Task task, TaskLog delegate) {
+      if(task.isRoot()){
+        return new ServerTaskLog(_queues, super.createLogFor(task, delegate));
+      }
+      else{
+        return super.createLogFor(task, delegate);
+      }
     }
     
   }

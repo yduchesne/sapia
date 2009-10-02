@@ -171,7 +171,7 @@ public class Java extends BaseJavaStarter {
     
     List<String> path = new ArrayList<String>();
     // adding classes dir
-    path.add(processUserDir+File.separator+"classes"+File.separator);
+    path.add("classes"+File.separator);
     for(String jar:jars){
       path.add(jar);
     }
@@ -179,7 +179,7 @@ public class Java extends BaseJavaStarter {
     
     for (int i = 0; i < path.size(); i++) {
       buf.append(basedir).append(File.separator).append(path.get(i));
-      if (i < (jars.length - 1)) {
+      if (i < (path.size() - 1)) {
         buf.append(System.getProperty("path.separator"));
       }
     }

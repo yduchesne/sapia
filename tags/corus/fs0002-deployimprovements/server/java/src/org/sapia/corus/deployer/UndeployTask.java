@@ -34,15 +34,9 @@ public class UndeployTask extends Task {
       ctx.info("Undeploying distribution " + _name + ", version: " +
                  _version);
       Task deleteDir = TaskFactory.newDeleteDirTask(distDir);
-      ctx.getTaskManager().executeAndWait(deleteDir);
+      ctx.getTaskManager().executeAndWait(deleteDir).get();
       _store.removeDistribution(_name, _version);
-
-      if (!distDir.exists()) {
-        ctx.info("Undeployment successful");
-      } else {
-        ctx.warn(distDir.getAbsolutePath() +
-                      " could not be completely removed");
-      }
+      ctx.info("Undeployment successful");
     }
     return null;
   }

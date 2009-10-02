@@ -11,8 +11,7 @@ import org.sapia.corus.ServerContext;
 public class TaskManagerImpl implements TaskManager{
   
   private Timer           background;
-  private ExecutorService sequential;
-  private ExecutorService parallel;
+  private ExecutorService threadpool;
   private ServerContext   serverContext;
   private Logger          logger;
   
@@ -24,8 +23,7 @@ public class TaskManagerImpl implements TaskManager{
     this.logger = logger;
     this.serverContext = serverContext;
     this.background = new Timer("TaskManagerDaemon", true);
-    this.parallel = Executors.newFixedThreadPool(parallelThreads);
-    this.sequential = Executors.newFixedThreadPool(1);
+    this.threadpool = Executors.newCachedThreadPool();
   }
   
   public void execute(Task task) {
@@ -43,10 +41,12 @@ public class TaskManagerImpl implements TaskManager{
         task.onMaxExecutionReached(ctx);
       }catch(Throwable err){
         ctx.error(err);
+      }finally{
+        task.cleanup(ctx);
       }
     }
     else{
-      sequential.execute(new Runnable(){
+      threadpool.execute(new Runnable(){
         public void run() {
           TaskExecutionContext ctx = new TaskExecutionContext(
               task,
@@ -65,6 +65,7 @@ public class TaskManagerImpl implements TaskManager{
             }
           }finally{
             task.incrementExecutionCount();
+            task.cleanup(ctx);
           }
         }
       });
@@ -83,79 +84,41 @@ public class TaskManagerImpl implements TaskManager{
           createLogFor(task, conf.getLog()), 
           serverContext, 
           self());
+      Object value = null;
       try{
         task.onMaxExecutionReached(ctx);
-        result.completed(null);
       }catch(Throwable err){
-        result.completed(err);
+        value = err;
       }finally{
         task.incrementExecutionCount();
-        if(conf.getLog() != null){
-          conf.getLog().close();
-        }
+        task.cleanup(ctx);
+        result.completed(value);
       }
     }
     else{
-      sequential.execute(new Runnable(){
+      final TaskExecutionContext ctx = new TaskExecutionContext(
+          task,
+          createLogFor(task, conf.getLog()), 
+          serverContext, 
+          self());
+      
+      threadpool.execute(new Runnable(){
         public void run() {
+          Object value = null;
           try{
-            Object o = task.execute(new TaskExecutionContext(
-                task,
-                createLogFor(task, conf.getLog()), 
-                serverContext, 
-                self()));
-            result.completed(o);
+            value = task.execute(ctx);
           }catch(Throwable t){
-            result.completed(t);
+            value = t;
           }finally{
             task.incrementExecutionCount();
+            task.cleanup(ctx);
+            result.completed(value);
           }
         }
       });
     }
     return result;
   }
-  
-  /*
-  public FutureResult executeAndWait(final Task task, final TaskLog parentLog) {
-    final FutureResult result = new FutureResult();
-    if(task.isMaxExecutionReached()){
-      TaskExecutionContext ctx = new TaskExecutionContext(
-          task,
-          createLogFor(task), 
-          serverContext, 
-          self());
-      try{
-        task.onMaxExecutionReached(ctx);
-        result.completed(null);
-      }catch(Throwable err){
-        result.completed(err);
-      }finally{
-        parentLog.close();
-      }
-    }
-    else{
-      sequential.execute(new Runnable(){
-        public void run() {
-          try{
-            Object o = task.execute(new TaskExecutionContext(
-                task,
-                createLogFor(task, parentLog), 
-                serverContext, 
-                self()));
-            result.completed(o);
-          }catch(Throwable t){
-            result.completed(t);
-          }finally{
-            parentLog.close();
-            task.incrementExecutionCount();
-          }
-        }
-      });
-    }
-    return result;
-  }*/
-
   
   public void executeBackground(final Task task, final BackgroundTaskConfig config){
     background.schedule(new TimerTask(){  
@@ -167,6 +130,7 @@ public class TaskManagerImpl implements TaskManager{
           if(config.getListener() != null){
             config.getListener().executionAborted(task);
           }
+          
         }
         else if(task.isMaxExecutionReached()){
           TaskExecutionContext ctx = new TaskExecutionContext(
@@ -218,26 +182,34 @@ public class TaskManagerImpl implements TaskManager{
         task.onMaxExecutionReached(ctx);
       }catch(Throwable err){
         ctx.error(err);
+      }finally{
+        task.cleanup(ctx);
       }
     }
     else{
-      parallel.execute(new Runnable(){
+      threadpool.execute(new Runnable(){
         public void run() {
+          Object value = null;
+          TaskExecutionContext ctx = new TaskExecutionContext(
+              task,
+              createLogFor(task, config.getLog()),
+              serverContext, 
+              self());
           try{
-            Object o = task.execute(new TaskExecutionContext(
-                task,
-                createLogFor(task, config.getLog()),
-                serverContext, 
-                self()));
-            if(config.getListener() != null){
-              config.getListener().executionSucceeded(task, o);
-            }
+            value = task.execute(ctx);
           }catch(Throwable t){
-            if(config.getListener() != null){
-              config.getListener().executionFailed(task, t);
-            }
+            value = t;
           }finally{
             task.incrementExecutionCount();
+            if(config.getListener() != null){
+              if(value instanceof Throwable){
+                config.getListener().executionFailed(task, (Throwable)value);
+              }
+              else{
+                config.getListener().executionSucceeded(task, value);
+              }
+            }
+            task.cleanup(ctx);
           }
         }
       });
@@ -245,12 +217,26 @@ public class TaskManagerImpl implements TaskManager{
   }
   
   public void shutdown(){
-    sequential.shutdown();
-    parallel.shutdown();
+    threadpool.shutdown();
   }
   
-  protected TaskLog createLogFor(Task task, TaskLog parent){
-    return new TaskLogImpl(logger, parent);
+  protected TaskLog createLogFor(Task task, TaskLog delegate){
+    if(task.isRoot()){
+      if(delegate == null){
+        return new LoggerTaskLog(logger);
+      }
+      else{
+        return new RootTaskLog(logger, delegate);
+      }
+    }
+    else{
+      if(delegate == null){
+        return new LoggerTaskLog(logger);
+      }
+      else{
+        return new ChildTaskLog(delegate);
+      }
+    }
   }
   
   private TaskManager self(){

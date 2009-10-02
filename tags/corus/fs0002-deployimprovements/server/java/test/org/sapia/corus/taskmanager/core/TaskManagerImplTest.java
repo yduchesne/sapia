@@ -24,20 +24,20 @@ public class TaskManagerImplTest extends TestCase {
   }
 
   public void testExecute() throws Exception{
-    TestTask t = new TestTask();
+    TestTask t = new TestTask(getName());
     tm.execute(t);
     t.waitFor();
     assertTrue("Not completed", t.completed);
   }
 
   public void testExecuteAndWait() throws Exception{
-    TestTask t = new TestTask();
+    TestTask t = new TestTask(getName());
     String result = (String)tm.executeAndWait(t).get();
     assertEquals("Result invalid", "TEST", result);
   }
   
   public void testExecuteAndWaitError() throws Exception{
-    ErrorTask t = new ErrorTask();
+    ErrorTask t = new ErrorTask(getName());
     try{
       tm.executeAndWait(t).get();
       fail("Expected InvocationTargetException");
@@ -47,7 +47,7 @@ public class TaskManagerImplTest extends TestCase {
   }
 
   public void testExecuteAndWaitTaskWithLog() throws Exception{
-    TestTask t = new TestTask();
+    TestTask t = new TestTask(getName());
     TestTaskLog log = new TestTaskLog();
 
     tm.executeAndWait(t, new TaskConfig().setLog(log)).get();
@@ -55,14 +55,15 @@ public class TaskManagerImplTest extends TestCase {
   }
 
   public void testExecuteBackground() throws Exception{
-    TestTask t = new TestTask();
+    TestTask t = new TestTask(getName());
     tm.executeBackground(t, BackgroundTaskConfig.create().setExecDelay(200).setExecInterval(200));
     Thread.sleep(1000);
+    t.abort();
     assertTrue("Task executed only once or less", t.getExecutionCount() > 1);
   }
   
   public void testExecuteBackgroundWithMax() throws Exception{
-    TestTask t = new TestTask();
+    TestTask t = new TestTask(getName());
     t.setMaxExecution(3);
     tm.executeBackground(t, BackgroundTaskConfig.create().setExecDelay(200).setExecInterval(200));
     Thread.sleep(1000);
@@ -70,32 +71,37 @@ public class TaskManagerImplTest extends TestCase {
   }
   
   public void testForkTask() throws Exception{
-    TestTask t = new TestTask();
+    TestTask t = new TestTask(getName());
     tm.fork(t);
     t.waitFor();
     assertTrue("Task was not executed", t.completed);
   }
 
   public void testForkTaskWithListener() throws Exception{
-    TestTask t = new TestTask();
+    TestTask t = new TestTask(getName());
     TestTaskListener ls = new TestTaskListener();
     
     tm.fork(t, ForkedTaskConfig.create(ls));
-    t.waitFor();
+    ls.waitFor();
     assertTrue("Task listener not called", ls.succeeded);
   }
   
   public void testForkTaskErrorWithListener() throws Exception{
-    ErrorTask t = new ErrorTask();
+    ErrorTask t = new ErrorTask(getName());
     TestTaskListener ls = new TestTaskListener();
     tm.fork(t, ForkedTaskConfig.create(ls));
-    t.waitFor();
+    ls.waitFor();
     assertTrue("Task listener not called", ls.failed);
   }
 
   
   class TestTask extends Task{
     boolean completed;
+    
+    public TestTask(String name) {
+      super(name);
+    }
+
     @Override
     public synchronized Object execute(TaskExecutionContext ctx) throws Throwable {
       try{
@@ -115,7 +121,12 @@ public class TaskManagerImplTest extends TestCase {
   }
 
   class ErrorTask extends TestTask{
-    @Override
+    
+    public ErrorTask(String name) {
+      super(name);
+    }
+    
+    @Override    
     public Object execute(TaskExecutionContext ctx) throws Throwable {
       try{
         throw new Exception();
@@ -129,6 +140,9 @@ public class TaskManagerImplTest extends TestCase {
   class TestTaskLog implements TaskLog{
     boolean logged;
     
+    public boolean isAdditive() {
+      return false;
+    }
     public void debug(Task task, String msg) {
       this.logged = true;
     }
@@ -154,13 +168,25 @@ public class TaskManagerImplTest extends TestCase {
   
   class TestTaskListener implements TaskListener{
 
-    boolean failed, succeeded;
-    public void executionFailed(Task task, Throwable err) {
-      failed = true;
+    private volatile boolean completed = false;
+    private volatile boolean failed, succeeded;
+
+    public synchronized void executionFailed(Task task, Throwable err) {
+      failed    = true;
+      completed = true;
+      notifyAll();
     }
     
-    public void executionSucceeded(Task task, Object result) {
+    public synchronized void executionSucceeded(Task task, Object result) {
       succeeded = true;
+      completed = true;
+      notifyAll();
+    }
+    
+    public synchronized void waitFor() throws InterruptedException{
+      while(!completed){
+        wait();
+      }
     }
     
   }

@@ -3,6 +3,9 @@ package org.sapia.corus.taskmanager.core;
 
 public class TestTaskLog implements TaskLog{
 
+  public boolean isAdditive() {
+    return false;
+  }
   public void debug(Task task, String msg) {
   }
 

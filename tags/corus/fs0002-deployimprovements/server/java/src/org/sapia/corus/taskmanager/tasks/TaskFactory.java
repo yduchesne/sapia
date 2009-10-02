@@ -18,14 +18,14 @@ public class TaskFactory {
     unzip.setSrc(srcJar);
     unzip.setDest(destDir);
 
-    return AntTaskHelper.init(unzip);
+    return AntTaskHelper.init("UnzipTask", unzip);
   }
 
   public static Task newDeleteFileTask(File toDelete) {
     Delete del = new Delete();
     del.setFile(toDelete);
 
-    return AntTaskHelper.init(del);
+    return AntTaskHelper.init("DeleteFileTask", del);
   }
 
   public static Task newDeleteDirTask(File toDelete) {
@@ -33,7 +33,7 @@ public class TaskFactory {
     del.setDir(toDelete);
     del.setIncludeEmptyDirs(true);
 
-    return AntTaskHelper.init(del);
+    return AntTaskHelper.init("DeleteDirTask", del);
   }
 
 }

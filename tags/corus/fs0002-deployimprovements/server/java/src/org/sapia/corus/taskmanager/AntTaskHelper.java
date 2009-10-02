@@ -12,14 +12,15 @@ import org.sapia.corus.taskmanager.core.TaskExecutionContext;
  */
 public class AntTaskHelper {
   
-  public static Task init(org.apache.tools.ant.Task antTask) {
-    return new DynAntTask(antTask);
+  public static Task init(String name, org.apache.tools.ant.Task antTask) {
+    return new DynAntTask(name, antTask);
   }
 
   static class DynAntTask extends Task{
     private org.apache.tools.ant.Task _antTask;
 
-    DynAntTask(org.apache.tools.ant.Task antTask) {
+    DynAntTask(String name, org.apache.tools.ant.Task antTask) {
+      super(name);
       _antTask = antTask;
     }
     
