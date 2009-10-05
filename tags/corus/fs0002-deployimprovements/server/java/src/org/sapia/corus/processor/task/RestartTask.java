@@ -73,7 +73,7 @@ public class RestartTask extends ProcessTerminationTask {
                                                             dist, 
                                                             conf);
         process.acquireLock(restart);
-        ctx.getTaskManager().fork(restart);
+        ctx.getTaskManager().execute(restart);
         
       }
     } catch (Exception e) {

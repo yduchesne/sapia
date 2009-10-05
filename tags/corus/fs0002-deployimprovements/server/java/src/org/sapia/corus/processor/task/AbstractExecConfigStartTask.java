@@ -62,14 +62,25 @@ public abstract class AbstractExecConfigStartTask extends Task{
             version,
             pd.getProfile(),
             processName);
-        for(Process p:activeProcesses){
-          if(!p.getDistributionInfo().getVersion().equals(pd.getVersion())){
-            if(stopExistingProcesses){
-              toStop.add(p);
+        if(activeProcesses.size() == 0){
+          ctx.debug("Process will be started: " + pd);
+          toStart.add(pd);
+        }
+        else{
+          for(Process p:activeProcesses){
+            if(!p.getDistributionInfo().getVersion().equals(pd.getVersion())){
+              if(stopExistingProcesses){
+                ctx.debug("Existing process will be stopped: " + p);
+                toStop.add(p);
+              }
+              else{
+                ctx.debug("Existing process will not be stopped: " + p);
+              }
             }
-          }
-          else{
-            toStart.add(pd);
+            else{
+              ctx.debug("Process will be started: " + p);
+              toStart.add(pd);
+            }
           }
         }
       }
@@ -77,6 +88,14 @@ public abstract class AbstractExecConfigStartTask extends Task{
     
     // no existing processes found
     if(toStop.size() == 0){
+      ctx.info("Did not find old processes");
+      if(toStart.size() > 0){
+        ctx.info("Will be starting: " + toStart.size() + " processes");
+      }
+      else{
+        ctx.info("Did not find any processes to start");
+      }
+
       execNewProcesses(ctx.getTaskManager(), toStart);
     }
     // existing processes found, killing
@@ -104,7 +123,9 @@ public abstract class AbstractExecConfigStartTask extends Task{
   
   private void execNewProcesses(TaskManager tm, Set<ProcessDef> toStart){
     ExecNewProcessesTask exec = new ExecNewProcessesTask(lock, toStart);
-    tm.fork(exec);
+    try{
+      tm.executeAndWait(exec).get();
+    }catch(Throwable err){}
   }
   
   //////////////////// BackgroundTaskListener interface /////////////////////

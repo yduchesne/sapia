@@ -97,7 +97,6 @@ public class TaskExecutionContext {
     }
     
     public void execute(Task child, SequentialTaskConfig conf) {
-      task.addChild(child);
       initLog(conf);
       taskManager.execute(child, conf);
     }
@@ -115,16 +114,6 @@ public class TaskExecutionContext {
     
     public void executeBackground(Task child, BackgroundTaskConfig conf) {
       taskManager.executeBackground(child, conf);
-    }
-    
-    public void fork(Task child) {
-      fork(child, ForkedTaskConfig.create());
-    }
-    
-    public void fork(Task child, ForkedTaskConfig conf) {
-      task.addChild(child);
-      initLog(conf);
-      taskManager.fork(child, conf);
     }
     
     private void initLog(TaskConfig conf){

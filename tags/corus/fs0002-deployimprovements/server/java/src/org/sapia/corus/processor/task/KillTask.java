@@ -29,7 +29,7 @@ public class KillTask extends ProcessTerminationTask {
       ProcessorConfiguration procConfig = ctx.getServerContext().getServices().lookup(Processor.class).getConfiguration();
       Process process = ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(corusPid());
       ProcessorTaskStrategy strategy = ctx.getServerContext().lookup(ProcessorTaskStrategy.class);
-      ctx.info("Process kill confirmed: " + process.getProcessID() + "; removing from active process list");
+      ctx.info("Process kill confirmed: " + process.getProcessID() + "; removing from active process list; requestor = " + requestor());
       strategy.cleanupProcess(ctx, process);
       if (requestor() == ProcessTerminationRequestor.KILL_REQUESTOR_SERVER) {
         if ((System.currentTimeMillis() - process.getCreationTime()) > procConfig.getRestartIntervalMillis()) {

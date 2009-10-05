@@ -12,7 +12,9 @@ import org.sapia.corus.admin.Arg;
 import org.sapia.corus.deployer.DeploymentException;
 import org.sapia.corus.util.ZipUtils;
 import org.sapia.util.xml.ProcessingException;
+import org.sapia.util.xml.confix.ConfigurationException;
 import org.sapia.util.xml.confix.Dom4jProcessor;
+import org.sapia.util.xml.confix.ObjectCreationCallback;
 import org.sapia.util.xml.confix.ReflectionFactory;
 
 
@@ -22,7 +24,7 @@ import org.sapia.util.xml.confix.ReflectionFactory;
  *
  * @author Yanick Duchesne
  */
-public class Distribution implements java.io.Serializable {
+public class Distribution implements java.io.Serializable, ObjectCreationCallback{
   
   static final long serialVersionUID = 1L;
 
@@ -258,6 +260,20 @@ public class Distribution implements java.io.Serializable {
     else{
       return false;
     }
+  }
+  
+  public Object onCreate() throws ConfigurationException {
+    for(ProcessConfig cfg:_processConfigs){
+      for(Dependency dep:cfg.dependencies()){
+        if(dep.getVersion() == null){
+          dep.setVersion(_version);
+        }
+        if(dep.getDist() == null){
+          dep.setDistribution(this.getName());
+        }
+      }
+    }
+    return this;
   }
 
 }

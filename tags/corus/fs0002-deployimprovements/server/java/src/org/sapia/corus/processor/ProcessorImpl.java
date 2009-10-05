@@ -154,52 +154,6 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       progress.close();
     }
 
-    /*
-    ExecConfig conf = this._execConfigs.getConfigFor(execConfigName);
-    if(conf == null){
-      progress.error("No execution configuration for: " + execCofigName);
-      progress.close();
-      return progress;
-    }
-    else{
-      progress.error("Executing process configuration: " + execConfigName);
-      for(ProcessDef def:conf.getProcesses()){
-        List<Distribution> dists = deployer.getDistributions(
-            new StringCommandArg(def.getDist()), 
-            new StringCommandArg(def.getVersion()));
-        if (dists.size() == 0) {
-          progress.warning("No distribution for " + def.getDist() + ", " +
-            def.getVersion());
-        }
-        for(Distribution dist:dists){
-          List<ProcessConfig> configs;
-          if(def.getProcess() == null){
-            configs = dist.getProcesses();
-          }
-          else{
-            configs = dist.getProcesses(new StringCommandArg(def.getProcess()));
-          }
-          if(configs.size() == 0){
-            progress.warning("Could not find any process to start for: " + 
-                def.getDist() + ", " + 
-                def.getVersion() + ", " + def.getProcess());
-          }
-          else{
-            for(ProcessConfig config:configs){
-              filter.addRootProcess(dist, config, def.getProfile());
-            }
-          }
-        }
-        
-      }
-      filter.filterDependencies(deployer, this);
-      for(ProcessRef processRef:filter.getFilteredProcesses()){
-        progress.info("Scheduling process execution for distribution: " + processRef.getDist().getName() + ", " + processRef.getDist().getVersion());
-      }
-      MultiExecTask  exec = new MultiExecTask(_startLock, filter.getFilteredProcesses());
-      taskman.executeBackground(0, _configuration.getExecIntervalMillis(), exec);
-    }
-    progress.close();*/
     return progress;
     
   }

@@ -17,13 +17,8 @@ import org.sapia.util.xml.confix.ObjectHandlerIF;
  * corus.xml file. This element provides process configuration parameters.
  *
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
-public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
+public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF{
   
   static final long serialVersionUID = 1L;
 
@@ -274,43 +269,26 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
     }
     return false;
   }
-
-  /**
-   * @see org.sapia.util.xml.confix.ObjectHandlerIF#handleObject(String, Object)
-   */
-  public void handleObject(String elementName, Object starter)
-                    throws ConfigurationException {
-    if (starter instanceof Starter) {
-      addStarter((Starter)starter);
-    } else {
-      throw new ConfigurationException(starter.getClass().getName() +
-                                       " does not implement the " +
-                                       Starter.class.getName() + " interface");
-    }
-  }
   
   public void addStarter(Starter starter){
     _starters.add(starter);
   }
-
-  private Starter findFor(String profile) {
-    Starter toReturn = null;
-    Starter current;
-
-    for (int i = 0; i < _starters.size(); i++) {
-      current = (Starter) _starters.get(i);
-
-      if ((current.getProfile() == null) && (toReturn == null)) {
-        toReturn = current;
-      } else if ((current.getProfile() != null) &&
-                   current.getProfile().equals(profile)) {
-        toReturn = current;
-      }
-    }
-
-    return toReturn;
+  
+  List<Dependency> dependencies(){
+    return _dependencies;
   }
-
+  
+  public void handleObject(String elementName, Object starter)
+  throws ConfigurationException {
+    if (starter instanceof Starter) {
+      addStarter((Starter)starter);
+    } else {
+    throw new ConfigurationException(starter.getClass().getName() +
+                         " does not implement the " +
+                         Starter.class.getName() + " interface");
+    }
+  }
+    
   public String toString() {
     return "[ name=" + _name + ", maxKillRetry=" + _maxKillRetry +
            ", shutDownTimeout=" + _shutDownTimeout + " java=" + _starters +
@@ -329,4 +307,23 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF {
       return false;
     }
   }
+  
+  private Starter findFor(String profile) {
+    Starter toReturn = null;
+    Starter current;
+
+    for (int i = 0; i < _starters.size(); i++) {
+      current = (Starter) _starters.get(i);
+
+      if ((current.getProfile() == null) && (toReturn == null)) {
+        toReturn = current;
+      } else if ((current.getProfile() != null) &&
+                   current.getProfile().equals(profile)) {
+        toReturn = current;
+      }
+    }
+
+    return toReturn;
+  }
+
 }

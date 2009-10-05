@@ -46,7 +46,5 @@ public class RootTaskLog extends LoggerTaskLog{
     delegate.warn(task, msg);
   }
   
-  
-  
 
 }

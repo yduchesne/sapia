@@ -65,7 +65,7 @@ public class ExecNewProcessesTask extends Task{
         try{
             dist = deployer.getDistribution(distName, version);
         }catch(LogicException e){
-          ctx.warn("No distribution found for " + pd);
+          // noop;
         }
         if(dist != null){
           for(ProcessConfig conf: dist.getProcesses(processName)){
@@ -90,12 +90,17 @@ public class ExecNewProcessesTask extends Task{
     filter.filterDependencies(deployer, processor);
 
     List<ProcessRef> filteredProcesses = filter.getFilteredProcesses();
-    MultiExecTask exec = new MultiExecTask(lock, filteredProcesses);
-    ctx.getTaskManager().executeBackground(
-        exec, 
-        BackgroundTaskConfig.create()
-          .setExecDelay(0)
-          .setExecInterval(processor.getConfiguration().getExecIntervalMillis()));
+    if(filteredProcesses.size() > 0){
+      MultiExecTask exec = new MultiExecTask(lock, filteredProcesses);
+      ctx.getTaskManager().executeBackground(
+          exec, 
+          BackgroundTaskConfig.create()
+            .setExecDelay(0)
+            .setExecInterval(processor.getConfiguration().getExecIntervalMillis()));
+    }
+    else{
+      ctx.getLog().error(this, "No processes found to execute");
+    }
     return null;
   }
 }

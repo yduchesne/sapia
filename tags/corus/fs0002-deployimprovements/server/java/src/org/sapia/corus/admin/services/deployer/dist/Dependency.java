@@ -7,6 +7,10 @@ public class Dependency {
   public String getDist() {
     return dist;
   }
+  
+  public void setDistribution(String dist){
+    setDist(dist);
+  }
 
   public void setDist(String dist) {
     this.dist = dist;

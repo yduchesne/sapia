@@ -3,23 +3,8 @@ package org.sapia.corus.taskmanager.core;
 public interface TaskManager {
 
   /**
-   * Executes the given task in parallel (execution order is not guaranteed).
-   * 
-   * @param task the task to execute.
-   */
-  public void fork(Task task);
-  
-  /**
-   * Executes the given task in parallel (execution order is not guaranteed).
-   * 
-   * @param task the task to execute.
-   * @param conf a {@link ForkedTaskConfig}
-   */
-  public void fork(Task task, ForkedTaskConfig conf);
-  
-  /**
-   * Executes the given task sequentially (execution order with other
-   * sequential tasks is guaranteed).
+   * Executes the given task in a separate thread. The calling wait returns
+   * as soon as the task is submitted - and not necessarily executed..
    * 
    * @param task the {@link Task} to execute.
    */
@@ -32,8 +17,7 @@ public interface TaskManager {
   public void execute(Task task, SequentialTaskConfig conf);
   
   /**
-   * Executes the given task sequentially (execution order with other
-   * sequential tasks is guaranteed), returning a {@link FutureResult} 
+   * Executes the given task sequentially returning a {@link FutureResult} 
    * which can be blocked upon.
    * 
    * @param task the task to execute

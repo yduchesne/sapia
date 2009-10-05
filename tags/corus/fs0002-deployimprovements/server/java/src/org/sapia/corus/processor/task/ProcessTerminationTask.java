@@ -91,7 +91,9 @@ public abstract class ProcessTerminationTask extends Task {
       ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid).releaseLock(this);
     }catch(Throwable err){
       //ctx.error(err);
-    } 
+    }finally{
+      super.abort(ctx);
+    }
   }
   
   /**

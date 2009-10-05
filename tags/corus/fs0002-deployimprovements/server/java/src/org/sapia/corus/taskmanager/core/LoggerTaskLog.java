@@ -34,6 +34,5 @@ public class LoggerTaskLog implements TaskLog{
     logger.error(task.getName() + " >> " + msg, err);
   }
 
-  public void close() {
-  }
+  public void close() {}
 }

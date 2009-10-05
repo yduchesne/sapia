@@ -30,14 +30,17 @@ public class MultiExecTask extends Task{
     if(_lock.authorize()){
       Set<String> serverTags = configurator.getTags();
       ctx.info("Starting execution of processes: " + _processRefs);
-      for(ProcessRef processRef:_processRefs){
+      if(_processRefs.size() > 0){
+        ProcessRef processRef = _processRefs.remove(0);
         Set<String> processTags = processRef.getDist().getTagSet();
         processTags.addAll(processRef.getProcessConfig().getTagSet());
         ctx.debug("Got server tags: " + serverTags);
         ctx.debug("Got process tags: " + processTags);
         if(processTags.size() > 0 && !serverTags.containsAll(processTags)){
-          ctx.warn("Not executing: " + processRef.getProcessConfig().getName() + " - process tags: " 
-              + processTags + " do not match server tags: " + serverTags);
+          ctx.warn(
+              "Not executing: " + processRef.getProcessConfig().getName() + 
+              " - process tags: " + processTags + 
+              " do not match server tags: " + serverTags);
           _startedCount++;
         }
         else{
