@@ -62,12 +62,13 @@ public class ProcessRef implements Comparable<ProcessRef> {
   }
   
   @Override
-  public String toString() {
+  public String toString(){
     return new StringBuilder("[")
-      .append("dist=").append(dist)
-      .append("processConf=").append(processConf)
-      .append("]")
-      .toString();
+    .append("dist=").append(dist.getName()).append(", ")
+    .append("version=").append(dist.getVersion()).append(", ")
+    .append("process=").append(processConf.getName())
+    .append("]")
+    .toString();
   }
-
+   
 }

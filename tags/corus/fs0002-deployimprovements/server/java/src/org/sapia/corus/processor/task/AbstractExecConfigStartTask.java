@@ -53,7 +53,7 @@ public abstract class AbstractExecConfigStartTask extends Task{
       for(ProcessDef pd:ec.getProcesses()){
         Arg distName = new StringArg(pd.getDist());
         Arg version = ArgFactory.any();
-        Arg processName = new StringArg(pd.getProcess());
+        Arg processName = new StringArg(pd.getName());
         if(pd.getProfile() == null){
           pd.setProfile(ec.getProfile());
         }

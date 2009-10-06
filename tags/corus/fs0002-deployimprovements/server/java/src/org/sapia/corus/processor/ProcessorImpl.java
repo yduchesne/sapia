@@ -194,14 +194,16 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
           }
         }
       }
-      List<ProcessRef> toStart = new ArrayList<ProcessRef>(filter.getFilteredProcesses().size());
+      List<ProcessRef> toStart = new ArrayList<ProcessRef>();
       filter.filterDependencies(deployer, this);
       for(ProcessRef fp:filter.getFilteredProcesses()){
-        q.info("Scheduling process execution for distribution: " + fp.getDist().getName() + ", " + fp.getDist().getVersion());
         ProcessRef copy = new ProcessRef(fp.getDist(), fp.getProcessConfig(), fp.getProfile(), 0);
         copy.setInstanceCount(instances);
         toStart.add(copy);
       }
+      
+      q.info("Scheduling execution of processes: " + toStart);
+      
       TaskManager taskman = lookup(TaskManager.class); 
       MultiExecTask  exec = new MultiExecTask(_startLock, toStart);
       taskman.executeBackground(

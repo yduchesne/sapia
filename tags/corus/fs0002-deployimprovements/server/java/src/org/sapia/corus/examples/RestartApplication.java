@@ -44,7 +44,7 @@ public class RestartApplication {
     InteropLink.getImpl().addShutdownListener(listener);
 
     try {
-      Thread.sleep(10000);
+      Thread.sleep(20000);
       InteropLink.getImpl().restart();
     } catch (Exception e) {
       e.printStackTrace();

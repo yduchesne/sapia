@@ -175,7 +175,7 @@ public class Ls extends CorusCliCommand {
     
       row.getCellAt(COL_EXEC_DIST).append(def.getDist());
       row.getCellAt(COL_EXEC_VERSION).append(def.getVersion());
-      row.getCellAt(COL_EXEC_PROCESS).append(def.getProcess());
+      row.getCellAt(COL_EXEC_PROCESS).append(def.getName());
       row.getCellAt(COL_EXEC_PROFILE).append(def.getProfile());
       row.flush();
       count++;

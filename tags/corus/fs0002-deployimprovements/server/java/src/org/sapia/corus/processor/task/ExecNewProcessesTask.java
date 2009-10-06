@@ -54,7 +54,7 @@ public class ExecNewProcessesTask extends Task{
       Distribution dist = null;
       Arg distName     = new StringArg(pd.getDist());
       Arg version      = new StringArg(pd.getVersion());
-      Arg processName  = new StringArg(pd.getProcess());
+      Arg processName  = new StringArg(pd.getName());
       
       List<Process> activeProcesses = processes.getActiveProcesses().getProcesses(
           distName, 

@@ -1,6 +1,10 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
-public class Dependency {
+import java.io.Serializable;
+
+public class Dependency implements Serializable{
+  
+  static final long serialVersionUID = 1L;
 
   private String dist, version, process, profile;
 

@@ -14,7 +14,6 @@ public class MultiExecTask extends Task{
   
   private List<ProcessRef>  _processRefs;
   private StartupLock       _lock;
-  private int               _startedCount;
   
   public MultiExecTask(
       StartupLock lock,
@@ -29,9 +28,9 @@ public class MultiExecTask extends Task{
     Configurator configurator = ctx.getServerContext().getServices().lookup(Configurator.class);
     if(_lock.authorize()){
       Set<String> serverTags = configurator.getTags();
-      ctx.info("Starting execution of processes: " + _processRefs);
       if(_processRefs.size() > 0){
         ProcessRef processRef = _processRefs.remove(0);
+        ctx.info("Starting execution of process: " + processRef.toString());
         Set<String> processTags = processRef.getDist().getTagSet();
         processTags.addAll(processRef.getProcessConfig().getTagSet());
         ctx.debug("Got server tags: " + serverTags);
@@ -41,7 +40,6 @@ public class MultiExecTask extends Task{
               "Not executing: " + processRef.getProcessConfig().getName() + 
               " - process tags: " + processTags + 
               " do not match server tags: " + serverTags);
-          _startedCount++;
         }
         else{
           int instanceCount = processes.getProcessCountFor(processRef);
@@ -51,7 +49,6 @@ public class MultiExecTask extends Task{
                   + processRef.getDist().getName() + ", " + processRef.getDist().getVersion() + ", " + processRef.getProfile());
             ExecTask exec = new ExecTask(processRef.getDist(), processRef.getProcessConfig(), processRef.getProfile());
             ctx.getTaskManager().executeAndWait(exec);
-            _startedCount++;
           }
         }
       }
@@ -59,8 +56,12 @@ public class MultiExecTask extends Task{
     else{
       ctx.debug("Not executing now; waiting for startup interval exhaustion");
     }
-    if(_startedCount >= _processRefs.size()){
+    if(_processRefs.size() <= 0){
+      ctx.debug("Completed starting processes");
       abort(ctx);
+    }
+    else{
+      ctx.debug("Still has these processes to start: " + _processRefs);
     }
     return null;
   }
