@@ -67,7 +67,9 @@ public class Conf extends CorusCliCommand{
       if(ctx.getCommandLine().containsOption(OPT_TAG, false)){
         handleTag(op, ctx);
       }
-      else if(ctx.getCommandLine().containsOption(OPT_PROPERTY, false)){
+      else if(ctx.getCommandLine().containsOption(OPT_PROPERTY, false) || 
+              ctx.getCommandLine().containsOption(OPT_SCOPE_PROC, true) ||
+              ctx.getCommandLine().containsOption(OPT_SCOPE_PROC, true)){
         handlePropertyOp(op, ctx);
       }
       else{

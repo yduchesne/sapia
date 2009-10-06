@@ -31,7 +31,7 @@
   <section title="Examples">
     <p>conf add -s svr -p corus.process.timeout=25,corus.process.kill-interval=30</p>
     <p/> 
-    <p>conf ls -p -s svr</p>
+    <p>conf ls -s svr</p>
     <p/> 
     <p>conf del -s svr -p corus.process.timeout</p>
     <p/> 

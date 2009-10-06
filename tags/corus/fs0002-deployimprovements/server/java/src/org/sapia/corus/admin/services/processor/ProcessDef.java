@@ -20,11 +20,11 @@ public class ProcessDef implements Serializable{
     setDist(dist);
   }
   
-  public void setProcess(String process) {
+  public void setName(String process) {
     this.process = process;
   }
   
-  public String getProcess() {
+  public String getName() {
     return process;
   }
   
@@ -48,7 +48,7 @@ public class ProcessDef implements Serializable{
     return new StringBuilder("[")
       .append("dist=").append(dist).append(", ")
       .append("version=").append(version).append(", ")
-      .append("process=").append(process).append(", ")
+      .append("name=").append(process).append(", ")
       .append("profile=").append(profile)
       .append("]")
       .toString();
