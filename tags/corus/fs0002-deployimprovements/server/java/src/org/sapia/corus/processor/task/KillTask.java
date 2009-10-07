@@ -5,6 +5,7 @@ import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.processor.event.ProcessKilledEvent;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.db.DbMap;
 
@@ -16,10 +17,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
     _configs = configs;
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ExecConfigDatabase#getConfigs()
-   */
-  public List<ExecConfig> getConfigs(){
+  public synchronized List<ExecConfig> getConfigs(){
     Iterator<ExecConfig> configs = _configs.values();
     List<ExecConfig> toReturn = new ArrayList<ExecConfig>();
     while(configs.hasNext()){
@@ -28,10 +26,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
     return toReturn;
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ExecConfigDatabase#getBootstrapConfigs()
-   */
-  public List<ExecConfig> getBootstrapConfigs(){
+  public synchronized List<ExecConfig> getBootstrapConfigs(){
     Iterator<ExecConfig> configs = _configs.values();
     List<ExecConfig> toReturn = new ArrayList<ExecConfig>();
     while(configs.hasNext()){
@@ -43,10 +38,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
     return toReturn;
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ExecConfigDatabase#getConfigsFor(org.sapia.corus.admin.CommandArg)
-   */
-  public List<ExecConfig> getConfigsFor(Arg arg){
+  public synchronized List<ExecConfig> getConfigsFor(Arg arg){
     Iterator<ExecConfig> configs = _configs.values();
     List<ExecConfig> toReturn = new ArrayList<ExecConfig>();
     while(configs.hasNext()){
@@ -58,36 +50,34 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
     return toReturn;
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ExecConfigDatabase#removeConfigsFor(org.sapia.corus.admin.CommandArg)
-   */
-  public void removeConfigsFor(Arg arg){
+  public synchronized void removeConfigsFor(Arg arg){
     List<ExecConfig> configs = getConfigsFor(arg);
     for(ExecConfig c:configs){
       _configs.remove(c.getName());
     }
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ExecConfigDatabase#getConfigFor(java.lang.String)
-   */
-  public ExecConfig getConfigFor(String name){
+  public synchronized ExecConfig getConfigFor(String name){
     return _configs.get(name);
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ExecConfigDatabase#removeConfig(java.lang.String)
-   */
-  public void removeConfig(String name){
+  public synchronized void removeConfig(String name){
     _configs.remove(name);
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ExecConfigDatabase#addConfig(org.sapia.corus.processor.ExecConfig)
-   */
-  public void addConfig(ExecConfig btc){
+  public synchronized void addConfig(ExecConfig btc){
     _configs.put(btc.getName(), btc);
   }
 
+  public synchronized void removeProcessesForDistribution(Distribution d){
+    Iterator<ExecConfig> configs = _configs.values();
+    while(configs.hasNext()){
+      ExecConfig c = configs.next();
+      c.removeAll(d);
+      if(c.getProcesses().size() == 0){
+        _configs.remove(c.getName());
+      }
+    }
+  }
 
 }

@@ -20,6 +20,8 @@ import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.deployer.DistributionDatabase;
+import org.sapia.corus.deployer.event.UndeploymentEvent;
+import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LockException;
 import org.sapia.corus.exceptions.LogicException;
@@ -41,6 +43,7 @@ import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.ProgressQueue;
 import org.sapia.corus.util.ProgressQueueImpl;
+import org.sapia.ubik.rmi.interceptor.Interceptor;
 
 /**
  * Implements the <code>Processor</code> interface.
@@ -52,7 +55,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   private ProcessorConfigurationImpl _configuration = new ProcessorConfigurationImpl();
   
   private ProcessRepository      _processes;
-  private ExecConfigDatabase     _execConfigs;
+  private ExecConfigDatabaseImpl _execConfigs;
   private StartupLock            _startLock;  
   
   
@@ -117,6 +120,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
           .setExecDelay(0)
           .setExecInterval(_configuration.getProcessCheckIntervalMillis()));
 
+    lookup(EventDispatcher.class).addInterceptor(UndeploymentEvent.class, new ProcessorInterceptor());
   }
 
   /**
@@ -197,12 +201,11 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       List<ProcessRef> toStart = new ArrayList<ProcessRef>();
       filter.filterDependencies(deployer, this);
       for(ProcessRef fp:filter.getFilteredProcesses()){
+        q.info("Scheduling execution of process: " + fp);
         ProcessRef copy = new ProcessRef(fp.getDist(), fp.getProcessConfig(), fp.getProfile(), 0);
         copy.setInstanceCount(instances);
         toStart.add(copy);
       }
-      
-      q.info("Scheduling execution of processes: " + toStart);
       
       TaskManager taskman = lookup(TaskManager.class); 
       MultiExecTask  exec = new MultiExecTask(_startLock, toStart);
@@ -533,5 +536,12 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   
   private ProcStatus copyStatus(Process p) {
     return new ProcStatus(p);
+  }
+  
+  public class ProcessorInterceptor implements Interceptor{
+   
+    public void onUndeploymentEvent(UndeploymentEvent evt){
+      _execConfigs.removeProcessesForDistribution(evt.getDistribution());
+    }
   }
 }

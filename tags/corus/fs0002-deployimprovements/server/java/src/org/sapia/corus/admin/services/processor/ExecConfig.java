@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.util.xml.ProcessingException;
 import org.sapia.util.xml.confix.Dom4jProcessor;
 import org.sapia.util.xml.confix.ReflectionFactory;
@@ -65,6 +67,20 @@ public class ExecConfig implements Serializable{
     }finally{
       is.close();
     }
+  }
+  
+  public void removeAll(Distribution d){
+    List<ProcessDef> toRemove = new ArrayList<ProcessDef>();
+    for(ProcessConfig pc : d.getProcesses()){
+      for(ProcessDef ref:processes){
+        if(ref.getDist().equals(d.getName()) &&
+           ref.getVersion().equals(d.getVersion()) &&
+           ref.getName().equals(pc.getName())){
+           toRemove.add(ref);
+        }
+      }
+    } 
+    processes.removeAll(toRemove);
   }
  
   

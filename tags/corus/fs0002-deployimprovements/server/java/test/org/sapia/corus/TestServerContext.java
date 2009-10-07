@@ -7,6 +7,8 @@ import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.configurator.TestConfigurator;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.TestDeployer;
+import org.sapia.corus.event.EventDispatcher;
+import org.sapia.corus.event.TestDispatcher;
 import org.sapia.corus.port.TestPortManager;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.TestProcessor;
@@ -27,6 +29,7 @@ public class TestServerContext extends ServerContext{
   }
   
   public static TestServerContext create(){
+    TestDispatcher    disp  = new TestDispatcher();
     TestDeployer      depl  = new TestDeployer();
     TestProcessor     proc  = new TestProcessor();
     TestPortManager   ports = new TestPortManager();
@@ -34,7 +37,8 @@ public class TestServerContext extends ServerContext{
     TestServerContext ctx   = new TestServerContext();
     TestTaskManager tm    = new TestTaskManager(ctx);
     TestProcessorTaskStrategy procStrat = new TestProcessorTaskStrategy();
-
+    
+    ctx.getServices().bind(EventDispatcher.class, disp);
     ctx.getServices().bind(Deployer.class, depl);
     ctx.getServices().bind(Processor.class, proc);
     ctx.getServices().bind(ProcessorTaskStrategy.class, procStrat);

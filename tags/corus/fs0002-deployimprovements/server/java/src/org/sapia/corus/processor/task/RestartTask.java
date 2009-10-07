@@ -10,10 +10,9 @@ import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.deployer.DistributionDatabase;
-import org.sapia.corus.exceptions.LockException;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.processor.ProcessRepository;
+import org.sapia.corus.processor.event.ProcessKilledEvent;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 

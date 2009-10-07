@@ -6,6 +6,7 @@ import java.util.Map;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.deployer.DistributionDatabase;
+import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.processor.ExecConfigDatabase;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.task.ProcessorTaskStrategy;
@@ -20,6 +21,13 @@ import org.sapia.corus.taskmanager.core.TaskManager;
 public class InternalServiceContext {
   
   private Map<String, Object> services = new HashMap<String, Object>();
+  
+  /**
+   * @return the {@link EventDispatcher}
+   */
+  public EventDispatcher getEventDispatcher(){
+    return lookup(EventDispatcher.class);
+  }
   
   /**
    * @return the {@link DistributionDatabase}
