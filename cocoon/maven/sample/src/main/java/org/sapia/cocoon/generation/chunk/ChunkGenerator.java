@@ -1,6 +1,7 @@
 package org.sapia.cocoon.generation.chunk;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.avalon.framework.configuration.ConfigurationException;
@@ -10,6 +11,7 @@ import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.generation.Generator;
 import org.apache.cocoon.sitemap.SitemapModelComponent;
 import org.apache.cocoon.xml.XMLConsumer;
+import org.apache.excalibur.source.Source;
 import org.sapia.cocoon.generation.chunk.exceptions.TemplateNotFoundException;
 import org.sapia.cocoon.generation.chunk.template.Template;
 import org.sapia.cocoon.generation.chunk.template.TemplateContext;
@@ -18,8 +20,13 @@ import org.sapia.cocoon.util.InputModuleStrLookup;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public class ChunkGenerator implements Generator, SitemapModelComponent, BeanFactoryAware{
 
@@ -75,7 +82,7 @@ public class ChunkGenerator implements Generator, SitemapModelComponent, BeanFac
         SourceResolver sources,
         TemplateResolver templates, 
         InputModuleStrLookup lookup) {
-      this.handler = handler;
+      this.handler = new ContentHandlerWrapper(handler);
       this.sources = sources;
       this.templates = templates;
       this.lookup = lookup;
@@ -88,6 +95,21 @@ public class ChunkGenerator implements Generator, SitemapModelComponent, BeanFac
     public Template resolveTemplate(String uri) 
       throws TemplateNotFoundException, SAXException, IOException{
       return templates.resolveTemplate(uri, sources);
+    }
+    
+    public void include(String uri) throws SAXException, IOException {
+      XMLReader reader = XMLReaderFactory.createXMLReader();
+      reader.setContentHandler(handler);
+      Source s = sources.resolveURI(uri);
+      InputStream src = sources.resolveURI(s.getURI()).getInputStream();
+      try{
+        reader.parse(new InputSource(src));
+      }finally{
+        if(src != null){
+          src.close();
+        }
+        sources.release(s);
+      }
     }
     
     public Object getValue(String prefix, String name) {
@@ -108,4 +130,72 @@ public class ChunkGenerator implements Generator, SitemapModelComponent, BeanFac
     
   }
 
+  public static class ContentHandlerWrapper implements ContentHandler{
+    
+    private ContentHandler delegate;
+    private int level;
+    
+    public ContentHandlerWrapper(ContentHandler delegate) {
+      this.delegate = delegate;
+    }
+    
+
+    public void startDocument() throws SAXException {
+      if(level == 0){
+        delegate.startDocument();
+      }
+      level++;
+    }
+    
+    public void endDocument() throws SAXException {
+       level--;
+       if(level == 0){
+         delegate.endDocument();
+       }
+    }
+
+    public void startElement(String uri, String localName, String name,
+        Attributes atts) throws SAXException {
+      delegate.startElement(uri, localName, name, atts);
+    }
+
+    
+    public void endElement(String uri, String localName, String name)
+        throws SAXException {
+      delegate.endElement(uri, localName, name);
+    }
+    
+    public void characters(char[] ch, int start, int length)
+    throws SAXException {
+      delegate.characters(ch, start, length);
+    }
+
+    public void startPrefixMapping(String prefix, String uri)
+    throws SAXException {
+      delegate.startPrefixMapping(prefix, uri);
+    }
+
+    public void endPrefixMapping(String prefix) throws SAXException {
+      delegate.endPrefixMapping(prefix);
+    }
+    
+    public void ignorableWhitespace(char[] ch, int start, int length)
+        throws SAXException {
+      delegate.ignorableWhitespace(ch, start, length);
+    }
+    
+    public void processingInstruction(String target, String data)
+        throws SAXException {
+      delegate.processingInstruction(target, data);
+    }
+    
+    public void setDocumentLocator(Locator locator) {
+      delegate.setDocumentLocator(locator);
+    }
+    
+    public void skippedEntity(String name) throws SAXException {
+      delegate.skippedEntity(name);
+    }
+    
+  }
 }
