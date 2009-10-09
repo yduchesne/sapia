@@ -22,6 +22,7 @@ public class NodeFactory {
   
   static{
     builders.put(new ElementKey(Names.NAMESPACE, Names.CHUNCK_ELEMENT_NAME), new ChildTemplateNodeBuilder());
+    builders.put(new ElementKey(Names.NAMESPACE, Names.INCLUDE_ELEMENT_NAME), new IncludeNodeBuilder());
   }
   
   /**

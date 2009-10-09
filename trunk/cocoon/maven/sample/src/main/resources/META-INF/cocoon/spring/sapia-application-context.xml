@@ -101,10 +101,5 @@
   <bean name="org.apache.cocoon.components.modules.input.InputModule/application" 
         class="org.sapia.cocoon.module.AppContextInputModule" 
         scope="singleton" />
-        
-  <!-- Demo beans -->        
-	<bean id="demo" class="demo.MyBean" scope="singleton">
-		<property name="message" value="This is a message coming from a Spring bean."/>
-	</bean>                 
-        
+
 </beans>

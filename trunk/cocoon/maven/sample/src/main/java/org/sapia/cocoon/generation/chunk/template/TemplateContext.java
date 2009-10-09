@@ -23,7 +23,14 @@ public interface TemplateContext {
    * @throws IOException
    */
   public Template resolveTemplate(String uri) throws TemplateNotFoundException, SAXException, IOException;
- 
+
+  /**
+   * Parses the content of the resource whose URI is given and parses it as XML.
+   * @param uri the URI of a resource to parse.
+   * @throws SAXException
+   * @throws IOException
+   */
+  public void include(String uri) throws SAXException, IOException;
   /**
    * @param prefix the prefix (that normally corresponds to the name of an {@link InputModule} of the variable.
    * @param name the name of that the variable (normally: the key of a value in the desired {@link InputModule}).

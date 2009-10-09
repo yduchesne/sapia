@@ -10,6 +10,14 @@
   
   <map:components>
   
+    <!-- generators -->      
+  
+    <map:generators>
+      <map:generator label="content,data" 
+         logger="sitemap.generator.jx" name="jx" 
+         src="org.apache.cocoon.template.JXTemplateGenerator"/>
+    </map:generators>
+  
     <!-- transformers -->      
   
     <map:transformers>
@@ -120,15 +128,22 @@
 	      
 	    </map:match>
 	    
-			<map:match pattern="**json-rpc/*/*">
+		<map:match pattern="**json-rpc/*/*">
 	        <map:read type="json">
 	          <map:parameter name="module" value="application"/>
 	          <map:parameter name="key"    value="{2}"/>
 	          <map:parameter name="method" value="{3}"/>
 	        </map:read>
 	    </map:match>
-	      
-      <map:match pattern="**.js">
+	    
+	    <map:match pattern="**.jx">
+	      <map:generate type="jx" src="resource/{1}.jx">
+	           <map:parameter name="lenient-xpath" value="false"/>
+	      </map:generate>
+	      <map:serialize type="xhtml"/>
+	    </map:match>
+
+        <map:match pattern="**.js">
         
 	      <map:match pattern="**catalogues.js">
             <map:act type="responseHeaders">    	      

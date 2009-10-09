@@ -13,7 +13,6 @@ import org.sapia.cocoon.generation.chunk.template.node.PrefixMappingNode;
 import org.sapia.cocoon.generation.chunk.template.node.ProcessingInstructionNode;
 import org.sapia.cocoon.generation.chunk.template.node.SkippedEntityNode;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -81,7 +80,7 @@ public class TemplateParser {
     Node root;
     Stack<Node> nodeStack = new Stack<Node>();
     StringBuilder cdata = new StringBuilder();
-  
+   
     @Override
     public void startDocument() throws SAXException {
       clearCdata();

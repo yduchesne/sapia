@@ -13,4 +13,6 @@ public interface Names {
   // http://www.sapia-oss.org/cocoon/generator/chunk/2.2
   public static final String NAMESPACE = CocoonConsts.NAMESPACE_URI + "/generator/chunk/2.2";
   public static final String CHUNCK_ELEMENT_NAME = "chunk";
+  public static final String PARSE_ELEMENT_NAME = "parse";
+  public static final String INCLUDE_ELEMENT_NAME = "include";
 }

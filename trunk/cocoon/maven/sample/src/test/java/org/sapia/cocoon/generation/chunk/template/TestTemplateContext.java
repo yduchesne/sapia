@@ -1,9 +1,11 @@
 package org.sapia.cocoon.generation.chunk.template;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.excalibur.source.Source;
 import org.sapia.cocoon.TestSourceResolver;
 import org.sapia.cocoon.generation.chunk.exceptions.TemplateNotFoundException;
 import org.sapia.cocoon.generation.chunk.template.ParserConfig;
@@ -11,7 +13,10 @@ import org.sapia.cocoon.generation.chunk.template.Template;
 import org.sapia.cocoon.generation.chunk.template.TemplateCache;
 import org.sapia.cocoon.generation.chunk.template.TemplateContext;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public class TestTemplateContext implements TemplateContext{
   
@@ -34,6 +39,22 @@ public class TestTemplateContext implements TemplateContext{
     this.handler = handler;
     this.cache = cache;
     this.resolver = sources;
+  }
+  
+  public void include(String uri) throws SAXException, IOException {
+    XMLReader reader = XMLReaderFactory.createXMLReader();
+    reader.setContentHandler(handler);
+    reader.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+    Source s = resolver.resolveURI(uri);
+    InputStream src = resolver.resolveURI(s.getURI()).getInputStream();
+    try{
+      reader.parse(new InputSource(src));
+    }finally{
+      if(src != null){
+        src.close();
+      }
+      resolver.release(s);
+    }
   }
   
   public TestTemplateContext put(String varName, Object value){
