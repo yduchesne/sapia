@@ -184,7 +184,7 @@ public class Kill extends CorusCliCommand {
   private void waitForKillCompletion(CliContext ctx, KillCompletionHook hook){
     boolean waitForCompletion = ctx.getCommandLine().containsOption(WAIT_COMPLETION_OPT, false);
     if(waitForCompletion){
-      ctx.getConsole().println("(Waiting for process termination)");
+      ctx.getConsole().println("(Waiting for process termination, please stand by)");
     }
     while(waitForCompletion){
       if(hook.isCompleted(ctx)){
