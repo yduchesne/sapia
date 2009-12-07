@@ -30,7 +30,7 @@ public class Man extends CorusCliCommand{
     _commands.put("kill", Kill.class);
     _commands.put("ls", Ls.class);
     _commands.put("ps", Ps.class);
-    _commands.put("restart", Resume.class);
+    _commands.put("restart", Restart.class);
     _commands.put("resume", Resume.class);
     _commands.put("suspend", Suspend.class);
     _commands.put("undeploy", Undeploy.class);
