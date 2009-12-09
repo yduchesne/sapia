@@ -3,6 +3,8 @@ package org.sapia.corus.admin.cli.command;
 import java.io.File;
 
 import org.sapia.console.AbortException;
+import org.sapia.console.Arg;
+import org.sapia.console.CmdElement;
 import org.sapia.console.InputException;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
@@ -20,9 +22,11 @@ public class Deploy extends CorusCliCommand {
   throws AbortException, InputException {
     
     if(ctx.getCommandLine().isNextArg()){
-      String[] fileNames = ctx.getCommandLine().assertNextArg().getName().split(",");
-      for(String fileName:fileNames){
-        deployDistribution(ctx, fileName.trim());
+      while(ctx.getCommandLine().hasNext()){
+        if(ctx.getCommandLine().isNextArg()){
+          CmdElement elem = ctx.getCommandLine().next();
+          deployDistribution(ctx, elem.getName());
+        }
       }
     }
     else if(ctx.getCommandLine().containsOption(OPT_EXEC_CONF, true)){
