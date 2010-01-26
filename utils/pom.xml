@@ -6,7 +6,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>utils</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
 
   <organization>
     <name>Sapia OSS</name>
@@ -39,10 +39,10 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/utils/utils-0.1-SNAPSHOT</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/utils-0.1-SNAPSHOT</developerConnection>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/trunk/utils</connection>
+    <developerConnection>scm:svn:https://${scm.username}:${scm.password}@sapia.googlecode.com/svn/trunk/utils</developerConnection>
     <tag>HEAD</tag>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/utils/utils-0.1-SNAPSHOT</url>
+    <url>http://code.google.com/p/sapia/source/browse/#svn/trunk/utils</url>
   </scm>
 
   <licenses>
@@ -63,41 +63,19 @@
     <testOutputDirectory>target/test-classes</testOutputDirectory>
     <sourceDirectory>java/src</sourceDirectory>
     <testSourceDirectory>java/test</testSourceDirectory>
-    <!--resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources-->
+
    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-7</version>
         <configuration>
-          <tagBase>https://sapia.googlecode.com/svn/branches/utils</tagBase>
+          <tagBase>https://${scm.username}:${scm.password}@sapia.googlecode.com/svn/branches/utils</tagBase>
         </configuration>
       </plugin>
     </plugins>
 
   </build>
-
-  <!--distributionManagement>
-        <repository>
-            <id>sapia-releases</id>
-            <name>Staging Repository</name>
-            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>sapia-snapshots</id>
-            <name>Snapshot Repository</name>
-            <url>http://oss.sonatype.org/content/repositories/sapia-snapshots/</url>
-        </snapshotRepository>
-  </distributionManagement-->
 
   <dependencies>
     <dependency>
