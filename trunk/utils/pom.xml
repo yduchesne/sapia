@@ -110,6 +110,20 @@
 
   </dependencies>
 
+  <distributionManagement>
+    <repository>
+      <id>sapia-releases</id>
+      <name>Staging Repository</name>
+      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>sapia-snapshots</id>
+      <name>Snapshot Repository</name>
+      <url>http://oss.sonatype.org/content/repositories/sapia-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
  <profiles>
     <profile>
       <id>release-sign-artifacts</id>
