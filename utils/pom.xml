@@ -6,7 +6,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>utils</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2</version>
 
   <organization>
     <name>Sapia OSS</name>
@@ -39,9 +39,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/utils/utils-0.1-SNAPSHOT</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/utils-0.1-SNAPSHOT</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/utils/utils-0.1-SNAPSHOT</url>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/utils/utils-0.2</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/utils-0.2</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/utils/utils-0.2</url>
   </scm>
 
   <licenses>
