@@ -69,7 +69,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-7</version>
         <configuration>
-          <tagBase>https://${scm.username}:${scm.password}@sapia.googlecode.com/svn/branches/utils</tagBase>
+          <tagBase>https://sapia.googlecode.com/svn/branches/utils</tagBase>
         </configuration>
       </plugin>
     </plugins>
