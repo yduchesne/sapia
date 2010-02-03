@@ -1,9 +1,10 @@
-package org.sapia.resource;
+package org.sapia.resource.test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.StringTokenizer;
 
+import org.sapia.resource.Utils;
 import org.sapia.resource.include.IncludeContext;
 import org.sapia.resource.include.IncludeState;
 

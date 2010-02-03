@@ -2,9 +2,9 @@ package org.sapia.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-
-import com.sun.org.apache.xerces.internal.util.URI;
 
 /**
  * Handles resources on the classpath.
@@ -28,13 +28,21 @@ public class ClasspathResourceHandler implements ResourceHandler, Schemes {
   public Resource getResourceObject(String uri) throws IOException {
     URI uriObj = null; 
     if(Utils.hasScheme(uri)){
-      uriObj = new URI(uri);
+      try{
+        uriObj = new URI(uri);
+      }catch(URISyntaxException e){
+        throw new IOException(e);
+      }
     }
     else{
-      uriObj = new URI(Schemes.SCHEME_RESOURCE+":"+uri);
+      try{
+        uriObj = new URI(Schemes.SCHEME_RESOURCE+":"+uri);
+      }catch(URISyntaxException e){
+        throw new IOException(e);
+      }
     }
     
-    String path = uriObj.getPath();
+    String path = uriObj.getPath() == null ? uriObj.getSchemeSpecificPart() : uriObj.getPath();
 
     if(path.charAt(0) == '/') {
       path = path.substring(1);

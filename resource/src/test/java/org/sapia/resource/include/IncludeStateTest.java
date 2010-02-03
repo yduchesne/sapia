@@ -3,8 +3,8 @@ package org.sapia.resource.include;
 import org.sapia.resource.ClasspathResourceHandler;
 import org.sapia.resource.FileResourceHandler;
 import org.sapia.resource.ResourceHandlerChain;
-import org.sapia.resource.TestIncludeContext;
-import org.sapia.resource.TestIncludedObject;
+import org.sapia.resource.test.TestIncludeContext;
+import org.sapia.resource.test.TestIncludedObject;
 
 import junit.framework.TestCase;
 
@@ -29,7 +29,7 @@ public class IncludeStateTest extends TestCase {
           
     TestIncludedObject obj = (TestIncludedObject)IncludeState.createContext("etc/testMainFile.txt", config).include();
     assertTrue(obj.uri.equals("etc/testMainFile.txt"));
-    assertEquals(4, obj.children.size());
+    assertEquals(3, obj.children.size());
     assertEquals("testRelativeFileInclude.txt", ((TestIncludedObject)obj.children.get(0)).uri);
     assertEquals("resource:/org/sapia/resource/testUrlResource.txt", ((TestIncludedObject)obj.children.get(1)).uri);    
     assertEquals("file:testRelativeFileInclude.txt", ((TestIncludedObject)obj.children.get(2)).uri);    
