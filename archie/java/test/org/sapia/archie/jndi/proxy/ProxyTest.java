@@ -6,6 +6,8 @@ import javax.naming.NamingEnumeration;
 
 import org.sapia.archie.impl.DefaultNode;
 import org.sapia.archie.jndi.JndiContext;
+import org.sapia.archie.test.TestContextProxy;
+import org.sapia.archie.test.TestEnumProxy;
 
 import junit.framework.TestCase;
 
