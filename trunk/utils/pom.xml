@@ -5,8 +5,8 @@
   <url>http://www.sapia-oss.org/projects/utils/index.html</url>
 
   <groupId>org.sapia</groupId>
-  <artifactId>utils</artifactId>
-  <version>0.3-SNAPSHOT</version>
+  <artifactId>sapia_utils_parent</artifactId>
+  <version>1.6-SNAPSHOT</version>
 
   <organization>
     <name>Sapia OSS</name>
@@ -53,7 +53,12 @@
      </license>
   </licenses>
 
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>modules/utils</module>
+    <module>modules/as</module>
+  </modules>
   
   <build>
     <directory>target</directory>
