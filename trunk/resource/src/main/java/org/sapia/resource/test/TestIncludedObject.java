@@ -1,4 +1,4 @@
-package org.sapia.resource;
+package org.sapia.resource.test;
 
 import java.util.ArrayList;
 import java.util.List;
