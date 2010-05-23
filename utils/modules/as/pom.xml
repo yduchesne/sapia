@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sapia</groupId>
     <artifactId>sapia_utils_parent</artifactId>
-    <version>1.7</version>
+    <version>1.8-SNAPSHOT</version>
   </parent>
 
   <artifactId>sapia_as</artifactId>
