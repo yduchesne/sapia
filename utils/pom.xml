@@ -38,6 +38,12 @@
     </developer>
   </developers>
 
+  <scm>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/sapia_utils_parent-1.7</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/sapia_utils_parent-1.7</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/utils/sapia_utils_parent-1.7</url>
+  </scm>
+
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -122,5 +128,51 @@
       <url>java-net:/maven2-repository/trunk/repository/</url>
     </repository>
   </distributionManagement>
+
+
+  <!--distributionManagement>
+    <repository>
+      <id>sapia-releases</id>
+      <name>Staging Repository</name>
+      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>sapia-snapshots</id>
+      <name>Snapshot Repository</name>
+      <url>http://oss.sonatype.org/content/repositories/sapia-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement-->
+
+ <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.0-alpha-4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
