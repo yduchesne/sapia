@@ -134,6 +134,13 @@
           <tagBase>https://sapia.googlecode.com/svn/branches/clazzy</tagBase>
         </configuration>
       </plugin>
+      <extensions>
+        <extension>
+          <groupId>org.jvnet.wagon-svn</groupId>
+          <artifactId>wagon-svn</artifactId>
+          <version>1.9</version>
+        </extension>
+      </extensions>
     </plugins>
 
   </build>
@@ -150,16 +157,9 @@
 
   <distributionManagement>
     <repository>
-      <id>sapia-releases</id>
-      <name>Staging Repository</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <id>java.net-m2-repository</id>
+      <url>java-net:/maven2-repository/trunk/repository/</url>
     </repository>
-    <snapshotRepository>
-      <uniqueVersion>true</uniqueVersion>
-      <id>sapia-snapshots</id>
-      <name>Snapshot Repository</name>
-      <url>http://oss.sonatype.org/content/repositories/sapia-snapshots/</url>
-    </snapshotRepository>
   </distributionManagement>
 
  <profiles>
