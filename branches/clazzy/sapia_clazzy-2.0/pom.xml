@@ -1,0 +1,197 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Sapia Clazzy</name>
+  <description>Basic classloader framework</description>
+  <url>http://www.sapia-oss.org/projects/clazzy/index.html</url>
+
+  <groupId>org.sapia</groupId>
+  <artifactId>sapia_clazzy</artifactId>
+  <version>2.0</version>
+
+  <organization>
+    <name>Sapia OSS</name>
+    <url>http://www.sapia-oss.org</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>yduchesne</id>
+      <name>Yanick Duchesne</name>
+      <email>yd@sapia-oss.org</email>
+      <url>http://www.sapia-oss.org</url>
+      <organization>Sapia</organization>
+      <organizationUrl>http://www.sapia-oss.org</organizationUrl>
+      <roles>
+        <role>architect</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>jcdesrochers</id>
+      <name>Jean-Cedric Desrochers</name>
+      <email>jc@sapia-oss.org</email>
+      <url>http://www.sapia-oss.org</url>
+      <organization>Sapia</organization>
+      <organizationUrl>http://www.sapia-oss.org</organizationUrl>
+      <roles>
+        <role>architect</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/clazzy/sapia_clazzy-2.0</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/clazzy/sapia_clazzy-2.0</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/clazzy/sapia_clazzy-2.0</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+     </license>
+  </licenses>
+
+  <packaging>jar</packaging>
+  
+  <build>
+    <directory>target</directory>
+    <outputDirectory>target/classes</outputDirectory>
+    <finalName>${artifactId}-${version}</finalName>
+    <testOutputDirectory>target/test-classes</testOutputDirectory>
+
+   <plugins>
+   
+     <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>sun.jdk</groupId>
+                <artifactId>tools</artifactId>
+                <version>1.5.0</version>
+                <scope>system</scope>
+                <systemPath>${java.home}/../lib/tools.jar</systemPath>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+     
+                <phase>process-test-classes</phase>
+                <configuration>                                       
+                  <tasks>
+                    <echo message="Compiling alternate classes using classpath: ${project.build.outputDirector}" />
+                    
+                    <property name="project.testClassesDir" value="etc/test/classes" />
+                    <property name="project.testCpDir" value="target/classes" />		
+                    <property name="project.testSrcDir" value="etc/test/src" />		
+                    <property name="project.testLibDir" value="etc/test/lib" />		
+                    
+                    <mkdir dir="${project.testClassesDir}" />
+                    <mkdir dir="${project.testLibDir}" />
+                    <delete includeEmptyDirs="true">
+                        <fileset dir="${project.testClassesDir}" includes="**/*" />      	
+                    </delete>
+    
+                    
+                    <javac destdir="${project.testClassesDir}" fork="false" debug="true" excludes="**.svn/**">
+                        <src path="${project.testSrcDir}" />
+                        <classpath>
+                          <pathelement location="${project.testCpDir}" />
+                        </classpath>
+                    </javac>  	
+                    <copy todir="${project.testClassesDir}/test">
+                        <fileset dir="${project.testSrcDir}/test" excludes="**/*.java" />
+                    </copy>  	
+                    <jar jarfile="${project.testLibDir}/classes.jar">
+                       <fileset dir="${project.testClassesDir}">
+                         <exclude name="test/JarClass2*" />
+                       </fileset>
+                    </jar>
+                    <jar jarfile="${project.testLibDir}/classes2.jar">
+                      <fileset dir="${project.testClassesDir}">
+                       <include name="test/JarClass2*" />
+                      </fileset>
+                    </jar>  	
+                    <delete>
+                      <fileset dir="${project.testClassesDir}" includes="test/JarClass*" />  		
+                    </delete>
+                    
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.0-beta-7</version>
+        <configuration>
+          <tagBase>https://sapia.googlecode.com/svn/branches/clazzy</tagBase>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <extensions>
+      <extension>
+        <groupId>org.jvnet.wagon-svn</groupId>
+        <artifactId>wagon-svn</artifactId>
+        <version>1.9</version>
+      </extension>
+    </extensions>
+
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <distributionManagement>
+    <repository>
+      <id>java.net-m2-repository</id>
+      <url>java-net:/maven2-repository/trunk/repository/</url>
+    </repository>
+  </distributionManagement>
+
+ <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+     
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.0-alpha-4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
