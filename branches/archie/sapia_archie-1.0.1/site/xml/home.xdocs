@@ -1,0 +1,151 @@
+<sapia:page title="Archie" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:refreshMenu page="leftmenu.html" />
+  <sapia:sect1 title="Archie">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+    </sapia:section>
+    <toc/>
+    <sapia:sect2 title="Overview">
+      <p>Archie is a "hierarchical object storage" toolkit - in fact, "Archie" stands
+      for "hierarchy". The <a href="http://www.sapia-oss.org/projects/ubik/index.html" target="target_window">Ubik</a> 
+      distributed computing framework uses Archie to support its JNDI implementation.</p>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Features">
+      <ul>
+        <li>Objects are bound to names in a hierarchical datastructure;</li>
+        <li>hierarchy traversal strategies are decoupled from datastructure (allows
+        implementing you own strategies);</li>
+        <li>interface-based design: roll your own (you could for example easily back
+        your implementation with an <a target="target_window" href="http://www.ozone-db.org">object-oriented database</a>);</li>        
+        <li>convenient in lots of situations (isn't Log4j using such a hierarchy
+        internally? internationalization could also be a candidate...);</li>        
+        <li>provides a basic JNDI implementation that can easily be augmented if needed.</li>
+      </ul>    
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Design">
+      <p>Get the following and you're off:</p>
+      <ul>
+        <li>A hierarchy is a tree of <sapia:class link="api/org/sapia/archie/Node.html" target="target_window">Node</sapia:class>s.</li>        
+        <li>A hierarchy has a single root <sapia:class>Node</sapia:class>.</li>                
+        <li>Nodes of a given type are instantiated by a 
+            <sapia:class link="api/org/sapia/archie/NodeFactory.html" target="target_window">NodeFactory</sapia:class>.</li>
+        <li>A <sapia:class link="api/org/sapia/archie/NameParser.html" target="target_window">NameParser</sapia:class> parses strings
+            into <sapia:class link="api/org/sapia/archie/Name.html" target="target_window">Name</sapia:class>s.</li>
+        <li>A <sapia:class>Name</sapia:class> is composed of one to many <sapia:class link="api/org/sapia/archie/NamePart.html" target="target_window">NamePart</sapia:class>(s).</li>            
+        <li>The "local name" of a node is modeled as a <sapia:class>NamePart</sapia:class>. The local name of a node is unique in the context
+            of that node's parent.</li>
+        <li>The "absolute path" of a node is in fact its full path in the node hierarchy; that path is the node's full-qualified 
+        <sapia:class link="api/org/sapia/archie/Name.html" target="target_window">Name</sapia:class>.</li>            
+        <li>You can manipulate nodes yourself, but most of the time you'll use an 
+        <sapia:class link="api/org/sapia/archie/Archie.html" target="target_window">Archie</sapia:class> instance to do so.</li>
+      </ul>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Learning by Example">
+      <sapia:sect-desc>
+       <p>The examples below should prove a thorough enough introduction. For more
+       details, see the <a href="api/index.html">javadoc</a> and the test cases.</p>
+      </sapia:sect-desc>
+      
+      <sapia:sect3 title="Archie API">
+        <sapia:sect4 title="Creating a Hierarchie from Scratch">
+<sapia:code>
+import org.sapia.archie.*
+import org.sapia.archie.impl.DefaultNodeFactory;
+
+...
+
+  NodeFactory fac = new DefaultNodeFactory();
+  
+  // note that the Archie class only needs the root node. 
+  // the Node interface provides all the functionality that
+  // the Archie class needs to create, lookup and remove nodes.
+  Archie arch = new Archie(fac.newNode());
+..
+</sapia:code>
+        </sapia:sect4>
+        
+        <sapia:sect4 title="Binding an Object">
+<sapia:code>
+  NameParser parser = arch.getNameParser();
+  
+  
+  Name name = parser.parse("some/path/foo");
+  
+  // No, class Foo is not in the API, don't look for it...  
+  arch.bind(name, new Foo());
+</sapia:code>
+        </sapia:sect4>
+        
+        <sapia:sect4 title="Looking Up">
+        
+          <p>With archie, you can lookup objects, nodes, and you can
+          use/implement <a href="api/org/sapia/archie/strategy/LookupStrategy.html">lookup strategies</a>.</p>
+<sapia:code>
+
+  NameParser parser = arch.getNameParser();
+  
+  // looking up an object...
+  Name name = parser.parse("some/path/foo");
+  Foo f = (Foo)arch.lookup(name);
+  
+  // looking up a node...
+  Name name = parser.parse("some/path");
+  Node node = arch.lookupNode(name);  
+  f = (Foo)node.getValue(parser.parseNamePart("foo"));
+  
+  // using some lookup strategy: this one would lookup
+  // a value at a given node - under a given name, and 
+  // go up to the parent nodes if no value would be found
+  // at that node, under that name.
+  ReverseLookupStrategy reverse = new ReverseLookupStrategy();
+  Foo f = (Foo)reverse.lookup(n, arch.getRoot());
+  
+</sapia:code>
+        </sapia:sect4>        
+        
+        <sapia:sect4 title="Removing an Object">
+<sapia:code>
+  NameParser parser = arch.getNameParser();
+  Name name = parser.parse("some/path/foo");
+  
+  // No, class Foo is not in the API, don't look for it...  
+  arch.unbind(name);
+</sapia:code>
+        </sapia:sect4>                
+        
+        <p>You get the picture... see the javadoc for more info.</p>
+        
+      </sapia:sect3>
+      
+      <sapia:sect3 title="JNDI">
+        <p>Archie provides a basic JNDI implementation (not yet supporting  
+        the <sapia:class>Referenceable</sapia:class> interface, links, listeners, etc.</p>
+        <sapia:sect4 title="Usage">
+          <p>The following snippet illustrates how to obtain a JNDI context implemented
+          on top of Archie:</p>
+<sapia:code>
+import org.sapia.archie.impl.DefaultNodeFactory;
+import org.sapia.archie.jndi.JndiContext;
+import javax.naming.Context;
+..
+  NodeFactory fac = new DefaultNodeFactory();
+  Context ctx = new JndiContext(fac);
+...
+
+</sapia:code>
+          <p>From then on, you use the JNDI API as you do normally. Of course, instantiating
+          a JNDI <sapia:class>Context</sapia:class> like this is not standard practice. Rather,
+          you should implement your own <sapia:class link="http://java.sun.com/products/jndi/tutorial/provider/basics/initial.html" target="target_window">InitialContextFactory</sapia:class>.</p>
+        </sapia:sect4>
+      </sapia:sect3>      
+    </sapia:sect2>
+    <sapia:sect2 title="Conclusion">
+      <p>Use Archie to store objects hierarchically. Implement your own lookup strategies, you own nodes, etc. Or use Archie as the basis
+      for a JNDI provider.</p>
+    </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>
