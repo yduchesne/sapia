@@ -6,7 +6,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>sapia_clazzy</artifactId>
-  <version>2.0-SNAPSHOT</version>
+  <version>2.0</version>
 
   <organization>
     <name>Sapia OSS</name>
@@ -39,9 +39,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/clazzy</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/clazzy</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/clazzy</url>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/clazzy/sapia_clazzy-2.0</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/clazzy/sapia_clazzy-2.0</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/clazzy/sapia_clazzy-2.0</url>
   </scm>
 
   <licenses>
@@ -82,10 +82,10 @@
                   <tasks>
                     <echo message="Compiling alternate classes using classpath: ${project.build.outputDirector}" />
                     
-                    <property name="project.testClassesDir"     value="etc/test/classes"/>
-                    <property name="project.testCpDir"         value="target/classes"/>		
-                    <property name="project.testSrcDir"         value="etc/test/src"/>		
-                    <property name="project.testLibDir"         value="etc/test/lib"/>		
+                    <property name="project.testClassesDir" value="etc/test/classes" />
+                    <property name="project.testCpDir" value="target/classes" />		
+                    <property name="project.testSrcDir" value="etc/test/src" />		
+                    <property name="project.testLibDir" value="etc/test/lib" />		
                     
                     <mkdir dir="${project.testClassesDir}" />
                     <mkdir dir="${project.testLibDir}" />
@@ -97,7 +97,7 @@
                     <javac destdir="${project.testClassesDir}" fork="false" debug="true" excludes="**.svn/**">
                         <src path="${project.testSrcDir}" />
                         <classpath>
-                          <pathelement location="${project.testCpDir}"/>
+                          <pathelement location="${project.testCpDir}" />
                         </classpath>
                     </javac>  	
                     <copy todir="${project.testClassesDir}/test">
@@ -105,12 +105,12 @@
                     </copy>  	
                     <jar jarfile="${project.testLibDir}/classes.jar">
                        <fileset dir="${project.testClassesDir}">
-                         <exclude name="test/JarClass2*"/>
+                         <exclude name="test/JarClass2*" />
                        </fileset>
                     </jar>
                     <jar jarfile="${project.testLibDir}/classes2.jar">
                       <fileset dir="${project.testClassesDir}">
-                       <include name="test/JarClass2*"/>
+                       <include name="test/JarClass2*" />
                       </fileset>
                     </jar>  	
                     <delete>
