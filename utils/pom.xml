@@ -39,9 +39,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/sapia_utils_parent-1.6</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/sapia_utils_parent-1.6</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/utils/sapia_utils_parent-1.6</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/utils/</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/utils/</url>
   </scm>
 
   <licenses>
@@ -128,21 +128,6 @@
       <url>java-net:/maven2-repository/trunk/repository/</url>
     </repository>
   </distributionManagement>
-
-
-  <!--distributionManagement>
-    <repository>
-      <id>sapia-releases</id>
-      <name>Staging Repository</name>
-      <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <snapshotRepository>
-      <uniqueVersion>true</uniqueVersion>
-      <id>sapia-snapshots</id>
-      <name>Snapshot Repository</name>
-      <url>http://oss.sonatype.org/content/repositories/sapia-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement-->
 
  <profiles>
     <profile>
