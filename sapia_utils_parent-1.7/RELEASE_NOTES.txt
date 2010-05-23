@@ -1,0 +1,66 @@
+THIS PROJECT IS MADE PUBLIC UNDER  THE SAPIA-OSS
+LICENSE. SEE LICENSE.txt THAT COMES  PACKAGED IN 
+THE ROOT OF THE DISTRIBUTION OR GO TO 
+
+http://www.sapia-oss.org/license.html 
+
+Sapia Utilities Version 1.5.1 (2005/02/17)
+=========================================
+
+Corrected minor bug in Confix (ObjectWrapperIF
+would not be handled appropriately in some cases).
+
+Sapia Utilities Version 1.5 (2005/01/12)
+=========================================
+
+This release contains the following new features:
+
+   - Cursor API
+   
+   - License Management API
+
+Sapia Utilities Version 1.4 (2004/08/03)
+=========================================
+
+This release contains the following new features:
+
+   - Confix: corrected bug where calls to methods of superclasses 
+             where not performed.
+
+   - Confix: added Dom4jProcessor.
+   
+   - Confix: added XMLConsumer interface.
+
+Sapia Utilities Version 1.3 (2004/06/25)
+=========================================
+
+This release contains the following new features:
+
+   - Application Starter: Fixed a bug where an extra slash was
+     used under linux when creating the classloader of the
+     application to start
+
+
+Sapia Utilities Version 1.2 (2004/02/26)
+=========================================
+
+This release contains the following new features:
+
+   - Application Starter: Fixed a bug where the classname was
+     passing to start() as the classpath
+
+
+Sapia Utilities Version 1.1 (2003/10/22)
+=========================================
+
+This release contains the following new features:
+
+   - CONFIX: Added ObjectCreationCallback interface
+
+   - CONFIX: Added NullObject interface
+
+   - CONFIX: Added support for passing complex objects to
+     methods represented by an XML element (in JDOMProcessor only)
+     
+   - Added the new utility IDEFIX that perform
+     serialization of objects into an XML form

@@ -1,0 +1,1163 @@
+<sapia:page title="Confix" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:refreshMenu page="leftmenu.html" />
+
+  <sapia:sect1 title="Confix">
+    <sapia:section>
+      <sapia:path name="home" href="../../../home.html" />
+      <sapia:path name="projects"/>
+      <sapia:path name="utils" href="../home.html"/>
+    </sapia:section>
+
+    <toc/>
+    <sapia:sect2 title="Overview">
+      <p>Confix stands for "configuration" and "xml". Indeed, the Confix API intends
+      to spare developers from the tedious task of "manually" parsing XML configuration
+      files, replacing this approach with a direct translation of XML configurations into
+      object format. Trying the API is to become addicted; you will never want to manually
+      process XML configuration files ever again.
+      </p>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Features">
+      <p>To wet your appetite, let us give you an insight into the API's features:</p>
+
+      <ul>
+        <li>translates XML configuration files into objects;</li>
+        <li>uses Java's Reflection API to instantiate and initialize the objects corresponding
+        to the configuration;</li>
+        <li>XML elements are converted into objects;</li>
+        <li>supports XML namespace definitions;</li>
+        <li>XML attributes are mapped to "setters";</li>
+        <li>automatic type conversion: XML attributes are automatically converted to the type
+        specified by their corresponding setters (int, boolean, long, etc.)</li>
+        <li>implements the factory pattern: separates XML traversal from object creation - the
+        latter is delegated to "object factories".</li>
+        <li>allows parts of the XML to bypass the conversion mechanism: the XML will remain
+        as such if some objects are interested in manipulating the XML themselves;</li>
+	<li>flexible, interface-based XML-to-object conversion strategies, suitable to solve most
+	configuration pecularities.</li>
+      </ul>
+
+    </sapia:sect2>
+
+    <sapia:sect2 title="Architecture">
+      <p>As was mentioned above, the API allows to convert XML configurations into objects, a
+      cumbersome task that we have all done at some point. At Sapia, we became so fed up with it
+      that we have decided to implement a toolkit that does it for us. The Confix architecture
+      cleanly separates XML traversal from object creation. The architecture is based on the following
+      entities:</p>
+
+      <ul>
+        <li><b>The Confix Processor</b>: the processor traverses an XML configuration file - in fact,
+        it does not traverse the "file" per say, but rather some representation of it (to give you
+        an insight, there is a SAX processor and a JDOM processor). The processor deals with
+        an object factory to retrieve objects corresponding to the XML elements in the configuration
+        - see next item for more on object factories. The processor is also in charge of assigning
+        the values that belong to each created object's corresponding XML element - the attribute
+        values are assigned on the created objects.</li>
+
+        <li><b>The Object Factory</b>: every time an XML element is encountered by the processor,
+        the latter calls its object factory to instantiate an object that corresponds to the
+        element that was encountered. An object factory implements a specific strategy to instantiate
+        objects - one could use Java's Reflection API, another hard-coded if/then logic, etc. By using
+        a factory, the processor is abstracted from instantiation of objects corresponding to the XML
+        elements.</li>
+      </ul>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Learning by Example">
+      <sapia:sect-desc>To quickly learn an API, nothing matches the hands-on approach. This section
+      provides a step-by-step Confix how-to.
+      </sapia:sect-desc>
+      <sapia:sect3 title="Creating a Configuration">
+        <p>For the sake of complicity, we will create a simple configuration. The configuration shown below
+        models a family:</p>
+
+        <sapia:code><![CDATA[
+<family name="Simpson">
+  <father   name="Homer" age="45"/>
+  <mother   name="Marge" age="42"/>
+  <boy      name="Bart"  age="10"/>
+  <girl     name="Lisa"  age="10"/>
+  <dog      name="Santa's Little Helper"
+            age="2"
+            animal="true"/>
+</family>]]></sapia:code>
+      </sapia:sect3>
+
+      <sapia:sect3 title="Creating the Object Model">
+        <p>Now that we have a configuration, we will create the classes that correspond to each of the
+        XML element found in it. First, we create a "Being" class - father, mother, boy, girl, and dog
+        are all beings:</p>
+
+        <sapia:code><![CDATA[
+package org.sapia.util.xml.confix.examples;
+
+public class Being{
+
+  private boolean _animal;
+  private String  _name;
+  private int     _age;
+
+  public void setAnimal(boolean animal){
+    _animal = animal;
+  }
+
+  public void setName(String name){
+    _name = name;
+  }
+
+  public void setAge(int age){
+    _age = age;
+  }
+}]]></sapia:code>
+        <p>As you can see, there must be one setter for each XML attribute specified in the configuration. Confix
+        will coerce the attribute values to the appropriate Java type. Attribute values must correspond to
+        Java's primitive types, to wrapper object of the primitive type, or to <sapia:class>String</sapia:class>.
+        The following table illustrates how attribute names are converted into method names:</p>
+        <center>
+        <sapia:table>
+          <sapia:th>Attribute Name</sapia:th><sapia:th>Method Name</sapia:th>
+          <tr>
+            <td>name</td><td>setName</td>
+          </tr>
+          <tr>
+            <td>Name</td><td>setName</td>
+          </tr>
+          <tr>
+            <td>firstName</td><td>setFirstName</td>
+          </tr>
+          <tr>
+            <td>FirstName</td><td>setFirstName</td>
+          </tr>
+          <tr>
+            <td>first-name</td><td>setFirstName</td>
+          </tr>
+          <tr>
+            <td>first.name</td><td>setFirstName</td>
+          </tr>
+        </sapia:table>
+        </center>
+
+        <p>Now, onto the <sapia:class>Family</sapia:class> class:</p>
+
+        <sapia:code><![CDATA[
+package org.sapia.util.xml.confix.examples;
+import java.util.*;
+
+public class Family{
+
+  private Being   _father, _mother;
+  private List    _boys  = new ArrayList()
+  private List    _girls = new ArrayList()
+  private List    _dogs  = new ArrayList()
+  private String  _name;
+
+  public void setName(String name){
+    _name = name;
+  }
+
+  public void setMother(Being mother){
+    if(_mother != null){
+      throw new IllegalArgumentException(
+       "Mother has already been assigned"
+      );
+    }
+    _mother = mother;
+  }
+
+  public void setFather(Being father){
+    if(_father != null){
+      throw new IllegalArgumentException(
+       "Father has already been assigned"
+      );
+    }
+    _father = father;
+  }
+
+  public void addBoy(Being boy){
+    _boys.add(boy);
+  }
+
+  public void addGirl(Being girl){
+    _girls.add(girl);
+  }
+
+  public void addDog(Being dog){
+    _dogs.add(dog);
+  }
+}]]></sapia:code>
+
+     <p>As you can see, setter and adder methods match the corresponding elements in our configuration. What the processor does
+        upon encountering elements is the following:</p>
+
+     <ul>
+       <li>It calls its object factory so that the latter creates an object corresponding to the encountered element.</li>
+       <li>It tries to assign this new object to its parent, if the parent is not null - the only case when null occurs is when
+       processing the root element.</li>
+     </ul>
+     <p>Assignment of the new object to its parent obeys the following rules:
+      <ul>
+        <li>The processor tries to find a setter on the parent object that matches the XML element name corresponding to the new object;</li>
+        <li>if a setter is found, it is invoked - the type of the new object must match the type of the parameter that is accepted by
+        the setter;</li>
+        <li>if no setter is found, an adder is searched;</li>
+        <li>if an adder is found, it is invoked;</li>
+        <li>if no setter or adder is found, an exception is thrown.</li>
+      </ul>
+      Setters and adders are searched in a manner similar as for attributes; the same method naming patterns are taken into
+      account - see table above.
+     </p>
+
+     <p>Thus, the processor resolves elements to objects in a recursive manner, following a <b>dept-first</b> algorithm - a child
+     is assigned to its parent only once it has itself completely been initialized. At the end of the process, one obtains a
+     complete object graph.</p>
+
+      </sapia:sect3>
+
+      <sapia:sect3 title="Creating the Object Factory">
+        <p>We have our configuration and our object model. Now we must implement the factory that will instantiate the objects
+        corresponding to our configuration. To do so, we implement the
+        <sapia:class><a href="api/org/sapia/util/xml/confix/ObjectFactoryIF.html">ObjectFactoryIF</a></sapia:class> interface.
+        </p>
+
+        <sapia:code><![CDATA[
+package org.sapia.util.xml.confix.examples;
+
+import org.sapia.util.xml.confix.CreationStatus;
+import org.sapia.util.xml.confix.ObjectCreationException;
+import org.sapia.util.xml.confix.ObjectFactoryIF;
+import java.util.*;
+
+public class FamilyObjectFactory
+             implements ObjectFactoryIF{
+
+  private static Set _beings = new HashSet();
+
+  static{
+    _beings.add("father");
+    _beings.add("mother");
+    _beings.add("boy");
+    _beings.add("girl");
+    _beings.add("dog");
+  }
+
+  CreationStatus newObjectFor(String aPrefix,
+                              String aNamespaceURI,
+                              String anElementName,
+                              Object aParent)
+                   throws ObjectCreationException{
+    if(_beings.contains(anElementName){
+      return CreationStatus.create(new Being());
+    }
+    else if (anElementName.equals("family")){
+      return CreationStatus.create(new Family());
+    }
+    else{
+      throw new ObjectCreationException(
+       "Element not recognized: " + anElementName
+      );
+    }
+  }
+}]]></sapia:code>
+
+      <p>As can be seen, implementing an object factory is quite straightforward; one only
+      needs implementing the <sapia:command>newObjectFor(...)</sapia:command> factory method,
+      and returning a <sapia:class><a href="api/org/sapia/util/xml/confix/CreationStatus.html">
+      CreationStatus</a></sapia:class> instance that contains the created object - we will see
+      more about the "creation status" further below.</p>
+
+      <p>The creational method takes many arguments: the first three arguments pertain to the XML
+      configuration itself; the last argument is the parent object of the one that is to be
+      created by the method. The parent object is <sapia:command>null</sapia:command> if no object
+      has been created yet - meaning that the element name passed in corresponds to the name of
+      the root element in the configuration.
+      </p>
+
+      </sapia:sect3>
+
+      <sapia:sect3 title="Using the Processor">
+        <p>Now that we have our factory, we are ready to rock. As seen earlier, the Confix processor
+        is in charge of traversing an XML resource and to create an object representation of that
+        XML. The interface <sapia:class><a href="api/org/sapia/util/xml/confix/ConfixProcessorIF.html">
+        ConfixProcessorIF</a></sapia:class> is in charge of that and it has only one method:</p>
+
+        <sapia:code>public Object process(InputStream is)
+                                  throws ProcessingException;</sapia:code>
+
+        <p>The code below shows how a Family instance is created. You will see that there are some
+        steps involved before being able to get our Family object. This example shows a factory
+        method that creates Family objects from an input stream that contains the XML family
+        configuration.</p>
+
+        <sapia:code><![CDATA[
+package org.sapia.util.xml.confix.examples;
+
+import java.io.InputStream;
+import org.sapia.util.xml.confix.ConfixProcessorFactory;
+import org.sapia.util.xml.confix.ConfixProcessorIF;
+import org.sapia.util.xml.confix.ObjectFactoryIF;
+
+public class FamilyFactory {
+
+  /**
+   * Factory method that creates a Family instance from
+   * the stream over the XML passed in. It return null
+   * if an error occurs.
+   */
+  public static Family
+    createFamily(InputStream anXmlStream) {
+
+    Family aFamily = null;
+
+    try {
+
+      // Creating an instance of our
+      // family object factory
+      ObjectFactoryIF anObjectFactory =
+          new FamilyObjectFactory();
+
+      // Creating a new processor factory instance
+      ConfixProcessorFactory aProcessorFactory =
+          ConfixProcessorFactory.newFactory();
+
+      // Getting a Confix processor for
+      // our object factory
+      ConfixProcessorIF aProcessor =
+          aProcessorFactory.createProcessor(
+            anObjectFactory);
+
+      // Finally, we process the input stream of
+      // the configuration
+      aFamily = (Family)
+          aProcessor.process(anXmlStream);
+
+    } catch (Exception e) {
+      System.err.println(
+       "Error while processing the family configuration");
+      e.printStackTrace();
+    }
+
+    return aFamily;
+  }
+}]]></sapia:code>
+
+        <sapia:sect4 title="Getting a Processor Factory">
+          <p>To use a Confix processor, we first need to get a <sapia:class>
+          <a href="api/org/sapia/util/xml/confix/ConfixProcessorFactory.html">
+          ConfixProcessorFactory</a></sapia:class>. This factory is responsible for creating the
+          processor that we will use. Since there are multiple processor implementations,
+          the factory prevents us from tying our code directly to the implementation. We create a
+          processor factory by invoking the <sapia:command>newFactory()</sapia:command> static method.</p>
+        </sapia:sect4>
+
+        <sapia:sect4 title="Getting a Processor Instance">
+	
+	  <sapia:sect5 title="JAXP-like Discovery">
+            <p>Now that we have the processor factory, we can create a <sapia:class>ConfixProcessorIF</sapia:class>
+            using the <sapia:command>createProcessor(ObjectFactoryIF)</sapia:command> method . This method takes
+            as an argument the <sapia:class>ObjectFactoryIF</sapia:class> to be used by the created processor.</p>
+
+            <p>How does the processor factory know which implementation of the Confix processor to create?
+            Well, the factory uses a mechanism similar to <a href="http://java.sun.com/xml/jaxp/">Sun's
+            JAXP specification</a>. It looks at different places for the name of the <sapia:class>ConfixProcessorIF</sapia:class>
+            class for which an instance should be created. Once it finds a class name, it looks for a constructor that takes has
+            <b>only argument</b> an <sapia:class>ObjectFactoryIF</sapia:class>. The algorithm that searches for the class name
+            is defined below; the factory looks for:</p>
+
+            <ol>
+               <li>the <sapia:command>org.sapia.xml.ConfixProcessor</sapia:command> system property
+               - if defined and accessible;</li>
+               <li>the value of the property <sapia:command>org.sapia.xml.ConfixProcessor</sapia:command> of
+               the file <sapia:command>$JAVA_HOME/jre/lib/sapia.properties</sapia:command> if it exists;</li>
+               <li>the Jar Service Provider discovery mechanism specified in the Jar File Specification. A
+               jar file can have a resource with the name <sapia:command>META-INF/services/org.sapia.xml.ConfixProcessor</sapia:command>
+               containing the name of the concrete class to instantiate.</li>
+            </ol>
+
+            <p>The above algorithm stops as soon as a processor can be determined; if no processor class can be found,
+               the fallback default implementation (<sapia:class><a href="api/org/sapia/util/xml/confix/SAXProcessor.html">SAXProcessor</a></sapia:class>)
+               is used. There are other processor implementations that come with Confix, based on JDOM and DOM4J - see below.</p>
+	  </sapia:sect5>
+	  <sapia:sect5 title="The Manual way">
+	    <p>You can get hold of a <code>ConfixProcessorIF</code> by instantiating it yourself. There are three implementations:
+	      <ul>
+	        <li><sapia:class><a href="api/org/sapia/util/xml/confix/SAXProcessor.html">SAXProcessor</a></sapia:class></li>
+	        <li><sapia:class><a href="api/org/sapia/util/xml/confix/JDOMProcessor.html">JDOMProcessor</a></sapia:class></li>
+	        <li><sapia:class><a href="api/org/sapia/util/xml/confix/Dom4jProcessor.html">Dom4jProcessor</a></sapia:class></li>		
+	      </ul>
+	    </p>
+	    <p>The above respectively use SAX, JDOM and DOM4J to create objects from XML. You will need the appropriate dependencies
+	    in your classpath at runtime, of course.</p>
+	    
+	  </sapia:sect5>
+        </sapia:sect4>
+
+        <sapia:sect4 title="Processing the XML">
+          <p>Finally, we now have a Confix processor that uses our custom object factory. The last
+          step is to call the <sapia:command>process(InputStream)</sapia:command> method, passing in
+          the input stream that contains our XML document. The result of that call is either a
+          <sapia:command>Family</sapia:command> instance returned (in our specific example) or a
+          <sapia:class><a href="api/org/sapia/util/xml/ProcessingException.html">
+          ProcessingException</a></sapia:class> - thrown if an error occured while processing the XML.</p>
+        </sapia:sect4>
+      </sapia:sect3>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Advanced Issues">
+
+        <sapia:sect3 title="XML Element Content">
+          <p>The previous example showed a simple configuration file where XML elements contain only attributes or nested
+             elements. What about content of XML element? Imagine the following configuration file:
+          </p>
+
+          <sapia:code><![CDATA[
+<family>
+  <name>Simpson</name>
+  <father>
+    <name>Homer</name>
+    <age>45</age>
+  </father>
+  <mother>
+    <name>Marge</name>
+    <age>42</age>
+  </mother>
+</family>]]></sapia:code>
+
+          <p>As you can see, this new configuration represents the same content as the one seen earlier. Instead of using
+          attributes to define the values, it uses the content of the element. This encoding style is similar to the SOAP
+          encoding defined by the <a href="http://www.w3.org/TR/SOAP/">Simple Object Access Protocol specification</a>. How
+          will the Confix processor react when encountering such an encoding? There are two mechanisms put in place in the
+          processor, and each occurs in a specific scenario: when the object factory is not able to create an object for
+          the encountered element, and when the factory creates one.
+          </p>
+
+          <p>When the Confix processor asks the object factory to create an object for an XML element and the factory can't
+          do it, the processor as a fall-back mechanism that tries to assign the content of the current element, for which
+          no object was created, to the parent object using the current element name. For instance, when processing the XML
+          configuration above, the processor would first create a <sapia:class>Family</sapia:class> instance and then it would
+          ask the object factory to create an object for the XML element <sapia:command>name</sapia:command>. Assuming we
+          are using the same object factory as in the previous example, no object would be created by the factory. The processor
+          then uses the fallback mechanism and tries to call the method <sapia:command>setName()</sapia:command> on the
+          <sapia:class>Family</sapia:class> instance, passing in the content of the element (<sapia:command>Simpson</sapia:command>).
+          </p>
+
+          <p>The second mechanism is simpler and occurs when the content of an XML element is encountered, and the object
+          factory could create an object for the given element. In that scenario, the content of the XML element is assigned to
+          its target object looking for a <sapia:command>setText()</sapia:command> or <sapia:command>addText()</sapia:command>
+          method - as if it was an XML attribute/element named <sapia:command>text</sapia:command>. As an example, imagine that
+          the object factory that creates family objects was modified to create an object for the <sapia:command>name</sapia:command>
+          element. The processor would then call a <sapia:command>setText()</sapia:command> or <sapia:command>addText()</sapia:command>
+          method one the <sapia:class>Name</sapia:class> instance, passing the value <sapia:command>Simpson</sapia:command> to the method.
+          </p>
+          
+          <p>As an extension of the behavior described previously, the <sapia:command>JDOMProcessor</sapia:command> also supports 
+          passing complex objects to methods that are represented by an XML element, as in the following:</p>
+          
+          <sapia:code><![CDATA[
+<family>
+  <name>Simpson</name>
+  <father>
+    <being>
+      <name>Homer</name>
+      <age>45</age>
+    </being>
+  </father>
+</family>]]></sapia:code>
+
+          <p>The above is quite similar to what you have already seen, except that this time, the "father" element has been
+          decoupled from the <sapia:command>Being</sapia:command> object. What the <sapia:command>JDOMProcessor</sapia:command>
+          expects here then is a <sapia:command>setFather</sapia:command> or <sapia:command>addFather</sapia:command> method,
+          and it tries to acquire an object from the underlying factory, using the <sapia:command>being</sapia:command>
+          element - this would of course require a modification to our factory class, which would create <sapia:command>Being</sapia:command>
+          instances when given "being" as an element. Note that the last requirement that must be met for the processor to behave this
+          way is to have, within the element that represents the method to call (in this case, "father"), a <b>single</b> root
+          element (corresponding to the object to pass to the method).</p>
+          
+        </sapia:sect3>
+
+        <sapia:sect3 title="Built-In Factories">
+         <p>The API comes bundled with object factory implementations:
+         <sapia:class><a href="api/org/sapia/util/xml/confix/CompositeObjectFactory.html">CompositeObjectFactory</a></sapia:class>
+         and <sapia:class><a href="api/org/sapia/util/xml/confix/ReflectionFactory.html">ReflectionFactory</a></sapia:class>. The
+         former, as its name implies, is in fact an aggregation of other factories. Each object factories added to the
+         <sapia:class>CompositeObjectFactory</sapia:class> is associated to a XML namespace URI or namespace prefix. When the
+         <sapia:command>newObjectFor(...)</sapia:command> method of the composite factory is called, it looks for the factory
+         that was registered for the namespace URI or namespace prefix of the encountered element. It then delegates the creation logic
+         to that object factory. The mapping logic is either done on the namespace URI <b>or</b> on the namespace prefix. By default,
+         the factory uses the namespace URI has the identifier of the factory to use, but that behavior can be changed using the
+         <sapia:command>setMapToPrefix()</sapia:command> method - see the javadoc for more information.
+         </p>
+         <p>The composite factory is convenient when one wants to create configuration files that correspond to objects categorized
+         on a per-namespace basis. To give you an example, one could build a task-based system configured through XML (such as Ant),
+         where tasks in fact correspond to classes, and for which instance are created when their corresponding elements are
+         encountered:
+         </p>
+        <sapia:code><![CDATA[
+...
+<tasks xmlns:somePrefix="http://acme.org/task"
+       xmlns:someOtherPrefix="http://myuri.net">
+  <somePrefix:copy
+    fromDir="c:/website/html"
+    toDir="ftp.somehost.com/public_html" />
+
+  <someOtherPrefix:copy
+    fromDir="c:/website/html"
+    toDir="g:/backup/website/html" />
+</tasks>
+...]]></sapia:code>
+
+         <p>As you can see, with such a pattern, two tasks can have the same local name, yet confusion is avoided by relating
+         each task to its own namespace. Such a model could allow for the extension of the task system by different contributors,
+         with each contributor being attributed its own namespace - therefore avoiding name collision.</p>
+
+         <p>The other object factory implementation that comes with Confix creates objects using Java reflection. It
+         proceeds as follows:</p>
+         <ul>
+           <li>First, it will try to find a createXXXX() or addXXXX() <b>no-args</b> method that returns an object, and whose name
+           matches the received XML element's name - users familiar with implementing Ant tasks certainly know about this pattern.
+           If such a method is found, it is invoked, and the object that was created is returned in a
+           <sapia:class>CreationStatus</sapia:class> instance.</li>
+           <li>if the above fails, it will attempt to create an object by trying to match the element name it receives to a class name.
+           Indeed, if you look at the constructor of the class, you will see that it takes an array of strings; these strings are
+           assumed to be package names. When receiving a <sapia:command>newObjectFor(...)</sapia:command> call, the factory iterates
+           through its package names, concatenating the passed in element name to each package name - this gives the fully qualified
+           name of the potential class to create an instance from. It tries to create an instance of that class using a
+           <sapia:command>Class.forName(...).newInstance()</sapia:command> call; if the call succeeds, the created object is returned -
+           within a <sapia:class>CreationStatus</sapia:class> instance. Ultimately, if no object could be created, an
+           <sapia:class>ObjectCreationException</sapia:class> is thrown.</li>
+         </ul>
+         <p>The first creational method used deserves a bit more explanation - or illustration. To that end, have a peek at the code
+         below:</p>
+        <sapia:code><![CDATA[
+package org.sapia.util.xml.confix.examples;
+import java.util.*;
+
+public class Family{
+
+  private Being   _father, _mother;
+  private List    _boys  = new ArrayList()
+  private List    _girls = new ArrayList()
+  private List    _dogs  = new ArrayList()
+  private String  _name;
+
+  public void setName(String name){
+    _name = name;
+  }
+
+  public Being createMother(){
+    if(_mother != null){
+      throw new IllegalArgumentException(
+       "Mother has already been assigned"
+      );
+    }
+    return _mother = new Being();
+  }
+
+  public Being createFather(){
+    if(_father != null){
+      throw new IllegalArgumentException(
+       "Father has already been assigned"
+      );
+    }
+    return _father = new Being();
+  }
+
+  public Being addBoy(){
+    Being boy = new Being();
+    _boys.add(boy);
+    return boy;
+  }
+
+  public Being addGirl(){
+    Being girl = new Being();
+    _girls.add(girl);
+    return girl;
+  }
+
+  public Being addDog(){
+    Being dog = new Being();
+    _dogs.add(dog);
+    return dog;
+  }
+}]]></sapia:code>
+
+          <p>See how the <sapia:class>Family</sapia:class> class thus becomes itself a factory for its own objects?
+          The <sapia:class>ReflectionFactory</sapia:class> interprets the adder an creator methods appropiately, by
+          matching them with the corresponding XML elements. Furthermore, it is important to note that the objects
+          thus created are automatically assigned to their parent (the family); this means that the processor should not
+          later on try to assign the created object through corresponding setters or adders (as is normally the case).</p>
+
+          <p>How does the processor know that it should not do this? Well, this is what the <sapia:class>
+          <a href="api/org/sapia/util/xml/confix/CreationStatus.html">CreationStatus</a></sapia:class> is about.
+          The class has a flag (a boolean value) that is intended to tell to the processor if the created object
+          has already been assigned to its parent; if the flag is set to true, then the processor will not try to assign the child
+          to its parent. The <sapia:command>wasAssigned()</sapia:command> method allows the processor to introspect the flag; from
+          within the factory, it is set to true through code similar to the following:</p>
+
+          <sapia:code>
+return CreationStatus.
+              create(theCreatedInstance).
+                assigned(true)</sapia:code>
+
+          <p>Now, to be consistent with the definition of our new <sapia:class>Family</sapia:class>, we revise our factory:</p>
+
+        <sapia:code><![CDATA[
+package org.sapia.util.xml.confix.examples;
+
+import org.sapia.util.xml.confix.CreationStatus;
+import org.sapia.util.xml.confix.ObjectCreationException;
+import org.sapia.util.xml.confix.ReflectionFactory;
+import java.util.*;
+
+public class FamilyObjectFactory
+             extends ReflectionFactory{
+
+  CreationStatus newObjectFor(String aPrefix,
+                              String aNamespaceURI,
+                              String anElementName,
+                              Object aParent)
+                   throws ObjectCreationException{
+    if (anElementName.equals("family")){
+      return CreationStatus.create(new Family());
+    }
+    else{
+      return super.newObjectFor(aPrefix,
+                                aNamespaceURI,
+                                anElementName,
+                                aParent);
+    }
+  }
+}]]></sapia:code>
+          <p>Our class now extends <sapia:class>ReflectionFactory</sapia:class>; as such, it benefits
+          from the addXXXX and createXXXX pattern.</p>
+        </sapia:sect3>
+        <sapia:sect3 title="Object Wrappers">
+          <p>Imagine for a minute that we have a framework that allows to dynamically configure Java software
+          components through XML: basically, we have some engine that instantiates components based on an XML
+          configuration file. An excerpt of such a file is given below:</p>
+
+        <sapia:code><![CDATA[
+<components>
+  <!--
+      This component polls a server at a given
+      URL to see if it is running and sends an
+      alert email to the configured address if
+      it isn't.
+  -->
+  <component class="org.acmesoft.StatusMonitor"
+             url="http://www.acmesoft.net/someService"
+             email="admin@acmesoft.net" />
+</components>
+]]></sapia:code>
+
+        <p>What basically happens is that the XML file is processed by an application container; the container
+        intantiates the components that make up the application dynamically. To process the XML and create
+        objects from it, the Confix API is used - of course. In this case, we have a class that matches the
+        "component" element in the above configuration. An instance of this class has a <sapia:command>setClass()</sapia:command>
+        method that takes the name of the class of the component that is to be instantiated. In the configuration, we
+        have a matching "class" attribute; all other attributes "belong" to the component that is to be instantiated. How
+        does the Confix processor know that the "class" attribute belongs to the class that corresponds to the object that will
+        represent our "component" element, and that the other attributes belong to the object that will be created using
+        the specified class name? The code snippets below will help us answer that question:
+        </p>
+
+        <sapia:code><![CDATA[
+import org.sapia.util.xml.confix.ObjectWrapperIF
+
+public class ComponentElement implements ObjectWrapperIF{
+
+  private Component _component;
+
+  public void setClass(String className)
+              throws Exception{
+    _component = (Component)Class.forName(className)
+                      .newInstance();
+  }
+
+  public void start(){
+    if(_component == null){
+      throw new IllegalStateException("'class' " +
+       "attribute not set; " +
+       "must be set before other attributes");
+    }
+    _component.start();
+  }
+
+  public Object getWrappedObject(){
+    if(_component == null){
+      throw new IllegalStateException("'class' " +
+       "attribute not set; " +
+       "must be set before other attributes");
+    }
+    return _component;
+  }
+}
+]]></sapia:code>
+
+         <p>Now, the <sapia:class>StatusMonitor</sapia:class>:</p>
+
+        <sapia:code><![CDATA[
+package net.acmesoft;
+
+public class StatusMonitor implements Component{
+
+  private String _url, _email;
+
+  public void setEmail(String email){
+    _email = email;
+  }
+
+  public void setUrl(String url){
+    _email = email;
+  }
+
+  /**
+   * Let`s say that this method is imposed by
+   * the fictious "Component" interface that
+   * this class implements...
+   */
+  public void start(){
+     // ... monitoring logic here ...
+  }
+
+}]]></sapia:code>
+
+         <p>When the Confix processor encounters an attribute, it tries to call the corresponding setter; if it works,
+         fine. If not, an exception is thrown... Except in the above case: if the object that was assumed to be the
+         parent of the attribute is an instance of the <sapia:class><a href="api/org/sapia/util/xml/confix/ObjectWrapperIF.html">ObjectWrapperIF</a></sapia:class>
+         interface and the search for a setter fails, the processor calls the <sapia:command>getWrappedObject()</sapia:command> method
+         on the wrapper, an then tries to resolve the attribute on the wrapped instance. In our case, the <sapia:class>ComponentElement</sapia:class>
+         class creates its wrapped object upon its <sapia:command>setClass()</sapia:command> method being called. Since the class does not
+         have setters corresponding to the "url" and "email" attributes, the <sapia:command>getWrappedObject()</sapia:command> method will be
+         called by the processor - to be robust, the class ensures at that point that its wrapped object has indeed been created. The processor
+         then tries to find the setters (for "url" and "email") on the wrapped instance.</p>
+         
+        </sapia:sect3>
+
+        <sapia:sect3 title="Object Handlers">
+          <p>In some cases, it might not be possible for a class to have an adder/setter for some XML elements, or we
+          might not wish it - we might want to be able to process add-hoc elements, for which we do not want to
+          define any getter or setter. In our case, imagine that we want to nest components - notice the nested
+          "component" element:</p>
+
+        <sapia:code><![CDATA[
+<components>
+  <component class="org.acmesoft.StatusMonitor"
+             url="http://www.acmesoft.net/someService"
+             email="admin@www.acmesoft.net">
+
+             <component class="org.acmesoft.Logger"
+                        file="./logs/log.txt" />
+  </component>
+
+</components>
+]]></sapia:code>
+
+          <p>We revise our code accordingly - notice the <sapia:command>handleObject()</sapia:command> method:</p>
+
+        <sapia:code><![CDATA[
+import org.sapia.util.xml.confix.ObjectWrapperIF;
+import org.sapia.util.xml.confix.ObjectHandlerIF;
+import org.sapia.util.xml.confix.ConfigurationException;
+
+import java.util.*;
+
+public class ComponentElement
+             implements ObjectWrapperIF,
+                        ObjectHandlerIF{
+
+  private Object _component;
+  private List   _children = new ArrayList();
+
+  public void setClass(String className)
+              throws Exception{
+    _component = Class.forName(className)
+                      .newInstance();
+  }
+
+  public void start(){
+    if(_component == null){
+      throw new IllegalStateException("'class' " +
+       "attribute not set; " +
+       "must be set before other attributes");
+    }
+    _component.start();
+
+    ComponentElement current;
+
+    for(int i = 0; i < _children.size; i++){
+      current = (ComponentElement)_children.get(i);
+      current.start();
+    }
+
+  }
+
+  public Object getWrappedObject(){
+    if(_component == null){
+      throw new IllegalStateException("'class' " +
+       "attribute not set; " +
+       "must be set before other attributes");
+    }
+    return _component;
+  }
+
+  public void handleObject(String elementName,
+                           Object toHandle)
+                throws ConfigurationException{
+    if(toHandle instanceof ComponentElement){
+      _children.add(toHandle);
+    }
+    else{
+      throw new ConfigurationException(
+       "ComponentElement instance expected"
+      );
+    }
+  }
+}]]></sapia:code>
+
+         <p>As you can see, in this case, our <sapia:class>ComponentElement</sapia:class> class now also implements
+            the <sapia:class><a href="api/org/sapia/util/xml/confix/ObjectHandlerIF.html">ObjectHandlerIF</a></sapia:class>
+            interface. In our case, we do not specify an adder or setter method for nested "component" elements. Rather,
+            we handle the objects corresponding to these elements in the <sapia:command>handleObject()</sapia:command>
+            method. The Confix processor "knows" about the <sapia:class>ObjectHandlerIF</sapia:class>; if it cannot find
+            any setter or adder for an object that corresponds to a given XML element, it will check if the
+            current object is a <sapia:class>ObjectWrapperIF</sapia:class>; if the check fails, it will then check to
+            see if the current object is a <sapia:class>ObjectHandlerIF</sapia:class>. If that is the case, it will
+            call the <sapia:command>handleObject()</sapia:command> method, passing to the latter the object to
+            assign.</p>
+
+      </sapia:sect3>
+      
+      <sapia:sect3 title="The ObjectCreationCallback Interface">
+          <p>In some cases, it is not possible to map an XML element to a bean-like class (that has a no-arg constructor
+          and javabean-like methods). For example, take the <sapia:class>java.net.URL</sapia:class> class; it could not
+          be instantiated dynamically by Confix, and it has no setter/adder methods. Yet, you could need to create a 
+          <sapia:command>URL</sapia:command> instance dynamically. Well, guess what, the Confix API offers the 
+          <sapia:class link="api/org/sapia/util/xml/confix/ObjectCreationCallback.html">ObjectCreationCallback</sapia:class> 
+          interface to handle these type of situations: when the Confix runtime receives objects from object factories,
+          it checks if these objects implement the above-mentioned interface; if so, a cast is performed, and the 
+          <sapia:command>onCreate()</sapia:command> method is called. The method returns an object which is used from then on -
+          just as if it had been created by an object factory. Using our example then, here is how URL instances could be created:</p>
+          
+          
+<sapia:code><![CDATA[
+public class URLTag 
+  implements ObjectCreationCallback{
+
+  private _link;
+  
+  public void setLink(String link){
+    _link = link;
+  }
+
+  public Object onCreate() 
+    throws ConfigurationException{
+    
+    if(_link == null){
+      throw new 
+        ConfigurationException("'link' not " +
+          "specified for URL");
+    }
+    try{
+      return new java.net.URL(_link);
+    }catch(MalformedURLException e){
+      throw new ConfigurationException("Invalid value " +
+        "for 'link' attribute of URL", e);
+    }
+  }
+}]]></sapia:code>
+          
+      </sapia:sect3>
+      
+      <sapia:sect3 title="The NullObject Interface">
+        <p>Imagine that you want some objects created by Confix to be ignored, based on given conditions. 
+          For example, taken our URL example above, imagine that you do not want to throw 
+          an exception if the link attribute has not been set; you just want Confix to forget about the
+          URL. Well then, use the <sapia:class link="api/org/sapia/util/xml/confix/NullObject.html">NullObject</sapia:class>
+          interface in that case:</p>
+<sapia:code><![CDATA[
+public class URLTag 
+  implements ObjectCreationCallback{
+
+  private _link;
+  
+  public void setLink(String link){
+    _link = link;
+  }
+
+  public Object onCreate() 
+    throws ConfigurationException{
+    
+    if(_link == null){
+      return new NullObject(){};
+    }
+    try{
+      return new java.net.URL(_link);
+    }catch(MalformedURLException e){
+      throw new ConfigurationException("Invalid value " +
+        "for 'link' attribute of URL", e);
+    }
+  }
+}]]></sapia:code>          
+        <p>When Confix encounters an <sapia:command>NullObject</sapia:command>, it just ignores it, an treats it just
+        as if it had never been created.</p>
+        
+      </sapia:sect3>
+
+      <sapia:sect3 title="Consuming Raw XML">
+        <sapia:sect4 title="The XMLConsumer interface">
+          <p>Imagine that in our framework, we want our components to be able to receive an XML configuration, in the
+          form of a SAX <sapia:class>InputSource</sapia:class>. To do so, have the appropriate classes in your configuration
+	  object model implement the <sapia:class><a href="api/org/sapia/util/xml/confix/XMLConsumer.html">XMLConsumer</a></sapia:class>
+	  interface. Instances of this interface are "recognized" by the processors, and raw XML is handled by them to the implementations.
+          The code below introduces the <sapia:class>Configuration</sapia:class> class to demonstrate how this is done:
+          </p>
+        <sapia:code><![CDATA[
+import org.sapia.util.xml.confix.XMLConsumer;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.xml.sax.InputSource;
+
+public class Configuration implements XMLConsumer{
+
+  private Element _conf;
+
+  /**
+   * @see XMLConsumer
+   */
+  public void consume(InputSource is) throws Exception{
+    SAXReader reader = new SAXReader();
+    _conf = reader.read(is).getRootElement();
+  }
+
+  protected Element getConfiguration(){
+    if(_conf == null){
+      throw new IllegalStateException("Configuration not specified");
+    }
+    return _conf;
+  }
+
+}]]></sapia:code>
+
+        <p>Now, we modify our <sapia:class>ComponentElement</sapia:class> class accordingly - notice
+        the <sapia:command>createConfiguration()</sapia:command> and <sapia:command>init()</sapia:command>
+        methods:</p>
+
+        <sapia:code><![CDATA[
+import org.sapia.util.xml.confix.ObjectWrapperIF;
+import org.sapia.util.xml.confix.ObjectHandlerIF;
+import org.sapia.util.xml.confix.ConfigurationException;
+
+import java.util.*;
+
+public class ComponentElement
+             implements ObjectWrapperIF,
+                        ObjectHandlerIF{
+
+  private Object _component;
+  private List   _children = new ArrayList();
+  private Configuration _conf = new Configuration();
+
+  public void setClass(String className)
+              throws Exception{
+    _component = Class.forName(className)
+                      .newInstance();
+  }
+
+  public Configuration createConfiguration(){
+    return _conf;
+  }
+
+  public void init() throws InitException{
+    if(_component == null){
+      throw new IllegalStateException("'class' " +
+       "attribute not set; " +
+       "must be set before other attributes");
+    }
+    _component.init(_conf.getConfiguration());
+
+    ComponentElement current;
+
+    for(int i = 0; i < _children.size; i++){
+      current = (ComponentElement)_children.get(i);
+      current.init();
+    }
+  }
+
+  public void start(){
+    if(_component == null){
+      throw new IllegalStateException("'class' " +
+       "attribute not set; " +
+       "must be set before other attributes");
+    }
+    _component.start();
+
+    ComponentElement current;
+
+    for(int i = 0; i < _children.size; i++){
+      current = (ComponentElement)_children.get(i);
+      current.start();
+    }
+
+  }
+
+  public Object getWrappedObject(){
+    if(_component == null){
+      throw new IllegalStateException("'class' " +
+       "attribute not set; " +
+       "must be set before other attributes");
+    }
+    return _component;
+  }
+
+  public void handleObject(String elementName,
+                           Object toHandle)
+                throws ConfigurationException{
+    if(toHandle instanceof ComponentElement){
+      _children.add(toHandle);
+    }
+    else{
+      throw new ConfigurationException(
+       "ComponentElement instance expected"
+      );
+    }
+  }
+}]]></sapia:code>
+        <p>Now, our revised status monitor - notice the <sapia:command>init()</sapia:command> method:</p>
+
+        <sapia:code><![CDATA[
+package net.acmesoft;
+
+import org.jdom.Element;
+
+public class StatusMonitor implements Component{
+
+  private String _url, _email;
+
+  public void setEmail(String email){
+    _email = email;
+  }
+
+  public void setUrl(String url){
+    _email = email;
+  }
+
+  public void init(Element conf){
+     // ... process config here ...
+  }
+
+  public void start(){
+     // ... monitoring logic here ...
+  }
+}]]></sapia:code>
+
+        <p>And, finally, the updated configuration - notice the nested <sapia:command>configuration</sapia:command> element:</p>
+
+        <sapia:code><![CDATA[
+<components>
+  <component class="org.acmesoft.StatusMonitor"
+             url="http://www.acmesoft.net/someService"
+             email="admin@www.acmesoft.net">
+
+             <configuration>
+               <message>The service is down!!!</message>
+             </configuration>
+
+             <component class="org.acmesoft.Logger"
+                        file="./logs/log.txt" />
+  </component>
+
+</components>
+]]></sapia:code>
+
+          <p>In addition, nothing stops your handler from also specifying its own attributes.</p>
+
+          <sapia:note>
+          The <sapia:class>XMLConsumer</sapia:class> interface is only recognized by the <sapia:class>JDOMProcessor</sapia:class>
+	  and the <sapia:class>Dom4jProcessor</sapia:class> classes.
+          </sapia:note>
+        </sapia:sect4>
+
+        <sapia:sect4 title="Using the SAXProcessor">
+          <p>The <sapia:class><a href="api/org/sapia/util/xml/confix/SAXProcessor.html">SAXProcessor</a></sapia:class> uses a
+          <a href="http://www.saxproject.org/">SAX parser</a> to navigate through the XML. Similarly to the <sapia:class>JDOMProcessor</sapia:class> 
+	  and <sapia:class>Dom4jProcessor</sapia:class> classes that allow accessing XML "as is", directly, the <sapia:class>SAXProcessor</sapia:class> 
+	  allows receiving the SAX events generated by the underlying SAX Parser. To manipulate these events, you need to implements the
+          <sapia:class><a href="../api/org/sapia/util/xml/parser/HandlerStateIF.html">HandlerStateIF</a></sapia:class> interface.
+          For the ones familiar with the SAX API, you will see that this interface is similar to the <sapia:class>SAXHanlder</sapia:class>
+          interface. In fact, the <sapia:class>SAXProcessor</sapia:class> uses a small framework based on the state pattern that gives
+          the ability to define parsing logic by element. Each piece of logic represents a "state" that knows how to handle given SAX events.
+          This approach has the advantage of breaking the necessary logic to parse complex XML documents into small pieces. When parsing
+          an XML document, a <sapia:class><a href="../api/org/sapia/util/xml/parser/HandlerContextIF.html">HandlerContextIF</a></sapia:class>
+          instance is passed. This context gives you the possibility to change the state of the parser, passing in another
+          <sapia:class>HandlerContextIF</sapia:class>. For example the <sapia:class>Configuration</sapia:class> class defined
+          previously to handle raw XML input could be rewritten as follows:
+          </p>
+
+        <sapia:code><![CDATA[
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.sapia.util.xml.parser.HandlerContextIF;
+import org.sapia.util.xml.parser.HandlerStateIF;
+
+public class Configuration implements HandlerStateIF {
+
+  private StringBuffer _message;
+
+  protected String getMessage() {
+    return _message;
+  }
+
+  public void startElement(
+      HandlerContextIF aContext, String anUri,
+      String aLocalName, String aQualifiedName,
+      Attributes someAttributes)
+      throws SAXException {
+    if (aLocalName.equals("message")) {
+      _message = new StringBuffer();
+    }
+  }
+
+  public void endElement(
+      HandlerContextIF aContext, String anUri,
+      String aLocalName, String aQualifiedName)
+      throws SAXException {
+    // Tell the context we are done parsing the XML
+    // putting back the previous state of the parser
+    aContext.removeCurrentState(anUri,
+                                aLocalName,
+                                aQualifiedName);
+  }
+
+  public void characters(
+      HandlerContextIF aContext, char[] someChars,
+      int anOffset, int length) throws SAXException {
+    if (_message != null) {
+      _message.append(someChars, anOffset, length);
+    }
+  }
+
+  public void ignorableWhitespace(
+      HandlerContextIF aContext, char[] someChars,
+      int anOffset, int aLength) throws SAXException {
+  }
+}]]></sapia:code>
+          <p/>
+          <sapia:note>
+          The <sapia:class>HandlerStateIF</sapia:class> interface is only recognized by the <sapia:class>SAXProcessor</sapia:class>.
+          </sapia:note>
+        </sapia:sect4>
+      </sapia:sect3>
+
+    </sapia:sect2>
+
+    <sapia:sect2 title="Conclusion">
+      <p>Use Confix if, like us, you are fed up of processing XML configuration files manually. Confix also offers
+      various hooks that allow you to bypass its normal behavior, making it a very flexible tool. After you'll
+      have used it once, you will become addicted; you will compulsively make your stuff configurable. Moreover, you'll
+      dump resorting to JDOM and DOM4J directly as means to process XML configuration files.</p>
+    </sapia:sect2>
+
+  </sapia:sect1>
+</sapia:page>
