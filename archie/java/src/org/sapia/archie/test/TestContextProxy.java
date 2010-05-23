@@ -25,8 +25,8 @@ public class TestContextProxy extends ContextProxy{
 		return new TestContextProxy(ctx);
 	}
 	
-	public NamingEnumeration onEnum(Name n, NamingEnumeration enum) throws NamingException{
-		return new TestEnumProxy(n, enum);
+	public NamingEnumeration onEnum(Name n, NamingEnumeration enumeration) throws NamingException{
+		return new TestEnumProxy(n, enumeration);
 	}
 	
 	

@@ -1,5 +1,6 @@
 package org.sapia.archie.strategy;
 
+
 import junit.framework.TestCase;
 
 import org.sapia.archie.*;

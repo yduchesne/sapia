@@ -250,8 +250,8 @@ public class ContextProxy implements Context{
 		return subContext;
 	}
 	
-	protected NamingEnumeration onEnum(Name enumName, NamingEnumeration enum) throws NamingException{
-		return enum;
+	protected NamingEnumeration onEnum(Name enumName, NamingEnumeration enumeration) throws NamingException{
+		return enumeration;
 	}
 	
 	/**
