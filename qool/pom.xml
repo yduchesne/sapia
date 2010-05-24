@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org/projects/qool/index.html</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_qool</artifactId>
-  <version>1.3</version>
+  <version>1.4-SNAPSHOT</version>
 
   <organization>
     <name>Sapia OSS</name>
