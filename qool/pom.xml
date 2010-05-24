@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org/projects/qool/index.html</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_qool</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3</version>
 
   <organization>
     <name>Sapia OSS</name>
@@ -38,9 +38,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/qool</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/qool</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/qool</url>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/qool/sapia_qool-1.3</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/qool/sapia_qool-1.3</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/qool/sapia_qool-1.3</url>
   </scm>
 
   <licenses>
