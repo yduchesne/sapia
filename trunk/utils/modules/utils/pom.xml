@@ -8,14 +8,38 @@
 
   <artifactId>sapia_utils</artifactId>
 
-  <build>
-    <sourceDirectory>../../java/src</sourceDirectory>
-    <testSourceDirectory>../..java/test</testSourceDirectory>
 
-    <directory>target</directory>
-    <outputDirectory>target/classes</outputDirectory>
+  <dependencies>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1</version>
+    </dependency>
+ 
+    <dependency>
+      <groupId>piccolo</groupId>
+      <artifactId>piccolo</artifactId>
+      <version>1.0.3</version>
+    </dependency> 
+
+  </dependencies>
+
+
+  <build>
     <finalName>${artifactId}-${version}</finalName>
-    <testOutputDirectory>target/test-classes</testOutputDirectory>
     
     <plugins>
       <plugin>
