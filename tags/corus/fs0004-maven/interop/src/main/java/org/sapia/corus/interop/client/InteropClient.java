@@ -149,11 +149,12 @@ public class InteropClient implements Consts, Implementation {
    * client.
    *
    * @param proto a <code>InteropProtocol</code> implementation.
-   * @throws IllegalStateException
+   * @throws ProtocolAlreadySetException if this instance's {@link InteropProtocol} has
+   * already been set.
    */
-  public void setProtocol(InteropProtocol proto) throws IllegalStateException {
+  public void setProtocol(InteropProtocol proto) throws ProtocolAlreadySetException {
     if (_proto != null) {
-      throw new IllegalStateException("Interop protocol implementation already set");
+      throw new ProtocolAlreadySetException();
     }
 
     _proto = proto;
