@@ -13,7 +13,7 @@ import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueue;
 
 public class ProcessDependencyFilter {
 

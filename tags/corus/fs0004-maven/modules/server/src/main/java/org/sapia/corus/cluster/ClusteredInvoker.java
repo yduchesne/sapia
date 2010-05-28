@@ -5,8 +5,8 @@ import java.util.Set;
 
 import org.apache.log.Logger;
 import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.util.ProgressQueue;
-import org.sapia.corus.util.ProgressQueueLogger;
+import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueueLogger;
 import org.sapia.ubik.rmi.replication.ReplicatedInvoker;
 
 /**

@@ -4,14 +4,17 @@ import org.apache.log.Hierarchy;
 
 import org.apache.log.Logger;
 import org.sapia.corus.Service;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.interceptor.MultiDispatcher;
 
 /**
- * Implements the <code>EventDispatcher</code> interface.
+ * Implements the {@link EventDispatcher} interface.
  * 
  * @author Yanick Duchesne
  */
+@SuppressWarnings(value="unchecked")
+@Bind(moduleInterface=EventDispatcher.class)
 public class EventDispatcherImpl extends MultiDispatcher implements EventDispatcher, Service{
   
   private Logger logger = Hierarchy.getDefaultHierarchy().getLoggerFor("EventDispatcher");

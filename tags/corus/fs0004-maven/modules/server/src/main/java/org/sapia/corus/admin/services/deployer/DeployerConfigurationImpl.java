@@ -2,8 +2,8 @@ package org.sapia.corus.admin.services.deployer;
 
 import java.io.Serializable;
 
-import org.sapia.corus.util.LongProperty;
-import org.sapia.corus.util.Property;
+import org.sapia.corus.property.LongProperty;
+import org.sapia.corus.property.Property;
 
 public class DeployerConfigurationImpl implements Serializable, DeployerConfiguration{
   

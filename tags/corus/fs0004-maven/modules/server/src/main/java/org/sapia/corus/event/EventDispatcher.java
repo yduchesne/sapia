@@ -10,6 +10,7 @@ import org.sapia.ubik.rmi.interceptor.InvalidInterceptorException;
  * 
  * @author Yanick Duchesne
  */
+@SuppressWarnings(value="unchecked")
 public interface EventDispatcher extends java.rmi.Remote, Module{
 	
   public static String ROLE = EventDispatcher.class.getName();
@@ -18,7 +19,7 @@ public interface EventDispatcher extends java.rmi.Remote, Module{
    * Adds an interceptor for the given event type.
    *
    * @param event an event class.
-   * @param it an <code>Interceptor</code> instance.
+   * @param it an {@link Interceptor} instance.
    *
    * @throws InvalidInterceptorException if the interceptor could not be added.
    */

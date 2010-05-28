@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.util.IntProperty;
-import org.sapia.corus.util.Property;
-import org.sapia.corus.util.StringProperty;
+import org.sapia.corus.property.IntProperty;
+import org.sapia.corus.property.Property;
+import org.sapia.corus.property.StringProperty;
 import org.sapia.ubik.mcast.AsyncEventListener;
 import org.sapia.ubik.mcast.EventChannel;
 import org.sapia.ubik.mcast.RemoteEvent;

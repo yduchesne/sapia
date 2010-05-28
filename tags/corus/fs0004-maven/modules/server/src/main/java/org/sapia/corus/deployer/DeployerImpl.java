@@ -16,7 +16,9 @@ import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
 import org.sapia.corus.admin.services.deployer.DeployerConfigurationImpl;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.admin.services.http.HttpModule;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.cluster.ClusterManager;
 import org.sapia.corus.deployer.task.BuildDistTask;
 import org.sapia.corus.deployer.task.DeployTask;
@@ -30,14 +32,13 @@ import org.sapia.corus.deployer.transport.DeploymentProcessor;
 import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.http.HttpModule;
+import org.sapia.corus.property.StringProperty;
 import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.IDGenerator;
-import org.sapia.corus.util.ProgressQueue;
-import org.sapia.corus.util.ProgressQueueImpl;
-import org.sapia.corus.util.StringProperty;
+import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueueImpl;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
@@ -45,10 +46,11 @@ import org.sapia.ubik.rmi.replication.ReplicationStrategy;
 
 
 /**
- * This component implements the <code>Deployer</code> interface.
+ * This component implements the {@link Deployer} interface.
  *
  * @author Yanick Duchesne
  */
+@Bind(moduleInterface=Deployer.class)
 public class DeployerImpl extends ModuleHelper implements Deployer,
   DeploymentConnector, Interceptor {
   /**
@@ -69,7 +71,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     java.io.File.separator + "tmp";
 
   
-  private DeployerConfigurationImpl _configuration = new DeployerConfigurationImpl();
+  private DeployerConfiguration _configuration = new DeployerConfigurationImpl();
   
   private Map<String, FileLock> _deployLocks = new HashMap<String, FileLock>();
   private DeploymentProcessor _processor;
@@ -80,8 +82,8 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     return _configuration;
   }
   
-  public DeployerConfiguration createConfiguration(){
-    return _configuration;
+  public void setConfiguration(DeployerConfiguration conf){
+    _configuration = conf;
   }
 
  
@@ -94,7 +96,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     
     String pattern = CorusRuntime.getCorus().getDomain() + '_' +
       ((TCPAddress) CorusRuntime.getTransport().getServerAddress()).getPort();
-
+ /*
     if (_configuration.getDeployDir() != null) {
       _configuration.setDeployDir(new StringProperty(_configuration.getDeployDir().getValue() + File.separator + pattern));
     } else {
@@ -106,7 +108,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     } else {
       _configuration.setTempDir(new StringProperty(DEFAULT_TMP_DIR + File.separator + pattern));
     }
-
+*/
     File f = new File(new File(_configuration.getDeployDir().getValue()).getAbsolutePath());
     f.mkdirs();
     assertFile(f);

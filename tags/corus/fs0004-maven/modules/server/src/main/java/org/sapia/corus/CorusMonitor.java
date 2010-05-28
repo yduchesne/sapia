@@ -11,8 +11,8 @@ import org.sapia.console.InputException;
 import org.sapia.corus.admin.Corus;
 import org.sapia.corus.admin.CorusVersion;
 import org.sapia.corus.taskmanager.CorusTaskManager;
-import org.sapia.corus.util.ProgressMsg;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressMsg;
+import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.ubik.rmi.server.Hub;
 import org.sapia.ubik.util.Localhost;
 

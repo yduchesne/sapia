@@ -7,7 +7,7 @@ import org.sapia.corus.admin.Module;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Status;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueue;
 
 
 /**

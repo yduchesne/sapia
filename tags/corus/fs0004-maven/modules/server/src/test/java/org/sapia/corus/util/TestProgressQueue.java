@@ -1,5 +1,7 @@
 package org.sapia.corus.util;
 
+import org.sapia.corus.util.progress.ProgressQueueImpl;
+
 
 public class TestProgressQueue extends ProgressQueueImpl{
   

@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskLog;
-import org.sapia.corus.util.ProgressMsg;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressMsg;
+import org.sapia.corus.util.progress.ProgressQueue;
 
 public class ServerTaskLog implements TaskLog{
   

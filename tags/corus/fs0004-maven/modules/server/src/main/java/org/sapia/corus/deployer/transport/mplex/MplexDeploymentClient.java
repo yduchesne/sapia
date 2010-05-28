@@ -14,8 +14,8 @@ import java.util.Set;
 import org.sapia.corus.deployer.DeploymentMetadata;
 import org.sapia.corus.deployer.transport.AbstractDeploymentClient;
 import org.sapia.corus.deployer.transport.DeploymentClient;
-import org.sapia.corus.util.ProgressMsg;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressMsg;
+import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 

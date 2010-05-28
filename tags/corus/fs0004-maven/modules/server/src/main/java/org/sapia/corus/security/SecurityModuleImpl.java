@@ -8,7 +8,10 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.util.Property;
+import org.sapia.corus.admin.services.security.CorusSecurityException;
+import org.sapia.corus.admin.services.security.SecurityModule;
+import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.property.Property;
 import org.sapia.corus.util.UriPattern;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
@@ -16,13 +19,11 @@ import org.sapia.ubik.rmi.server.Hub;
 import org.sapia.ubik.rmi.server.invocation.ServerPreInvokeEvent;
 
 /**
+ * Implements the {@link SecurityModule} interface.
+ * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
+@Bind(moduleInterface=SecurityModule.class)
 public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, Interceptor{
 
   private static final String LOCALHOST;
@@ -142,14 +143,14 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
     }
 
     boolean isMatching = (_allowedPatterns.size() == 0);
-    for (Iterator it = _allowedPatterns.iterator(); !isMatching && it.hasNext(); ) {
+    for (Iterator<UriPattern> it = _allowedPatterns.iterator(); !isMatching && it.hasNext(); ) {
       UriPattern pattern = (UriPattern) it.next();
       if (pattern.matches(hostAddr)) {
         isMatching = true;
       }
     }
     
-    for (Iterator it = _deniedPatterns.iterator(); isMatching && it.hasNext(); ) {
+    for (Iterator<UriPattern> it = _deniedPatterns.iterator(); isMatching && it.hasNext(); ) {
       UriPattern pattern = (UriPattern) it.next();
       if (pattern.matches(hostAddr)) {
         isMatching = false;

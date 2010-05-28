@@ -13,17 +13,19 @@ import org.sapia.corus.InitContext;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.configurator.Configurator;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
+import org.sapia.corus.property.PropertyContainer;
 import org.sapia.corus.util.NameValuePair;
-import org.sapia.corus.util.PropertyContainer;
 
+@Bind(moduleInterface=Configurator.class)
 public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   
   public static final String PROP_SERVER_NAME = "corus.server.name";
   
   private PropertyStore processProperties, serverProperties, internalProperties;
-  private DbMap<String, String> tags;
+  private DbMap<String, ConfigProperty> tags;
   
   public String getRoleName() {
     return Configurator.ROLE;
@@ -33,11 +35,11 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   public void preInit() {
     try{
       DbModule db = lookup(DbModule.class);
-      processProperties   = new PropertyStore(db.getDbMap("configurator.properties.process"));
-      serverProperties    = new PropertyStore(db.getDbMap("configurator.properties.server"));
-      internalProperties  = new PropertyStore(db.getDbMap("configurator.properties.internal"));
+      processProperties   = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.process"));
+      serverProperties    = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.server"));
+      internalProperties  = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.internal"));
 
-      tags       = db.getDbMap("configurator.tags");
+      tags       = db.getDbMap(String.class, ConfigProperty.class, "configurator.tags");
       InitContext.get().setProperties(new ConfigPropertyContainer(InitContext.get().getProperties()));
     }catch(Exception e){
       throw new IllegalStateException("Could not pre-initialize configurator", e);
@@ -90,7 +92,7 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   }
   
   public void addTag(String tag) {
-    tags.put(tag, tag);
+    tags.put(tag, new ConfigProperty(tag, tag));
   }
   
   public void clearTags() {

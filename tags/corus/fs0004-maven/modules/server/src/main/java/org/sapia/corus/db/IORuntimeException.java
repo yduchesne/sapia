@@ -1,6 +1,6 @@
 package org.sapia.corus.db;
 
-import org.sapia.corus.util.NestedRuntimeException;
+import org.sapia.corus.util.exception.NestedRuntimeException;
 
 
 /**

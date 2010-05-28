@@ -2,8 +2,8 @@ package org.sapia.corus.admin.services.processor;
 
 import java.io.Serializable;
 
-import org.sapia.corus.util.IntProperty;
-import org.sapia.corus.util.Property;
+import org.sapia.corus.property.IntProperty;
+import org.sapia.corus.property.Property;
 
 public class ProcessorConfigurationImpl implements Serializable, ProcessorConfiguration {
   

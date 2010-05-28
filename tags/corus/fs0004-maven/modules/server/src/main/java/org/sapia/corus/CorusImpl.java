@@ -9,10 +9,10 @@ import org.sapia.corus.admin.Corus;
 import org.sapia.corus.admin.CorusVersion;
 import org.sapia.corus.admin.services.naming.JndiModule;
 import org.sapia.corus.exceptions.CorusException;
+import org.sapia.corus.property.PropertyContainer;
 import org.sapia.corus.util.CompositeStrLookup;
 import org.sapia.corus.util.IOUtils;
 import org.sapia.corus.util.PropertiesStrLookup;
-import org.sapia.corus.util.PropertyContainer;
 import org.sapia.ubik.rmi.naming.remote.RemoteContext;
 import org.sapia.ubik.rmi.naming.remote.RemoteContextProvider;
 import org.springframework.context.ApplicationContext;
@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CorusImpl implements Corus, RemoteContextProvider {
   private static ApplicationContext           _appContext;
-  private  static CorusModuleLifeCycleManager _lifeCycle;
+  private  static ModuleLifeCycleManager _lifeCycle;
   private static CorusImpl                    _instance;
   private String                              _domain;
 
@@ -77,9 +77,9 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     serverContext);
     try{
       _appContext = new ClassPathXmlApplicationContext("org/sapia/corus/corus.xml");
-      _lifeCycle = (CorusModuleLifeCycleManager)_appContext.getBean(CorusModuleLifeCycleManager.class.getName());
+      _lifeCycle = (ModuleLifeCycleManager)_appContext.getBean(ModuleLifeCycleManager.class.getName());
       if(_lifeCycle == null){
-        throw new IllegalStateException(CorusModuleLifeCycleManager.class.getName() + " not found");
+        throw new IllegalStateException(ModuleLifeCycleManager.class.getName() + " not found");
       }
     }finally{
       InitContext.unattach();

@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.Service;
 import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.services.cron.CronJobInfo;
+import org.sapia.corus.admin.services.cron.CronModule;
 import org.sapia.corus.admin.services.deployer.Deployer;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.exceptions.CorusException;
@@ -20,16 +22,14 @@ import fr.dyade.jdring.PastDateException;
 
 
 /**
- * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
+ * This class implements the {@link CronModule} interface.
+ * 
+ * @author yduchesne
  */
+@Bind(moduleInterface=CronModule.class)
 public class CronModuleImpl extends ModuleHelper implements CronModule {
   static CronModuleImpl instance;
-  private DbMap         _jobs;
+  private DbMap<String, CronJob> _jobs;
   private AlarmManager  _alarms = new AlarmManager();
 
   /**
@@ -37,7 +37,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
    */
   public void init() throws Exception {
     instance = this;
-    _jobs    = lookup(DbModule.class).getDbMap("cron.jobs");
+    _jobs    = lookup(DbModule.class).getDbMap(String.class, CronJob.class, "cron.jobs");
     initAlarms();
   }
 
@@ -66,7 +66,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.cron.CronModule#addCronJob(CronJobInfo)
+   * @see org.sapia.corus.admin.services.cron.CronModule#addCronJob(CronJobInfo)
    */
   public synchronized void addCronJob(CronJobInfo info)
                                throws InvalidTimeException, LogicException, 
@@ -84,7 +84,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
 
     info.assignId(IDGenerator.makeId());
 
-    CronJob job = info.toCronJob();
+    CronJob job = new CronJob(info);
 
     try {
       AlarmEntry entry = new AlarmEntry(info.getMinute(), info.getHour(),
@@ -104,7 +104,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   }
 
   /**
-   * @see org.sapia.corus.cron.CronModule#removeCronJob(String)
+   * @see org.sapia.corus.admin.services.cron.CronModule#removeCronJob(String)
    */
   public synchronized void removeCronJob(String id) {
     _log.debug("removing cron job: " + id);
@@ -114,16 +114,13 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
     initAlarms();
   }
 
-  /**
-   * @see org.sapia.corus.cron.CronModule#listCronJobs()
-   */
-  public synchronized List listCronJobs() {
-    List     infos = new ArrayList(10);
-    Iterator itr = _jobs.values();
+  public synchronized List<CronJobInfo> listCronJobs() {
+    List<CronJobInfo>     infos = new ArrayList<CronJobInfo>(10);
+    Iterator<CronJob> itr = _jobs.values();
     CronJob  job;
 
     while (itr.hasNext()) {
-      job = (CronJob) itr.next();
+      job = itr.next();
       infos.add(job.getInfo());
     }
 
@@ -131,7 +128,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   }
 
   private synchronized void initAlarms() {
-    Iterator itr = _jobs.values();
+    Iterator<CronJob> itr = _jobs.values();
     CronJob  job;
 
     while (itr.hasNext()) {

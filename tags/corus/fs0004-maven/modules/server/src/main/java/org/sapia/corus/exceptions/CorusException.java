@@ -1,6 +1,6 @@
 package org.sapia.corus.exceptions;
 
-import org.sapia.corus.util.NestedException;
+import org.sapia.corus.util.exception.NestedException;
 
 
 /**

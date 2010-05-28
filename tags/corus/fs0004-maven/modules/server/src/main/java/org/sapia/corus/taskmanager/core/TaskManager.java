@@ -1,5 +1,6 @@
 package org.sapia.corus.taskmanager.core;
 
+
 public interface TaskManager {
 
   /**

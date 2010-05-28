@@ -12,6 +12,7 @@ package org.sapia.corus.port;
 
 import org.sapia.corus.admin.services.port.PortRange;
 import org.sapia.corus.db.HashDbMap;
+import org.sapia.corus.db.persistence.ClassDescriptor;
 
 /**
  *
@@ -20,7 +21,7 @@ import org.sapia.corus.db.HashDbMap;
 public class TestPortManager extends PortManagerImpl{
   
   public TestPortManager() {
-    super(new PortRangeStore(new HashDbMap<String, PortRange>()));
+    super(new PortRangeStore(new HashDbMap<String, PortRange>(new ClassDescriptor<PortRange>(PortRange.class))));
   }
 
 }

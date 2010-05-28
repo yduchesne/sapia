@@ -7,20 +7,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpConstants;
 import org.apache.log.Logger;
 import org.sapia.corus.CorusRuntime;
+import org.sapia.corus.admin.services.http.HttpContext;
+import org.sapia.corus.admin.services.http.HttpExtension;
+import org.sapia.corus.admin.services.http.HttpExtensionInfo;
 import org.sapia.corus.http.helpers.HomePageHelper;
 import org.sapia.corus.http.helpers.NotFoundHelper;
 import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
-import org.sapia.ubik.net.mplex.ServerSocketAdapter;
 import org.sapia.ubik.rmi.server.transport.TransportProvider;
 import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketTransportProvider;
 import org.simpleframework.http.Path;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import org.simpleframework.http.connect.Connection;
-import org.simpleframework.http.connect.SocketConnection;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.http.core.ContainerServer;
 
@@ -37,7 +36,7 @@ public class HttpExtensionManager implements Container{
   private MultiplexSocketConnector _httpConnector;  
   private ContainerServer _containerServer;
   private Logger _logger;
-  private Map _extensions = Collections.synchronizedMap(new HashMap());
+  private Map<HttpExtensionInfo, HttpExtension> _extensions = Collections.synchronizedMap(new HashMap<HttpExtensionInfo, HttpExtension>());
   
   public HttpExtensionManager(Logger logger) {
      _logger = logger;

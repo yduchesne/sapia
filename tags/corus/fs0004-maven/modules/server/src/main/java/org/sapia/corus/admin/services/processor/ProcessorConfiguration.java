@@ -1,6 +1,6 @@
 package org.sapia.corus.admin.services.processor;
 
-import org.sapia.corus.util.Property;
+import org.sapia.corus.property.Property;
 
 public interface ProcessorConfiguration {
 

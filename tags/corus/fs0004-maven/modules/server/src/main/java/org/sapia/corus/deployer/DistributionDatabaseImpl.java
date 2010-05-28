@@ -16,21 +16,13 @@ import org.sapia.corus.exceptions.LogicException;
 /**
  * Holds <code>Distribution</code> instances.
  * 
- * @see org.sapia.corus.admin.services.deployer.dist.Distribution
+ * @see Distribution
  * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class DistributionDatabaseImpl implements DistributionDatabase {
   private Map<String, Map<String, Distribution>> _distsByName = new TreeMap<String, Map<String, Distribution>>();
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#addDistribution(org.sapia.corus.admin.services.deployer.dist.Distribution)
-   */
   public synchronized void addDistribution(Distribution dist)
                                     throws DuplicateDistributionException {
     Map<String, Distribution> distsByVersion;
@@ -49,16 +41,10 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
     distsByVersion.put(dist.getVersion(), dist);
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#containsDistribution(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
-   */
   public synchronized boolean containsDistribution(Arg name, Arg version) {
     return select(name, version).size() > 0;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#containsDistribution(java.lang.String, java.lang.String)
-   */
   public synchronized boolean containsDistribution(String name, String version) {
     Map<String, Distribution> distsByVersion = (Map<String, Distribution>)_distsByName.get(name);
     if(distsByVersion == null){
@@ -69,9 +55,6 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
     }
   }  
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#removeDistribution(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
-   */
   public synchronized void removeDistribution(Arg name, Arg version) {
     Map<String, Distribution> distsByVersion;
     List<Distribution> dists = select(name, version);
@@ -89,9 +72,6 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
 
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#getDistributions()
-   */
   public synchronized List<Distribution> getDistributions() {
     List<Distribution>   dists = new ArrayList<Distribution>();
     String name;
@@ -104,27 +84,18 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
     return dists;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#getDistributions(org.sapia.corus.admin.CommandArg)
-   */  
   public synchronized List<Distribution> getDistributions(Arg name) {
     List<Distribution> lst            = new ArrayList<Distribution>();
     lst.addAll(select(name, null));
     return lst;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#getDistributions(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
-   */    
   public synchronized List<Distribution> getDistributions(Arg name, Arg version) {
     List<Distribution> lst            = new ArrayList<Distribution>();
     lst.addAll(select(name, version));
     return lst;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.deployer.DistributionDatabase#getDistribution(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
-   */   
   public synchronized Distribution getDistribution(Arg name, Arg version)
                                             throws LogicException {
     List<Distribution> dists = select(name, version);

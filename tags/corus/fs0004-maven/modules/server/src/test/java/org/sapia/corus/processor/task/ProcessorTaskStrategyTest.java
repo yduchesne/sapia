@@ -9,12 +9,12 @@ import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.ProcessRepository;
+import org.sapia.corus.property.IntProperty;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TestTaskLog;
 import org.sapia.corus.taskmanager.core.TestTaskManager;
-import org.sapia.corus.util.IntProperty;
 
 public class ProcessorTaskStrategyTest extends TestCase{
 

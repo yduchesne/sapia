@@ -3,6 +3,7 @@ package org.sapia.corus.admin.services.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sapia.corus.admin.annotations.Transient;
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.exceptions.LockException;
 import org.sapia.corus.interop.AbstractCommand;
@@ -75,39 +76,41 @@ public class Process implements java.io.Serializable {
   
   public static final int    DEFAULT_SHUTDOWN_TIMEOUT_SECS = 30;
   public static final int    DEFAULT_KILL_RETRY            = 3;
-  private DistributionInfo   _distInfo;
-  private String             _vmId                         = IDGenerator.makeId();
-  private String             _vmDir;
+  private DistributionInfo   _distributionInfo;
+  private String             _processID                    = IDGenerator.makeId();
+  private String             _processDir;
   private String             _pid;
   private boolean            _deleteOnKill                 = false;
   private transient Object   _lockOwner;
   private long               _creationTime                 = System.currentTimeMillis();
   private long               _lastAccess                   = System.currentTimeMillis();
-  private int                _shutDownTimeout              = DEFAULT_SHUTDOWN_TIMEOUT_SECS;
+  private int                _shutdownTimeout              = DEFAULT_SHUTDOWN_TIMEOUT_SECS;
   private int                _maxKillRetry                 = DEFAULT_KILL_RETRY;
-  private LifeCycleStatus             _status                       = LifeCycleStatus.ACTIVE;
+  private LifeCycleStatus    _status                       = LifeCycleStatus.ACTIVE;
   private transient List<AbstractCommand>  _commands       = new ArrayList<AbstractCommand>();
   private List<ActivePort>   _activePorts                  = new ArrayList<ActivePort>();
-  private org.sapia.corus.interop.Status             _interopStatus;
+  private org.sapia.corus.interop.Status             _processStatus;
 
+  
+  Process(){}
   /**
    * Creates an instance of this class.
    *
    * @param info a <code>DistributionInfo</code>.
    */
   public Process(DistributionInfo info) {
-    _distInfo = info;
+    _distributionInfo = info;
   }
 
   /**
    * Creates an instance of this class.
    *
    * @param info a <code>DistributionInfo</code>.
-   * @param vmId the identifier of the suspended process.
+   * @param processID the identifier of the suspended process.
    */
-  public Process(DistributionInfo info, String vmId) {
-    _distInfo = info;
-    _vmId     = vmId;
+  public Process(DistributionInfo info, String processID) {
+    _distributionInfo = info;
+    _processID = processID;
   }
 
   /**
@@ -119,7 +122,7 @@ public class Process implements java.io.Serializable {
    */
   public Process(DistributionInfo info, int shutDownTimeoutSeconds) {
     this(info);
-    _shutDownTimeout = shutDownTimeoutSeconds;
+    _shutdownTimeout = shutDownTimeoutSeconds;
   }
 
   /**
@@ -134,7 +137,7 @@ public class Process implements java.io.Serializable {
    */
   public Process(DistributionInfo info, int shutDownTimeoutSeconds, int maxKillRetry) {
     this(info);
-    _shutDownTimeout = shutDownTimeoutSeconds;
+    _shutdownTimeout = shutDownTimeoutSeconds;
     _maxKillRetry    = maxKillRetry;
   }
   
@@ -160,7 +163,7 @@ public class Process implements java.io.Serializable {
    * @return this instance's <code>DistributionInfo</code>.
    */
   public DistributionInfo getDistributionInfo() {
-    return _distInfo;
+    return _distributionInfo;
   }
 
   /**
@@ -169,7 +172,7 @@ public class Process implements java.io.Serializable {
    * @return this instance's process identifier as a string.
    */
   public String getProcessID() {
-    return _vmId;
+    return _processID;
   }
 
   /**
@@ -178,7 +181,7 @@ public class Process implements java.io.Serializable {
    * @return this instance's process process private directory.
    */
   public String getProcessDir() {
-    return _vmDir;
+    return _processDir;
   }
 
   /**
@@ -196,7 +199,7 @@ public class Process implements java.io.Serializable {
    * @return this instance's shutdown timeout, in seconds.
    */
   public int getShutdownTimeout() {
-    return _shutDownTimeout;
+    return _shutdownTimeout;
   }
   
   /**
@@ -250,7 +253,7 @@ public class Process implements java.io.Serializable {
    * @param a timeout in seconds.
    */
   public void setShutdownTimeout(int timeout) {
-    _shutDownTimeout = timeout;
+    _shutdownTimeout = timeout;
   }
 
   /**
@@ -259,7 +262,7 @@ public class Process implements java.io.Serializable {
    * @param retry a max number of retries.
    */
   public void setMaxKillRetry(int retry) {
-    _shutDownTimeout = retry;
+    _shutdownTimeout = retry;
   }
 
   /**
@@ -268,7 +271,7 @@ public class Process implements java.io.Serializable {
    * @param dir a valid directory path.
    */
   public void setProcessDir(String dir) {
-    _vmDir = dir;
+    _processDir = dir;
   }
 
   /**
@@ -314,7 +317,7 @@ public class Process implements java.io.Serializable {
    */
   public synchronized List<AbstractCommand> status(org.sapia.corus.interop.Status stat) {
     _lastAccess    = System.currentTimeMillis();
-    _interopStatus = stat;
+    _processStatus = stat;
 
     List<AbstractCommand> commands  = new ArrayList<AbstractCommand>(commands());
     commands().clear();
@@ -329,7 +332,7 @@ public class Process implements java.io.Serializable {
    * @return the <code>Status</code> of this process instance.
    */
   public synchronized org.sapia.corus.interop.Status getProcessStatus() {
-    return _interopStatus;
+    return _processStatus;
   }
 
   /**
@@ -396,6 +399,7 @@ public class Process implements java.io.Serializable {
   /**
    * @return <code>true</code> if this instance is locked.
    */
+  @Transient
   public synchronized boolean isLocked() {
     return _lockOwner != null;
   }
@@ -456,8 +460,9 @@ public class Process implements java.io.Serializable {
    *
    * @return <code>true</code> if this instance's process shutdown has timed out.
    */
+  @Transient
   public boolean isShutdownTimedOut() {
-    return (System.currentTimeMillis() - _lastAccess) > _shutDownTimeout;
+    return (System.currentTimeMillis() - _lastAccess) > _shutdownTimeout;
   }
   
   private List<AbstractCommand> commands(){
@@ -465,6 +470,6 @@ public class Process implements java.io.Serializable {
   }
 
   public String toString() {
-    return "[ id=" + _vmId + ", pid=" + _pid + " " + _distInfo.toString() + " ]@" + Integer.toHexString(hashCode());
+    return "[ id=" + _processID + ", pid=" + _pid + " " + _distributionInfo.toString() + " ]@" + Integer.toHexString(hashCode());
   }
 }

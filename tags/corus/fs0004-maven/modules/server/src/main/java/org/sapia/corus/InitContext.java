@@ -1,6 +1,6 @@
 package org.sapia.corus;
 
-import org.sapia.corus.util.PropertyContainer;
+import org.sapia.corus.property.PropertyContainer;
 
 /**
  * Encapsulates state pertaining to the initialization of the Corus server and its

@@ -4,12 +4,16 @@ import java.io.File;
 
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.ModuleHelper;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.ubik.net.TCPAddress;
 
 
 /**
+ * This class implements the {@link DbModule} interface.
+ * 
  * @author Yanick Duchesne
  */
+@Bind(moduleInterface=DbModule.class)
 public class DbModuleImpl extends ModuleHelper implements DbModule{
   private File   _dbDir;
   private JdbmDb _db;
@@ -81,12 +85,10 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
                         DbModule INTERFACE METHODS  
   ////////////////////////////////////////////////////////////////////*/
 
-  /**
-   * @see org.sapia.corus.db.DbModule#getDbMap(String)
-   */
-  public DbMap getDbMap(String name) {
+  @Override
+  public <K, V> DbMap<K, V> getDbMap(Class<K> keyType, Class<V> valueType, String name){
     try {
-      return new CacheDbMap(_db.getDbMap(name));
+      return new CacheDbMap<K, V>(_db.getDbMap(keyType, valueType, name));
     } catch (java.io.IOException e) {
       throw new IORuntimeException(e);
     }

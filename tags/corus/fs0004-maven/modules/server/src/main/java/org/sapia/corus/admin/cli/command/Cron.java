@@ -13,7 +13,7 @@ import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.cli.command.cron.CronWizard;
-import org.sapia.corus.cron.CronJobInfo;
+import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.ubik.net.ServerAddress;
 
 

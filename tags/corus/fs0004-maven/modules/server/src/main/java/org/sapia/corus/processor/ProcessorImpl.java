@@ -11,6 +11,7 @@ import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.admin.services.http.HttpModule;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
@@ -25,7 +26,6 @@ import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LockException;
 import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.http.HttpModule;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.processor.task.BootstrapExecConfigStartTask;
 import org.sapia.corus.processor.task.EndUserExecConfigStartTask;
@@ -41,8 +41,8 @@ import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
-import org.sapia.corus.util.ProgressQueue;
-import org.sapia.corus.util.ProgressQueueImpl;
+import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueueImpl;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 
 /**
@@ -67,7 +67,6 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return _configuration;
   }
 
-  @SuppressWarnings(value={"unchecked"})
   public void init() throws Exception {
 
     _startLock = new StartupLock(_configuration.getStartIntervalMillis());
@@ -76,13 +75,13 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     services().bind(ProcessorTaskStrategy.class, new  ProcessorTaskStrategyImpl());
     
     //// intializing process repository
-    _execConfigs = new ExecConfigDatabaseImpl(db.getDbMap("processor.execConfigs"));
+    _execConfigs = new ExecConfigDatabaseImpl(db.getDbMap(String.class, ExecConfig.class, "processor.execConfigs"));
     services().bind(ExecConfigDatabase.class, _execConfigs);
     
     
-    ProcessDatabase suspended = new ProcessDatabaseImpl(db.getDbMap("processor.suspended"));
-    ProcessDatabase active = new ProcessDatabaseImpl(db.getDbMap("processor.active"));
-    ProcessDatabase toRestart = new ProcessDatabaseImpl(db.getDbMap("processor.toRestart"));
+    ProcessDatabase suspended = new ProcessDatabaseImpl(db.getDbMap(String.class, Process.class, "processor.suspended"));
+    ProcessDatabase active = new ProcessDatabaseImpl(db.getDbMap(String.class, Process.class, "processor.active"));
+    ProcessDatabase toRestart = new ProcessDatabaseImpl(db.getDbMap(String.class, Process.class, "processor.toRestart"));
 
     _processes = new ProcessRepositoryImpl(suspended, active, toRestart);
     services().bind(ProcessRepository.class, _processes);

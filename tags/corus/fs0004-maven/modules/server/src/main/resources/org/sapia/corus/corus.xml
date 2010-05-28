@@ -5,7 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
            
-  <bean id="org.sapia.CorusModuleLifeCycleManager" class="org.sapia.CorusModuleLifeCycleManager" />
+  <bean id="org.sapia.corus.ModuleLifeCycleManager" class="org.sapia.corus.ModuleLifeCycleManager" />
 
   <!-- ============ DB ============ -->
 
@@ -38,7 +38,7 @@
 
   <!-- ============ HTTP ============ -->
 
-  <bean id="org.sapia.corus.http.HttpModule" 
+  <bean id="org.sapia.corus.admin.services.http.HttpModule" 
         class="org.sapia.corus.http.HttpModuleImpl" 
         scope="singleton">
   </bean>
@@ -52,10 +52,10 @@
   
   <!-- ============ DEPLOYER ============ -->
 
-  <bean id="deployer.tempDir"   class="org.sapia.corus.util.PropertyImpl" p:name="corus.server.tmp.dir" />
-  <bean id="deployer.deployDir" class="org.sapia.corus.util.PropertyImpl" p:name="corus.server.deploy.dir" />
+  <bean id="deployer.tempDir"   class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.server.tmp.dir" />
+  <bean id="deployer.deployDir" class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.server.deploy.dir" />
   
-  <bean id="deployer.configuration" class="org.sapia.corus.admin.services.deployer.DeployerConfiguration">
+  <bean id="deployer.configuration" class="org.sapia.corus.admin.services.deployer.DeployerConfigurationImpl">
     <property name="tempDir"   ref="deployer.tempDir" />
     <property name="deployDir" ref="deployer.deployDir" />
   </bean>
@@ -70,13 +70,13 @@
 
   <!-- ============ PROCESSOR ============ -->
 
-  <bean id="processor.processCheckInterval"   class="org.sapia.corus.util.PropertyImpl" p:name="corus.process.check-interval" />
-  <bean id="processor.killInterval"           class="org.sapia.corus.util.PropertyImpl" p:name="corus.process.kill-interval" />
-  <bean id="processor.startInterval"          class="org.sapia.corus.util.PropertyImpl" p:name="corus.process.start-interval" />
-  <bean id="processor.restartInterval"        class="org.sapia.corus.util.PropertyImpl" p:name="corus.process.corus.process.restart-interval" />
-  <bean id="processor.processTimeout"         class="org.sapia.corus.util.PropertyImpl" p:name="corus.process.timeout" />
+  <bean id="processor.processCheckInterval"   class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.process.check-interval" />
+  <bean id="processor.killInterval"           class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.process.kill-interval" />
+  <bean id="processor.startInterval"          class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.process.start-interval" />
+  <bean id="processor.restartInterval"        class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.process.corus.process.restart-interval" />
+  <bean id="processor.processTimeout"         class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.process.timeout" />
 
-  <bean id="processor.configuration" class="org.sapia.corus.admin.services.processor.ProcessorConfiguration">
+  <bean id="processor.configuration" class="org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl">
     <property name="processCheckInterval" ref="processor.processCheckInterval" />
     <property name="killInterval"         ref="processor.killInterval" />
     <property name="startInterval"        ref="processor.startInterval" />
@@ -95,8 +95,8 @@
 
   <!-- ============ CLUSTER ============ -->
 
-  <bean id="cluster.mcastAddress"      class="org.sapia.corus.util.PropertyImpl" p:name="corus.server.multicast.address" />
-  <bean id="cluster.mcastPort"         class="org.sapia.corus.util.PropertyImpl" p:name="corus.server.multicast.port" />
+  <bean id="cluster.mcastAddress"      class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.server.multicast.address" />
+  <bean id="cluster.mcastPort"         class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.server.multicast.port" />
 
   <bean id="org.sapia.corus.cluster.ClusterManager" 
         class="org.sapia.corus.cluster.ClusterManagerImpl" 
@@ -121,12 +121,14 @@
 
   <!-- ============ SECURITY ============ -->
 
-  <bean id="security.allowedHostPatterns"    class="org.sapia.corus.util.PropertyImpl" p:name="corus.server.security.hostPattern.allow" />
-  <bean id="security.deniedHostPatterns"     class="org.sapia.corus.util.PropertyImpl" p:name="corus.server.security.hostPattern.deny" />
+  <bean id="security.allowedHostPatterns"    class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.server.security.hostPattern.allow" />
+  <bean id="security.deniedHostPatterns"     class="org.sapia.corus.core.property.PropertyImpl" p:name="corus.server.security.hostPattern.deny" />
 
   <bean id="org.sapia.corus.security.SecurityModule" 
         class="org.sapia.corus.security.SecurityModuleImpl" 
         scope="singleton">
+    <property name="allowedHostPatterns"   ref="security.allowedHostPatterns" />
+    <property name="deniedHostPatterns"    ref="security.deniedHostPatterns" />
   </bean> 
 
 </beans>

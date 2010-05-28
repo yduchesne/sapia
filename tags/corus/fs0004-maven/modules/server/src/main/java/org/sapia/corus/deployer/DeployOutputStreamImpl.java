@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueue;
 
 
 /**

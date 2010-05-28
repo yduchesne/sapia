@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import org.sapia.corus.deployer.DeployOutputStream;
 import org.sapia.corus.deployer.DeploymentMetadata;
 import org.sapia.corus.exceptions.CorusRuntimeException;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueue;
 
 /**
  * @author Yanick Duchesne

@@ -13,9 +13,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.http.HttpContext;
-import org.sapia.corus.http.HttpExtension;
-import org.sapia.corus.http.HttpExtensionInfo;
+import org.sapia.corus.admin.services.http.HttpContext;
+import org.sapia.corus.admin.services.http.HttpExtension;
+import org.sapia.corus.admin.services.http.HttpExtensionInfo;
 import org.sapia.ubik.net.TCPAddress;
 
 /**

@@ -9,8 +9,8 @@ import org.sapia.console.Context;
 import org.sapia.console.InputException;
 import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.admin.cli.CliContext;
-import org.sapia.corus.util.ProgressMsg;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressMsg;
+import org.sapia.corus.util.progress.ProgressQueue;
 
 
 /**

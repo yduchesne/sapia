@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.cron.CronJobInfo;
 import org.sapia.corus.cron.InvalidTimeException;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.exceptions.CorusException;
@@ -19,7 +19,7 @@ import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.exceptions.PortActiveException;
 import org.sapia.corus.exceptions.PortRangeConflictException;
 import org.sapia.corus.exceptions.PortRangeInvalidException;
-import org.sapia.corus.util.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.ubik.net.ServerAddress;
 
 
@@ -429,7 +429,7 @@ public interface CorusFacade {
    * all the coruss in the cluster.
    *
    * @return a <code>Results</code> instance containing <code>HostList</code>s of <code>CronJobInfo</code> instances.
-   * @see org.sapia.corus.cron.CronJobInfo
+   * @see org.sapia.corus.admin.services.cron.CronJobInfo
 
    */
   public Results getCronJobs(ClusterInfo cluster);

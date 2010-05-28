@@ -1,5 +1,6 @@
 package org.sapia.corus.db;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,33 +8,22 @@ import java.util.Map;
 /**
  * @author Yanick Duchesne
  *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2004 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
-public class CacheDbMap implements DbMap{
+public class CacheDbMap<K, V> implements DbMap<K, V>{
 	
-	private DbMap _db;
-	private Map _cache = new HashMap(500);
+	private DbMap<K, V> _db;
+	private Map<K, V> _cache = new HashMap<K, V>();
 	
-	CacheDbMap(DbMap cached){
+	CacheDbMap(DbMap<K,V> cached){
 		_db = cached;
 	}
 
-  /**
-   * @see org.sapia.corus.db.DbMap#close()
-   */
   public synchronized void close() {
     _db.close();
   }
 
-  /**
-   * @see org.sapia.corus.db.DbMap#get(java.lang.Object)
-   */
-  public synchronized Object get(Object key) {
-    Object toReturn = _cache.get(key);
+  public synchronized V get(K key) {
+    V toReturn = _cache.get(key);
     if(toReturn == null){
     	toReturn = _db.get(key);
     	if(toReturn != null){
@@ -43,39 +33,37 @@ public class CacheDbMap implements DbMap{
     return toReturn;
   }
 
-  /**
-   * @see org.sapia.corus.db.DbMap#keys()
-   */
-  public Iterator keys() {
+  public Iterator<K> keys() {
     return _db.keys();
   }
 
-  /**
-   * @see org.sapia.corus.db.DbMap#put(java.lang.Object, java.lang.Object)
-   */
-  public synchronized void put(Object key, Object value) {
+  public synchronized void put(K key, V value) {
     _cache.remove(key);
 		_db.put(key, value);
   }
 
-  /**
-   * @see org.sapia.corus.db.DbMap#remove(java.lang.Object)
-   */
-  public synchronized void remove(Object key) {
+  public synchronized void remove(K key) {
   	_cache.remove(key);
   	_db.remove(key);
   }
 
-  /**
-   * @see org.sapia.corus.db.DbMap#values()
-   */
-  public Iterator values() {
+  public Iterator<V> values() {
     return _db.values();
   }
   
   public synchronized void clear() {
     _cache.clear();
     _db.clear();
+  }
+  
+  @Override
+  public Matcher<V> createMatcherFor(V template) {
+    return _db.createMatcherFor(template);
+  }
+  
+  @Override
+  public Collection<V> values(Matcher<V> matcher) {
+    return _db.values(matcher);
   }
 
 }

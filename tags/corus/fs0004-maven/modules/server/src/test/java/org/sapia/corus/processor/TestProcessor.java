@@ -13,8 +13,8 @@ import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Status;
-import org.sapia.corus.util.ProgressQueue;
-import org.sapia.corus.util.ProgressQueueImpl;
+import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueueImpl;
 
 public class TestProcessor implements Processor{
   

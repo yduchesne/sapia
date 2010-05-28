@@ -1,5 +1,6 @@
 package org.sapia.corus.taskmanager.core;
 
+
 /**
  * Allows registering a callback with a {@link TaskManager} in order to by
  * notified when execution of a given task has completed.

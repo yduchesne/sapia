@@ -1,5 +1,6 @@
 package org.sapia.corus.db;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 
@@ -64,4 +65,17 @@ public interface DbMap<K, V> {
    * Clears this instance's values.
    */
   public void clear();
+  
+  /**
+   * @param template the object that serves as a template for matching.
+   * @return the {@link Matcher} corresponding to the given template object.
+   */
+  public Matcher<V> createMatcherFor(V template);
+
+  /**
+   * @param matcher a matcher to use for selection
+   * @return an {@link Iterator} "containing" objects that are determined
+   * to 'match' by the given matcher.
+   */
+  public Collection<V> values(Matcher<V> matcher);
 }

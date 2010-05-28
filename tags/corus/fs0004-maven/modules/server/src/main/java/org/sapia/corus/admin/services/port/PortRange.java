@@ -30,6 +30,8 @@ public class PortRange implements java.io.Serializable{
   private List<Integer> _availablePorts = new ArrayList<Integer>();
   private List<Integer> _busyPorts = new ArrayList<Integer>();
   
+  PortRange(){}
+  
   /** Creates a new instance of PortRange */
   public PortRange(String name, int min, int max) throws PortRangeInvalidException{
     if(min <= 0)

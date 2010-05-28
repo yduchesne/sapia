@@ -14,8 +14,8 @@ import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLog;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TaskManagerImpl;
-import org.sapia.corus.util.ProgressQueue;
-import org.sapia.corus.util.ProgressQueueImpl;
+import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.util.progress.ProgressQueueImpl;
 
 
 /**

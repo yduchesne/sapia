@@ -2,6 +2,9 @@ package org.sapia.corus.http;
 
 import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.ModuleHelper;
+import org.sapia.corus.admin.services.http.HttpExtension;
+import org.sapia.corus.admin.services.http.HttpModule;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.http.filesystem.FileSystemExtension;
 import org.sapia.corus.http.interop.SoapExtension;
 import org.sapia.corus.http.jmx.JmxExtension;
@@ -10,13 +13,10 @@ import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketTransportProvid
 
 
 /**
+ * Implements the {@link HttpModule} interface.
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
+@Bind(moduleInterface=HttpModule.class)
 public class HttpModuleImpl extends ModuleHelper implements HttpModule {
 
   private HttpExtensionManager _httpExt;

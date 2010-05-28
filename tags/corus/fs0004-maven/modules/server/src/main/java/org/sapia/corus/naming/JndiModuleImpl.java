@@ -7,6 +7,7 @@ import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.ServerStartedEvent;
 import org.sapia.corus.admin.services.naming.JndiModule;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.cluster.ClusterManager;
 import org.sapia.corus.event.EventDispatcher;
 import org.sapia.ubik.mcast.EventChannel;
@@ -21,6 +22,7 @@ import org.sapia.ubik.rmi.naming.remote.RemoteContext;
  * 
  * @author yduchesne
  */
+@Bind(moduleInterface=JndiModule.class)
 public class JndiModuleImpl extends ModuleHelper implements JndiModule, Interceptor{
   private Context _context;
   private ClientListener _listener;

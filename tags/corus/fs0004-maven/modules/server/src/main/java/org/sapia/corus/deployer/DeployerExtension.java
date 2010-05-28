@@ -11,9 +11,9 @@ import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
-import org.sapia.corus.http.HttpContext;
-import org.sapia.corus.http.HttpExtension;
-import org.sapia.corus.http.HttpExtensionInfo;
+import org.sapia.corus.admin.services.http.HttpContext;
+import org.sapia.corus.admin.services.http.HttpExtension;
+import org.sapia.corus.admin.services.http.HttpExtensionInfo;
 import org.sapia.ubik.net.TCPAddress;
 
 import org.simpleframework.http.Request;
