@@ -2,9 +2,9 @@ package org.sapia.corus.db;
 
 import java.io.File;
 
-import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.net.TCPAddress;
 
 
@@ -30,7 +30,7 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
   }
 
   @Override
-  public void preInit() {
+  public void init() throws Exception {
     if (_dbDir != null) {
       String aFilename = new StringBuffer(_dbDir.getAbsolutePath()).
               append(File.separator).append(CorusRuntime.getCorus().getDomain()).
@@ -59,8 +59,6 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
       throw new IllegalStateException("Could not open database", e);
     }
   }
-  
-  public void init() throws Exception {}
 
   public void dispose() {
     if (_db != null) {

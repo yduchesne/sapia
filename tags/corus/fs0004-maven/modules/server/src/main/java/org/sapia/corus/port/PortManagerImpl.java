@@ -14,17 +14,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.Service;
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.port.PortRange;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.core.ModuleHelper;
+import org.sapia.corus.core.Service;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.exceptions.PortActiveException;
 import org.sapia.corus.exceptions.PortRangeConflictException;
 import org.sapia.corus.exceptions.PortRangeInvalidException;
 import org.sapia.corus.exceptions.PortUnavailableException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Implements the {@link PortManager} interface.
@@ -33,6 +34,8 @@ import org.sapia.corus.exceptions.PortUnavailableException;
 @Bind(moduleInterface=PortManager.class)
 public class PortManagerImpl extends ModuleHelper implements Service, PortManager {
   
+  @Autowired
+  private DbModule _db;
   private PortRangeStore _store;
   
   /** Creates a new instance of PortManagerImpl */
@@ -48,7 +51,7 @@ public class PortManagerImpl extends ModuleHelper implements Service, PortManage
   }
   
   protected PortRangeStore newPortRangeStore() throws Exception{
-    DbMap<String, PortRange> ports = lookup(DbModule.class).getDbMap(String.class, PortRange.class, "ports");
+    DbMap<String, PortRange> ports = _db.getDbMap(String.class, PortRange.class, "ports");
     return new PortRangeStore(ports);
   }
   

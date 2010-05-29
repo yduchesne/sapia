@@ -7,11 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.services.security.CorusSecurityException;
 import org.sapia.corus.admin.services.security.SecurityModule;
 import org.sapia.corus.annotations.Bind;
-import org.sapia.corus.property.Property;
+import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.util.UriPattern;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
@@ -61,11 +60,11 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
    * 
    * @param patternList The pattern list of allowed hosts.
    */  
-  public synchronized void setAllowedHostPatterns(Property patternList) {
+  public synchronized void setAllowedHostPatterns(String patternList) {
     _allowedPatterns.clear();
     
-    if (patternList != null && patternList.getValue().trim().length() > 0) {
-      String[] patterns = StringUtils.split(patternList.getValue(), ',');
+    if (patternList != null && (patternList = patternList.trim()).length() > 0) {
+      String[] patterns = StringUtils.split(patternList, ',');
       for (int i = 0; i < patterns.length; i++) {
         if (patterns[i].trim().equals("localhost")) {
           _allowedPatterns.add(UriPattern.parse(LOCALHOST));
@@ -82,11 +81,11 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
    * 
    * @param patternList The pattern list of denied hosts.
    */  
-  public synchronized void setDeniedHostPatterns(Property patternList) {
+  public synchronized void setDeniedHostPatterns(String patternList) {
     _deniedPatterns.clear();
     
-    if (patternList != null && patternList.getValue().trim().length() > 0) {
-      String[] patterns = StringUtils.split(patternList.getValue(), ',');
+    if (patternList != null && (patternList = patternList.trim()).length() > 0) {
+      String[] patterns = StringUtils.split(patternList, ',');
       for (int i = 0; i < patterns.length; i++) {
         if (patterns[i].trim().equals("localhost")) {
           _deniedPatterns.add(UriPattern.parse(LOCALHOST));
@@ -98,7 +97,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.soto.Service#init()
+   * @see org.sapia.corus.core.soto.Service#init()
    */
   public void init() throws Exception {
     logger().info("Initializing the security module");
@@ -106,7 +105,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.corus.ModuleHelper#start()
+   * @see org.sapia.corus.core.ModuleHelper#start()
    */
   public void start() throws Exception {
     logger().info("Starting the security module");
@@ -114,7 +113,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.soto.Service#dispose()
+   * @see org.sapia.corus.core.soto.Service#dispose()
    */
   public void dispose() {
     logger().info("Stopping the security module");

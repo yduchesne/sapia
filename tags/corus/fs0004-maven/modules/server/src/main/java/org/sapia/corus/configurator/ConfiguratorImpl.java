@@ -9,20 +9,28 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.sapia.corus.InitContext;
-import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.core.InitContext;
+import org.sapia.corus.core.ModuleHelper;
+import org.sapia.corus.core.PropertyContainer;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
-import org.sapia.corus.property.PropertyContainer;
+import org.sapia.corus.property.PropertyProvider;
 import org.sapia.corus.util.NameValuePair;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Bind(moduleInterface=Configurator.class)
 public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   
   public static final String PROP_SERVER_NAME = "corus.server.name";
+
+  @Autowired
+  private PropertyProvider propertyProvider;
+  
+  @Autowired
+  private DbModule db;
   
   private PropertyStore processProperties, serverProperties, internalProperties;
   private DbMap<String, ConfigProperty> tags;
@@ -32,21 +40,14 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   }
   
   @Override
-  public void preInit() {
-    try{
-      DbModule db = lookup(DbModule.class);
-      processProperties   = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.process"));
-      serverProperties    = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.server"));
-      internalProperties  = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.internal"));
-
-      tags       = db.getDbMap(String.class, ConfigProperty.class, "configurator.tags");
-      InitContext.get().setProperties(new ConfigPropertyContainer(InitContext.get().getProperties()));
-    }catch(Exception e){
-      throw new IllegalStateException("Could not pre-initialize configurator", e);
-    }
-  }
-
   public void init() throws Exception {
+    processProperties   = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.process"));
+    serverProperties    = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.server"));
+    internalProperties  = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.internal"));
+
+    tags       = db.getDbMap(String.class, ConfigProperty.class, "configurator.tags");
+    propertyProvider.overrideInitProperties(new ConfigPropertyContainer(InitContext.get().getProperties()));
+
     String serverName = internalProperties.getProperty(PROP_SERVER_NAME);
     if(serverName == null){
       internalProperties.addProperty(PROP_SERVER_NAME, serverContext().getServerName());

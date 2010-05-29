@@ -174,7 +174,7 @@ public class ClassDescriptor<T> {
           Field mutator = type.getDeclaredField("_"+fieldName);
           fd = new FieldDescriptor(index, fieldName, info.accessor, new FieldDescriptor.FieldMutator(mutator));
         }catch(Exception e3){
-          throw new FieldAccessException(String.format("Could not determine mutator for field %s", fieldName), e3);
+          throw new FieldAccessException(String.format("Could not determine mutator for field %s in class %s", fieldName, type.getName()), e3);
         }
       }
     }

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
@@ -29,6 +28,7 @@ import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.cluster.ClusterInterceptor;
 import org.sapia.corus.cluster.ClusterManager;
+import org.sapia.corus.core.ClusterInfo;
 import org.sapia.corus.cron.InvalidTimeException;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.deployer.DeployOsAdapter;

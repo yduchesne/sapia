@@ -8,7 +8,6 @@ import org.sapia.console.InputException;
 import org.sapia.console.table.Cell;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.admin.HostItem;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
@@ -17,6 +16,7 @@ import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.ProcessDef;
+import org.sapia.corus.core.ClusterInfo;
 import org.sapia.ubik.net.ServerAddress;
 
 

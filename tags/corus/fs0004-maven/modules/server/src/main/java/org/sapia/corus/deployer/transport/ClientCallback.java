@@ -2,7 +2,7 @@ package org.sapia.corus.deployer.transport;
 
 import java.io.IOException;
 
-import org.sapia.corus.CorusRuntime;
+import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.ubik.rmi.server.transport.MarshalOutputStream;
 

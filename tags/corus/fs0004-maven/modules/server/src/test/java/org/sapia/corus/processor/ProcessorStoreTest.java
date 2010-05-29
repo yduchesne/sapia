@@ -13,13 +13,12 @@ import org.sapia.corus.exceptions.LogicException;
 
 /**
  * @author Yanick Duchesne
- * 2002-03-03
  */
 public class ProcessorStoreTest extends TestCase {
   
   ProcessRepository        db;
   
-  List procs = new ArrayList();
+  List<Process> procs = new ArrayList<Process>();
   
   /**
    * Constructor for VmProcessorTest.

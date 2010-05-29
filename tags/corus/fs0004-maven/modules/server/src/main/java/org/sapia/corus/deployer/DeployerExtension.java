@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.Deployer;
@@ -14,6 +13,7 @@ import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.http.HttpContext;
 import org.sapia.corus.admin.services.http.HttpExtension;
 import org.sapia.corus.admin.services.http.HttpExtensionInfo;
+import org.sapia.corus.core.CorusRuntime;
 import org.sapia.ubik.net.TCPAddress;
 
 import org.simpleframework.http.Request;

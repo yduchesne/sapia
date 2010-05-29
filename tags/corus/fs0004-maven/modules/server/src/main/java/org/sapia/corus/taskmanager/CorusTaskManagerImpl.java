@@ -3,8 +3,8 @@ package org.sapia.corus.taskmanager;
 import java.rmi.Remote;
 
 import org.apache.log.Logger;
-import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.ServerContext;
+import org.sapia.corus.core.ModuleHelper;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.ForkedTaskConfig;
 import org.sapia.corus.taskmanager.core.FutureResult;
@@ -29,7 +29,7 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   private ProgressQueues _queues = new ProgressQueues();
 
   /**
-   * @see org.sapia.soto.Service#init()
+   * @see org.sapia.corus.core.soto.Service#init()
    */
   public void init() throws Exception {
     _delegate = new InternalTaskManager(logger(), serverContext());
@@ -37,7 +37,7 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   }
 
   /**
-   * @see org.sapia.soto.Service#dispose()
+   * @see org.sapia.corus.core.soto.Service#dispose()
    */
   public void dispose() {
   }

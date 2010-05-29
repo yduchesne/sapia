@@ -7,8 +7,8 @@ import org.sapia.console.Command;
 import org.sapia.console.Console;
 import org.sapia.console.Context;
 import org.sapia.console.InputException;
-import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.core.ClusterInfo;
 import org.sapia.corus.util.progress.ProgressMsg;
 import org.sapia.corus.util.progress.ProgressQueue;
 

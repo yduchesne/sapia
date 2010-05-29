@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.sapia.corus.ClusterInfo;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.core.ClusterInfo;
 import org.sapia.corus.cron.InvalidTimeException;
 import org.sapia.corus.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.exceptions.CorusException;

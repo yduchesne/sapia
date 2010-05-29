@@ -7,11 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.ModuleHelper;
-import org.sapia.corus.property.IntProperty;
-import org.sapia.corus.property.Property;
-import org.sapia.corus.property.StringProperty;
+import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.mcast.AsyncEventListener;
 import org.sapia.ubik.mcast.EventChannel;
 import org.sapia.ubik.mcast.RemoteEvent;
@@ -28,8 +25,8 @@ import org.sapia.ubik.rmi.server.invocation.ServerPreInvokeEvent;
 public class ClusterManagerImpl extends ModuleHelper
   implements ClusterManager, AsyncEventListener {
   static ClusterManagerImpl instance;
-  private Property _multicastAddress = new StringProperty(Consts.DEFAULT_MCAST_ADDR);
-  private Property _multicastPort    = new IntProperty(Consts.DEFAULT_MCAST_PORT);
+  private String _multicastAddress = Consts.DEFAULT_MCAST_ADDR;
+  private int _multicastPort       = Consts.DEFAULT_MCAST_PORT;
   private EventChannel      _channel;
   private Map               _hostsById   = Collections.synchronizedMap(new HashMap());
   private Map               _hostsByAddr = Collections.synchronizedMap(new HashMap());
@@ -37,26 +34,26 @@ public class ClusterManagerImpl extends ModuleHelper
   /**
    * @param addr this instance's multicast address.
    */
-  public void setMcastAddress(Property addr){
+  public void setMcastAddress(String addr){
     _multicastAddress = addr;
   }
   
   /**
    * @param port this instance's multicast port.
    */
-  public void setMcastPort(Property port){
-    _multicastPort = new IntProperty(port.getIntValue());
+  public void setMcastPort(int port){
+    _multicastPort = port;
   }
 
   /**
-   * @see org.sapia.soto.Service#init()
+   * @see org.sapia.corus.core.soto.Service#init()
    */
   public void init() throws Exception {
     instance = this;
     _channel = new EventChannel(
         CorusRuntime.getCorus().getDomain(), 
-        _multicastAddress.getValue(),
-        _multicastPort.getIntValue());
+        _multicastAddress,
+        _multicastPort);
     _channel.registerAsyncListener(CorusPubEvent.class.getName(), this);
     _channel.start();
     _channel.setBufsize(4000);    
@@ -70,7 +67,7 @@ public class ClusterManagerImpl extends ModuleHelper
   }
   
   /**
-   * @see org.sapia.soto.Service#dispose()
+   * @see org.sapia.corus.core.soto.Service#dispose()
    */
   public void dispose() {
     _channel.close();

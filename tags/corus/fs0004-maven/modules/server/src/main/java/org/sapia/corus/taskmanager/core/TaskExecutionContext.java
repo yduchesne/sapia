@@ -1,6 +1,6 @@
 package org.sapia.corus.taskmanager.core;
 
-import org.sapia.corus.ServerContext;
+import org.sapia.corus.core.ServerContext;
 
 /**
  * Encapsulates state pertaining to the execution of a given task.

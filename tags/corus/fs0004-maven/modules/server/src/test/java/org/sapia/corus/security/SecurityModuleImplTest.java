@@ -4,8 +4,6 @@ import java.net.InetAddress;
 
 import junit.framework.TestCase;
 
-import org.sapia.corus.property.StringProperty;
-
 public class SecurityModuleImplTest extends TestCase {
   
   public SecurityModuleImplTest(String name){
@@ -19,7 +17,7 @@ public class SecurityModuleImplTest extends TestCase {
   
   public void testAllowedMatch() {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setAllowedHostPatterns(new StringProperty("192.170.1.1, 192.168.**"));
+    mod.setAllowedHostPatterns("192.170.1.1, 192.168.**");
 
     boolean isAllowed = mod.isMatch("192.168.0.1");
     assertTrue("The hosts 192.168.0.1 should match the allowed pattern", isAllowed);
@@ -27,7 +25,7 @@ public class SecurityModuleImplTest extends TestCase {
 
   public void testAllowedNoMatch() {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setAllowedHostPatterns(new StringProperty("192.170.1.1, 192.168.**"));
+    mod.setAllowedHostPatterns("192.170.1.1, 192.168.**");
 
     boolean isAllowed = mod.isMatch("200.168.0.1");
     assertTrue("The hosts 192.168.0.1 should not match the allowed pattern", !isAllowed);
@@ -35,7 +33,7 @@ public class SecurityModuleImplTest extends TestCase {
   
   public void testDeniedMatch() {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setDeniedHostPatterns(new StringProperty("192.170.1.1, 192.168.**"));
+    mod.setDeniedHostPatterns("192.170.1.1, 192.168.**");
 
     boolean isAllowed = mod.isMatch("192.168.0.1");
     assertTrue("The hosts 192.168.0.1 should match the denied pattern", !isAllowed);
@@ -43,7 +41,7 @@ public class SecurityModuleImplTest extends TestCase {
   
   public void testDeniedNoMatch() {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setDeniedHostPatterns(new StringProperty("192.170.1.1, 192.168.**"));
+    mod.setDeniedHostPatterns("192.170.1.1, 192.168.**");
 
     boolean isAllowed = mod.isMatch("200.168.0.1");
     assertTrue("The hosts 200.168.0.1 should not match the denied pattern", isAllowed);
@@ -51,8 +49,8 @@ public class SecurityModuleImplTest extends TestCase {
 
   public void testComplexAllowedMatch() {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setAllowedHostPatterns(new StringProperty("192.170.1.1, 192.168.**, 10.10.10.**"));
-    mod.setDeniedHostPatterns(new StringProperty("200.170.1.1, 200.168.**, 10.10.10.10"));
+    mod.setAllowedHostPatterns("192.170.1.1, 192.168.**, 10.10.10.**");
+    mod.setDeniedHostPatterns("200.170.1.1, 200.168.**, 10.10.10.10");
 
     boolean isAllowed = mod.isMatch("192.168.0.1");
     assertTrue("The hosts 192.168.0.1 should match the allowed pattern", isAllowed);
@@ -63,8 +61,8 @@ public class SecurityModuleImplTest extends TestCase {
 
   public void testComplexDeniedMatch() {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setAllowedHostPatterns(new StringProperty("192.170.1.1, 192.168.**, 10.10.10.**"));
-    mod.setDeniedHostPatterns(new StringProperty("200.170.1.1, 200.168.**, 10.10.10.10"));
+    mod.setAllowedHostPatterns("192.170.1.1, 192.168.**, 10.10.10.**");
+    mod.setDeniedHostPatterns("200.170.1.1, 200.168.**, 10.10.10.10");
 
     boolean isAllowed = mod.isMatch("200.168.0.1");
     assertTrue("The hosts 200.168.0.1 should match the denied pattern", !isAllowed);
@@ -75,7 +73,7 @@ public class SecurityModuleImplTest extends TestCase {
 
   public void testAllowedLocalhost() throws Exception {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setAllowedHostPatterns(new StringProperty("localhost"));
+    mod.setAllowedHostPatterns("localhost");
     String localhost = InetAddress.getLocalHost().getHostAddress();
 
     boolean isAllowed = mod.isMatch(localhost);
@@ -84,7 +82,7 @@ public class SecurityModuleImplTest extends TestCase {
 
   public void testDeniedLocalhost() throws Exception {
     SecurityModuleImpl mod = new SecurityModuleImpl();
-    mod.setDeniedHostPatterns(new StringProperty("localhost"));
+    mod.setDeniedHostPatterns("localhost");
     String localhost = InetAddress.getLocalHost().getHostAddress();
 
     boolean isAllowed = mod.isMatch(localhost);

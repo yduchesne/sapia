@@ -5,7 +5,6 @@ import java.util.List;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
-import org.sapia.corus.admin.services.deployer.DeployerConfigurationImpl;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.util.progress.ProgressQueue;

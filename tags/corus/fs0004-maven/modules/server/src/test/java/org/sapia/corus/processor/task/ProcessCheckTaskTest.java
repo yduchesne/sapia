@@ -5,7 +5,6 @@ import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.processor.TestProcessor;
-import org.sapia.corus.property.PropertyFactory;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
@@ -25,7 +24,7 @@ public class ProcessCheckTaskTest extends BaseTaskTest {
     
     TestProcessor processor = (TestProcessor)ctx.lookup(Processor.class);
     ProcessorConfigurationImpl processorConf = (ProcessorConfigurationImpl)processor.getConfiguration();
-    processorConf.setProcessTimeout(PropertyFactory.create(1));
+    processorConf.setProcessTimeout(1);
     
     Thread.sleep(1500);
 

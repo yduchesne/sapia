@@ -27,8 +27,8 @@ public class PortRange implements java.io.Serializable{
   
   private String _name;
   private int _min, _max;
-  private List<Integer> _availablePorts = new ArrayList<Integer>();
-  private List<Integer> _busyPorts = new ArrayList<Integer>();
+  private List<Integer> _available = new ArrayList<Integer>();
+  private List<Integer> _active = new ArrayList<Integer>();
   
   PortRange(){}
   
@@ -46,7 +46,7 @@ public class PortRange implements java.io.Serializable{
     _max = max;
     
     for(int i = min; i <= max; i++){
-      _availablePorts.add(new Integer(i));
+      _available.add(new Integer(i));
     }
   }
   
@@ -55,11 +55,11 @@ public class PortRange implements java.io.Serializable{
   }
   
   public List<Integer> getAvailable(){
-    return Collections.unmodifiableList(_availablePorts);
+    return Collections.unmodifiableList(_available);
   }
   
   public List<Integer> getActive(){
-    return Collections.unmodifiableList(_busyPorts);
+    return Collections.unmodifiableList(_active);
   }  
   
   /**
@@ -81,9 +81,9 @@ public class PortRange implements java.io.Serializable{
    */
   public synchronized void release(int port){
     Integer portObj = new Integer(port);
-    _busyPorts.remove(portObj);
-    if(!_availablePorts.contains(portObj)){
-      _availablePorts.add(portObj);
+    _active.remove(portObj);
+    if(!_available.contains(portObj)){
+      _available.add(portObj);
     }
   }
   
@@ -91,11 +91,11 @@ public class PortRange implements java.io.Serializable{
    * acquires an available port from this instance.
    */
   public synchronized int acquire(){
-    if(_availablePorts.size() == 0){
+    if(_available.size() == 0){
       throw new IllegalStateException("No port available for range: " + _name);
     }
-    Integer portObj = (Integer)_availablePorts.remove(0);
-    _busyPorts.add(portObj);
+    Integer portObj = (Integer)_available.remove(0);
+    _active.add(portObj);
     return portObj.intValue();
   }
   
@@ -103,20 +103,20 @@ public class PortRange implements java.io.Serializable{
    * @return <code>true</code> if this range has busy ports.
    */
   public boolean hasBusyPorts(){
-    return _busyPorts.size() > 0;
+    return _active.size() > 0;
   }
   
   /**
    * releases all active ports.
    */
   public void releaseAll(){
-    for(int i = 0; i < _busyPorts.size(); i++){
-      Integer busy = (Integer)_busyPorts.get(i);
-      if(!_availablePorts.contains(busy)){
-        _availablePorts.add(busy);
+    for(int i = 0; i < _active.size(); i++){
+      Integer busy = (Integer)_active.get(i);
+      if(!_available.contains(busy)){
+        _available.add(busy);
       }
     }
-    _busyPorts.clear();
+    _active.clear();
   }
   
   /**   

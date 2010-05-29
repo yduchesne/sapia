@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.corus.admin.services.cron.CronModule;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.db.DbMap;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.util.IDGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.dyade.jdring.AlarmEntry;
 import fr.dyade.jdring.AlarmManager;
@@ -28,21 +29,29 @@ import fr.dyade.jdring.PastDateException;
  */
 @Bind(moduleInterface=CronModule.class)
 public class CronModuleImpl extends ModuleHelper implements CronModule {
+  
   static CronModuleImpl instance;
+  
+  @Autowired
+  private DbModule _db;
+  
+  @Autowired
+  private Deployer _deployer;
+  
   private DbMap<String, CronJob> _jobs;
   private AlarmManager  _alarms = new AlarmManager();
 
   /**
-   * @see org.sapia.soto.Service#init()
+   * @see org.sapia.corus.core.soto.Service#init()
    */
   public void init() throws Exception {
     instance = this;
-    _jobs    = lookup(DbModule.class).getDbMap(String.class, CronJob.class, "cron.jobs");
+    _jobs    = _db.getDbMap(String.class, CronJob.class, "cron.jobs");
     initAlarms();
   }
 
   /**
-   * @see org.sapia.soto.Service#dispose()
+   * @see org.sapia.corus.core.soto.Service#dispose()
    */
   public void dispose() {
     try{
@@ -75,9 +84,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
       _log.info("adding cron job: " + info);
     }
 
-    Deployer dep = lookup(Deployer.class);
-
-    if (!dep.getDistribution(ArgFactory.parse(info.getDistribution()), 
+    if (!_deployer.getDistribution(ArgFactory.parse(info.getDistribution()), 
         ArgFactory.parse(info.getVersion())).containsProcess(info.getVmName())) {
       throw new LogicException("Invalid VM name: " + info.getVmName());
     }

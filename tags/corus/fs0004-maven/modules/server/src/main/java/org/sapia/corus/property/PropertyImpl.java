@@ -2,7 +2,10 @@ package org.sapia.corus.property;
 
 import java.io.Serializable;
 
-import org.sapia.corus.InitContext;
+import org.sapia.corus.core.InitContext;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * This class models a configuration property (name and value).
@@ -10,14 +13,18 @@ import org.sapia.corus.InitContext;
  * @author yduchesne
  *
  */
-public class PropertyImpl implements Property, Serializable{
-  
-  static final long serialVersionUID = 1L;
+public class PropertyImpl implements Property, ApplicationContextAware{
   
   private String value;
   
-  public void setName(String name) {
-    this.value = InitContext.get().getProperties().getProperty(name);
+  @Override
+  public void setApplicationContext(ApplicationContext arg0)
+      throws BeansException {
+    
+  }
+  
+  public void setValue(String value) {
+    this.value = value;
   }
 
   public String getValue(){

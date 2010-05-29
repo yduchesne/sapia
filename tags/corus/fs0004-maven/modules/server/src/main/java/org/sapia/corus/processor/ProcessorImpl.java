@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.deployer.Deployer;
@@ -17,8 +16,9 @@ import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
-import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.db.DbModule;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.event.UndeploymentEvent;
@@ -44,26 +44,40 @@ import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.corus.util.progress.ProgressQueueImpl;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Implements the <code>Processor</code> interface.
  *
  * @author Yanick Duchesne
  */
+@Bind(moduleInterface=Processor.class)
 public class ProcessorImpl extends ModuleHelper implements Processor {
     
-  private ProcessorConfigurationImpl _configuration = new ProcessorConfigurationImpl();
+  @Autowired
+  private ProcessorConfiguration _configuration;
+  
+  @Autowired
+  DbModule _db;
+  
+  @Autowired
+  private Deployer _deployer;
+  
+  @Autowired
+  private TaskManager _taskman;
+  
+  @Autowired
+  private EventDispatcher _events;
+
+  @Autowired
+  private HttpModule _http;
+  
   
   private ProcessRepository      _processes;
   private ExecConfigDatabaseImpl _execConfigs;
   private StartupLock            _startLock;  
   
-  
   public ProcessorConfiguration getConfiguration() {
-    return _configuration;
-  }
-  
-  public ProcessorConfiguration createConfiguration(){
     return _configuration;
   }
 
@@ -71,17 +85,15 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
     _startLock = new StartupLock(_configuration.getStartIntervalMillis());
     
-    DbModule     db    = services().lookup(DbModule.class);
     services().bind(ProcessorTaskStrategy.class, new  ProcessorTaskStrategyImpl());
     
     //// intializing process repository
-    _execConfigs = new ExecConfigDatabaseImpl(db.getDbMap(String.class, ExecConfig.class, "processor.execConfigs"));
+    _execConfigs = new ExecConfigDatabaseImpl(_db.getDbMap(String.class, ExecConfig.class, "processor.execConfigs"));
     services().bind(ExecConfigDatabase.class, _execConfigs);
     
-    
-    ProcessDatabase suspended = new ProcessDatabaseImpl(db.getDbMap(String.class, Process.class, "processor.suspended"));
-    ProcessDatabase active = new ProcessDatabaseImpl(db.getDbMap(String.class, Process.class, "processor.active"));
-    ProcessDatabase toRestart = new ProcessDatabaseImpl(db.getDbMap(String.class, Process.class, "processor.toRestart"));
+    ProcessDatabase suspended = new ProcessDatabaseImpl(_db.getDbMap(String.class, Process.class, "processor.suspended"));
+    ProcessDatabase active = new ProcessDatabaseImpl(_db.getDbMap(String.class, Process.class, "processor.active"));
+    ProcessDatabase toRestart = new ProcessDatabaseImpl(_db.getDbMap(String.class, Process.class, "processor.toRestart"));
 
     _processes = new ProcessRepositoryImpl(suspended, active, toRestart);
     services().bind(ProcessRepository.class, _processes);
@@ -99,32 +111,27 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   }
   
   public void start() throws Exception {
-    TaskManager  tm     = lookup(TaskManager.class);
-    HttpModule   module = lookup(HttpModule.class);
     ProcessorExtension ext = new ProcessorExtension(this);
-    module.addHttpExtension(ext);
+    _http.addHttpExtension(ext);
     
     BootstrapExecConfigStartTask boot = new BootstrapExecConfigStartTask(_startLock);
     
-    tm.executeBackground(
+    _taskman.executeBackground(
         boot,
         BackgroundTaskConfig.create()
           .setExecDelay(_configuration.getBootExecDelayMillis())
           .setExecInterval(_configuration.getExecIntervalMillis()));
     
     ProcessCheckTask check = new ProcessCheckTask();
-    tm.executeBackground(
+    _taskman.executeBackground(
         check, 
         BackgroundTaskConfig.create()
           .setExecDelay(0)
           .setExecInterval(_configuration.getProcessCheckIntervalMillis()));
 
-    lookup(EventDispatcher.class).addInterceptor(UndeploymentEvent.class, new ProcessorInterceptor());
+    _events.addInterceptor(UndeploymentEvent.class, new ProcessorInterceptor());
   }
 
-  /**
-   * @see org.sapia.soto.Service#dispose()
-   */
   public void dispose() {
   }
 
@@ -145,10 +152,9 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   
   public ProgressQueue exec(String execConfigName) {
     ProgressQueue progress = new ProgressQueueImpl();
-    TaskManager  taskman = lookup(TaskManager.class);
     EndUserExecConfigStartTask start = new EndUserExecConfigStartTask(execConfigName, _startLock);
     try{
-      taskman.executeAndWait(
+      _taskman.executeAndWait(
           start, TaskConfig.create(new TaskLogProgressQueue(progress))).get();
     }catch(InvocationTargetException e){
       // noop
@@ -164,8 +170,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   public ProgressQueue exec(Arg distName, Arg version, String profile,
     Arg processName, int instances) {
     try {
-      Deployer     deployer = lookup(Deployer.class);
-      List<Distribution> dists = deployer.getDistributions(distName, version);
+      List<Distribution> dists = _deployer.getDistributions(distName, version);
       if (dists.size() == 0) {
         throw new LogicException("No distribution for " + distName + ", " +
           version);
@@ -198,16 +203,15 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         }
       }
       List<ProcessRef> toStart = new ArrayList<ProcessRef>();
-      filter.filterDependencies(deployer, this);
+      filter.filterDependencies(_deployer, this);
       for(ProcessRef fp:filter.getFilteredProcesses()){
         q.info("Scheduling execution of process: " + fp);
         ProcessRef copy = fp.getCopy();
         toStart.add(copy);
       }
       
-      TaskManager taskman = lookup(TaskManager.class); 
       MultiExecTask  exec = new MultiExecTask(_startLock, toStart);
-      taskman.executeBackground(
+      _taskman.executeBackground(
           exec,
           BackgroundTaskConfig.create()
             .setExecDelay(0)
@@ -248,15 +252,9 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       Arg processName, boolean suspend) throws CorusException {
     List<Process> procs = _processes.getActiveProcesses().getProcesses(distName, version,
         profile, processName);
-    TaskManager tm;
     KillTask kill;
     Process proc;
 
-    try {
-      tm = lookup(TaskManager.class);
-    } catch (Exception e) {
-      throw new CorusException(e);
-    }
 
     for (int i = 0; i < procs.size(); i++) {
       proc = (Process) procs.get(i);
@@ -267,7 +265,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
             proc.getProcessID(), 
             proc.getMaxKillRetry());
         
-        tm.executeBackground(
+        _taskman.executeBackground(
             susp,
             BackgroundTaskConfig.create()
               .setExecDelay(0)
@@ -276,7 +274,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         kill   = new KillTask(
             ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN,
             proc.getProcessID(), proc.getMaxKillRetry());
-        tm.executeBackground(kill,
+        _taskman.executeBackground(kill,
             BackgroundTaskConfig.create()
               .setExecDelay(0)
               .setExecInterval(_configuration.getKillIntervalMillis()));
@@ -292,14 +290,9 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     boolean suspend) throws CorusException {
     List<Process>          procs = _processes.getActiveProcesses().getProcesses(distName,
         version, profile);
-    TaskManager          tm;
     KillTask               kill;
     Process                proc;
-    try {
-      tm = lookup(TaskManager.class);
-    } catch (Exception e) {
-      throw new CorusException(e);
-    }
+
 
     for (int i = 0; i < procs.size(); i++) {
       proc = (Process) procs.get(i);
@@ -309,7 +302,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
             ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN, 
             proc.getProcessID(), 
             proc.getMaxKillRetry());
-        tm.executeBackground(
+        _taskman.executeBackground(
             susp,
             BackgroundTaskConfig.create()
               .setExecDelay(0)
@@ -318,7 +311,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         kill   = new KillTask(
             ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN,
             proc.getProcessID(), proc.getMaxKillRetry());
-        tm.executeBackground(
+        _taskman.executeBackground(
             kill,
             BackgroundTaskConfig.create()
               .setExecDelay(0)
@@ -337,7 +330,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         SuspendTask susp = new SuspendTask(
             ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN, 
             corusPid, proc.getMaxKillRetry());
-        lookup(TaskManager.class).executeBackground(
+        _taskman.executeBackground(
             susp,
             BackgroundTaskConfig.create()
               .setExecDelay(0)
@@ -346,7 +339,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         kill   = new KillTask(
             ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN,
             corusPid, proc.getMaxKillRetry());
-        lookup(TaskManager.class).executeBackground(
+        _taskman.executeBackground(
             kill,
             BackgroundTaskConfig.create()
               .setExecDelay(0)
@@ -372,7 +365,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
           origin, 
           dynId, proc.getMaxKillRetry());
 
-      lookup(TaskManager.class).executeBackground(
+      _taskman.executeBackground(
           restart,
           BackgroundTaskConfig.create()
             .setExecDelay(0)
@@ -387,19 +380,8 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
   public ProgressQueue resume() {
     Iterator<Process>    procs  = _processes.getSuspendedProcesses().getProcesses().iterator();
-    TaskManager tm;
     ResumeTask  resume;
     Process     proc;
-
-    try {
-      tm = lookup(TaskManager.class);
-    } catch (Exception e) {
-      ProgressQueue q = new ProgressQueueImpl();
-      q.error(e);
-      q.close();
-
-      return q;
-    }
 
     DistributionDatabase store = lookup(DistributionDatabase.class);
 
@@ -442,7 +424,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         return q;
       }
 
-      tm.execute(resume);
+      _taskman.execute(resume);
       restartCount++;
     }
 

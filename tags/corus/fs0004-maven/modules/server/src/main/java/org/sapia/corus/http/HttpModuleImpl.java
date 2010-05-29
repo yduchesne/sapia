@@ -1,10 +1,10 @@
 package org.sapia.corus.http;
 
-import org.sapia.corus.CorusRuntime;
-import org.sapia.corus.ModuleHelper;
 import org.sapia.corus.admin.services.http.HttpExtension;
 import org.sapia.corus.admin.services.http.HttpModule;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.http.filesystem.FileSystemExtension;
 import org.sapia.corus.http.interop.SoapExtension;
 import org.sapia.corus.http.jmx.JmxExtension;
@@ -36,7 +36,7 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
   }
 
   /**
-   * @see org.sapia.soto.Service#init()
+   * @see org.sapia.corus.core.soto.Service#init()
    */
   public void init() throws Exception {
     // Create the interop and http extension transports

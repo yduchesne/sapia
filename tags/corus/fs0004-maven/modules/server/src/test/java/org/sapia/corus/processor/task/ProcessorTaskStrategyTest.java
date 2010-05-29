@@ -9,7 +9,6 @@ import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.ProcessRepository;
-import org.sapia.corus.property.IntProperty;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.TaskManager;
@@ -91,7 +90,7 @@ public class ProcessorTaskStrategyTest extends TestCase{
     Process          proc = new Process(dist);
     proc.setOsPid("1234");
     processes.getActiveProcesses().addProcess(proc);
-    processorConf.setRestartInterval(new IntProperty(1));
+    processorConf.setRestartInterval(1);
     Thread.sleep(1200);
     boolean killed = strategy.forcefulKill(taskContext, 
         ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, 

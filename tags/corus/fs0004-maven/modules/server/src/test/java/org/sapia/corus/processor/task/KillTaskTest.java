@@ -7,7 +7,6 @@ import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.TestProcessor;
-import org.sapia.corus.property.PropertyFactory;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
@@ -96,7 +95,7 @@ public class KillTaskTest extends BaseTaskTest{
     
     TestProcessor processor = (TestProcessor)ctx.lookup(Processor.class);
     ProcessorConfigurationImpl processorConf = (ProcessorConfigurationImpl)processor.getConfiguration();
-    processorConf.setRestartInterval(PropertyFactory.create(1));
+    processorConf.setRestartInterval(1);
 
     Thread.sleep(1500);
 

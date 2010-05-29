@@ -1,9 +1,9 @@
 package org.sapia.corus.cron;
 
-import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.corus.util.progress.ProgressQueueLogger;
 
@@ -15,8 +15,13 @@ import fr.dyade.jdring.AlarmListener;
  * @author Yanick Duchesne
  */
 public class CronJob implements java.io.Serializable, AlarmListener {
+
+  static final long serialVersionUID = 1L;
+  
   private CronJobInfo _info;
 
+  CronJob(){}
+  
   CronJob(CronJobInfo info) {
     _info = info;
   }

@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.sapia.corus.CorusRuntime;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.http.HttpContext;
@@ -16,6 +15,7 @@ import org.sapia.corus.admin.services.http.HttpExtension;
 import org.sapia.corus.admin.services.http.HttpExtensionInfo;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Context;
 import org.sapia.corus.interop.Param;

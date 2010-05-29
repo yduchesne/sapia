@@ -1,7 +1,7 @@
 package org.sapia.corus.deployer.transport;
 
 import org.apache.log.Logger;
-import org.sapia.corus.CorusRuntime;
+import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.deployer.transport.http.HttpDeploymentAcceptor;
 import org.sapia.corus.deployer.transport.mplex.MplexDeploymentAcceptor;
 import org.sapia.ubik.rmi.server.transport.http.HttpTransportProvider;

@@ -1,35 +1,20 @@
 package org.sapia.corus.admin.services.processor;
 
-import org.sapia.corus.property.Property;
 
 public interface ProcessorConfiguration {
 
-  public abstract Property getProcessTimeout();
+  public long getProcessTimeoutMillis();
+  
+  public long getProcessCheckIntervalMillis();
 
-  public abstract long getProcessTimeoutMillis();
+  public long getKillIntervalMillis();
 
-  public abstract Property getProcessCheckInterval();
+  public long getStartIntervalMillis();
 
-  public abstract long getProcessCheckIntervalMillis();
+  public long getRestartIntervalMillis();
 
-  public abstract Property getKillInterval();
+  public long getExecIntervalMillis();
 
-  public abstract long getKillIntervalMillis();
-
-  public abstract Property getStartInterval();
-
-  public abstract long getStartIntervalMillis();
-
-  public abstract Property getRestartInterval();
-
-  public abstract long getRestartIntervalMillis();
-
-  public abstract Property getExecInterval();
-
-  public abstract long getExecIntervalMillis();
-
-  public abstract Property getBootExecDelay();
-
-  public abstract long getBootExecDelayMillis();
+  public long getBootExecDelayMillis();
 
 }

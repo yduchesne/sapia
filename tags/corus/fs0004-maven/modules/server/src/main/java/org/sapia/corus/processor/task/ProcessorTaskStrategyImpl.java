@@ -11,7 +11,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.Consts;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
 import org.sapia.corus.admin.services.configurator.Configurator;
@@ -28,6 +27,7 @@ import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.core.Consts;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.exceptions.PortUnavailableException;
 import org.sapia.corus.processor.NativeProcess;
@@ -292,7 +292,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
             + new Date(process.getCreationTime()));
         ctx.debug("Current time: " + new Date());
         ctx.debug("Restart interval: "
-            + processor.getConfiguration().getRestartInterval() + " seconds");
+            + processor.getConfiguration().getRestartIntervalMillis() + " millis");
         // if no OS pid, then process could not be forcefully killed...
         if (process.getOsPid() == null) {
           ctx.warn("Not restarting process: " + process.getProcessID()
