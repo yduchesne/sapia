@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.Module;
-import org.sapia.corus.exceptions.CorusException;
-import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.interop.Status;
+import org.sapia.corus.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.util.progress.ProgressQueue;
 
 
@@ -77,13 +77,13 @@ public interface Processor extends java.rmi.Remote, Module {
    *
    * @param a corus pid..
    */
-  public void restartByAdmin(String pid) throws CorusException;
+  public void restartByAdmin(String pid) throws ProcessNotFoundException;
   
   /**
    * Shuts down and restarts the process with the given ID.
    * @see Processor#restart(String)
    */
-  public void restart(String pid) throws CorusException;
+  public void restart(String pid) throws ProcessNotFoundException;
 
   /**
    * Kill the process(es) corresponding to the passed in parameters.
@@ -97,7 +97,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * @return a <code>ProgressQueue</code>.
    */
   public void kill(Arg distName, Arg version, String profile,
-                   boolean suspend) throws CorusException;
+                   boolean suspend);
 
   /**
    * Kill the process(es) corresponding to the passed in parameters.
@@ -112,14 +112,14 @@ public interface Processor extends java.rmi.Remote, Module {
    * @return a <code>ProgressQueue</code>.
    */
   public void kill(Arg distName, Arg version, String profile,
-                   Arg processName, boolean suspend) throws CorusException;
+                   Arg processName, boolean suspend);
 
   /**
    * Kills the process with the given identifier.
    *
    * @param a process identifier.
    */
-  public void kill(String corusPid, boolean suspend) throws CorusException;
+  public void kill(String corusPid, boolean suspend) throws ProcessNotFoundException;
 
   /**
    * Return the process whose identifier is given..
@@ -127,7 +127,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param corusPid a process identifier.
    * @return a <code>Process</code> instance.
    */
-  public Process getProcess(String corusPid) throws LogicException;
+  public Process getProcess(String corusPid) throws ProcessNotFoundException;
 
   /**
    * Returns all process objects.
@@ -181,7 +181,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param corusPid a process identifier.
    * @return a <code>Status</code> instance.
    */
-  public ProcStatus getStatusFor(String corusPid) throws LogicException;
+  public ProcStatus getStatusFor(String corusPid) throws ProcessNotFoundException;
 
   /**
    * Returns the status for all processes.
@@ -240,7 +240,7 @@ public interface Processor extends java.rmi.Remote, Module {
   /**
    * @param conf adds an {@link ExecConfig} to this instance.
    */
-  public void addExecConfig(ExecConfig conf) throws LogicException;
+  public void addExecConfig(ExecConfig conf);
   
   /**
    * @return the list of {@link ExecConfig}s that are contained in this instance.

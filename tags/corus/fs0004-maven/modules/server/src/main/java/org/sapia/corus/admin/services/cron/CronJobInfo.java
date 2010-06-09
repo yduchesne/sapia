@@ -20,7 +20,7 @@ public class CronJobInfo implements java.io.Serializable {
   private String          _distName;
   private String          _profile;
   private String          _version;
-  private String          _vmName;
+  private String          _processName;
   private String          _id;
   private int             _minute     = UNDEFINED;
   private int             _hour       = UNDEFINED;
@@ -38,7 +38,7 @@ public class CronJobInfo implements java.io.Serializable {
     _distName = dist;
     _profile  = profile;
     _version  = version;
-    _vmName   = vmName;
+    _processName   = vmName;
   }
 
   public String getId() {
@@ -57,8 +57,8 @@ public class CronJobInfo implements java.io.Serializable {
     return _version;
   }
 
-  public String getVmName() {
-    return _vmName;
+  public String getProcessName() {
+    return _processName;
   }
 
   public void setMinute(int min) {

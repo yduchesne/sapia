@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.apache.tools.ant.DirectoryScanner;
 import org.sapia.console.CmdLine;
-import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.admin.exceptions.misc.MissingDataException;
 import org.sapia.util.ApplicationStarter;
 
 
@@ -39,11 +39,11 @@ public class Magnet extends BaseJavaStarter implements java.io.Serializable {
    *
    * @return a <code>CmdLine</code> instance.
    */
-  public CmdLine toCmdLine(Env env) throws LogicException {
+  public CmdLine toCmdLine(Env env) throws MissingDataException {
     if (_magnetFile == null) {
-      throw new LogicException("'magnetFile' attribute not specified in 'magnet' element of corus.xml");
+      throw new MissingDataException("'magnetFile' attribute not specified in 'magnet' element of corus.xml");
     } else if (_profile == null) {
-      throw new LogicException("'profile' attribute not specified in 'magnet' element of corus.xml");
+      throw new MissingDataException("'profile' attribute not specified in 'magnet' element of corus.xml");
     }
 
     CmdLine cmd = new CmdLine();

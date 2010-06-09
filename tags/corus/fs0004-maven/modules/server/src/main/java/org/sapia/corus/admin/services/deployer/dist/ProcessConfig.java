@@ -1,13 +1,12 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.admin.exceptions.misc.MissingDataException;
 import org.sapia.util.xml.confix.ConfigurationException;
 import org.sapia.util.xml.confix.ObjectHandlerIF;
 
@@ -233,7 +232,7 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF{
    * for the profile contained in the passed in <code>Env</code>
    * instance.
    */
-  public CmdLine toCmdLine(Env env) throws LogicException {
+  public CmdLine toCmdLine(Env env) throws MissingDataException {
     Starter st = findFor(env.getProfile());
 
     if (st == null) {

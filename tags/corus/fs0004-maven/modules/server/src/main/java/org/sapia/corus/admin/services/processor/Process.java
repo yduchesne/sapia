@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sapia.corus.admin.annotations.Transient;
+import org.sapia.corus.admin.exceptions.processor.ProcessLockException;
 import org.sapia.corus.admin.services.port.PortManager;
-import org.sapia.corus.exceptions.LockException;
 import org.sapia.corus.interop.AbstractCommand;
 import org.sapia.corus.interop.Shutdown;
 import org.sapia.corus.interop.client.CyclicIdGenerator;
@@ -379,11 +379,11 @@ public class Process implements java.io.Serializable {
    * Acquires the lock on this instance.
    * 
    * @param leaser the object that attempts to obtain the lock on this instance.
-   * @throws LockException if this instance is already locked by another object.
+   * @throws ProcessLockException if this instance is already locked by another object.
    */
-  public synchronized void acquireLock(Object leaser) throws LockException {
+  public synchronized void acquireLock(Object leaser) throws ProcessLockException {
     if ((_lockOwner != null) && (_lockOwner != leaser)) {
-      throw new LockException("Process is currently locked - probably in shutdown; try again");
+      throw new ProcessLockException("Process is currently locked - probably in shutdown; try again");
     }
 
     _lockOwner = leaser;

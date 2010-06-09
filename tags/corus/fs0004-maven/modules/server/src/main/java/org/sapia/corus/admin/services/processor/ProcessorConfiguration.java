@@ -1,7 +1,9 @@
 package org.sapia.corus.admin.services.processor;
 
+import java.rmi.Remote;
 
-public interface ProcessorConfiguration {
+
+public interface ProcessorConfiguration extends Remote{
 
   public long getProcessTimeoutMillis();
   

@@ -1,7 +1,9 @@
 package org.sapia.corus.admin.services.deployer;
 
+import java.rmi.Remote;
 
-public interface DeployerConfiguration {
+
+public interface DeployerConfiguration extends Remote{
 
   public abstract String getDeployDir();
 

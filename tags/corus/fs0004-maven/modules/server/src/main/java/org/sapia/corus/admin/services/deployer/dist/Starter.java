@@ -3,7 +3,7 @@ package org.sapia.corus.admin.services.deployer.dist;
 import java.util.List;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.admin.exceptions.misc.MissingDataException;
 
 
 /**
@@ -41,5 +41,5 @@ public interface Starter {
    * @return a <code>CmdLine</code>
    * @throws LogicException if the <code>CmdLine</code> could not be created.
    */
-  public CmdLine toCmdLine(Env env) throws LogicException;
+  public CmdLine toCmdLine(Env env) throws MissingDataException;
 }

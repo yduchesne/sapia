@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.Module;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.admin.exceptions.deployer.RunningProcessesException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.util.progress.ProgressQueue;
 
 /**
@@ -36,7 +37,7 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @param version  the name of the version to undeploy.
    * @return a <code>ProgressQueue</code>.
    */
-  public ProgressQueue undeploy(Arg distName, Arg version);
+  public ProgressQueue undeploy(Arg distName, Arg version) throws RunningProcessesException;
 
   /**
    * Returns the list of distributions that this instance contains.
@@ -72,5 +73,5 @@ public interface Deployer extends java.rmi.Remote, Module {
    * @throws LogicException if no corresponding distribution could be found.
    */
   public Distribution getDistribution(Arg name, Arg version)
-                               throws LogicException;
+                               throws DistributionNotFoundException;
 }

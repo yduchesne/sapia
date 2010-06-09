@@ -11,17 +11,8 @@ import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.tools.ant.DirectoryScanner;
 import org.sapia.console.CmdLine;
-import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.admin.exceptions.misc.MissingDataException;
 import org.sapia.corus.starter.Starter;
-/*
-import org.sapia.soto.util.TemplateContextMap;
-import org.sapia.util.text.MapContext;
-import org.sapia.util.text.SystemContext;
-import org.sapia.util.text.TemplateContextIF;
-import org.sapia.util.text.TemplateElementIF;
-import org.sapia.util.text.TemplateException;
-import org.sapia.util.text.TemplateFactory;
-*/
 import org.sapia.corus.util.CompositeStrLookup;
 import org.sapia.corus.util.PropertiesStrLookup;
 
@@ -73,12 +64,12 @@ public class Java extends BaseJavaStarter {
   }
   
   
-  public CmdLine toCmdLine(Env env) throws LogicException {
+  public CmdLine toCmdLine(Env env) throws MissingDataException {
     CmdLine cmd = new CmdLine();
     File javaHome = new File(_javaHome);
     
     if(!javaHome.exists()){
-      throw new LogicException("java.home not found");
+      throw new MissingDataException("java.home not found");
     }
     
     cmd.addArg(javaHome.getAbsolutePath() + File.separator + "bin" + File.separator + _javaCmd);
@@ -88,7 +79,7 @@ public class Java extends BaseJavaStarter {
     }
     
     if (_mainClass == null) {
-      throw new LogicException("'mainClass' not specified in corus.xml");
+      throw new MissingDataException("'mainClass' not specified in corus.xml");
     }
     
     Property prop = new Property();
@@ -181,7 +172,7 @@ public class Java extends BaseJavaStarter {
     return buf.toString();
   }
   
-  private String getProcessCp(String processUserDir, StrLookup env) throws LogicException{
+  private String getProcessCp(String processUserDir, StrLookup env) {
     if(!new File(processUserDir).exists()){
       processUserDir = System.getProperty("user.dir");
     }
@@ -229,7 +220,7 @@ public class Java extends BaseJavaStarter {
     return substitutor.replace(buf.toString());
   }
   
-  private String render(StrLookup context, String value) throws LogicException{
+  private String render(StrLookup context, String value){
     StrSubstitutor substitutor = new StrSubstitutor(context);
     return substitutor.replace(value);
   }

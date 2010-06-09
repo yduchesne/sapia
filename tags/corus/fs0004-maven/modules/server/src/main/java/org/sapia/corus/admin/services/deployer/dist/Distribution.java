@@ -1,6 +1,7 @@
 package org.sapia.corus.admin.services.deployer.dist;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sapia.corus.admin.Arg;
-import org.sapia.corus.deployer.DeploymentException;
+import org.sapia.corus.admin.exceptions.deployer.DeploymentException;
 import org.sapia.corus.util.ZipUtils;
 import org.sapia.util.xml.ProcessingException;
 import org.sapia.util.xml.confix.ConfigurationException;
@@ -215,7 +216,6 @@ public class Distribution implements java.io.Serializable, ObjectCreationCallbac
     try {
       return ((Distribution) proc.process(is));
     } catch (ProcessingException e) {
-      e.printStackTrace();
       throw new DeploymentException(e.getMessage(), e);
     }
   }
