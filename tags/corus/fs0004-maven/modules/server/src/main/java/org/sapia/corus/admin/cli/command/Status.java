@@ -5,19 +5,17 @@ import java.util.List;
 import org.sapia.console.AbortException;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-import org.sapia.console.table.Cell;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.core.ClusterInfo;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Context;
 import org.sapia.corus.interop.Param;
 import org.sapia.ubik.net.ServerAddress;
-
 
 /**
  * @author Yanick Duchesne
@@ -68,8 +66,8 @@ public class Status extends CorusCliCommand {
         ProcStatus stat = ctx.getCorus().getStatusFor(vmId);
         displayHeader(ctx.getCorus().getServerAddress(), ctx);
         displayStatus(stat, ctx);
-      } catch (LogicException e) {
-        ctx.getConsole().println(e.getMessage());
+      } catch (ProcessNotFoundException e) {
+        throw new InputException(e.getMessage());
       }
     } else if ((dist != null) && (version != null) && (profile != null) &&
                  (vmName != null)) {

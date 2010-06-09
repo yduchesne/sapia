@@ -1,7 +1,6 @@
 package org.sapia.corus.admin.cli;
 
 import java.net.UnknownHostException;
-import java.rmi.RemoteException;
 import java.util.Calendar;
 
 import org.sapia.console.CmdLine;
@@ -13,7 +12,7 @@ import org.sapia.console.InputException;
 import org.sapia.corus.admin.CorusFacade;
 import org.sapia.corus.admin.CorusFacadeImpl;
 import org.sapia.corus.admin.CorusVersion;
-import org.sapia.corus.exceptions.CorusException;
+import org.sapia.corus.admin.exceptions.cli.ConnectionException;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.util.Localhost;
 
@@ -90,9 +89,7 @@ public class CorusCli extends CommandConsole {
       help();
     } catch (Exception e) {
       e.printStackTrace();
-      if(e instanceof CorusException && 
-         ((CorusException)e).getCause() != null && 
-         ((CorusException)e).getCause() instanceof RemoteException){
+      if(e instanceof ConnectionException){
         System.out.println("No server listening at " + host + ":" + port);
       }
       else{

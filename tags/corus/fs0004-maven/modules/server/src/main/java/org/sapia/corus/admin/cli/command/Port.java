@@ -9,10 +9,10 @@ import org.sapia.console.table.Table;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.admin.exceptions.port.PortActiveException;
+import org.sapia.corus.admin.exceptions.port.PortRangeConflictException;
+import org.sapia.corus.admin.exceptions.port.PortRangeInvalidException;
 import org.sapia.corus.admin.services.port.PortRange;
-import org.sapia.corus.exceptions.PortActiveException;
-import org.sapia.corus.exceptions.PortRangeConflictException;
-import org.sapia.corus.exceptions.PortRangeInvalidException;
 import org.sapia.ubik.net.ServerAddress;
 
 /**

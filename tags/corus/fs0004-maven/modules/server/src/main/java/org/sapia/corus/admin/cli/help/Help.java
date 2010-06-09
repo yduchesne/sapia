@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.sapia.console.table.Table;
 import org.sapia.corus.admin.cli.command.Man;
-import org.sapia.corus.exceptions.CorusException;
+import org.sapia.corus.admin.exceptions.CorusException;
+import org.sapia.corus.admin.exceptions.ExceptionCode;
 import org.sapia.util.xml.ProcessingException;
 import org.sapia.util.xml.confix.Dom4jProcessor;
 import org.sapia.util.xml.confix.ReflectionFactory;
@@ -53,7 +54,7 @@ public class Help {
       try{
         return (Help)proc.process(input);
       }catch(ProcessingException e){
-        throw new CorusException("Could not read command help for", e);
+        throw new CorusException("Could not read command help", ExceptionCode.COMMAND_HELP_ERROR.getFullCode(), e);
       }
   }
   

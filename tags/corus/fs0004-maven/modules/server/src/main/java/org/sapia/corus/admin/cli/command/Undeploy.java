@@ -4,6 +4,7 @@ import org.sapia.console.AbortException;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.admin.exceptions.deployer.RunningProcessesException;
 
 
 /**
@@ -42,6 +43,8 @@ public class Undeploy extends CorusCliCommand {
       super.displayProgress(ctx.getCorus().undeploy(dist, version,
                                                     getClusterInfo(ctx)),
                             ctx.getConsole());
+    } catch (RunningProcessesException e){
+      throw new InputException(e.getMessage());
     } catch (InputException e) {
       throw new InputException("File name expected as argument");
     }

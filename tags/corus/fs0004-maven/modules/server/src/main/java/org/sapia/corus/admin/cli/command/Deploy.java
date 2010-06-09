@@ -7,7 +7,7 @@ import org.sapia.console.Arg;
 import org.sapia.console.CmdElement;
 import org.sapia.console.InputException;
 import org.sapia.corus.admin.cli.CliContext;
-import org.sapia.corus.deployer.ConcurrentDeploymentException;
+import org.sapia.corus.admin.exceptions.deployer.ConcurrentDeploymentException;
 
 
 /**

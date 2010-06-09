@@ -11,7 +11,6 @@ import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.core.ClusterInfo;
-import org.sapia.corus.exceptions.LogicException;
 
 
 /**
@@ -108,7 +107,7 @@ public class Restart extends CorusCliCommand {
   protected void restartProcess(CliContext ctx, Process aProcess) throws InputException {
     try {
       ctx.getCorus().restart(aProcess.getProcessID());
-    } catch (LogicException e) {
+    } catch (Exception e) {
       throw new InputException(e.getMessage());
     }
 

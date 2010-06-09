@@ -10,7 +10,6 @@ import org.sapia.console.InputException;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.cli.help.Help;
 import org.sapia.corus.admin.cli.help.NoHelpException;
-import org.sapia.corus.exceptions.CorusException;
 
 /**
  * @author Yanick Duchesne
@@ -62,12 +61,11 @@ public class Man extends CorusCliCommand{
     try{
       h = Help.newHelpFor(clazz);
       h.display(ctx.getConsole().out());
-    }catch(CorusException e){
-      ctx.getConsole().out().println("Could not display help");
-      e.printStackTrace(ctx.getConsole().out());
     }catch(NoHelpException e){
       ctx.getConsole().out().println("No help available.");
+    }catch(Exception e){
+      ctx.getConsole().out().println("Could not display help");
+      e.printStackTrace(ctx.getConsole().out());
     }
-    
   }
 }

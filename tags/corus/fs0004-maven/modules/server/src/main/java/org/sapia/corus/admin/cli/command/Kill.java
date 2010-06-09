@@ -12,9 +12,9 @@ import org.sapia.corus.admin.HostItem;
 import org.sapia.corus.admin.HostList;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.core.ClusterInfo;
-import org.sapia.corus.exceptions.LogicException;
 
 
 /**
@@ -169,12 +169,16 @@ public class Kill extends CorusCliCommand {
   
   protected void killProcess(CliContext ctx, Process aProcess) throws InputException {
     if (_suspend) {
-      ctx.getCorus().suspend(aProcess.getProcessID());
-      ctx.getConsole().println("Suspending VM " + aProcess.getProcessID() + "...");
+      try{
+        ctx.getCorus().suspend(aProcess.getProcessID());
+        ctx.getConsole().println("Suspending VM " + aProcess.getProcessID() + "...");
+      }catch(ProcessNotFoundException e){
+        throw new InputException(e.getMessage());
+      }
     } else {
       try {
         ctx.getCorus().kill(aProcess.getProcessID());
-      } catch (LogicException e) {
+      } catch (ProcessNotFoundException e) {
         throw new InputException(e.getMessage());
       }
       ctx.getConsole().println("Proceeding to kill of VM " + aProcess.getProcessID() + "...");
@@ -217,7 +221,7 @@ public class Kill extends CorusCliCommand {
       for(String vmId:vmIds){
         try{
           ctx.getCorus().getProcess(vmId);
-        }catch(LogicException e){
+        }catch(Exception e){
           completed = false;
         }
       }

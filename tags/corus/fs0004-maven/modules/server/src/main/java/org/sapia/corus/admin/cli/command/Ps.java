@@ -11,7 +11,6 @@ import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.core.ClusterInfo;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.ubik.net.ServerAddress;
 
 
@@ -78,7 +77,7 @@ public class Ps extends CorusCliCommand {
         Process proc = ctx.getCorus().getProcess(vmId);
         displayHeader(ctx.getCorus().getServerAddress(), ctx, displayPorts);
         displayProcess(proc, ctx, displayPorts);
-      } catch (LogicException e) {
+      } catch (Exception e) {
         ctx.getConsole().println(e.getMessage());
       }
     } else if ((dist != null) && (version != null) && (profile != null) &&

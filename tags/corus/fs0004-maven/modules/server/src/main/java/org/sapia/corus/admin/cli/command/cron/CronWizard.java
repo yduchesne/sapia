@@ -7,8 +7,10 @@ import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.cli.command.Cron;
+import org.sapia.corus.admin.exceptions.cron.DuplicateScheduleException;
+import org.sapia.corus.admin.exceptions.cron.InvalidTimeException;
+import org.sapia.corus.admin.exceptions.processor.ProcessConfigurationNotFoundException;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
-import org.sapia.corus.cron.InvalidTimeException;
 
 
 /**
@@ -48,7 +50,15 @@ public class CronWizard {
     try {
       ctx.getCorus().addCronJon(info);
     } catch (InvalidTimeException e) {
-      throw new InputException("The data you entered does not specify a valid time.");
+      throw new InputException(e.getMessage());
+    } catch(DuplicateScheduleException e){
+      throw new InputException(e.getMessage());
+    } catch(ProcessConfigurationNotFoundException e){
+      throw new InputException(e.getMessage());
+    } catch (Exception e) {
+      ctx.getConsole().println("Error entering data.");
+      e.printStackTrace(ctx.getConsole().out());
+      throw new AbortException();
     }
   }
 

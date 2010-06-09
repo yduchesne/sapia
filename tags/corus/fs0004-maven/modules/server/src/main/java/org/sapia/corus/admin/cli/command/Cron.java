@@ -108,7 +108,7 @@ public class Cron extends CorusCliCommand {
     row.getCellAt(COL_ID).append(info.getId());
     row.getCellAt(COL_DIST).append(info.getDistribution());
     row.getCellAt(COL_VERSION).append(info.getVersion());
-    row.getCellAt(COL_VM).append(info.getVmName());
+    row.getCellAt(COL_VM).append(info.getProcessName());
     row.getCellAt(COL_PROFILE).append(info.getProfile());
     row.getCellAt(COL_HOUR).append(doAppend(info.getHour()));
     row.getCellAt(COL_MINUTE).append(doAppend(info.getMinute()));
