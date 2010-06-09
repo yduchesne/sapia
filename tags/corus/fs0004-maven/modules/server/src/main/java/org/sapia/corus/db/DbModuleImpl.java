@@ -2,6 +2,9 @@ package org.sapia.corus.db;
 
 import java.io.File;
 
+import org.sapia.corus.admin.exceptions.core.IORuntimeException;
+import org.sapia.corus.admin.services.db.DbMap;
+import org.sapia.corus.admin.services.db.DbModule;
 import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
@@ -89,6 +92,6 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
       return new CacheDbMap<K, V>(_db.getDbMap(keyType, valueType, name));
     } catch (java.io.IOException e) {
       throw new IORuntimeException(e);
-    }
+    } 
   }
 }

@@ -2,11 +2,11 @@ package org.sapia.corus.deployer.task;
 
 import java.io.File;
 
+import org.sapia.corus.admin.exceptions.deployer.DeploymentException;
+import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.deployer.DeploymentException;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.event.DeploymentEvent;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.tasks.TaskFactory;
@@ -70,7 +70,7 @@ public class DeployTask extends Task {
         File vms = new File(baseDir + File.separator + "processes");
 
         if (_store.containsDistribution(dist.getName(), dist.getVersion())) {
-          ctx.error(new LogicException("Distribution already exists for: " +
+          ctx.error(new DuplicateDistributionException("Distribution already exists for: " +
                                          dist.getName() + " version: " +
                                          dist.getVersion()));
 
@@ -78,7 +78,7 @@ public class DeployTask extends Task {
         }
 
         if (dest.exists()) {
-          ctx.error(new LogicException("Distribution already exists for: " +
+          ctx.error(new DuplicateDistributionException("Distribution already exists for: " +
                                          dist.getName() + " version: " +
                                          dist.getVersion()));
 
@@ -99,7 +99,7 @@ public class DeployTask extends Task {
           _store.addDistribution(dist);
           ctx.info("Distribution added to Corus");
           ctx.getServerContext().getServices().getEventDispatcher().dispatch(new DeploymentEvent(dist));
-        } catch (LogicException e) {
+        } catch (DuplicateDistributionException e) {
           // noop
         }
       }

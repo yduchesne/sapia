@@ -3,9 +3,9 @@ package org.sapia.corus.deployer;
 import java.util.List;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.exceptions.DuplicateDistributionException;
-import org.sapia.corus.exceptions.LogicException;
 
 public interface DistributionDatabase {
 
@@ -87,6 +87,6 @@ public interface DistributionDatabase {
    * @return a <code>Distribution</code>.
    */
   public abstract Distribution getDistribution(Arg name,
-      Arg version) throws LogicException;
+      Arg version) throws DistributionNotFoundException;
 
 }

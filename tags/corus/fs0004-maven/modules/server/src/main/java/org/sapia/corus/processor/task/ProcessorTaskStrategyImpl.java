@@ -13,6 +13,9 @@ import java.util.Set;
 import org.sapia.console.CmdLine;
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.admin.exceptions.port.PortUnavailableException;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.admin.services.deployer.Deployer;
@@ -28,8 +31,6 @@ import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.core.Consts;
-import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.exceptions.PortUnavailableException;
 import org.sapia.corus.processor.NativeProcess;
 import org.sapia.corus.processor.NativeProcessFactory;
 import org.sapia.corus.processor.ProcessInfo;
@@ -60,14 +61,21 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     return false;
   }
 
-  public void cleanupProcess(TaskExecutionContext ctx, Process proc) throws Throwable{
+  public void cleanupProcess(TaskExecutionContext ctx, Process proc){
     if (proc.getProcessDir() != null) {
       if (proc.isDeleteOnKill()) {
         File f = new File(proc.getProcessDir());
-        TaskFactory.newDeleteDirTask(f).execute(ctx);
-        if (f.exists()) {
-          ctx.warn("Could not destroy process directory: "
-              + f.getAbsolutePath());
+        try{
+          TaskFactory.newDeleteDirTask(f).execute(ctx);
+          if (f.exists()) {
+            ctx.warn("Could not destroy process directory: "
+                + f.getAbsolutePath());
+          }
+        }catch(Throwable e){
+          if (f.exists()) {
+            ctx.warn("Could not destroy process directory: "
+                + f.getAbsolutePath(), e);
+          }
         }
       }
     }
@@ -104,7 +112,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
   }
 
   public boolean execProcess(TaskExecutionContext ctx, ProcessInfo info,
-      Properties processProperties) throws Throwable{
+      Properties processProperties){
 
     ProcessorTaskStrategy strategy = ctx.getServerContext().lookup(ProcessorTaskStrategy.class);
     ProcessConfig conf = info.getConfig();
@@ -145,7 +153,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     CmdLine cmd;
     try {
       cmd = conf.toCmdLine(env);
-    } catch (LogicException e) {
+    } catch (Exception e) {
       process.releasePorts(ports);
       ctx.error(e);
       return false;
@@ -247,7 +255,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
   }
 
   public boolean forcefulKill(TaskExecutionContext ctx,
-      ProcessTerminationRequestor requestor, String corusPid) throws Throwable{
+      ProcessTerminationRequestor requestor, String corusPid){
     boolean killSuccessful = false;
 
     try {
@@ -315,14 +323,14 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
       } else {
         ctx.warn("Process " + process.getProcessID() + " terminated");
       }
-    } catch (LogicException e) {
+    } catch (ProcessNotFoundException e) {
       ctx.error(e);
     }
 
     return killSuccessful;
   }
 
-  public void killConfirmed(TaskExecutionContext ctx, Process process) throws Throwable{
+  public void killConfirmed(TaskExecutionContext ctx, Process process){
     PortManager ports = ctx.getServerContext().getServices().lookup(
         PortManager.class);
     ProcessorTaskStrategy tasks = ctx.getServerContext().lookup(
@@ -378,7 +386,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
       Arg versionArg = ArgFactory.exact(process.getDistributionInfo().getVersion());      
       
       dist = deployer.getDistribution(nameArg, versionArg);
-    }catch(LogicException e){
+    }catch(DistributionNotFoundException e){
       ctx.error("Could not find corresponding distribution; process " + process.getProcessID() + " will not be restarted", e);
       return false;
     }catch(Exception e){

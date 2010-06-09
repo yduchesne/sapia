@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.sapia.corus.admin.services.db.DbMap;
 import org.sapia.corus.db.persistence.ClassDescriptor;
 import org.sapia.corus.db.persistence.Record;
 import org.sapia.corus.db.persistence.Template;
@@ -22,6 +23,11 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
   
   public HashDbMap(ClassDescriptor<V> cd) {
     _classDescriptor = cd;
+  }
+  
+  @Override
+  public ClassDescriptor<V> getClassDescriptor() {
+    return _classDescriptor;
   }
 
   public void close() {
@@ -53,17 +59,17 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
     return new RecordIterator(_map.values().iterator());
   }
   
-  public org.sapia.corus.db.Matcher<V> createMatcherFor(V template) {
+  public org.sapia.corus.db.RecordMatcher<V> createMatcherFor(V template) {
     return new TemplateMatcher<V>(new Template<V>(_classDescriptor, template));
   }
  
-  public Collection<V> values(Matcher<V> matcher) {
+  public Collection<V> values(RecordMatcher<V> matcher) {
     Collection<V> result = new ArrayList<V>();
     Iterator<Record<V>> iterator = _map.values().iterator();
     while(iterator.hasNext()){
       Record<V> rec = iterator.next();
-      V obj = rec.toObject(_classDescriptor);
-      if(matcher.matches(obj)){
+      if(matcher.matches(rec)){
+        V obj = rec.toObject(_classDescriptor);
         result.add(obj);
       }
     }

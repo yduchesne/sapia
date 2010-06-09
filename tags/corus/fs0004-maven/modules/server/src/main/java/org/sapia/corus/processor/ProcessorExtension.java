@@ -10,13 +10,13 @@ import java.util.List;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.http.HttpContext;
 import org.sapia.corus.admin.services.http.HttpExtension;
 import org.sapia.corus.admin.services.http.HttpExtensionInfo;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.core.CorusRuntime;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Context;
 import org.sapia.corus.interop.Param;
 import org.sapia.corus.interop.Status;
@@ -168,7 +168,7 @@ public class ProcessorExtension implements HttpExtension{
         Process proc = _processor.getProcess(i);
         processes = new ArrayList(1);
         processes.add(proc);
-      }catch(LogicException e){
+      }catch(ProcessNotFoundException e){
         processes = Collections.EMPTY_LIST;
       }
     }

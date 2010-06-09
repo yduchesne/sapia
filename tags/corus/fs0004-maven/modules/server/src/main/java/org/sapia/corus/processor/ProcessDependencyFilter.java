@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.sapia.corus.admin.StringArg;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Dependency;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.util.progress.ProgressQueue;
 
 public class ProcessDependencyFilter {
@@ -96,9 +96,9 @@ public class ProcessDependencyFilter {
                   .warning("No distribution found for dependency - distribution"
                       + dep.getDist() + ", version: " + currentVersion);
             }
-          } catch (LogicException loe) {
+          } catch (DistributionNotFoundException dnfe) {
             progress.warning("Could not find distribution for dependency: "
-                + loe.getMessage());
+                + dnfe.getMessage());
           }
         }
         // no distribution specified

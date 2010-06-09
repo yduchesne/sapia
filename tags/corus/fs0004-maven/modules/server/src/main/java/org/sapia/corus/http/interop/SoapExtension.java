@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
+import org.sapia.corus.admin.exceptions.misc.MissingDataException;
 import org.sapia.corus.admin.services.http.HttpContext;
 import org.sapia.corus.admin.services.http.HttpExtension;
 import org.sapia.corus.admin.services.http.HttpExtensionInfo;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;
-import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.Poll;
 import org.sapia.corus.interop.Process;
@@ -35,7 +35,7 @@ public class SoapExtension implements HttpExtension, RequestListener {
   private Logger                          _logger;
   private ServerContext                   _serverContext;
   
-  public SoapExtension(ServerContext serverContext) throws CorusException{
+  public SoapExtension(ServerContext serverContext){
     _helper = new ServerStatelessSoapStreamHelper(this, "corus.server");
     _logger = Hierarchy.getDefaultHierarchy().getLoggerFor(getClass().getName());
     _serverContext = serverContext;
@@ -64,7 +64,7 @@ public class SoapExtension implements HttpExtension, RequestListener {
                                              ConfirmShutdown confirm)
     throws Exception {
     if (proc.getCorusPid() == null) {
-      throw new CorusException("'corusPid' not specified in header");
+      throw new MissingDataException("'corusPid' not specified in header");
     }
     
     _logger.info("Process: " + proc + " confirming shutdown");
@@ -74,7 +74,7 @@ public class SoapExtension implements HttpExtension, RequestListener {
   public synchronized List onPoll(Process proc, Poll poll)
   throws Exception {
     if (proc.getCorusPid() == null) {
-      throw new CorusException("'corusPid' not specified in header");
+      throw new MissingDataException("'corusPid' not specified in header");
     }
     
     _logger.debug("Process: " + proc + " polling...");
@@ -85,7 +85,7 @@ public class SoapExtension implements HttpExtension, RequestListener {
   public synchronized void onRestart(Process proc, Restart restart)
   throws Exception {
     if (proc.getCorusPid() == null) {
-      throw new CorusException("'corusPid' not specified in header");
+      throw new MissingDataException("'corusPid' not specified in header");
     }
     
     _logger.debug("Process requested a restart: " + proc);
@@ -95,7 +95,7 @@ public class SoapExtension implements HttpExtension, RequestListener {
   public synchronized List onStatus(Process proc, Status stat)
   throws Exception {
     if (proc.getCorusPid() == null) {
-      throw new CorusException("'corusPid' not specified in header");
+      throw new MissingDataException("'corusPid' not specified in header");
     }
     
     _logger.debug("Status received for " + proc);

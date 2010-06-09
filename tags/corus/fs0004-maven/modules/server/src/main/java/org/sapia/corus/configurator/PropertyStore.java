@@ -1,12 +1,13 @@
 package org.sapia.corus.configurator;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import org.sapia.corus.admin.Arg;
-import org.sapia.corus.db.DbMap;
+import org.sapia.corus.admin.services.db.DbMap;
+import org.sapia.corus.util.IteratorFilter;
+import org.sapia.corus.util.Matcher;
 
 public class PropertyStore {
 
@@ -32,17 +33,18 @@ public class PropertyStore {
     properties.remove(name); 
   }
 
-  public void removeProperty(Arg pattern) {
-    List<String> toRemove = new ArrayList<String>();
-    Iterator<String> names = properties.keys();
-    while(names.hasNext()){
-      String name = names.next();
-      if(pattern.matches(name)){
-        toRemove.add(name);
-      }
-    }
-    for(String r:toRemove){
-      properties.remove(r);
+  public void removeProperty(final Arg pattern) {
+    List<ConfigProperty> toRemove = new IteratorFilter<ConfigProperty>(
+        new Matcher<ConfigProperty>() {
+          @Override
+          public boolean matches(ConfigProperty object) {
+            return pattern.matches(object.getName());
+          }
+        }
+    ).filter(properties.values()).get();
+
+    for(ConfigProperty r:toRemove){
+      properties.remove(r.getName());
     }
   }
 

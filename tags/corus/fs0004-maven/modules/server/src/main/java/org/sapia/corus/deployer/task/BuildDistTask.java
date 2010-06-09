@@ -2,12 +2,9 @@ package org.sapia.corus.deployer.task;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.deployer.DeploymentException;
 import org.sapia.corus.deployer.DistributionDatabase;
-import org.sapia.corus.exceptions.DuplicateDistributionException;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
@@ -68,13 +65,9 @@ public class BuildDistTask extends Task {
         dist.setBaseDir(versionDir.getAbsolutePath());
         _store.addDistribution(dist);
         ctx.info("Adding distribution: " + dist.getName() + ", " + dist.getVersion());
-      } catch (FileNotFoundException e) {
+      } catch (Exception e) {
         ctx.error(e);
-      } catch (DeploymentException e) {
-        ctx.error(e);
-      } catch (DuplicateDistributionException e) {
-        ctx.error(e);
-      }
+      }     
     } else {
       ctx.error("File " + corusXML.getAbsolutePath() + " does not exist");
     }

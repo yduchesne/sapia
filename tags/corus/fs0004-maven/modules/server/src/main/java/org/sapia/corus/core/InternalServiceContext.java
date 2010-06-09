@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.processor.ExecConfigDatabase;
@@ -13,7 +14,19 @@ import org.sapia.corus.processor.task.ProcessorTaskStrategy;
 import org.sapia.corus.taskmanager.core.TaskManager;
 
 /**
- * An instance of this class holds internal services.
+ * An instance of this class holds "internal" services (i.e.: services are singletion beans 
+ * that implement behavior that is internal to the Corus server).
+ * <p>
+ * Services that are bound to this context are not necessarily and exclusively the ones configured
+ * as Spring beans. Indeed, these so-called services are bound to this instance using one of the {@link #bind(Class, Object)} of
+ * this class.
+ * <p>
+ * The {@link ModuleLifeCycleManager} automatically binds to this context those beans that are annotated with {@link Bind}. Binding
+ * can occur at anytime, but it is typically done at initialization/start time.
+ * <p>
+ * Any object that has access to an instance of this class can also bind its own objects (i.e.: those that it 
+ * creates itself and are not instantiated by the Spring container).
+ * 
  * 
  * @author yduchesne
  *

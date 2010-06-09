@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.sapia.corus.admin.exceptions.core.IORuntimeException;
+import org.sapia.corus.admin.services.db.DbMap;
 import org.sapia.corus.db.persistence.ClassDescriptor;
 import org.sapia.corus.db.persistence.Record;
 import org.sapia.corus.db.persistence.Template;
@@ -27,6 +29,11 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
   DbMapImpl(Class<K> keyType, Class<V> valueType, JDBMHashtable hashtable) {
     _hashtable = hashtable;
     _classDescriptor = new ClassDescriptor<V>(valueType);
+  }
+  
+  @Override
+  public ClassDescriptor<V> getClassDescriptor() {
+    return _classDescriptor;
   }
 
   @Override
@@ -92,21 +99,20 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
   }
 
   @Override
-  public org.sapia.corus.db.Matcher<V> createMatcherFor(V template) {
+  public org.sapia.corus.db.RecordMatcher<V> createMatcherFor(V template) {
     return new TemplateMatcher<V>(new Template<V>(_classDescriptor, template));
   }
   
   @Override
   @SuppressWarnings(value="unchecked")
-  public Collection<V> values(Matcher<V> matcher) {
+  public Collection<V> values(RecordMatcher<V> matcher) {
     try {
       Collection<V> result = new ArrayList<V>();
       JDBMEnumeration enumeration = _hashtable.values();
       while(enumeration.hasMoreElements()){
         Record<V> rec = (Record<V>)enumeration.nextElement();
-        V obj = rec.toObject(_classDescriptor);
-        if(matcher.matches(obj)){
-          result.add(obj);
+        if(matcher.matches(rec)){
+          result.add(rec.toObject(_classDescriptor));
         }
       }
       return result;

@@ -1,13 +1,15 @@
 package org.sapia.corus.processor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.admin.services.db.DbMap;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.db.DbMap;
-import org.sapia.corus.exceptions.LogicException;
+import org.sapia.corus.util.CompositeMatcher;
+import org.sapia.corus.util.IteratorFilter;
+import org.sapia.corus.util.Matcher;
 
 
 /**
@@ -32,135 +34,97 @@ public class ProcessDatabaseImpl implements ProcessDatabase {
   }
 
   public synchronized void removeProcesses(Arg name, Arg version) {
-    Process  current;
-    Iterator<Process> processes = _processes.values();
-    List<Process>     toRemove  = new ArrayList<Process>();
-
-    for (; processes.hasNext();) {
-      current = (Process) processes.next();
-
-      if (name.matches(current.getDistributionInfo().getName()) &&
-            version.matches(current.getDistributionInfo().getVersion())) {
-        toRemove.add(current);
-      }
-    }
-
+    List<Process>     toRemove  = getProcesses(name, version);
     for (int i = 0; i < toRemove.size(); i++) {
       _processes.remove(((Process) toRemove.get(i)).getProcessID());
     }
   }
 
   public synchronized List<Process> getProcesses() {
-    List<Process>     toReturn  = new ArrayList<Process>();
-    Iterator<Process> processes = _processes.values();
-
-    for (; processes.hasNext();) {
-      toReturn.add((Process) processes.next());
-    }
-
-    return toReturn;
+    return new IteratorFilter<Process>(new CompositeMatcher<Process>()).filter(_processes.values()).sort(new ProcessComparator()).get();
   }
   
-  public synchronized List<Process> getProcesses(Arg name) {
-    List<Process> toReturn  = new ArrayList<Process>();
-    Process  current;
-    Iterator<Process> processes = _processes.values();
-
-    for (; processes.hasNext();) {
-      current = (Process) processes.next();
-
-      if (name.matches(current.getDistributionInfo().getName())) {
-        toReturn.add(current);
-      }
-    }
-
-    return toReturn;
+  public synchronized List<Process> getProcesses(final Arg name) {
+    return getProcesses(replaceNull(name), replaceNull(null), null, replaceNull(null));
   }
  
   public synchronized List<Process> getProcesses(Arg name, Arg version) {
-    List<Process>     toReturn  = new ArrayList<Process>();
-    Process  current;
-    Iterator<Process> processes = _processes.values();
-
-    for (; processes.hasNext();) {
-      current = (Process) processes.next();
-
-      if (name.matches(current.getDistributionInfo().getName()) &&
-            version.matches(current.getDistributionInfo().getVersion())) {
-        toReturn.add(current);
-      }
-    }
-
-    return toReturn;
+    return getProcesses(replaceNull(name), replaceNull(version), null, replaceNull(null));
   }
   
-  public synchronized List<Process> getProcesses(String name, String version, String processName, String profile) {
-    List<Process>     toReturn  = new ArrayList<Process>();
-    Process  current;
-    Iterator<Process> processes = _processes.values();
-
-    for (; processes.hasNext();) {
-      current = (Process) processes.next();
-
-      if (name.equals(current.getDistributionInfo().getName()) &&
-          version.equals(current.getDistributionInfo().getVersion()) &&
-          profile.equals(current.getDistributionInfo().getProfile()) &&
-          processName.equals(current.getDistributionInfo().getProcessName())) {
-        toReturn.add(current);
-      }
-    }
-
-    return toReturn;
+  public synchronized List<Process> getProcesses(final String name, final String version, final String processName, final String profile) {
+    return getProcesses(argFor(name), argFor(version), profile, argFor(processName));
   }
   
   public synchronized List<Process> getProcesses(Arg name, Arg version, String profile) {
-    List<Process>     toReturn  = new ArrayList<Process>();
-    Process  current;
-    Iterator<Process> processes = _processes.values();
-
-    for (; processes.hasNext();) {
-      current = (Process) processes.next();
-
-      if (name.matches(current.getDistributionInfo().getName()) &&
-          version.matches(current.getDistributionInfo().getVersion()) &&
-            (profile == null || current.getDistributionInfo().getProfile().equals(profile))) {
-        toReturn.add(current);
-      }
-    }
-
-    return toReturn;
+    return getProcesses(name, version, profile, replaceNull(null));
   }
    
-  public synchronized List<Process> getProcesses(Arg name, Arg version, String profile,
-                                 Arg processName) {
-    List<Process>     toReturn  = new ArrayList<Process>();
-    Process  current;
-    Iterator<Process> processes = _processes.values();
-
-    for (; processes.hasNext();) {
-      current = (Process) processes.next();
-      if (name.matches(current.getDistributionInfo().getName()) &&
-          version.matches(current.getDistributionInfo().getVersion()) &&
-          (profile == null || current.getDistributionInfo().getProfile().equals(profile)) &&
-          processName.matches(current.getDistributionInfo().getProcessName())) {
-        toReturn.add(current);
+  public synchronized List<Process> getProcesses(final Arg name, final Arg version, final String profile,
+                                 final Arg processName) {
+    Matcher<Process> matcher = new CompositeMatcher<Process>()
+    .add(
+      new Matcher<Process>() {
+        public boolean matches(Process object) {
+          return name.matches(object.getDistributionInfo().getName());
+        }
       }
-    }
-
-    return toReturn;
+    )
+    .add(
+      new Matcher<Process>() {
+        public boolean matches(Process object) {
+          return version.matches(object.getDistributionInfo().getVersion());
+        }
+      }
+    )
+    .add(
+      new Matcher<Process>() {
+        public boolean matches(Process object) {
+          return processName.matches(object.getDistributionInfo().getProcessName());
+        }
+      }
+    )
+    .add(
+      new Matcher<Process>() {
+        public boolean matches(Process object) {
+          if(profile == null) return true;
+          return profile.equals(object.getDistributionInfo().getProfile());
+        }
+      }
+    );
+    
+    return new IteratorFilter<Process>(matcher).filter(_processes.values()).sort(new ProcessComparator()).get();
   }
 
   public synchronized void removeProcess(String corusPid) {
     _processes.remove(corusPid);
   }
 
-  public synchronized Process getProcess(String corusPid) throws LogicException {
+  public synchronized Process getProcess(String corusPid) throws ProcessNotFoundException {
     Process current = (Process) _processes.get(corusPid);
 
     if (current == null) {
-      throw new LogicException("No process for ID: " + corusPid);
+      throw new ProcessNotFoundException("No process for ID: " + corusPid);
     }
 
     return current;
+  }
+  
+  private Arg replaceNull(Arg someArg){
+    if(someArg == null){
+      return argFor(null);
+    }
+    else{
+      return someArg;
+    }
+  }
+  
+  private Arg argFor(String arg){
+    if(arg == null){
+      return ArgFactory.any();
+    }
+    else{
+      return ArgFactory.parse(arg);
+    }
   }
 }

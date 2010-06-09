@@ -1,87 +1,37 @@
 package org.sapia.corus.core;
 
-import java.util.UUID;
-
 import org.sapia.ubik.net.TCPAddress;
 
-/**
- * Encapsulates the state pertaining to a corus server.
- * 
- * @author yduchesne
- *
- */
-public class ServerContext {
-
-  private String serverName = UUID.randomUUID().toString().substring(0, 8);
-  private String domain;
-  private TCPAddress serverAddress;
-  private InternalServiceContext services;
-  private String homeDir;
-  
-  public ServerContext(
-      TCPAddress addr, 
-      String domain, 
-      String homeDir, 
-      InternalServiceContext services){
-    this(domain, homeDir, services);
-    this.serverAddress = addr;
-  }
-  
-  public ServerContext(
-      String domain, 
-      String homeDir, 
-      InternalServiceContext services){
-    this.domain = domain;
-    this.homeDir = homeDir;
-    this.services = services;
-  }
-  
+public interface ServerContext {
   /**
    * @return the name of the Corus server.
    */
-  public String getServerName() {
-    return serverName;
-  }
+  public String getServerName();
   
-  /**
-   * @param serverName the name of the Corus server.
-   */
-  public void setServerName(String serverName) {
-    this.serverName = serverName;
-  }
+  
+  public void overrideServerName(String serverName);
   
   /**
    * @return the home directory of the Corus server.
    */
-  public String getHomeDir() {
-    return homeDir;
-  }
+  public String getHomeDir();
   
   /**
    * @return the domain of the Corus server.
    */
-  public String getDomain() {
-    return domain;
-  }
+  public String getDomain();
   
   /**
    * @return the address of the Corus server corresponding to this
    * instance.
    */
-  public TCPAddress getServerAddress() {
-    if(serverAddress == null){
-      throw new IllegalStateException("Server address not yet available");
-    }
-    return serverAddress;
-  }
+  public TCPAddress getServerAddress();
   
   /**
    * @return the {@link InternalServiceContext} containing the services
    * of the Corus server.
    */
-  public InternalServiceContext getServices() {
-    return services;
-  }
+  public InternalServiceContext getServices();
   
   /**
    * Looks up a service of the given interface (internally delegates the call to
@@ -90,12 +40,6 @@ public class ServerContext {
    * @param serviceInterface the service interface for which to find a service instance.
    * @return the service instance that was found.
    */
-  public <S> S lookup(Class<S> serviceInterface){
-    return services.lookup(serviceInterface);
-  }
+  public <S> S lookup(Class<S> serviceInterface);
   
-  void setServerAddress(TCPAddress addr){
-    this.serverAddress = addr;
-  }
-
 }

@@ -84,14 +84,13 @@ public class CorusRuntime {
     return globals;
   }
 
-  static void init(CorusImpl dyn, String corusHome, CorusTransport aTransport) {
-    _instance   = dyn;
+  static void init(CorusImpl corus, String corusHome, CorusTransport aTransport) {
+    _instance   = corus;
     _corusHome = corusHome;
     _transport = aTransport;
   }
   
   static void shutdown() {
     _transport.shutdown();
-    CorusImpl.shutdown();
   }
 }

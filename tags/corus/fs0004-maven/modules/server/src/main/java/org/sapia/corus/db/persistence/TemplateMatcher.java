@@ -1,14 +1,14 @@
 package org.sapia.corus.db.persistence;
 
-import org.sapia.corus.db.Matcher;
+import org.sapia.corus.db.RecordMatcher;
 
 /**
- * This class implements the {@link Matcher} interface over the {@link Template} class.
+ * This class implements the {@link RecordMatcher} interface over the {@link Template} class.
  *  
  * @author yduchesne
  *
  */
-public class TemplateMatcher<T> implements Matcher<T>{
+public class TemplateMatcher<T> implements RecordMatcher<T>{
   
   private Template<T> template;
 
@@ -21,8 +21,8 @@ public class TemplateMatcher<T> implements Matcher<T>{
    * 
    * @see Template
    */
-  public boolean matches(T toMatch) {
-    return template.matches(toMatch);
+  @Override
+  public boolean matches(Record<T> rec) {
+    return template.matches(rec);
   }
-
 }

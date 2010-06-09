@@ -3,6 +3,7 @@ package org.sapia.corus.taskmanager;
 import java.rmi.Remote;
 
 import org.apache.log.Logger;
+import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
@@ -23,6 +24,7 @@ import org.sapia.corus.util.progress.ProgressQueueImpl;
  * 
  * @author Yanick Duchesne
  */
+@Bind(moduleInterface=CorusTaskManager.class)
 public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManager, Remote{
   
   private InternalTaskManager _delegate; 
@@ -33,7 +35,6 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
    */
   public void init() throws Exception {
     _delegate = new InternalTaskManager(logger(), serverContext());
-    serverContext().getServices().bind(TaskManager.class, this);
   }
 
   /**

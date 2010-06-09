@@ -8,9 +8,9 @@ import java.util.TreeMap;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.exceptions.DuplicateDistributionException;
-import org.sapia.corus.exceptions.LogicException;
 
 
 /**
@@ -97,14 +97,14 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
   }
 
   public synchronized Distribution getDistribution(Arg name, Arg version)
-                                            throws LogicException {
+                                            throws DistributionNotFoundException {
     List<Distribution> dists = select(name, version);
     if(dists.size() == 0){
-      throw new LogicException("No distribution for version " + version +
+      throw new DistributionNotFoundException("No distribution for version " + version +
           " under " + name);
     }
     else if(dists.size() > 1){
-      throw new LogicException("More than one distribution for version " + version +
+      throw new DistributionNotFoundException("More than one distribution for version " + version +
           " under " + name);      
     }
     else{

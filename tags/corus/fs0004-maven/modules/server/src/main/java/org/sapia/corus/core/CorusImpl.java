@@ -1,5 +1,6 @@
 package org.sapia.corus.core;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.Properties;
@@ -7,16 +8,18 @@ import java.util.Properties;
 import org.apache.log.Hierarchy;
 import org.sapia.corus.admin.Corus;
 import org.sapia.corus.admin.CorusVersion;
+import org.sapia.corus.admin.exceptions.core.ServiceNotFoundException;
 import org.sapia.corus.admin.services.naming.JndiModule;
-import org.sapia.corus.core.spring.ConfigurationPostProcessor;
-import org.sapia.corus.exceptions.CorusException;
+import org.sapia.corus.core.property.PropertyContainer;
 import org.sapia.corus.util.CompositeStrLookup;
 import org.sapia.corus.util.IOUtils;
 import org.sapia.corus.util.PropertiesStrLookup;
+import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.naming.remote.RemoteContext;
 import org.sapia.ubik.rmi.naming.remote.RemoteContextProvider;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
 
 /**
@@ -27,13 +30,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Yanick Duchesne
  */
 public class CorusImpl implements Corus, RemoteContextProvider {
-  private static ApplicationContext           _appContext;
-  private  static ModuleLifeCycleManager _lifeCycle;
-  private static CorusImpl                    _instance;
-  private String                              _domain;
+  private ModuleLifeCycleManager      _lifeCycle;
+  private String                      _domain;
 
-  private CorusImpl(String domain) {
-    _domain        = domain;
+  CorusImpl(Hierarchy h, InputStream config, String domain,
+      CorusTransport aTransport, String corusHome) throws IOException, Exception{
+    init(h, config, domain, aTransport, corusHome);
   }
 
   public String getVersion() {
@@ -44,10 +46,17 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     return _domain;
   }
   
-  public static ServerContext init(Hierarchy h, InputStream config, String domain,
-                          CorusTransport aTransport, String corusHome) throws java.io.IOException, Exception {
-    _instance = new CorusImpl(domain);
-    CorusRuntime.init(_instance, corusHome, aTransport);
+  public ServerContext getServerContext(){
+    return _lifeCycle;
+  }
+  
+  void setServerAddress(TCPAddress addr){
+    _lifeCycle.setServerAddress(addr);
+  }
+  
+  private ServerContext init(Hierarchy h, InputStream config, String domain,
+                          CorusTransport aTransport, String corusHome) throws IOException, Exception {
+    _domain = domain;
     
     // loading default properties.
     final Properties props = new Properties();
@@ -68,66 +77,63 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     props.load(tmp);
     
     InternalServiceContext services = new InternalServiceContext();
-    ServerContext serverContext = new ServerContext(domain, corusHome,  services);
-    InitContext.attach(new PropertyContainer(){
-      public String getProperty(String name) {
-        return props.getProperty(name);
-      }
-    },
-    serverContext);
-    try{
-      _appContext = new ClassPathXmlApplicationContext("org/sapia/corus/core.xml");
-      _lifeCycle = (ModuleLifeCycleManager)_appContext.getBean(ModuleLifeCycleManager.class.getName());
-      if(_lifeCycle == null){
-        throw new IllegalStateException(ModuleLifeCycleManager.class.getName() + " not found");
-      }
-      ClassPathXmlApplicationContext moduleContext = new ClassPathXmlApplicationContext(_appContext);
-      moduleContext.addBeanFactoryPostProcessor(new ConfigurationPostProcessor(_lifeCycle));
+    ServerContextImpl serverContext = new ServerContextImpl(domain, corusHome,  services);
+  //  try{
+      
+    
+      // root context
+      PropertyContainer propContainer = new PropertyContainer() {
+        @Override
+        public String getProperty(String name) {
+          return props.getProperty(name);
+        }
+      };
+      final ModuleLifeCycleManager manager = new ModuleLifeCycleManager(serverContext, propContainer);
+      BeanFactoryPostProcessor postProcessor = new ConfigurationPostProcessor(serverContext, manager);
+
+      GenericApplicationContext rootContext = new GenericApplicationContext();
+      rootContext.getBeanFactory().registerSingleton("lifecycleManager", manager);
+      rootContext.refresh();
+      
+      // core services context
+      
+      ClassPathXmlApplicationContext coreContext = new ClassPathXmlApplicationContext(rootContext);
+      coreContext.addBeanFactoryPostProcessor(postProcessor);
+      coreContext.registerShutdownHook();
+      coreContext.setConfigLocation("org/sapia/corus/core.xml");
+      coreContext.refresh();
+      manager.addApplicationContext(coreContext);
+      
+      // module context
+      ClassPathXmlApplicationContext moduleContext = new ClassPathXmlApplicationContext(coreContext);
+      moduleContext.addBeanFactoryPostProcessor(postProcessor);
+      moduleContext.registerShutdownHook();
       moduleContext.setConfigLocation("org/sapia/corus/modules.xml");
       moduleContext.refresh();
+      manager.addApplicationContext(moduleContext);
 
-    }finally{
+      _lifeCycle = manager;
+/*    }finally{
       InitContext.unattach();
     }
-    
+*/    
     return serverContext;
   }
   
-  public static void start() throws Exception {
+  public void start() throws Exception {
     _lifeCycle.startServices();
   }
   
-  public static void shutdown(){
-    _lifeCycle.disposeServices();
-  }
-  
-  public Object lookup(String module) throws CorusException {
-    try {
-      Object toReturn = _appContext.getBean(module);
-      if(toReturn == null){
-        throw new IllegalArgumentException(String.format("No module found for: %s", module));
-      }
-      return toReturn;
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new CorusException(e);
+  public Object lookup(String module) throws ServiceNotFoundException{
+    Object toReturn = _lifeCycle.lookup(module);
+    if(toReturn == null){
+      throw new ServiceNotFoundException(String.format("No module found for: %s", module));
     }
-  }
-  
-  public static CorusImpl getInstance() {
-    if (_instance == null) {
-      throw new IllegalStateException("corus not initialized");
-    }
-
-    return _instance;
+    return toReturn;
   }
   
   public RemoteContext getRemoteContext() throws RemoteException{
-    try{
-      JndiModule module = (JndiModule)lookup(JndiModule.ROLE);
-      return module.getRemoteContext();
-    }catch(CorusException e){
-      throw new RuntimeException(e);
-    }
+    JndiModule module = (JndiModule)lookup(JndiModule.ROLE);
+    return module.getRemoteContext();
   }
 }

@@ -1,10 +1,10 @@
 package org.sapia.corus.processor.task;
 
+import org.sapia.corus.admin.exceptions.processor.ProcessLockException;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.exceptions.LockException;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
@@ -37,13 +37,13 @@ public abstract class ProcessTerminationTask extends Task {
   public Object execute(TaskExecutionContext ctx) throws Throwable {
     try{
       ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid).acquireLock(this);
-    } catch (LockException e) {
+    } catch (ProcessLockException e) {
       ctx.error("Could not acquire lock on process: " + _corusPid);
       ctx.error(e);
       abort(ctx);
       return null;
-    } catch (LogicException e) {
-      ctx.error("VM identifier not found for: " + _corusPid);
+    } catch (ProcessNotFoundException e) {
+      ctx.error("Process not found for: " + _corusPid);
       ctx.error(e);
       abort(ctx);
       return null;
@@ -62,7 +62,7 @@ public abstract class ProcessTerminationTask extends Task {
       } else {
         onExec(ctx);
       }
-    } catch (LogicException e) {
+    } catch (ProcessNotFoundException e) {
       ctx.error(e);
       abort(ctx);
     }

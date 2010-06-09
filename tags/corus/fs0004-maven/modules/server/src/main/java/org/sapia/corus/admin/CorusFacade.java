@@ -6,19 +6,23 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.sapia.corus.admin.exceptions.CorusException;
+import org.sapia.corus.admin.exceptions.cron.DuplicateScheduleException;
+import org.sapia.corus.admin.exceptions.cron.InvalidTimeException;
+import org.sapia.corus.admin.exceptions.deployer.ConcurrentDeploymentException;
+import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
+import org.sapia.corus.admin.exceptions.deployer.RunningProcessesException;
+import org.sapia.corus.admin.exceptions.port.PortActiveException;
+import org.sapia.corus.admin.exceptions.port.PortRangeConflictException;
+import org.sapia.corus.admin.exceptions.port.PortRangeInvalidException;
+import org.sapia.corus.admin.exceptions.processor.ProcessConfigurationNotFoundException;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.core.ClusterInfo;
-import org.sapia.corus.cron.InvalidTimeException;
-import org.sapia.corus.deployer.ConcurrentDeploymentException;
-import org.sapia.corus.exceptions.CorusException;
-import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.exceptions.PortActiveException;
-import org.sapia.corus.exceptions.PortRangeConflictException;
-import org.sapia.corus.exceptions.PortRangeInvalidException;
 import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.ubik.net.ServerAddress;
 
@@ -75,7 +79,9 @@ public interface CorusFacade {
    */
   public ProgressQueue deploy(String fileName, ClusterInfo cluster)
                        throws java.io.IOException, 
-                              ConcurrentDeploymentException, CorusException;
+                              ConcurrentDeploymentException, 
+                              DuplicateDistributionException, 
+                              Exception;
 
   /**
    * Undeploys the distribution corresponding to the given name and version.
@@ -91,7 +97,7 @@ public interface CorusFacade {
    * @param cluster a <code>ClusterInfo</code> instance.
    * @return a <code>ProgressQueue</code>.
    */
-  public ProgressQueue undeploy(String distName, String version, ClusterInfo cluster);
+  public ProgressQueue undeploy(String distName, String version, ClusterInfo cluster) throws RunningProcessesException;
 
   
   /**
@@ -99,7 +105,7 @@ public interface CorusFacade {
    * @param fileName the name of the file of the execution configuration to deploy.
    * @param cluster
    */
-  public void deployExecConfig(String fileName, ClusterInfo cluster) throws IOException, CorusException;
+  public void deployExecConfig(String fileName, ClusterInfo cluster) throws IOException, Exception;
 
   /**
    * Undeploys the exec configurations matching the given name. 
@@ -116,7 +122,7 @@ public interface CorusFacade {
    * @throws CorusException
    */
   public  Results getExecConfigs(ClusterInfo cluster) 
-    throws IOException, CorusException;
+    throws IOException, Exception;
 
   /**
    * Returns the list of distributions.
@@ -157,7 +163,7 @@ public interface CorusFacade {
    * @param vmId a process identifier.
    * @return a <code>Process</code> instance.
    */
-  public Process getProcess(String vmId) throws LogicException;
+  public Process getProcess(String vmId) throws ProcessNotFoundException;
 
   /**
    * Returns all process objects, per corus server.
@@ -326,7 +332,7 @@ public interface CorusFacade {
    * @param pid a Corus process ID.
    * @return a {@link ProgressQueue}
    */
-  public void restart(String pid) throws LogicException;
+  public void restart(String pid) throws ProcessNotFoundException;
   
   /**
    * Kills the process(es) corresponding to the passed in parameters.
@@ -364,7 +370,7 @@ public interface CorusFacade {
    *
    * @param a process identifier.
    */
-  public void kill(String processId) throws LogicException;
+  public void kill(String processId) throws ProcessNotFoundException;
 
   /**
    * Suspends the process(es) corresponding to the passed in parameters.
@@ -400,9 +406,9 @@ public interface CorusFacade {
   /**
    * Suspends the process with the given identifier.
    *
-   * @param dynId a process identifier.
+   * @param pid a process identifier.
    */
-  public void suspend(String dynId);
+  public void suspend(String pid) throws ProcessNotFoundException;
   
   /*////////////////////////////////////////////////////////////////////
                             CRON MANAGEMENT
@@ -413,7 +419,12 @@ public interface CorusFacade {
    *
    * @param <code>CronJobInfo</code> instance.
    */
-  public void addCronJon(CronJobInfo info) throws InvalidTimeException;
+  public void addCronJon(CronJobInfo info) 
+  throws     
+  InvalidTimeException,
+  DuplicateScheduleException, 
+  ProcessConfigurationNotFoundException, 
+  Exception;
 
   /**
    * Removes the cron job corresponding to the given identifier.
@@ -440,7 +451,7 @@ public interface CorusFacade {
    * @param corusPid a process identifier.
    * @return a <code>ProcStatus</code> instance.
    */
-  public ProcStatus getStatusFor(String corusPid) throws LogicException;
+  public ProcStatus getStatusFor(String corusPid) throws ProcessNotFoundException;
 
   /**
    * Returns the status for all processes.

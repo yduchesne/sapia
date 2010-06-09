@@ -2,6 +2,8 @@ package org.sapia.corus.core;
 
 
 /**
+ * This interface holds common property names.
+ * 
  * @author Yanick Duchesne
  */
 public interface Consts {

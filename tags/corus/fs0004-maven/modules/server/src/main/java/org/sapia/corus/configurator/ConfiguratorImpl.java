@@ -11,13 +11,12 @@ import java.util.TreeSet;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.services.configurator.Configurator;
+import org.sapia.corus.admin.services.db.DbMap;
+import org.sapia.corus.admin.services.db.DbModule;
 import org.sapia.corus.annotations.Bind;
-import org.sapia.corus.core.InitContext;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.corus.core.PropertyContainer;
-import org.sapia.corus.db.DbMap;
-import org.sapia.corus.db.DbModule;
-import org.sapia.corus.property.PropertyProvider;
+import org.sapia.corus.core.property.PropertyContainer;
+import org.sapia.corus.core.property.PropertyProvider;
 import org.sapia.corus.util.NameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,19 +40,20 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   
   @Override
   public void init() throws Exception {
+    
     processProperties   = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.process"));
     serverProperties    = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.server"));
     internalProperties  = new PropertyStore(db.getDbMap(String.class, ConfigProperty.class, "configurator.properties.internal"));
 
     tags       = db.getDbMap(String.class, ConfigProperty.class, "configurator.tags");
-    propertyProvider.overrideInitProperties(new ConfigPropertyContainer(InitContext.get().getProperties()));
+    propertyProvider.overrideInitProperties(new ConfigPropertyContainer(propertyProvider.getInitProperties()));
 
     String serverName = internalProperties.getProperty(PROP_SERVER_NAME);
     if(serverName == null){
       internalProperties.addProperty(PROP_SERVER_NAME, serverContext().getServerName());
     }
     else{
-      serverContext().setServerName(serverName);
+      serverContext().overrideServerName(serverName);
     }
   }
   

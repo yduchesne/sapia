@@ -2,11 +2,10 @@ package org.sapia.corus.cluster;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
+import org.sapia.corus.admin.services.cluster.ClusterManager;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.mcast.AsyncEventListener;
@@ -28,8 +27,7 @@ public class ClusterManagerImpl extends ModuleHelper
   private String _multicastAddress = Consts.DEFAULT_MCAST_ADDR;
   private int _multicastPort       = Consts.DEFAULT_MCAST_PORT;
   private EventChannel      _channel;
-  private Map               _hostsById   = Collections.synchronizedMap(new HashMap());
-  private Map               _hostsByAddr = Collections.synchronizedMap(new HashMap());
+  private Set<ServerAddress>   _hostsAddresses = Collections.synchronizedSet(new HashSet<ServerAddress>());
   
   /**
    * @param addr this instance's multicast address.
@@ -91,8 +89,8 @@ public class ClusterManagerImpl extends ModuleHelper
   /**
    * @see ClusterManager#getHostAddresses()
    */
-  public synchronized Set getHostAddresses() {
-    return new HashSet(_hostsById.keySet());
+  public synchronized Set<ServerAddress> getHostAddresses() {
+    return new HashSet<ServerAddress>(_hostsAddresses);
   }
 
   /**
@@ -119,8 +117,7 @@ public class ClusterManagerImpl extends ModuleHelper
     if (event instanceof CorusPubEvent) {
       CorusPubEvent evt  = (CorusPubEvent) event;
       ServerAddress  addr = evt.getOrigin();
-      _hostsByAddr.put(evt.getOrigin(), addr);
-      _hostsById.put(addr, evt.getOrigin());
+      _hostsAddresses.add(evt.getOrigin());
 
       if (evt.isNew()) {
         _log.debug("New corus discovered: " + addr);

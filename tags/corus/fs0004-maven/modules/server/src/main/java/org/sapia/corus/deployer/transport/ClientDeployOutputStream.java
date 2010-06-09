@@ -5,9 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import org.sapia.corus.admin.exceptions.core.IORuntimeException;
 import org.sapia.corus.deployer.DeployOutputStream;
 import org.sapia.corus.deployer.DeploymentMetadata;
-import org.sapia.corus.exceptions.CorusRuntimeException;
 import org.sapia.corus.util.progress.ProgressQueue;
 
 /**
@@ -71,7 +71,7 @@ public class ClientDeployOutputStream implements DeployOutputStream{
   		try{
     		close();
   		}catch(IOException e){
-  		  throw new CorusRuntimeException("Could not close client", e);
+  		  throw new IORuntimeException("Could not close client", e);
   		}
   	}
 		if(_queue == null){

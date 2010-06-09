@@ -1,7 +1,6 @@
 package org.sapia.corus.admin;
 
-import org.sapia.corus.exceptions.CorusException;
-
+import org.sapia.corus.admin.exceptions.core.ServiceNotFoundException;
 
 /**
  * This class is the corus server's remote interface.
@@ -24,9 +23,8 @@ public interface Corus extends java.rmi.Remote {
   /**
    * @param moduleName the name of the module to lookup.
    * @return the remote module instance.
-   * @throws CorusException in an error occurs while performing
-   * the lookup.
+   * @throws ServiceNotFoundException when the desired service is not found.
    */
-  public Object lookup(String moduleName) throws CorusException;
+  public Object lookup(String moduleName) throws ServiceNotFoundException;
   
 }

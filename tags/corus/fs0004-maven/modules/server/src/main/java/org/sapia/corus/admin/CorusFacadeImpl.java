@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +16,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.sapia.corus.admin.exceptions.CorusException;
+import org.sapia.corus.admin.exceptions.cli.ConnectionException;
+import org.sapia.corus.admin.exceptions.cron.DuplicateScheduleException;
+import org.sapia.corus.admin.exceptions.cron.InvalidTimeException;
+import org.sapia.corus.admin.exceptions.deployer.ConcurrentDeploymentException;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
+import org.sapia.corus.admin.exceptions.deployer.RunningProcessesException;
+import org.sapia.corus.admin.exceptions.port.PortActiveException;
+import org.sapia.corus.admin.exceptions.port.PortRangeConflictException;
+import org.sapia.corus.admin.exceptions.port.PortRangeInvalidException;
+import org.sapia.corus.admin.exceptions.processor.ProcessConfigurationNotFoundException;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.admin.services.cluster.ClusterManager;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
@@ -27,28 +42,18 @@ import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.cluster.ClusterInterceptor;
-import org.sapia.corus.cluster.ClusterManager;
 import org.sapia.corus.core.ClusterInfo;
-import org.sapia.corus.cron.InvalidTimeException;
-import org.sapia.corus.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.deployer.DeployOsAdapter;
 import org.sapia.corus.deployer.DeployOutputStream;
 import org.sapia.corus.deployer.DeploymentMetadata;
 import org.sapia.corus.deployer.transport.ClientDeployOutputStream;
 import org.sapia.corus.deployer.transport.DeploymentClientFactory;
-import org.sapia.corus.exceptions.CorusException;
-import org.sapia.corus.exceptions.CorusRuntimeException;
-import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.exceptions.PortActiveException;
-import org.sapia.corus.exceptions.PortRangeConflictException;
-import org.sapia.corus.exceptions.PortRangeInvalidException;
 import org.sapia.corus.util.progress.ProgressMsg;
 import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.corus.util.progress.ProgressQueueImpl;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.server.Hub;
-import org.sapia.util.xml.ProcessingException;
 
 
 /**
@@ -72,7 +77,7 @@ public class CorusFacadeImpl implements CorusFacade {
   /**
    * Constructor for RemoteCorusFacade.
    */
-  public CorusFacadeImpl(String host, int port) throws CorusException {
+  public CorusFacadeImpl(String host, int port) throws Exception {
     _interceptor = new ClusterInterceptor();
     reconnect(host, port);
   }
@@ -83,8 +88,7 @@ public class CorusFacadeImpl implements CorusFacade {
    * @param port the port of the server to reconnect to.
    * @throws CorusException
    */
-  public synchronized void reconnect(String host, int port)
-  throws CorusException {
+  public synchronized void reconnect(String host, int port){
     _addr = new TCPAddress(host, port);
     reconnect();
   }
@@ -94,8 +98,8 @@ public class CorusFacadeImpl implements CorusFacade {
    *
    * @throws CorusException
    */
-  public synchronized void reconnect() throws CorusException {
-    try {
+  public synchronized void reconnect() {
+    try{
       _corus = (Corus) Hub.connect(((TCPAddress) _addr).getHost(),
         ((TCPAddress) _addr).getPort());
       _domain = _corus.getDomain();
@@ -105,8 +109,8 @@ public class CorusFacadeImpl implements CorusFacade {
       
       ClusterManager mgr = (ClusterManager) _corus.lookup(ClusterManager.ROLE);
       _otherHosts.addAll(mgr.getHostAddresses());
-    } catch (java.rmi.RemoteException e) {
-      throw new CorusException(e);
+    }catch(RemoteException e){
+      throw new ConnectionException("Could not reconnect to Corus server", e);
     }
   }
   
@@ -132,7 +136,8 @@ public class CorusFacadeImpl implements CorusFacade {
   public synchronized ProgressQueue deploy(final String fileName, final ClusterInfo cluster)
   throws IOException,
     ConcurrentDeploymentException,
-    CorusException {
+    DuplicateDistributionException,
+    Exception{
     refresh();
     final ProgressQueueImpl queue = new ProgressQueueImpl();
     
@@ -186,7 +191,8 @@ public class CorusFacadeImpl implements CorusFacade {
   private ProgressQueue doDeploy(String fileName, ClusterInfo cluster)   
   throws IOException,
     ConcurrentDeploymentException,
-    CorusException {
+    DuplicateDistributionException,
+    Exception{
 
     OutputStream        os     = null;
     BufferedInputStream bis    = null;
@@ -243,7 +249,7 @@ public class CorusFacadeImpl implements CorusFacade {
   }
   
   public synchronized ProgressQueue undeploy(String distName, String version,
-    ClusterInfo cluster) {
+    ClusterInfo cluster) throws RunningProcessesException{
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
     
@@ -252,17 +258,12 @@ public class CorusFacadeImpl implements CorusFacade {
   }
   
   public synchronized void deployExecConfig(String fileName, ClusterInfo cluster) 
-    throws IOException, CorusException{
+    throws IOException, Exception{
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
     FileInputStream fis = new FileInputStream(fileName); 
-    try{
-      ExecConfig conf = ExecConfig.newInstance(fis);
-      getProcessor().addExecConfig(conf);
-    }catch(ProcessingException e){
-      e.printStackTrace();
-      throw new CorusException(e);
-    }
+    ExecConfig conf = ExecConfig.newInstance(fis);
+    getProcessor().addExecConfig(conf);
   }
   
   public synchronized void undeployExecConfig(String fileName, ClusterInfo cluster){
@@ -272,7 +273,7 @@ public class CorusFacadeImpl implements CorusFacade {
   }
 
   public synchronized Results getExecConfigs(ClusterInfo cluster) 
-  throws IOException, CorusException{
+  throws IOException, Exception{
     refresh();
     
     Results  res = new Results();
@@ -357,7 +358,7 @@ public class CorusFacadeImpl implements CorusFacade {
       } else {
         res.complete();
       }
-    } catch (LogicException e) {
+    } catch (DistributionNotFoundException e) {
       res.complete();
       
       // noop
@@ -369,7 +370,7 @@ public class CorusFacadeImpl implements CorusFacade {
   /**
    * @see org.sapia.corus.admin.CorusFacade#getProcess(String)
    */
-  public synchronized Process getProcess(String vmId) throws LogicException {
+  public synchronized Process getProcess(String vmId) throws ProcessNotFoundException{
     refresh();
     
     return getProcessor().getProcess(vmId);
@@ -504,7 +505,7 @@ public class CorusFacadeImpl implements CorusFacade {
   /**
    * @see org.sapia.corus.admin.CorusFacade#getStatusFor(String)
    */
-  public synchronized ProcStatus getStatusFor(String vmId) throws LogicException {
+  public synchronized ProcStatus getStatusFor(String vmId) throws ProcessNotFoundException {
     refresh();
     
     return getProcessor().getStatusFor(vmId);
@@ -752,7 +753,6 @@ public class CorusFacadeImpl implements CorusFacade {
   public ProgressQueue restart(ClusterInfo cluster) {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
-    
     return getProcessor().resume();
   }
   
@@ -763,12 +763,7 @@ public class CorusFacadeImpl implements CorusFacade {
     String profile, ClusterInfo cluster) {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
-    
-    try {
-      getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), profile, false);
-    } catch (CorusException e) {
-      // noop
-    }
+    getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), profile, false);
   }
   
   /**
@@ -778,28 +773,16 @@ public class CorusFacadeImpl implements CorusFacade {
     String profile, String vmName, ClusterInfo cluster) {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
-    
-    try {
-      getProcessor().kill(ArgFactory.parse(distName), 
-          ArgFactory.parse(version), profile, ArgFactory.parse(vmName), false);
-    } catch (CorusException e) {
-      // noop
-    }
+    getProcessor().kill(ArgFactory.parse(distName), 
+    ArgFactory.parse(version), profile, ArgFactory.parse(vmName), false);
   }
   
   /**
    * @see org.sapia.corus.admin.CorusFacade#kill(String)
    */
-  public synchronized void kill(String vmId) throws LogicException {
+  public synchronized void kill(String vmId) throws ProcessNotFoundException {
     refresh();
-    
-    try {
-      getProcessor().kill(vmId, false);
-    } catch (CorusException e) {
-      if (e instanceof LogicException) {
-        throw (LogicException) e;
-      }
-    }
+    getProcessor().kill(vmId, false);
   }
   
   /**
@@ -809,12 +792,7 @@ public class CorusFacadeImpl implements CorusFacade {
     ClusterInfo cluster) {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
-    
-    try {
-      getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), profile, true);
-    } catch (CorusException e) {
-      // noop
-    }
+    getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), profile, true);
   }
   
   /**
@@ -824,37 +802,20 @@ public class CorusFacadeImpl implements CorusFacade {
     String vmName, ClusterInfo cluster) {
     refresh();
     ClusterInterceptor.clusterCurrentThread(cluster);
-    
-    try {
-      getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), 
-          profile, ArgFactory.parse(vmName), true);
-    } catch (CorusException e) {
-      // noop
-    }
+    getProcessor().kill(ArgFactory.parse(distName), ArgFactory.parse(version), profile, ArgFactory.parse(vmName), true);
   }
   
   /**
    * @see org.sapia.corus.admin.CorusFacade#suspend(String)
    */
-  public void suspend(String vmId) {
+  public void suspend(String vmId) throws ProcessNotFoundException{
     refresh();
-    
-    try {
-      getProcessor().kill(vmId, true);
-    } catch (CorusException e) {
-      // noop
-    }
+    getProcessor().kill(vmId, true);
   }
   
-  public void restart(String pid) throws LogicException {
+  public void restart(String pid) throws ProcessNotFoundException {
     refresh();
-    try{
-      getProcessor().restartByAdmin(pid);
-    }catch(CorusException e){
-      if(e instanceof LogicException){
-        throw (LogicException)e;
-      }
-    }
+    getProcessor().restartByAdmin(pid);
   }
   
   /**
@@ -882,14 +843,14 @@ public class CorusFacadeImpl implements CorusFacade {
    * @see org.sapia.corus.admin.CorusFacade#addCronJon(CronJobInfo)
    */
   public synchronized void addCronJon(CronJobInfo info)
-  throws InvalidTimeException {
+  throws     
+    InvalidTimeException,
+    DuplicateScheduleException, 
+    ProcessConfigurationNotFoundException, 
+    Exception
+  {
     refresh();
-    
-    try {
-      getCron().addCronJob(info);
-    } catch (CorusException e) {
-      throw new CorusRuntimeException(e);
-    }
+    getCron().addCronJob(info);
   }
   
   /**
@@ -956,14 +917,10 @@ public class CorusFacadeImpl implements CorusFacade {
     getPorts().releasePortRange(name);
   }  
   
-  protected void refresh() {
+  protected void refresh() throws ConnectionException{
     if ((System.currentTimeMillis() - _lastReconnect) > RECONNECT_INTERVAL) {
-      try {
-        reconnect();
-        _lastReconnect = System.currentTimeMillis();
-      } catch (CorusException e) {
-        throw new CorusRuntimeException(e);
-      }
+      reconnect();
+      _lastReconnect = System.currentTimeMillis();
     }
   }  
   
@@ -971,12 +928,7 @@ public class CorusFacadeImpl implements CorusFacade {
     Object toReturn = _components.get(role);
     
     if (toReturn == null) {
-      try {
-        toReturn = _corus.lookup(role);
-      } catch (CorusException e) {
-        throw new CorusRuntimeException(e);
-      }
-      
+      toReturn = _corus.lookup(role);
       _components.put(role, toReturn);
     }
     

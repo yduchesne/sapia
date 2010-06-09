@@ -3,8 +3,8 @@ package org.sapia.corus.processor;
 import java.util.List;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.exceptions.LogicException;
 
 public interface ProcessRepository {
 
@@ -45,7 +45,7 @@ public interface ProcessRepository {
    * @throws LogicException if no process object could be found for the
    * given identifier.
    */
-  public abstract Process getProcess(String corusPid) throws LogicException;
+  public abstract Process getProcess(String corusPid) throws ProcessNotFoundException;
 
   /**
    * @return the <code>List</code> of <code>Process</code> instances that

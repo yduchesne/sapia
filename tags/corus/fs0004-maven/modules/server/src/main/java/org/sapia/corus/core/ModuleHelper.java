@@ -4,27 +4,44 @@ import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
 import org.sapia.corus.admin.Module;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
+ * This class can conveniently be extended by {@link Module} implementations.
+ * 
  * @author Yanick Duchesne
  */
-public abstract class ModuleHelper implements ApplicationContextAware, Service, Module{
+public abstract class ModuleHelper implements ApplicationContextAware, Service, Module, InitializingBean, DisposableBean{
   
   protected Logger  _log = Hierarchy.getDefaultHierarchy().getLoggerFor(getClass().getName());
+
   protected ApplicationContext     _appContext;
-  protected ServerContext          _serverContext;
+  
+  @Autowired
+  protected ServerContext _serverContext;
 
   public ModuleHelper() {
     super();
+  }
+  
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    this.init();
+  }
+  
+  @Override
+  public void destroy() throws Exception {
+    this.dispose();
   }
 
   @Override
   public void setApplicationContext(ApplicationContext appCtx)
       throws BeansException {
     _appContext = appCtx;
-    _serverContext = InitContext.get().getServerContext();
   }
     
   public void start() throws Exception {}

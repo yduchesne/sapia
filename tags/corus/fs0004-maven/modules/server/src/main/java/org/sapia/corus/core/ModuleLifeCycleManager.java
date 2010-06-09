@@ -6,78 +6,132 @@ import java.util.List;
 import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
 import org.sapia.corus.annotations.Bind;
-import org.sapia.corus.property.PropertyProvider;
-import org.springframework.beans.BeansException;
+import org.sapia.corus.core.property.PropertyContainer;
+import org.sapia.corus.core.property.PropertyProvider;
+import org.sapia.ubik.net.TCPAddress;
 import org.springframework.beans.FatalBeanException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationContext;
 
-public class ModuleLifeCycleManager implements BeanPostProcessor, PropertyProvider{
+/**
+ * An instance of this class supplements the Spring bean lifecyle by supporting additional constructs:
+ * 
+ * <ul>
+ *   <li>It recognizes the {@link Service} interface.
+ *   <li>It recognizes the {@link Bind} annotation.
+ * </ul>
+ * 
+ * <p>
+ * Instances that are annotated with {@link Bind} are automatically bound to this instance's {@link InternalServiceContext}.
+ * 
+ * @author yduchesne
+ *
+ */
+class ModuleLifeCycleManager implements ServerContext, PropertyProvider{
   
-  private List<Service> services = new ArrayList<Service>();
   private Logger logger = Hierarchy.getDefaultHierarchy().getLoggerFor(getClass().getSimpleName());
+  private List<ApplicationContext> contexts = new ArrayList<ApplicationContext>();
+  private ServerContextImpl delegate;
+  private PropertyContainer properties;
 
-  ///////////////// PropertyProvider interface
+  ModuleLifeCycleManager(ServerContextImpl serverContext, PropertyContainer properties) {
+    this.delegate = serverContext;
+    this.properties = properties;
+  }
+  
+  ///////// ServerContext interface
 
+  @Override
+  public String getDomain() {
+    return delegate.getDomain();
+  }
+  
+  @Override
+  public String getHomeDir() {
+    return delegate.getHomeDir();
+  }
+  
+  @Override
+  public TCPAddress getServerAddress() {
+    return delegate.getServerAddress();
+  }
+  
+  @Override
+  public String getServerName() {
+    return delegate.getServerName();
+  }
+  
+  @Override
+  public void overrideServerName(String serverName) {
+    delegate.overrideServerName(serverName);
+  }
+  
+  @Override
+  public InternalServiceContext getServices() {
+    return delegate.getServices();
+  }
+ 
+  @Override
+  public <S> S lookup(Class<S> serviceInterface) {
+    return delegate.lookup(serviceInterface);
+  }
+  
+  ///////// PropertyProvider interface
+  
+  @Override
+  public void overrideInitProperties(PropertyContainer properties) {
+    this.properties = properties;
+  }
+  
   @Override
   public PropertyContainer getInitProperties() {
-    return InitContext.get().getProperties();
+    return properties;
   }
   
-  @Override
-  public void overrideInitProperties(PropertyContainer container) {
-    InitContext.get().setProperties(container);
+  ///////// Instance methods
+  
+  ServerContext getServerContext(){
+    return delegate;
   }
   
-  ///////////////// BeanPostProcessor interface
-  
-  @Override
-  public Object postProcessAfterInitialization(Object module, String name)
-      throws BeansException {
-    
-    if(module.getClass().isAnnotationPresent(Bind.class)){
-      Bind bind = module.getClass().getAnnotation(Bind.class);
-      logger.debug(String.format("Binding %s as module %s", module.getClass().getName(), bind.moduleInterface().getName()));
-      InitContext.get().getServerContext().getServices().bind(bind.moduleInterface(), module);
-    }
-    
-    if(module instanceof Service){
-      try{
-        Service service = (Service)module;
-        service.init();
-        services.add(service);
-        return module;
-      }catch(Exception e){
-        throw new FatalBeanException("Error performing service initialization for " + name, e);
-      }
-    }
-    else{
-      return module;
-    }
+  void setServerAddress(TCPAddress addr){
+    delegate.setServerAddress(addr);
   }
   
-  @Override
-  public Object postProcessBeforeInitialization(Object module, String name)
-      throws BeansException {
-    return module;
-  }
-  
-  ///////////////// Instance methods
-  
-  public void startServices() throws Exception{
-    for(Service s:services){
-      s.start();
-    }
-  }
-  
-  public void disposeServices(){
-    for(int i = services.size() - 1; i >= 0; i--){
-      Service s = services.get(i);
-      try{
-        s.dispose();
-      }catch(Exception e){
-        logger.error(String.format("Error disposing service: %s", s.getClass().getName()), e);
-      }
-    }
+  void addApplicationContext(ApplicationContext ctx){
+    contexts.add(ctx);
   }
 
+  Object lookup(String name){
+    for(ApplicationContext ctx:contexts){
+      Object bean = ctx.getBean(name);
+      if(bean != null){
+        return bean;
+      }
+    }
+    return null;
+  }
+  
+  void startServices() throws Exception{
+    
+    for(ApplicationContext context:contexts){
+      for(String name:context.getBeanDefinitionNames()){
+        Object bean = context.getBean(name);
+        if(bean != null){
+          if(bean.getClass().isAnnotationPresent(Bind.class)){
+            Bind bind = bean.getClass().getAnnotation(Bind.class);
+            logger.debug(String.format("Binding %s as module %s", bean.getClass().getName(), bind.moduleInterface().getName()));
+            delegate.getServices().bind(bind.moduleInterface(), bean);
+          }
+        }
+        if(bean instanceof Service){
+          try{
+            Service service = (Service)bean;
+            service.start();
+          }catch(Exception e){
+            throw new FatalBeanException("Error performing service initialization for " + name, e);
+          }
+        }
+      }
+    }
+  }  
 }

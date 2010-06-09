@@ -1,6 +1,7 @@
 package org.sapia.corus.core;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
@@ -15,8 +16,9 @@ import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.admin.CorusVersion;
+import org.sapia.corus.admin.exceptions.CorusException;
+import org.sapia.corus.admin.exceptions.ExceptionCode;
 import org.sapia.corus.event.EventDispatcher;
-import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.log.CompositeTarget;
 import org.sapia.corus.log.FormatterFactory;
 import org.sapia.corus.log.StdoutTarget;
@@ -27,12 +29,9 @@ import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.util.Localhost;
 
 /**
+ * This class is the entry point called from the 'java' command line.
+ * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class CorusServer {
   public static final int    DEFAULT_PORT    = 33000;
@@ -53,7 +52,7 @@ public class CorusServer {
       String corusHome = System.getProperty("corus.home");
       
       if (corusHome == null) {
-        throw new CorusException("corus.home system property not set");
+        throw new CorusException("corus.home system property not set", ExceptionCode.INTERNAL_ERROR.getFullCode());
       } else {
         // hack to avoid headackes with backslashes in Properties.load()
         corusHome = corusHome.replace('\\', '/');
@@ -110,7 +109,7 @@ public class CorusServer {
       else{
         throw new CorusException("Domain must be set; pass -d option to command-line, "
            + " or configure " + Consts.PROPERTY_CORUS_DOMAIN + " as part of "
-           + " corus.properties");
+           + " corus.properties", ExceptionCode.INTERNAL_ERROR.getFullCode());
       }
       
       System.setProperty(Consts.PROPERTY_CORUS_DOMAIN, domain);
@@ -201,22 +200,22 @@ public class CorusServer {
       CorusTransport aTransport = new TcpCorusTransport(host, port);
    
       // Initialize Corus, export it and start it
-      ServerContext context = CorusImpl.init(h, new FileInputStream(aFilename), domain, aTransport, corusHome);
-      aTransport.exportObject(CorusImpl.getInstance());
-      CorusImpl.start();
+      CorusImpl corus = new CorusImpl(h, new FileInputStream(aFilename), domain, aTransport, corusHome);
+      CorusRuntime.init(corus, corusHome, aTransport);
+      ServerContext context =  corus.getServerContext();
+      aTransport.exportObject(corus);
+      corus.start();
       
       TCPAddress addr = ((TCPAddress) aTransport.getServerAddress());
       
-      context.setServerAddress(addr);
+      corus.setServerAddress(addr);
       
       System.out.println("Corus server ("+CorusVersion.create()+") started on: " + addr + ":" + port +
         ", domain: " + domain);
       
       EventDispatcher dispatcher = context.lookup(EventDispatcher.class);
       dispatcher.dispatch(new ServerStartedEvent(aTransport.getServerAddress()));
-      
-      Runtime.getRuntime().addShutdownHook(new ShutdownHook(h));
-      
+            
       Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
       
       while (true) {
@@ -254,21 +253,5 @@ public class CorusServer {
     System.out.println("          If not present, the default tcp transport provider is used.");
     System.out.println();
   }
-  
-  static class ShutdownHook extends Thread{
-    private Hierarchy _log;
-    
-    ShutdownHook(Hierarchy h){
-      _log = h;
-    }
-    
-    /**
-     * @see java.lang.Thread#run()
-     */
-    public void run() {
-      _log.getLoggerFor(getClass().getName()).debug("Terminating...");
-      CorusImpl.shutdown();
-      _log.getLoggerFor(getClass().getName()).debug("Terminated.");
-    }
-  }
+
 }

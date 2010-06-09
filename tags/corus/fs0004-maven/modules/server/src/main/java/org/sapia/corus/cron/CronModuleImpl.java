@@ -5,15 +5,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.exceptions.CorusException;
+import org.sapia.corus.admin.exceptions.cron.DuplicateScheduleException;
+import org.sapia.corus.admin.exceptions.cron.InvalidTimeException;
+import org.sapia.corus.admin.exceptions.processor.ProcessConfigurationNotFoundException;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.corus.admin.services.cron.CronModule;
+import org.sapia.corus.admin.services.db.DbMap;
+import org.sapia.corus.admin.services.db.DbModule;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.corus.db.DbMap;
-import org.sapia.corus.db.DbModule;
-import org.sapia.corus.exceptions.CorusException;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.util.IDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -78,28 +80,29 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
    * @see org.sapia.corus.admin.services.cron.CronModule#addCronJob(CronJobInfo)
    */
   public synchronized void addCronJob(CronJobInfo info)
-                               throws InvalidTimeException, LogicException, 
+                               throws InvalidTimeException, ProcessConfigurationNotFoundException, 
                                       CorusException {
     if (_log.isInfoEnabled()) {
       _log.info("adding cron job: " + info);
     }
 
     if (!_deployer.getDistribution(ArgFactory.parse(info.getDistribution()), 
-        ArgFactory.parse(info.getVersion())).containsProcess(info.getVmName())) {
-      throw new LogicException("Invalid VM name: " + info.getVmName());
+        ArgFactory.parse(info.getVersion())).containsProcess(info.getProcessName())) {
+      throw new ProcessConfigurationNotFoundException("Invalid process name: " + info.getProcessName());
     }
 
     info.assignId(IDGenerator.makeId());
 
     CronJob job = new CronJob(info);
-
+    job.init(this, serverContext());
+    
     try {
       AlarmEntry entry = new AlarmEntry(info.getMinute(), info.getHour(),
                                         info.getDayOfMonth(), info.getMonth(),
                                         info.getDayOfWeek(), info.getYear(), job);
 
       if (_alarms.containsAlarm(entry)) {
-        throw new LogicException("A cron job with the same schedule is already present; change the schedule of the new cron job.");
+        throw new DuplicateScheduleException("A cron job with the same schedule is already present; change the schedule of the new cron job");
       } else {
         _alarms.addAlarm(entry);
       }
@@ -140,7 +143,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
 
     while (itr.hasNext()) {
       job = (CronJob) itr.next();
-
+      job.init(this, super.serverContext());
       try {
         _alarms.addAlarm(job.getInfo().getMinute(), job.getInfo().getHour(),
                          job.getInfo().getDayOfMonth(),

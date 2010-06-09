@@ -1,9 +1,9 @@
 package org.sapia.corus.processor.task;
 
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
@@ -28,7 +28,7 @@ public class SuspendTask extends ProcessTerminationTask {
       if(strategy.attemptKill(ctx, requestor(), process, super.getExecutionCount())){
         abort(ctx);
       }
-    } catch (Throwable e) {
+    } catch (ProcessNotFoundException e) {
       // no Vm for ID...
       super.abort(ctx);
       ctx.error(e);
@@ -51,7 +51,7 @@ public class SuspendTask extends ProcessTerminationTask {
       }
 
       ctx.warn("Process '" + process.getProcessID() + "' put in suspended process queue.");
-    } catch (LogicException e) {
+    } catch (ProcessNotFoundException e) {
       ctx.error(e);
     } finally {
       super.abort(ctx);

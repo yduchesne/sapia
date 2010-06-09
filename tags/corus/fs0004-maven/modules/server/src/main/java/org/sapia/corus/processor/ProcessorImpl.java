@@ -7,6 +7,11 @@ import java.util.List;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.admin.exceptions.misc.MissingDataException;
+import org.sapia.corus.admin.exceptions.processor.ProcessLockException;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.admin.services.db.DbModule;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
@@ -19,13 +24,9 @@ import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.corus.db.DbModule;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.event.UndeploymentEvent;
 import org.sapia.corus.event.EventDispatcher;
-import org.sapia.corus.exceptions.CorusException;
-import org.sapia.corus.exceptions.LockException;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.processor.task.BootstrapExecConfigStartTask;
 import org.sapia.corus.processor.task.EndUserExecConfigStartTask;
@@ -172,7 +173,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     try {
       List<Distribution> dists = _deployer.getDistributions(distName, version);
       if (dists.size() == 0) {
-        throw new LogicException("No distribution for " + distName + ", " +
+        throw new DistributionNotFoundException("No distribution for " + distName + ", " +
           version);
       }
       ProgressQueueImpl q = new ProgressQueueImpl();      
@@ -233,9 +234,9 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return exec(distName, version, profile, null, instances);
   }
   
-  public void addExecConfig(ExecConfig conf) throws LogicException{
+  public void addExecConfig(ExecConfig conf){
     if(conf.getName() == null) {
-      throw new LogicException("Execution configuration must have a name");
+      throw new MissingDataException("Execution configuration must have a name");
     }
     this._execConfigs.addConfig(conf);
   }
@@ -249,7 +250,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   }
 
   public void kill(Arg distName, Arg version, String profile,
-      Arg processName, boolean suspend) throws CorusException {
+      Arg processName, boolean suspend) {
     List<Process> procs = _processes.getActiveProcesses().getProcesses(distName, version,
         profile, processName);
     KillTask kill;
@@ -283,11 +284,11 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   }
 
   public void kill(Arg distName, Arg version, 
-      boolean suspend) throws CorusException {
+      boolean suspend) {
     kill(distName, version, null, suspend);
   }
   public void kill(Arg distName, Arg version, String profile,
-    boolean suspend) throws CorusException {
+    boolean suspend) {
     List<Process>          procs = _processes.getActiveProcesses().getProcesses(distName,
         version, profile);
     KillTask               kill;
@@ -320,8 +321,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     }
   }
 
-  public void kill(String corusPid, boolean suspend) throws CorusException {
-    try {
+  public void kill(String corusPid, boolean suspend)  throws ProcessNotFoundException{
 
       KillTask               kill;
       Process                proc = _processes.getActiveProcesses().getProcess(corusPid);
@@ -345,37 +345,27 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
               .setExecDelay(0)
               .setExecInterval(_configuration.getKillIntervalMillis()));
       }
-    } catch (Exception e) {
-      throw new CorusException(e);
-    }
   }
 
-  public void restartByAdmin(String pid) throws CorusException {
+  public void restartByAdmin(String pid) throws ProcessNotFoundException{
     doRestart(pid, ProcessTerminationRequestor.KILL_REQUESTOR_ADMIN);
   }
 
-  public void restart(String pid) throws CorusException {
+  public void restart(String pid) throws ProcessNotFoundException{
     doRestart(pid, ProcessTerminationRequestor.KILL_REQUESTOR_PROCESS);
   }
   
-  private void doRestart(String dynId, ProcessTerminationRequestor origin) throws CorusException {
-    try {
-      Process     proc    = _processes.getActiveProcesses().getProcess(dynId);
-      RestartTask restart = new RestartTask(
-          origin, 
-          dynId, proc.getMaxKillRetry());
+  private void doRestart(String dynId, ProcessTerminationRequestor origin) throws ProcessNotFoundException{
+    Process     proc    = _processes.getActiveProcesses().getProcess(dynId);
+    RestartTask restart = new RestartTask(
+        origin, 
+        dynId, proc.getMaxKillRetry());
 
-      _taskman.executeBackground(
-          restart,
-          BackgroundTaskConfig.create()
-            .setExecDelay(0)
-            .setExecInterval(_configuration.getKillIntervalMillis()));
-      
-    } catch (CorusException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new CorusException(e);
-    }
+    _taskman.executeBackground(
+        restart,
+        BackgroundTaskConfig.create()
+          .setExecDelay(0)
+          .setExecInterval(_configuration.getKillIntervalMillis()));
   }
 
   public ProgressQueue resume() {
@@ -393,10 +383,9 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       proc = (Process) procs.next();
       Arg nameArg = ArgFactory.exact(proc.getDistributionInfo().getName());
       Arg versionArg = ArgFactory.exact(proc.getDistributionInfo().getVersion());      
-      try {
- 
-        dist = store.getDistribution(nameArg, versionArg);
-      } catch (LogicException e) {
+      try{
+            dist = store.getDistribution(nameArg, versionArg);
+      } catch (DistributionNotFoundException e) {
         store.removeDistribution(nameArg, versionArg);
         continue;
       }
@@ -416,7 +405,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
       try {
         resume = new ResumeTask(proc, dist, conf);
-      } catch (LockException e) {
+      } catch (ProcessLockException e) {
         ProgressQueue q = new ProgressQueueImpl();
         q.error(e);
         q.close();
@@ -441,7 +430,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return q;
   }
 
-  public Process getProcess(String corusPid) throws LogicException {
+  public Process getProcess(String corusPid) throws ProcessNotFoundException {
     return _processes.getActiveProcesses().getProcess(corusPid);
   }
 
@@ -499,7 +488,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     return copyStatus(getProcesses(distName));
   }
 
-  public ProcStatus getStatusFor(String corusPid) throws LogicException {
+  public ProcStatus getStatusFor(String corusPid) throws ProcessNotFoundException {
     Process proc = getProcess(corusPid);
 
     return copyStatus(proc);

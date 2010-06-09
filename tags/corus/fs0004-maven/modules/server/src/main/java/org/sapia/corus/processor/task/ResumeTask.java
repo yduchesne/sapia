@@ -2,11 +2,11 @@ package org.sapia.corus.processor.task;
 
 import java.io.IOException;
 
+import org.sapia.corus.admin.exceptions.processor.ProcessLockException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.core.CorusRuntime;
-import org.sapia.corus.exceptions.LockException;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.Task;
@@ -26,7 +26,7 @@ public class ResumeTask extends Task{
   public ResumeTask(Process proc,
                     Distribution dist, 
                     ProcessConfig conf)
-             throws LockException {
+             throws ProcessLockException {
     _process = proc;
     _dist    = dist;
     _conf    = conf;

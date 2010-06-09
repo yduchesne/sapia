@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.sapia.corus.admin.services.db.DbMap;
+import org.sapia.corus.db.persistence.ClassDescriptor;
+
 /**
  * @author Yanick Duchesne
  *
@@ -16,6 +19,11 @@ public class CacheDbMap<K, V> implements DbMap<K, V>{
 	
 	CacheDbMap(DbMap<K,V> cached){
 		_db = cached;
+	}
+	
+	@Override
+	public ClassDescriptor<V> getClassDescriptor() {
+	  return _db.getClassDescriptor();
 	}
 
   public synchronized void close() {
@@ -57,12 +65,12 @@ public class CacheDbMap<K, V> implements DbMap<K, V>{
   }
   
   @Override
-  public Matcher<V> createMatcherFor(V template) {
+  public RecordMatcher<V> createMatcherFor(V template) {
     return _db.createMatcherFor(template);
   }
   
   @Override
-  public Collection<V> values(Matcher<V> matcher) {
+  public Collection<V> values(RecordMatcher<V> matcher) {
     return _db.values(matcher);
   }
 

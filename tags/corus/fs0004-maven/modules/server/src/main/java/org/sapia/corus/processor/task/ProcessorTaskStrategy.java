@@ -15,38 +15,38 @@ public interface ProcessorTaskStrategy {
       TaskExecutionContext ctx, 
       ProcessTerminationRequestor requestor, 
       Process proc, 
-      int currentRetryCount) throws Throwable;
+      int currentRetryCount);
   
-  public void cleanupProcess(TaskExecutionContext ctx, Process proc) throws Throwable;
+  public void cleanupProcess(TaskExecutionContext ctx, Process proc);
 
   public boolean execCmdLine(
       TaskExecutionContext ctx, 
       File processDir, 
       CmdLine cmdLine, 
-      Process proc) throws Throwable;
+      Process proc);
   
   public boolean execProcess(
       TaskExecutionContext ctx, 
       ProcessInfo info, 
-      Properties processProperties) throws Throwable;
+      Properties processProperties);
   
   public boolean forcefulKill(
       TaskExecutionContext ctx, 
       ProcessTerminationRequestor requestor, 
-      String corusPid) throws Throwable;
+      String corusPid);
   
   public void killConfirmed(
       TaskExecutionContext ctx, 
-      Process process) throws Throwable;
+      Process process);
   
   public void killProcess(
       TaskExecutionContext ctx, 
       ProcessTerminationRequestor requestor, 
-      Process proc) throws Throwable;
+      Process proc);
   
   public File makeProcessDir(
       TaskExecutionContext ctx, 
-      ProcessInfo info) throws Throwable;
+      ProcessInfo info);
   
-  public boolean restartProcess(TaskExecutionContext ctx, Process process) throws Throwable;
+  public boolean restartProcess(TaskExecutionContext ctx, Process process);
 }

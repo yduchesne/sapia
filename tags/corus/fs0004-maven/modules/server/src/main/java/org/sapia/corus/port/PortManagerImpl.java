@@ -14,17 +14,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.sapia.corus.admin.exceptions.port.PortActiveException;
+import org.sapia.corus.admin.exceptions.port.PortRangeConflictException;
+import org.sapia.corus.admin.exceptions.port.PortRangeInvalidException;
+import org.sapia.corus.admin.exceptions.port.PortUnavailableException;
+import org.sapia.corus.admin.services.db.DbMap;
+import org.sapia.corus.admin.services.db.DbModule;
 import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.port.PortRange;
 import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.Service;
-import org.sapia.corus.db.DbMap;
-import org.sapia.corus.db.DbModule;
-import org.sapia.corus.exceptions.PortActiveException;
-import org.sapia.corus.exceptions.PortRangeConflictException;
-import org.sapia.corus.exceptions.PortRangeInvalidException;
-import org.sapia.corus.exceptions.PortUnavailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

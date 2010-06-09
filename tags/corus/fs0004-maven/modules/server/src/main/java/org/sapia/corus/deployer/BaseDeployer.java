@@ -3,10 +3,10 @@ package org.sapia.corus.deployer;
 import java.util.List;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.corus.util.progress.ProgressQueueImpl;
 
@@ -20,7 +20,7 @@ public class BaseDeployer implements Deployer{
   }
   
   public Distribution getDistribution(Arg name, Arg version)
-      throws LogicException {
+      throws DistributionNotFoundException {
     return _store.getDistribution(name, version);
   }
   

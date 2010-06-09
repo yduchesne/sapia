@@ -1,5 +1,6 @@
 package org.sapia.corus.taskmanager.core;
 
+import org.sapia.corus.core.ServerContextImpl;
 import org.sapia.corus.core.ServerContext;
 
 /**
@@ -31,7 +32,7 @@ public class TaskExecutionContext {
   }
   
   /**
-   * @return this instance's {@link ServerContext}
+   * @return this instance's {@link ServerContextImpl}
    */
   public ServerContext getServerContext() {
     return serverContext;

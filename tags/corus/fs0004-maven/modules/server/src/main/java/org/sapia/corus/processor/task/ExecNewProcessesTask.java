@@ -5,13 +5,13 @@ import java.util.Set;
 
 import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.StringArg;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.ProcessDef;
 import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.processor.ProcessDependencyFilter;
 import org.sapia.corus.processor.ProcessRef;
 import org.sapia.corus.processor.ProcessRepository;
@@ -64,7 +64,7 @@ public class ExecNewProcessesTask extends Task{
       if(activeProcesses.size() == 0){
         try{
             dist = deployer.getDistribution(distName, version);
-        }catch(LogicException e){
+        }catch(DistributionNotFoundException e){
           ctx.warn("Could not acquire distribution", e);
           // noop;
         }

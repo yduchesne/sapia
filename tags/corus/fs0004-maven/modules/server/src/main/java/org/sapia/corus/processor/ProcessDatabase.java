@@ -3,8 +3,8 @@ package org.sapia.corus.processor;
 import java.util.List;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.exceptions.LogicException;
 
 public interface ProcessDatabase {
 
@@ -88,6 +88,6 @@ public interface ProcessDatabase {
 
   public abstract void removeProcess(String corusPid);
 
-  public abstract Process getProcess(String corusPid) throws LogicException;
+  public abstract Process getProcess(String corusPid) throws ProcessNotFoundException;
 
 }

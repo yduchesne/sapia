@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.exceptions.LogicException;
 
 /**
  * An instance of this class holds the {@link ProcessDatabase}s that
@@ -34,30 +34,18 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     _toRestart = toRestart;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getSuspendedProcesses()
-   */
   public synchronized ProcessDatabase getSuspendedProcesses() {
     return _suspended;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getActiveProcesses()
-   */
   public synchronized ProcessDatabase getActiveProcesses() {
     return _active;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcessesToRestart()
-   */
   public synchronized ProcessDatabase getProcessesToRestart() {
     return _toRestart;
   }
-  
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcessCountFor(org.sapia.corus.processor.ProcessRef)
-   */
+
   public synchronized int getProcessCountFor(ProcessRef processRef){
     return getActiveProcesses().getProcesses(
         processRef.getDist().getName(), 
@@ -66,9 +54,6 @@ public class ProcessRepositoryImpl implements ProcessRepository {
         processRef.getProfile()).size();
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcesses()
-   */
   public synchronized List<Process> getProcesses() {
     List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses());
@@ -78,10 +63,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     return procs;
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcess(java.lang.String)
-   */
-  public synchronized Process getProcess(String corusPid) throws LogicException{
+  public synchronized Process getProcess(String corusPid) throws ProcessNotFoundException{
     if(_active.containsProcess(corusPid)){
       return _active.getProcess(corusPid);
     }
@@ -91,12 +73,9 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     else if(_toRestart.containsProcess(corusPid)){
       return _toRestart.getProcess(corusPid);
     }
-    throw new LogicException("No process found for ID: " + corusPid);
+    throw new ProcessNotFoundException("No process found for ID: " + corusPid);
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg)
-   */
   public synchronized List<Process> getProcesses(Arg distName) {
     List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName));
@@ -105,9 +84,6 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     return procs;
   }  
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg)
-   */
   public synchronized List<Process> getProcesses(Arg distName, Arg version) {
     List<Process> procs = new ArrayList<Process>();
     procs.addAll(_active.getProcesses(distName, version));
@@ -117,9 +93,6 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     return procs;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg, java.lang.String)
-   */
   public synchronized List<Process> getProcesses(Arg distName, Arg version,
                                         String profile) {
     List<Process> procs = new ArrayList<Process>();
@@ -130,9 +103,6 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     return procs;
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.processor.ProcessDatabase#getProcesses(org.sapia.corus.admin.CommandArg, org.sapia.corus.admin.CommandArg, java.lang.String, org.sapia.corus.admin.CommandArg)
-   */
   public synchronized List<Process> getProcesses(Arg distName, Arg version,
                                         String profile, Arg procName) {
     List<Process> procs = new ArrayList<Process>();

@@ -1,11 +1,10 @@
 package org.sapia.corus.processor.task;
 
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
 import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.exceptions.LogicException;
-import org.sapia.corus.processor.event.ProcessKilledEvent;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
@@ -44,7 +43,7 @@ public class KillTask extends ProcessTerminationTask {
       } else {
         ctx.warn("Process " + corusPid() + " terminated");
       }
-    } catch (LogicException e) {
+    } catch (ProcessNotFoundException e) {
       ctx.error(e.getMessage());
     } finally {
       super.abort(ctx);
@@ -65,7 +64,7 @@ public class KillTask extends ProcessTerminationTask {
       if(strategy.attemptKill(ctx, requestor(), process, getExecutionCount())){
         abort(ctx);
       }
-    } catch (LogicException e) {
+    } catch (ProcessNotFoundException e) {
       // no Vm for ID...
       abort(ctx);
       ctx.error(e);

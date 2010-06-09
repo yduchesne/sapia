@@ -9,13 +9,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.exceptions.deployer.ConcurrentDeploymentException;
+import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.admin.exceptions.deployer.RunningProcessesException;
+import org.sapia.corus.admin.services.cluster.ClusterManager;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.http.HttpModule;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.annotations.Bind;
-import org.sapia.corus.cluster.ClusterManager;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
@@ -29,7 +32,6 @@ import org.sapia.corus.deployer.transport.DeploymentClientFactory;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.corus.deployer.transport.DeploymentProcessor;
 import org.sapia.corus.event.EventDispatcher;
-import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
@@ -179,7 +181,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   ////////////////////////////////////////////////////////////////////*/
 
   public Distribution getDistribution(Arg name, Arg version)
-    throws LogicException {
+    throws DistributionNotFoundException {
     return getDistributionStore().getDistribution(name, version);
   }
 
@@ -199,7 +201,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     ProgressQueueImpl progress = new ProgressQueueImpl();
     try {
       if(lookup(Processor.class).getProcesses(distName, version).size() > 0){
-        throw new LogicException("Processes for selected configuration are currently running; kill them prior to undeploying");
+        throw new RunningProcessesException("Processes for selected configuration are currently running; kill them prior to undeploying");
       }
 
       TaskConfig cfg = TaskConfig.create(new TaskLogProgressQueue(progress));
