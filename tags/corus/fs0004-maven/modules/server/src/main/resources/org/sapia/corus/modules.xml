@@ -13,10 +13,6 @@
   <!-- Register Annotation-based Post Processing Beans -->
   <context:annotation-config />
   
-  <bean id="org.sapia.corus.core.ModuleLifeCycleManager" 
-        class="org.sapia.corus.core.ModuleLifeCycleManager" 
-        scope="singleton"/>
-          
   <!-- ============ CLUSTER ============ -->
 
   <bean id="org.sapia.corus.cluster.ClusterManager" 

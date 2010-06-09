@@ -6,7 +6,7 @@ import org.sapia.corus.admin.services.port.PortManager;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.configurator.TestConfigurator;
 import org.sapia.corus.core.InternalServiceContext;
-import org.sapia.corus.core.ServerContext;
+import org.sapia.corus.core.ServerContextImpl;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.TestDeployer;
 import org.sapia.corus.event.EventDispatcher;
@@ -20,7 +20,7 @@ import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TestTaskManager;
 import org.sapia.ubik.net.TCPAddress;
 
-public class TestServerContext extends ServerContext{
+public class TestServerContext extends ServerContextImpl{
   
   public TestServerContext() {
     super(

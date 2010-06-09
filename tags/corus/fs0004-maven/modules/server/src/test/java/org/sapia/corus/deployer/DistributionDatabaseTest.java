@@ -3,8 +3,8 @@ package org.sapia.corus.deployer;
 import junit.framework.TestCase;
 
 import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.exceptions.DuplicateDistributionException;
 
 
 /**

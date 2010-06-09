@@ -9,7 +9,6 @@ import org.sapia.corus.admin.services.processor.ProcStatus;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
-import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.exceptions.CorusException;
 import org.sapia.corus.exceptions.LogicException;
 import org.sapia.corus.interop.Status;

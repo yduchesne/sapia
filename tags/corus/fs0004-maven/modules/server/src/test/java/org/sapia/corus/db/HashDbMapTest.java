@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sapia.corus.admin.services.db.DbMap;
 import org.sapia.corus.db.persistence.ClassDescriptor;
 
 public class HashDbMapTest {
@@ -77,7 +78,7 @@ public class HashDbMapTest {
   public void testValuesMatcher() {
     TestDbObject tbo = new TestDbObject();
     tbo.setName("name0");
-    Matcher<TestDbObject> matcher = map.createMatcherFor(tbo);
+    RecordMatcher<TestDbObject> matcher = map.createMatcherFor(tbo);
     Collection<TestDbObject> result = map.values(matcher);
     assertEquals(1, result.size());
     TestDbObject tboResult = result.iterator().next();

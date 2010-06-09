@@ -3,7 +3,7 @@ package org.sapia.corus.processor.task;
 import org.sapia.corus.admin.services.processor.DistributionInfo;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl;
+import org.sapia.corus.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.processor.TestProcessor;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
