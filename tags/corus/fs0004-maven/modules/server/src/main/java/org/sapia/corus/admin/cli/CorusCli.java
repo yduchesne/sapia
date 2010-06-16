@@ -9,10 +9,10 @@ import org.sapia.console.Console;
 import org.sapia.console.ConsoleListener;
 import org.sapia.console.Context;
 import org.sapia.console.InputException;
-import org.sapia.corus.admin.CorusFacade;
-import org.sapia.corus.admin.CorusFacadeImpl;
 import org.sapia.corus.admin.CorusVersion;
 import org.sapia.corus.admin.exceptions.cli.ConnectionException;
+import org.sapia.corus.admin.facade.CorusConnectionContext;
+import org.sapia.corus.admin.facade.CorusConnector;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.util.Localhost;
 
@@ -26,22 +26,22 @@ public class CorusCli extends CommandConsole {
   public static final int    DEFAULT_PORT = 33000;
   public static final String HOST_OPT = "h";
   public static final String PORT_OPT = "p";
-  protected CorusFacade     _corus;
+  protected CorusConnector _corus;
 
-  public CorusCli(CorusFacade corus) {
+  public CorusCli(CorusConnector corus) {
     super(new CorusCommandFactory());
     super.setCommandListener(new CliConsoleListener());
     _corus = corus;
     
     // Change the prompt
     StringBuffer prompt = new StringBuffer().append("[");
-    if (_corus.getServerAddress().getTransportType().equals("tcp/socket")) {
-      prompt.append(((TCPAddress) _corus.getServerAddress()).getHost()).append(":").
-             append(((TCPAddress) _corus.getServerAddress()).getPort());
+    if (_corus.getContext().getAddress().getTransportType().equals("tcp/socket")) {
+      prompt.append(((TCPAddress) _corus.getContext().getAddress()).getHost()).append(":").
+             append(((TCPAddress) _corus.getContext().getAddress()).getPort());
     } else {
-      prompt.append(_corus.getServerAddress().toString());
+      prompt.append(_corus.getContext().getAddress().toString());
     }
-    prompt.append("@").append(_corus.getDomain()).append("]>> ");
+    prompt.append("@").append(_corus.getContext().getDomain()).append("]>> ");
 
     setPrompt(prompt.toString());
   }
@@ -77,10 +77,9 @@ public class CorusCli extends CommandConsole {
         if (cmd.containsOption(PORT_OPT, true)) {
           port = cmd.assertOption(PORT_OPT, true).asInt();
         }
-  
-        CorusFacade fac = new CorusFacadeImpl(host, port);
-  
-        CorusCli    cli = new CorusCli(fac);
+        CorusConnectionContext connection = new CorusConnectionContext(host, port);
+        CorusConnector connector = new CorusConnector(connection);
+        CorusCli    cli = new CorusCli(connector);
         
         cli.start();
       }

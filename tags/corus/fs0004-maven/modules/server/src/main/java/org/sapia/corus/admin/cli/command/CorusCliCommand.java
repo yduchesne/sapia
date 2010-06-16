@@ -38,7 +38,7 @@ public abstract class CorusCliCommand implements Command {
 
   protected static void displayProgress(ProgressQueue queue, Console cons) {
     ProgressMsg msg;
-    List        msgs;
+    List<ProgressMsg>        msgs;
 
     while (queue.hasNext()) {
       msgs = queue.next();

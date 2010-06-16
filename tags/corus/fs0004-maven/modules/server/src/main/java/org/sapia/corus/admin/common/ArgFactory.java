@@ -1,4 +1,5 @@
-package org.sapia.corus.admin;
+package org.sapia.corus.admin.common;
+
 
 /**
  * This class parses a command arguments, returning the object
@@ -16,8 +17,9 @@ public class ArgFactory {
   
   
   /**
-   * @param token a command token.
-   * @return the corresponding <code>CommandArg</code> object.
+   * @param token an arbitrary string, that can also
+   * represent a pattern.
+   * @return the corresponding {@link Arg} object.
    */
   public static Arg parse(String token){
     if(isPattern(token)){

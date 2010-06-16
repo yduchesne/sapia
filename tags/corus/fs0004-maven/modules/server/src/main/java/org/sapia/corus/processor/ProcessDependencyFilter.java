@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.admin.StringArg;
+import org.sapia.corus.admin.common.StringArg;
 import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Dependency;

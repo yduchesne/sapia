@@ -12,8 +12,8 @@ public class Host extends CorusCliCommand {
 
   protected void doExecute(CliContext ctx)
                     throws AbortException, InputException {
-    ctx.getConsole().println(ctx.getCorus().getServerAddress() +
-                             " at domain '" + ctx.getCorus().getDomain() +
+    ctx.getConsole().println(ctx.getCorus().getContext().getAddress() +
+                             " at domain '" + ctx.getCorus().getContext().getDomain() +
                              "'");
   }
 }

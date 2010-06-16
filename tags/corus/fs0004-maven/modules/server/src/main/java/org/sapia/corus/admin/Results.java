@@ -9,31 +9,23 @@ import java.util.List;
  * @author Yanick Duchesne
  */
 //@SuppressWarnings
-public class Results {
-  private List    _hostLists  = new ArrayList();
+public class Results<T> {
+  private List<Result<T>>    _results = new ArrayList<Result<T>>();
   private boolean _incomplete = true;
 
   /**
-   * @param list a {@link HostList}
+   * @param result a {@link Result}.
    */
-  synchronized void addResult(HostList list) {
-    _hostLists.add(list);
+  public synchronized void addResult(Result<T> result) {
+    _results.add(result);
     notify();
   }
 
-  /**
-   * @param item a {@link HostItem}
-   */
-  synchronized void addResult(HostItem item) {
-    _hostLists.add(item);
-    notify();
-  }
-  
   /**
    * @return <code>true</code> if this instance contains other objects.
    */
   public synchronized boolean hasNext() {
-    if (_hostLists.size() > 0) {
+    if (_results.size() > 0) {
       return true;
     }
 
@@ -45,18 +37,18 @@ public class Results {
       }
     }
 
-    return _hostLists.size() > 0;
+    return _results.size() > 0;
   }
 
   /**
    * @return the next object that this instance contains (the returned object
    * is removed from this instance).
    */
-  public Object next() {
-    return _hostLists.remove(0);
+  public Result<T> next() {
+    return _results.remove(0);
   }
 
-  synchronized void complete() {
+  public synchronized void complete() {
     _incomplete = false;
     notifyAll();
   }

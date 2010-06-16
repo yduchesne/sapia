@@ -1,8 +1,8 @@
 package org.sapia.corus.cron;
 
-import org.sapia.corus.admin.ArgFactory;
 
 import org.sapia.corus.admin.annotations.Transient;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.admin.services.cron.CronJobInfo;
 import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;

@@ -15,11 +15,6 @@ import org.sapia.corus.admin.services.cron.CronJobInfo;
 
 /**
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class CronWizard {
   public void execute(CmdLine cmd, CliContext ctx)
@@ -48,7 +43,7 @@ public class CronWizard {
     }
 
     try {
-      ctx.getCorus().addCronJon(info);
+      ctx.getCorus().getCronFacade().addCronJon(info);
     } catch (InvalidTimeException e) {
       throw new InputException(e.getMessage());
     } catch(DuplicateScheduleException e){

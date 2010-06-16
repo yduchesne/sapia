@@ -3,7 +3,7 @@ package org.sapia.corus.admin.cli;
 import org.sapia.console.CmdLine;
 import org.sapia.console.Console;
 import org.sapia.console.Context;
-import org.sapia.corus.admin.CorusFacade;
+import org.sapia.corus.admin.facade.CorusConnector;
 
 public class ChildCliContext extends Context implements CliContext{
   
@@ -25,7 +25,7 @@ public class ChildCliContext extends Context implements CliContext{
     return parent.getConsole();
   }
   
-  public CorusFacade getCorus() {
+  public CorusConnector getCorus() {
     return parent.getCorus();
   }
 

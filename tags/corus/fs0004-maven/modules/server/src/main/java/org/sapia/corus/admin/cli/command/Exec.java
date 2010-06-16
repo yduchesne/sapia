@@ -30,7 +30,7 @@ public class Exec extends CorusCliCommand {
   private void doExecuteConfig(CliContext ctx) throws AbortException, InputException {
     ClusterInfo cluster = getClusterInfo(ctx);
     String configName = ctx.getCommandLine().assertOption(OPT_EXEC_CONFIG, true).getValue();
-    displayProgress(ctx.getCorus().exec(configName, cluster), ctx.getConsole());
+    displayProgress(ctx.getCorus().getProcessorFacade().exec(configName, cluster), ctx.getConsole());
   } 
   private void doExecuteProcesses(CliContext ctx) throws AbortException, InputException {
     String  dist      = null;
@@ -40,27 +40,27 @@ public class Exec extends CorusCliCommand {
     int     instances = 1;
     CmdLine cmd       = ctx.getCommandLine();
 
-    dist = cmd.assertOption(super.DIST_OPT, true).getValue();
+    dist = cmd.assertOption(DIST_OPT, true).getValue();
 
-    version = cmd.assertOption(super.VERSION_OPT, true).getValue();
+    version = cmd.assertOption(VERSION_OPT, true).getValue();
 
-    profile = cmd.assertOption(super.PROFILE_OPT, true).getValue();
+    profile = cmd.assertOption(PROFILE_OPT, true).getValue();
 
-    if (cmd.containsOption(super.VM_NAME_OPT, true)) {
-      vmName = cmd.assertOption(super.VM_NAME_OPT, true).getValue();
+    if (cmd.containsOption(VM_NAME_OPT, true)) {
+      vmName = cmd.assertOption(VM_NAME_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VM_INSTANCES, true)) {
-      instances = cmd.assertOption(super.VM_INSTANCES, true).asInt();
+    if (cmd.containsOption(VM_INSTANCES, true)) {
+      instances = cmd.assertOption(VM_INSTANCES, true).asInt();
     }
 
     ClusterInfo cluster = getClusterInfo(ctx);
 
     if (vmName != null) {
-      displayProgress(ctx.getCorus().exec(dist, version, profile, vmName,
+      displayProgress(ctx.getCorus().getProcessorFacade().exec(dist, version, profile, vmName,
                                            instances, cluster), ctx.getConsole());
     } else {
-      displayProgress(ctx.getCorus().exec(dist, version, profile, instances,
+      displayProgress(ctx.getCorus().getProcessorFacade().exec(dist, version, profile, instances,
                                            cluster), ctx.getConsole());
     }
   }

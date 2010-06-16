@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import org.sapia.corus.admin.Arg;
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;

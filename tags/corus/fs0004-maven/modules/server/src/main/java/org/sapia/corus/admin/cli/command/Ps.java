@@ -1,12 +1,13 @@
 package org.sapia.corus.admin.cli.command;
 
+import java.util.List;
+
 import org.sapia.console.AbortException;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-import org.sapia.console.table.Cell;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.services.processor.Process;
@@ -41,78 +42,71 @@ public class Ps extends CorusCliCommand {
     String  version = null;
     String  profile = null;
     String  vmName  = null;
-    String  vmId    = null;
+    String  pid = null;
     boolean displayPorts = false;
 
     CmdLine cmd = ctx.getCommandLine();
 
-    if (cmd.containsOption(super.DIST_OPT, true)) {
-      dist = cmd.assertOption(super.DIST_OPT, true).getValue();
+    if (cmd.containsOption(DIST_OPT, true)) {
+      dist = cmd.assertOption(DIST_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VERSION_OPT, true)) {
-      version = cmd.assertOption(super.VERSION_OPT, true).getValue();
+    if (cmd.containsOption(VERSION_OPT, true)) {
+      version = cmd.assertOption(VERSION_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.PROFILE_OPT, true)) {
-      profile = cmd.assertOption(super.PROFILE_OPT, true).getValue();
+    if (cmd.containsOption(PROFILE_OPT, true)) {
+      profile = cmd.assertOption(PROFILE_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VM_NAME_OPT, true)) {
-      vmName = cmd.assertOption(super.VM_NAME_OPT, true).getValue();
+    if (cmd.containsOption(VM_NAME_OPT, true)) {
+      vmName = cmd.assertOption(VM_NAME_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VM_ID_OPT, true)) {
-      vmId = cmd.assertOption(super.VM_ID_OPT, true).getValue();
+    if (cmd.containsOption(VM_ID_OPT, true)) {
+      pid = cmd.assertOption(VM_ID_OPT, true).getValue();
     }
     
     displayPorts = cmd.containsOption(OPT_PORTS, false);
 
     ClusterInfo cluster = getClusterInfo(ctx);
 
-    Results res;
+    Results<List<Process>> res;
 
-    if (vmId != null) {
+    if (pid != null) {
       try {
-        Process proc = ctx.getCorus().getProcess(vmId);
-        displayHeader(ctx.getCorus().getServerAddress(), ctx, displayPorts);
+        Process proc = ctx.getCorus().getProcessorFacade().getProcess(pid);
+        displayHeader(ctx.getCorus().getContext().getAddress(), ctx, displayPorts);
         displayProcess(proc, ctx, displayPorts);
       } catch (Exception e) {
         ctx.getConsole().println(e.getMessage());
       }
     } else if ((dist != null) && (version != null) && (profile != null) &&
                  (vmName != null)) {
-      res = ctx.getCorus().getProcesses(dist, version, profile, vmName, cluster);
+      res = ctx.getCorus().getProcessorFacade().getProcesses(dist, version, profile, vmName, cluster);
       displayResults(res, ctx, displayPorts);
     } else if ((dist != null) && (version != null) && (profile != null)) {
-      res = ctx.getCorus().getProcesses(dist, version, profile, cluster);
+      res = ctx.getCorus().getProcessorFacade().getProcesses(dist, version, profile, cluster);
       displayResults(res, ctx, displayPorts);
     } else if ((dist != null) && (version != null)) {
-      res = ctx.getCorus().getProcesses(dist, version, cluster);
+      res = ctx.getCorus().getProcessorFacade().getProcesses(dist, version, cluster);
       displayResults(res, ctx, displayPorts);
     } else if (dist != null) {
-      res = ctx.getCorus().getProcesses(dist, cluster);
+      res = ctx.getCorus().getProcessorFacade().getProcesses(dist, cluster);
       displayResults(res, ctx, displayPorts);
     } else {
-      res = ctx.getCorus().getProcesses(cluster);
+      res = ctx.getCorus().getProcessorFacade().getProcesses(cluster);
       displayResults(res, ctx, displayPorts);
     }
   }
 
-  private void displayResults(Results res, CliContext ctx, boolean displayPorts) {
-    HostList dists;
-    Process  proc;
-
+  private void displayResults(Results<List<Process>> res, CliContext ctx, boolean displayPorts) {
+    
     while (res.hasNext()) {
-      dists = (HostList) res.next();
-
-      if (dists.size() > 0) {
-        displayHeader(dists.getServerAddress(), ctx, displayPorts);
-
-        for (int j = 0; j < dists.size(); j++) {
-          proc = (Process) dists.get(j);
-          displayProcess(proc, ctx, displayPorts);
-        }
+      Result<List<Process>> result = res.next();
+      displayHeader(result.getOrigin(), ctx, displayPorts);
+      for(Process proc:result.getData()){
+        displayProcess(proc, ctx, displayPorts);
       }
     }
   }
@@ -120,7 +114,6 @@ public class Ps extends CorusCliCommand {
   private void displayProcess(Process proc, CliContext ctx, boolean displayPorts) {
     Table   procTable;
     Row     row;
-    Cell    cell;
 
     procTable = new Table(ctx.getConsole().out(), 7, 20);
     procTable.getTableMetaData().getColumnMetaDataAt(COL_DIST).setWidth(15);

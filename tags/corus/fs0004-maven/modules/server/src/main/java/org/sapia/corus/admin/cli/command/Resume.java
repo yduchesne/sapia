@@ -13,7 +13,7 @@ public class Resume extends CorusCliCommand {
   @Override
   protected void doExecute(CliContext ctx)
                     throws AbortException, InputException {
-    displayProgress(ctx.getCorus().restart(getClusterInfo(ctx)),
+    displayProgress(ctx.getCorus().getProcessorFacade().restart(getClusterInfo(ctx)),
                     ctx.getConsole());
   }
 }

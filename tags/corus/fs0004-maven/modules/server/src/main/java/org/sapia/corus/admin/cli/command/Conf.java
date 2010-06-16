@@ -1,19 +1,18 @@
 package org.sapia.corus.admin.cli.command;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.sapia.console.AbortException;
 import org.sapia.console.InputException;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.admin.ArgFactory;
-import org.sapia.corus.admin.HostItem;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
+import org.sapia.corus.admin.common.NameValuePair;
 import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
-import org.sapia.corus.util.NameValuePair;
 import org.sapia.ubik.net.ServerAddress;
 
 public class Conf extends CorusCliCommand{
@@ -85,14 +84,14 @@ public class Conf extends CorusCliCommand{
         set.add(toAdd[i].trim());
       }
       
-      ctx.getCorus().addTags(set, getClusterInfo(ctx));
+      ctx.getCorus().getConfigFacade().addTags(set, getClusterInfo(ctx));
     }
     else if(op == Op.DELETE){
       String toRemove = ctx.getCommandLine().assertOption(OPT_TAG, true).getValue();
-      ctx.getCorus().removeTag(ArgFactory.parse(toRemove), getClusterInfo(ctx));
+      ctx.getCorus().getConfigFacade().removeTag(toRemove, getClusterInfo(ctx));
     }
     else if(op == Op.LIST){
-      displayTagResults(ctx.getCorus().getTags(getClusterInfo(ctx)), ctx);
+      displayTagResults(ctx.getCorus().getConfigFacade().getTags(getClusterInfo(ctx)), ctx);
     }
   }
   
@@ -117,38 +116,26 @@ public class Conf extends CorusCliCommand{
         ctx.getConsole().println("Invalid property format; expected: <name>=<value>");
       }
       else{
-        ctx.getCorus().addProperty(scope, nameValue[0], nameValue[1], getClusterInfo(ctx));
+        ctx.getCorus().getConfigFacade().addProperty(scope, nameValue[0], nameValue[1], getClusterInfo(ctx));
       }
     }
     else if(op == Op.DELETE){
       String name = ctx.getCommandLine().assertOption(OPT_PROPERTY, true).getValue();
-      ctx.getCorus().removeProperty(scope, ArgFactory.parse(name), getClusterInfo(ctx));
+      ctx.getCorus().getConfigFacade().removeProperty(scope, name, getClusterInfo(ctx));
     }
     else if(op == Op.LIST){
-      displayPropertyResults(ctx.getCorus().getProperties(scope, getClusterInfo(ctx)), ctx);
+      Results<List<NameValuePair>> results = ctx.getCorus().getConfigFacade().getProperties(scope, getClusterInfo(ctx));
+      displayPropertyResults(results, ctx);
     }
     
   }
   
-  private void displayTagResults(Results res, CliContext ctx) {
-    String tag;
+  private void displayTagResults(Results<List<String>> res, CliContext ctx) {
     while (res.hasNext()) {
-      Object result = res.next();
-      if(result instanceof HostItem){
-        HostItem item = (HostItem) result;
-        displayTagsHeader(item.getServerAddress(), ctx);
-        displayTag((String)item.get(), ctx);
-      }
-      else{
-        HostList     propertiesList = (HostList) result;
-        if (propertiesList.size() > 0) {
-          displayTagsHeader(propertiesList.getServerAddress(), ctx);
-  
-          for (int j = 0; j < propertiesList.size(); j++) {
-            tag = (String) propertiesList.get(j);
-            displayTag(tag, ctx);
-          }
-        }
+      Result<List<String>> result = res.next();
+      displayTagsHeader(result.getOrigin(), ctx);
+      for(String tag:result.getData()){
+        displayTag(tag, ctx);
       }
     }
   }
@@ -189,25 +176,12 @@ public class Conf extends CorusCliCommand{
     row.flush();
   }  
   
-  private void displayPropertyResults(Results res, CliContext ctx) {
-    NameValuePair props;
+  private void displayPropertyResults(Results<List<NameValuePair>> res, CliContext ctx) {
     while (res.hasNext()) {
-      Object result = res.next();
-      if(result instanceof HostItem){
-        HostItem item = (HostItem) result;
-        displayPropertiesHeader(item.getServerAddress(), ctx);
-        displayProperties((NameValuePair)item.get(), ctx);
-      }
-      else{
-        HostList     propertiesList = (HostList) result;
-        if (propertiesList.size() > 0) {
-          displayPropertiesHeader(propertiesList.getServerAddress(), ctx);
-  
-          for (int j = 0; j < propertiesList.size(); j++) {
-            props = (NameValuePair) propertiesList.get(j);
-            displayProperties(props, ctx);
-          }
-        }
+      Result<List<NameValuePair>> result = res.next();
+      displayPropertiesHeader(result.getOrigin(), ctx);
+      for(NameValuePair props:result.getData()){
+        displayProperties(props, ctx);
       }
     }
   }

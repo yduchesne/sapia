@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.admin.exceptions.CorusException;
 import org.sapia.corus.admin.exceptions.cron.DuplicateScheduleException;
 import org.sapia.corus.admin.exceptions.cron.InvalidTimeException;

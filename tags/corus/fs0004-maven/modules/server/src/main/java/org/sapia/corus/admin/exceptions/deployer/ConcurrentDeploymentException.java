@@ -10,10 +10,9 @@ import org.sapia.corus.admin.exceptions.ExceptionCode;
  * @author Yanick Duchesne
  */
 public class ConcurrentDeploymentException extends CorusException{
-  /**
-   * Constructor for ConcurrentDeploymentException.
-   * @param msg
-   */
+  
+  static final long serialVersionUID = 1L;
+
   public ConcurrentDeploymentException(String msg) {
     super(msg, ExceptionCode.CONCURRENT_DEPLOYMENT.getFullCode());
   }

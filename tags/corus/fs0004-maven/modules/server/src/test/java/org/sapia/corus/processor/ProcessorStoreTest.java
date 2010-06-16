@@ -5,10 +5,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.ArgFactory;
+import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.processor.DistributionInfo;
 import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.exceptions.LogicException;
 
 
 /**
@@ -116,7 +116,7 @@ public class ProcessorStoreTest extends TestCase {
     try {
       db.getActiveProcesses().getProcess(proc.getProcessID());
       throw new Exception("process not removed");
-    } catch (LogicException e) {
+    } catch (ProcessNotFoundException e) {
       // ok
     }
   }

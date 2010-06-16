@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.sapia.corus.admin.Arg;
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.admin.services.http.HttpContext;
 import org.sapia.corus.admin.services.http.HttpExtension;

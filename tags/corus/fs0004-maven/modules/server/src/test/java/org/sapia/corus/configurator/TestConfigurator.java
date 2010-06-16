@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.NameValuePair;
 import org.sapia.corus.admin.services.configurator.Configurator;
-import org.sapia.corus.util.NameValuePair;
 
 public class TestConfigurator implements Configurator{
 

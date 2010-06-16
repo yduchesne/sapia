@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.db.HashDbMap;
 import org.sapia.corus.db.persistence.ClassDescriptor;
 

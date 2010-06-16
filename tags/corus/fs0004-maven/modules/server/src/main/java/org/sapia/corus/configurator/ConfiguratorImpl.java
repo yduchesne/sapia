@@ -9,7 +9,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.NameValuePair;
 import org.sapia.corus.admin.services.configurator.Configurator;
 import org.sapia.corus.admin.services.db.DbMap;
 import org.sapia.corus.admin.services.db.DbModule;
@@ -17,7 +18,6 @@ import org.sapia.corus.annotations.Bind;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.property.PropertyContainer;
 import org.sapia.corus.core.property.PropertyProvider;
-import org.sapia.corus.util.NameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Bind(moduleInterface=Configurator.class)

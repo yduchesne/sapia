@@ -1,4 +1,5 @@
-package org.sapia.corus.admin;
+package org.sapia.corus.admin.common;
+
 
 /**
  * An instance of this class is used to match given strings

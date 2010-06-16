@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
 import org.sapia.corus.admin.services.db.DbMap;
 import org.sapia.corus.util.IteratorFilter;
 import org.sapia.corus.util.Matcher;

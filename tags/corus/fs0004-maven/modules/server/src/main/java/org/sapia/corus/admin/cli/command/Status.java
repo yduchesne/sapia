@@ -7,7 +7,7 @@ import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
@@ -33,75 +33,69 @@ public class Status extends CorusCliCommand {
     String  version = null;
     String  profile = null;
     String  vmName  = null;
-    String  vmId    = null;
+    String  pid     = null;
 
     CmdLine cmd = ctx.getCommandLine();
 
-    if (cmd.containsOption(super.DIST_OPT, true)) {
-      dist = cmd.assertOption(super.DIST_OPT, true).getValue();
+    if (cmd.containsOption(DIST_OPT, true)) {
+      dist = cmd.assertOption(DIST_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VERSION_OPT, true)) {
-      version = cmd.assertOption(super.VERSION_OPT, true).getValue();
+    if (cmd.containsOption(VERSION_OPT, true)) {
+      version = cmd.assertOption(VERSION_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.PROFILE_OPT, true)) {
-      profile = cmd.assertOption(super.PROFILE_OPT, true).getValue();
+    if (cmd.containsOption(PROFILE_OPT, true)) {
+      profile = cmd.assertOption(PROFILE_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VM_NAME_OPT, true)) {
-      vmName = cmd.assertOption(super.VM_NAME_OPT, true).getValue();
+    if (cmd.containsOption(VM_NAME_OPT, true)) {
+      vmName = cmd.assertOption(VM_NAME_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VM_ID_OPT, true)) {
-      vmId = cmd.assertOption(super.VM_ID_OPT, true).getValue();
+    if (cmd.containsOption(VM_ID_OPT, true)) {
+      pid = cmd.assertOption(VM_ID_OPT, true).getValue();
     }
 
     ClusterInfo cluster = getClusterInfo(ctx);
 
-    Results res;
+    Results<List<ProcStatus>> res;
 
-    if (vmId != null) {
+    if (pid != null) {
       try {
-        ProcStatus stat = ctx.getCorus().getStatusFor(vmId);
-        displayHeader(ctx.getCorus().getServerAddress(), ctx);
+        ProcStatus stat = ctx.getCorus().getProcessorFacade().getStatusFor(pid);
+        displayHeader(ctx.getCorus().getContext().getAddress(), ctx);
         displayStatus(stat, ctx);
       } catch (ProcessNotFoundException e) {
         throw new InputException(e.getMessage());
       }
     } else if ((dist != null) && (version != null) && (profile != null) &&
                  (vmName != null)) {
-      res = ctx.getCorus().getStatus(dist, version, profile, vmName, cluster);
+      res = ctx.getCorus().getProcessorFacade().getStatus(dist, version, profile, vmName, cluster);
       displayResults(res, ctx);
     } else if ((dist != null) && (version != null) && (profile != null)) {
-      res = ctx.getCorus().getStatus(dist, version, profile, cluster);
+      res = ctx.getCorus().getProcessorFacade().getStatus(dist, version, profile, cluster);
       displayResults(res, ctx);
     } else if ((dist != null) && (version != null)) {
-      res = ctx.getCorus().getStatus(dist, version, cluster);
+      res = ctx.getCorus().getProcessorFacade().getStatus(dist, version, cluster);
       displayResults(res, ctx);
     } else if (dist != null) {
-      res = ctx.getCorus().getStatus(dist, cluster);
+      res = ctx.getCorus().getProcessorFacade().getStatus(dist, cluster);
       displayResults(res, ctx);
     } else {
-      res = ctx.getCorus().getStatus(cluster);
+      res = ctx.getCorus().getProcessorFacade().getStatus(cluster);
       displayResults(res, ctx);
     }
   }
 
-  private void displayResults(Results res, CliContext ctx) {
-    HostList dists;
-    ProcStatus stat;
-
+  private void displayResults(Results<List<ProcStatus>> res, CliContext ctx) {
+    
     while (res.hasNext()) {
-      dists = (HostList) res.next();
+      Result<List<ProcStatus>> result = res.next();
+      displayHeader(result.getOrigin(), ctx);
 
-      if (dists.size() > 0) {
-        displayHeader(dists.getServerAddress(), ctx);
-
-        for (int j = 0; j < dists.size(); j++) {
-          stat = (ProcStatus) dists.get(j);
-          displayStatus(stat, ctx);
-        }
+      for(ProcStatus stat:result.getData()){
+        displayStatus(stat, ctx);
       }
     }
   }
@@ -119,7 +113,7 @@ public class Status extends CorusCliCommand {
 
     row = procTable.newRow();
     row.getCellAt(COL_PID).append(stat.getProcessID());
-    List contexts = stat.getContexts();
+    List<Context> contexts = stat.getContexts();
     if(contexts.size() == 0){
       row.flush();
       return;
@@ -128,7 +122,7 @@ public class Status extends CorusCliCommand {
     for(int i = 0; i < contexts.size(); i++){
       context = (Context)contexts.get(i);
       row.getCellAt(COL_CONTEXT).append(context.getName());
-      List params = context.getParams();
+      List<Param> params = context.getParams();
       if(params.size() == 0){
         row.flush();
         row = procTable.newRow();

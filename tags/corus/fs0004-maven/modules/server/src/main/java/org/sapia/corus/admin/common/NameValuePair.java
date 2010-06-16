@@ -1,4 +1,4 @@
-package org.sapia.corus.util;
+package org.sapia.corus.admin.common;
 
 import java.io.Serializable;
 

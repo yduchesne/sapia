@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
 import org.sapia.corus.admin.services.db.DbMap;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.processor.ExecConfig;

@@ -8,8 +8,7 @@ import org.sapia.console.InputException;
 import org.sapia.console.table.Cell;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.admin.HostItem;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
@@ -54,27 +53,12 @@ public class Ls extends CorusCliCommand {
   private void doListExecConfigs(CliContext ctx){
     ClusterInfo cluster = getClusterInfo(ctx);
     try{
-      Results res = ctx.getCorus().getExecConfigs(cluster);
-      
-      ExecConfig conf;
+      Results<List<ExecConfig>> res = ctx.getCorus().getProcessorFacade().getExecConfigs(cluster);
       while (res.hasNext()) {
-        Object result = res.next();
-        if(result instanceof HostItem){
-          HostItem item = (HostItem) result;
-          displayExecConfigHeader(item.getServerAddress(), ctx);
-          conf = (ExecConfig)item.get();
+        Result<List<ExecConfig>> result = res.next();
+        displayExecConfigHeader(result.getOrigin(), ctx);
+        for(ExecConfig conf:result.getData()){
           displayExecConfig(conf, ctx);
-        }
-        else{
-          HostList     confs = (HostList) result;
-          if (confs.size() > 0) {
-            displayExecConfigHeader(confs.getServerAddress(), ctx);
-    
-            for (int j = 0; j < confs.size(); j++) {
-              conf = (ExecConfig) confs.get(j);
-              displayExecConfig(conf, ctx);
-            }
-          }
         }
       }
     }catch(Exception e){
@@ -88,47 +72,34 @@ public class Ls extends CorusCliCommand {
     String  dist    = null;
     String  version = null;
     CmdLine cmd     = ctx.getCommandLine();
-    if (cmd.containsOption(super.DIST_OPT, true)) {
-      dist = cmd.assertOption(super.DIST_OPT, true).getValue();
+    if (cmd.containsOption(DIST_OPT, true)) {
+      dist = cmd.assertOption(DIST_OPT, true).getValue();
     }
 
-    if (cmd.containsOption(super.VERSION_OPT, true)) {
-      version = cmd.assertOption(super.VERSION_OPT, true).getValue();
+    if (cmd.containsOption(VERSION_OPT, true)) {
+      version = cmd.assertOption(VERSION_OPT, true).getValue();
     }
 
     ClusterInfo cluster = getClusterInfo(ctx);
 
     if ((dist != null) && (version != null)) {
-      Results res = ctx.getCorus().getDistributions(dist, version, cluster);
+      Results<List<Distribution>> res = ctx.getCorus().getDeployerFacade().getDistributions(dist, version, cluster);
       displayResults(res, ctx);
     } else if (dist != null) {
-      Results res = ctx.getCorus().getDistributions(dist, cluster);
+      Results<List<Distribution>> res = ctx.getCorus().getDeployerFacade().getDistributions(dist, cluster);
       displayResults(res, ctx);
     } else {
-      Results res = ctx.getCorus().getDistributions(cluster);
+      Results<List<Distribution>> res = ctx.getCorus().getDeployerFacade().getDistributions(cluster);
       displayResults(res, ctx);
     }
   }
 
-  private void displayResults(Results res, CliContext ctx) {
-    Distribution dist;
+  private void displayResults(Results<List<Distribution>> res, CliContext ctx) {
     while (res.hasNext()) {
-      Object result = res.next();
-      if(result instanceof HostItem){
-        HostItem item = (HostItem) result;
-        displayHeader(item.getServerAddress(), ctx);
-        displayDist((Distribution)item.get(), ctx);
-      }
-      else{
-        HostList     dists = (HostList) result;
-        if (dists.size() > 0) {
-          displayHeader(dists.getServerAddress(), ctx);
-  
-          for (int j = 0; j < dists.size(); j++) {
-            dist = (Distribution) dists.get(j);
-            displayDist(dist, ctx);
-          }
-        }
+      Result<List<Distribution>> result = res.next();
+      displayHeader(result.getOrigin(), ctx);
+      for(Distribution dist:result.getData()){
+        displayDist(dist, ctx);
       }
     }
   }
@@ -175,11 +146,11 @@ public class Ls extends CorusCliCommand {
   }
 
   private void displayDist(Distribution dist, CliContext ctx) {
-    Table         distTable = new Table(ctx.getConsole().out(), 4, 20);
-    Row           row;
-    List          vms;
-    Cell          cell;
-    ProcessConfig vm;
+    Table               distTable = new Table(ctx.getConsole().out(), 4, 20);
+    Row                 row;
+    List<ProcessConfig> vms;
+    Cell                cell;
+    ProcessConfig       vm;
 
     distTable.getTableMetaData().getColumnMetaDataAt(COL_DIST).setWidth(18);
     distTable.getTableMetaData().getColumnMetaDataAt(COL_VERSION).setWidth(8);
@@ -194,7 +165,7 @@ public class Ls extends CorusCliCommand {
     vms = dist.getProcesses();
 
     //    StringBuffer profiles = new StringBuffer();
-    List profiles;
+    List<String> profiles;
 
     for (int k = 0; k < vms.size(); k++) {
       cell = row.getCellAt(COL_VMS);

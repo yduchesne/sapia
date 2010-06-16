@@ -44,7 +44,7 @@ public class Deploy extends CorusCliCommand {
     }
     else{
       try {
-        displayProgress(ctx.getCorus().deploy(fileName,
+        displayProgress(ctx.getCorus().getDeployerFacade().deploy(fileName,
           getClusterInfo(ctx)),
           ctx.getConsole());
       } catch (ConcurrentDeploymentException e) {
@@ -67,7 +67,7 @@ public class Deploy extends CorusCliCommand {
     }
     else{
       try{
-        ctx.getCorus().deployExecConfig(fileName, getClusterInfo(ctx));
+        ctx.getCorus().getProcessorFacade().deployExecConfig(fileName, getClusterInfo(ctx));
       }catch(Exception e){
         ctx.getConsole().println("Could not deploy execution configuration");
         e.printStackTrace(ctx.getConsole().out());

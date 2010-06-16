@@ -11,8 +11,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.admin.Arg;
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.exceptions.port.PortUnavailableException;
 import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;

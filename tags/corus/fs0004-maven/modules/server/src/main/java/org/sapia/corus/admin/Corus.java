@@ -8,7 +8,6 @@ import org.sapia.corus.admin.exceptions.core.ServiceNotFoundException;
  * @author Yanick Duchesne
  */
 public interface Corus extends java.rmi.Remote {
-
   
   /**
    * @return the version of the corus server.

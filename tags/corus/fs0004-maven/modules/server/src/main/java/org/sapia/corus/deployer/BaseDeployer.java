@@ -2,7 +2,7 @@ package org.sapia.corus.deployer;
 
 import java.util.List;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
 import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.admin.services.deployer.DeployerConfiguration;

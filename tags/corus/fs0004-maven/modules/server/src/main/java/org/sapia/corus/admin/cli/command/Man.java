@@ -16,7 +16,7 @@ import org.sapia.corus.admin.cli.help.NoHelpException;
  */
 public class Man extends CorusCliCommand{
   
-  private static Map _commands = new HashMap();
+  private static Map<String,Class<?>> _commands = new HashMap<String, Class<?>>();
   
   static{
     _commands.put("conf", Conf.class);
@@ -44,7 +44,7 @@ public class Man extends CorusCliCommand{
     CmdLine cmd = ctx.getCommandLine();
     if(cmd.hasNext() && cmd.isNextArg()){
       Arg toDisplayHelp = cmd.assertNextArg();
-      Class cmdClass = (Class)_commands.get(toDisplayHelp.getName());
+      Class<?> cmdClass = (Class<?>)_commands.get(toDisplayHelp.getName());
       if(cmdClass == null){
         ctx.getConsole().out().println("No help available for: " + toDisplayHelp.getName());
         ctx.getConsole().out().println();
@@ -56,7 +56,7 @@ public class Man extends CorusCliCommand{
       displayHelp(ctx, Man.class);
     }
   }
-  private void displayHelp(CliContext ctx, Class clazz){
+  private void displayHelp(CliContext ctx, Class<?> clazz){
     Help h;
     try{
       h = Help.newHelpFor(clazz);

@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.admin.Arg;
-import org.sapia.corus.admin.ArgFactory;
-import org.sapia.corus.admin.StringArg;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.ArgFactory;
+import org.sapia.corus.admin.common.StringArg;
 import org.sapia.corus.admin.services.processor.ExecConfig;
 import org.sapia.corus.admin.services.processor.Process;
 import org.sapia.corus.admin.services.processor.ProcessDef;

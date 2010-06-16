@@ -1,15 +1,13 @@
 package org.sapia.corus.admin.cli.command;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.sapia.console.AbortException;
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-import org.sapia.corus.admin.HostItem;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
@@ -39,25 +37,25 @@ public class Kill extends CorusCliCommand {
     String  version = null;
     String  profile = null;
     String  vmName  = null;
-    String  vmId    = null;
+    String  pid     = null;
     String  osPid   = null;
 
     CmdLine cmd = ctx.getCommandLine();
 
     // Kill by VM IDENTIDER
-    if (cmd.containsOption(CorusCliCommand.VM_ID_OPT, true)) {
-      VmIdCompletionHook completion = new VmIdCompletionHook();
-      vmId = cmd.assertOption(CorusCliCommand.VM_ID_OPT, true).getValue();
-      completion.addVmId(vmId);
-      killProcessByVmId(ctx, vmId);
+    if (cmd.containsOption(VM_ID_OPT, true)) {
+      PidCompletionHook completion = new PidCompletionHook();
+      pid = cmd.assertOption(VM_ID_OPT, true).getValue();
+      completion.addPid(pid);
+      killProcessByVmId(ctx, pid);
 
       while (cmd.hasNext()) {
         sleep(1000);
         if (cmd.isNextArg()) {
           Arg argument = cmd.assertNextArg();
-          vmId = argument.getName();
-          completion.addVmId(vmId);
-          killProcessByVmId(ctx, vmId);
+          pid = argument.getName();
+          completion.addPid(pid);
+          killProcessByVmId(ctx, pid);
         } else {
           cmd.next();
         }
@@ -66,18 +64,18 @@ public class Kill extends CorusCliCommand {
       waitForKillCompletion(ctx, completion);
 
     // Kill by OS PROCESS ID
-    } else if (cmd.containsOption(CorusCliCommand.OS_PID_OPT, true)) {
-      osPid = cmd.assertOption(CorusCliCommand.OS_PID_OPT, true).getValue();
-      VmIdCompletionHook completion = new VmIdCompletionHook();
-      vmId = killProcessByOsPid(ctx, osPid);
-      completion.addVmId(vmId);
+    } else if (cmd.containsOption(OS_PID_OPT, true)) {
+      osPid = cmd.assertOption(OS_PID_OPT, true).getValue();
+      PidCompletionHook completion = new PidCompletionHook();
+      pid = killProcessByOsPid(ctx, osPid);
+      completion.addPid(pid);
 
       while (cmd.hasNext()) {
         sleep(1000);
         if (cmd.isNextArg()) {
           Arg argument = cmd.assertNextArg();
-          vmId = killProcessByOsPid(ctx, argument.getName());
-          completion.addVmId(vmId);
+          pid = killProcessByOsPid(ctx, argument.getName());
+          completion.addPid(pid);
         } else {
           cmd.next();
         }
@@ -88,16 +86,16 @@ public class Kill extends CorusCliCommand {
     // KILL BY DISTRIBUTION ATTIRBUTES
     } else {
       
-      dist = cmd.assertOption(CorusCliCommand.DIST_OPT, true).getValue();
+      dist = cmd.assertOption(DIST_OPT, true).getValue();
   
-      version = cmd.assertOption(CorusCliCommand.VERSION_OPT, true).getValue();
+      version = cmd.assertOption(VERSION_OPT, true).getValue();
   
-      if(cmd.containsOption(CorusCliCommand.PROFILE_OPT, true)){
-        profile = cmd.assertOption(CorusCliCommand.PROFILE_OPT, true).getValue();
+      if(cmd.containsOption(PROFILE_OPT, true)){
+        profile = cmd.assertOption(PROFILE_OPT, true).getValue();
       }
       
-      if (cmd.containsOption(CorusCliCommand.VM_NAME_OPT, true)) {
-        vmName = cmd.assertOption(CorusCliCommand.VM_NAME_OPT, true).getValue();
+      if (cmd.containsOption(VM_NAME_OPT, true)) {
+        vmName = cmd.assertOption(VM_NAME_OPT, true).getValue();
       }
   
       ClusterInfo cluster = getClusterInfo(ctx);
@@ -106,15 +104,15 @@ public class Kill extends CorusCliCommand {
       MatchCompletionHook completion = new MatchCompletionHook(dist, version, profile, vmName);
       if (vmName != null) {
         if (_suspend) {
-          ctx.getCorus().suspend(dist, version, profile, vmName, cluster);
+          ctx.getCorus().getProcessorFacade().suspend(dist, version, profile, vmName, cluster);
         } else {
-          ctx.getCorus().kill(dist, version, profile, vmName, cluster);
+          ctx.getCorus().getProcessorFacade().kill(dist, version, profile, vmName, cluster);
         }
       } else {
         if (_suspend) {
-          ctx.getCorus().suspend(dist, version, profile, cluster);
+          ctx.getCorus().getProcessorFacade().suspend(dist, version, profile, cluster);
         } else {
-          ctx.getCorus().kill(dist, version, profile, cluster);
+          ctx.getCorus().getProcessorFacade().kill(dist, version, profile, cluster);
         }
       }
       waitForKillCompletion(ctx, completion);
@@ -123,14 +121,13 @@ public class Kill extends CorusCliCommand {
   
   protected void killProcessByVmId(CliContext ctx, String vmId) throws InputException {
     Process processToKill = null;
-    Results aResult = ctx.getCorus().getProcesses(new ClusterInfo(false));
-    while (aResult.hasNext() && processToKill == null) {
-      HostList aList = (HostList) aResult.next();
-      
-      for (Iterator it = aList.iterator(); it.hasNext() && processToKill == null; ) {
-        Process process = (Process) it.next();
+    Results<List<Process>> results = ctx.getCorus().getProcessorFacade().getProcesses(new ClusterInfo(false));
+    while (results.hasNext() && processToKill == null) {
+      Result<List<Process>> processes = results.next();
+      for(Process process:processes.getData()){
         if (process.getProcessID().equals(vmId)) {
           processToKill = process;
+          break;
         }
       }
     }
@@ -144,16 +141,15 @@ public class Kill extends CorusCliCommand {
   
   protected String killProcessByOsPid(CliContext ctx, String osPid) throws InputException {
     Process processToKill = null;
-    Results aResult = ctx.getCorus().getProcesses(new ClusterInfo(false));
-    while (aResult.hasNext() && processToKill == null) {
-      HostList aList = (HostList) aResult.next();
-      
-      for (Iterator it = aList.iterator(); it.hasNext() && processToKill == null; ) {
-        Process aProcess = (Process) it.next();
-        if (aProcess.getOsPid() != null && aProcess.getOsPid().equals(osPid)) {
-          String vmId = aProcess.getProcessID();
-          processToKill = aProcess;
-          ctx.getConsole().println("Found VM " + vmId + " associated to OS pid " + osPid);
+    Results<List<Process>> results = ctx.getCorus().getProcessorFacade().getProcesses(new ClusterInfo(false));
+    while (results.hasNext() && processToKill == null) {
+      Result<List<Process>> processes = results.next();
+      for(Process process:processes.getData()){
+        if (process.getOsPid() != null && process.getOsPid().equals(osPid)) {
+          String pid = process.getProcessID();
+          processToKill = process;
+          ctx.getConsole().println("Found VM " + pid + " associated to OS pid " + osPid);
+          break;
         }
       }
     }
@@ -170,18 +166,18 @@ public class Kill extends CorusCliCommand {
   protected void killProcess(CliContext ctx, Process aProcess) throws InputException {
     if (_suspend) {
       try{
-        ctx.getCorus().suspend(aProcess.getProcessID());
-        ctx.getConsole().println("Suspending VM " + aProcess.getProcessID() + "...");
+        ctx.getCorus().getProcessorFacade().suspend(aProcess.getProcessID());
+        ctx.getConsole().println("Suspending process " + aProcess.getProcessID() + "...");
       }catch(ProcessNotFoundException e){
         throw new InputException(e.getMessage());
       }
     } else {
       try {
-        ctx.getCorus().kill(aProcess.getProcessID());
+        ctx.getCorus().getProcessorFacade().kill(aProcess.getProcessID());
       } catch (ProcessNotFoundException e) {
         throw new InputException(e.getMessage());
       }
-      ctx.getConsole().println("Proceeding to kill of VM " + aProcess.getProcessID() + "...");
+      ctx.getConsole().println("Proceeding to kill of process " + aProcess.getProcessID() + "...");
     }
   }
   
@@ -208,19 +204,19 @@ public class Kill extends CorusCliCommand {
     boolean isCompleted(CliContext ctx);
   }
   
-  class VmIdCompletionHook implements KillCompletionHook{
+  class PidCompletionHook implements KillCompletionHook{
     
-    private List<String> vmIds = new ArrayList<String>();
+    private List<String> pids = new ArrayList<String>();
 
-    void addVmId(String vmId){
-      if(vmId != null)vmIds.add(vmId);
+    void addPid(String pid){
+      if(pid != null)pids.add(pid);
     }
     
     public boolean isCompleted(CliContext ctx) {
       boolean completed = true;
-      for(String vmId:vmIds){
+      for(String vmId:pids){
         try{
-          ctx.getCorus().getProcess(vmId);
+          ctx.getCorus().getProcessorFacade().getProcess(vmId);
         }catch(Exception e){
           completed = false;
         }
@@ -243,29 +239,23 @@ public class Kill extends CorusCliCommand {
       ClusterInfo cluster = getClusterInfo(ctx);
       boolean completed = true;
       if(process != null && profile != null){
-        completed = isCompleted(ctx.getCorus().getProcesses(dist, version, profile, process, cluster));
+        completed = isCompleted(ctx.getCorus().getProcessorFacade().getProcesses(dist, version, profile, process, cluster));
       }
       else if(process != null){
-        completed = isCompleted(ctx.getCorus().getProcesses(dist, version, process, cluster));
+        completed = isCompleted(ctx.getCorus().getProcessorFacade().getProcesses(dist, version, process, cluster));
       }
       else{
-        completed = isCompleted(ctx.getCorus().getProcesses(dist, version, cluster));
+        completed = isCompleted(ctx.getCorus().getProcessorFacade().getProcesses(dist, version, cluster));
       }
       return completed;
     }
     
-    private boolean isCompleted(Results results){
+    private boolean isCompleted(Results<List<Process>> results){
       boolean completed = true;
       while(results.hasNext()){
-        Object result = results.next();
-        if(result instanceof HostItem){
+        Result<List<Process>> result = results.next();
+        if(!result.getData().isEmpty()){
           completed = false;
-        }
-        else{
-          HostList hl = (HostList)result;
-          if(!hl.isEmpty()){
-            completed = false;
-          }
         }
       }
       return completed;

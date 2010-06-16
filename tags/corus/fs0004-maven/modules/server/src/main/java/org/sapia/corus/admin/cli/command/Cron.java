@@ -6,10 +6,9 @@ import org.sapia.console.AbortException;
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-import org.sapia.console.table.Cell;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.cli.command.cron.CronWizard;
@@ -52,10 +51,10 @@ public class Cron extends CorusCliCommand {
       Arg arg = (Arg) cmd.next();
 
       if (arg.getName().equals(LIST) || arg.getName().equals(LS)) {
-        displayResults(ctx.getCorus().getCronJobs(getClusterInfo(ctx)),
+        displayResults(ctx.getCorus().getCronFacade().getCronJobs(getClusterInfo(ctx)),
                        ctx);
       } else if (arg.getName().equals(REMOVE)) {
-        ctx.getCorus().removeCronJob(cmd.assertOption(JOB_ID, true).getValue());
+        ctx.getCorus().getCronFacade().removeCronJob(cmd.assertOption(JOB_ID, true).getValue());
       } else if (arg.getName().equals(ADD)) {
         wiz.execute(cmd, ctx);
       } else {
@@ -67,20 +66,13 @@ public class Cron extends CorusCliCommand {
     }
   }
 
-  private void displayResults(Results res, CliContext ctx) {
-    HostList    dists;
-    CronJobInfo job;
+  private void displayResults(Results<List<CronJobInfo>> res, CliContext ctx) {
 
     while (res.hasNext()) {
-      dists = (HostList) res.next();
-
-      if (dists.size() > 0) {
-        displayHeader(dists.getServerAddress(), ctx);
-
-        for (int j = 0; j < dists.size(); j++) {
-          job = (CronJobInfo) dists.get(j);
-          displayJob(job, ctx);
-        }
+      Result<List<CronJobInfo>> result = res.next();
+      displayHeader(result.getOrigin(), ctx);
+      for(CronJobInfo job:result.getData()){
+        displayJob(job, ctx);
       }
     }
   }
@@ -88,8 +80,6 @@ public class Cron extends CorusCliCommand {
   private void displayJob(CronJobInfo info, CliContext ctx) {
     Table cronTable = new Table(ctx.getConsole().out(), 10, 20);
     Row   row;
-    List  vms;
-    Cell  cell;
 
     cronTable.getTableMetaData().getColumnMetaDataAt(COL_ID).setWidth(17);
     cronTable.getTableMetaData().getColumnMetaDataAt(COL_DIST).setWidth(7);
@@ -143,7 +133,6 @@ public class Cron extends CorusCliCommand {
     Table infoTable;
     Row   row;
     Row   headers;
-    Cell  cell;
 
     hostTable = new Table(ctx.getConsole().out(), 1, 78);
     hostTable.drawLine('=');

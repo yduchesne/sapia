@@ -1,7 +1,8 @@
-package org.sapia.corus.admin;
+package org.sapia.corus.admin.common;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * NOTE: THE SOURCE FROM THIS CLASS HAS BEEN COPIED FROM APACHE COCOON'S
@@ -15,6 +16,7 @@ import java.util.Map;
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi </a>
  * @author <a href="mailto:bloritsch@apache.org">Berin Loritsch </a>
  */
+@SuppressWarnings(value="unchecked")
 public class PatternArg implements Arg{
   
   public static final long serialVersionUID = 1L;

@@ -9,7 +9,7 @@ public class Ver extends CorusCliCommand{
   @Override
   protected void doExecute(CliContext ctx) throws AbortException,
       InputException {
-    ctx.getConsole().println("Server version: " + ctx.getCorus().getVersion());
+    ctx.getConsole().println("Server version: " + ctx.getCorus().getContext().getVersion());
   }
 
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
 import org.sapia.corus.admin.exceptions.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.exceptions.deployer.RunningProcessesException;

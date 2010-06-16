@@ -1,20 +1,20 @@
 package org.sapia.corus.admin.cli;
 
 import org.sapia.console.Context;
-import org.sapia.corus.admin.CorusFacade;
+import org.sapia.corus.admin.facade.CorusConnector;
 
 
 /**
  * @author Yanick Duchesne
  */
 public class CliContextImpl extends Context implements CliContext {
-  private CorusFacade _corus;
+  private CorusConnector _corus;
 
-  public CliContextImpl(CorusFacade corus) {
+  public CliContextImpl(CorusConnector corus) {
     _corus = corus;
   }
 
-  public CorusFacade getCorus() {
+  public CorusConnector getCorus() {
     return _corus;
   }
   

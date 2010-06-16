@@ -3,7 +3,7 @@ package org.sapia.corus.deployer.task;
 import java.io.File;
 import java.util.List;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.event.UndeploymentEvent;

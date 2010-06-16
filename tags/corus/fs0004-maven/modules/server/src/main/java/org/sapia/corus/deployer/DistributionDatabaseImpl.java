@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.sapia.corus.admin.Arg;
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.admin.Arg;
+import org.sapia.corus.admin.common.Arg;
 import org.sapia.corus.admin.exceptions.deployer.DeploymentException;
 import org.sapia.corus.util.ZipUtils;
 import org.sapia.util.xml.ProcessingException;

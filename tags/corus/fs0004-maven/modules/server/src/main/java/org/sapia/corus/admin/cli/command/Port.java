@@ -1,12 +1,13 @@
 package org.sapia.corus.admin.cli.command;
 
+import java.util.List;
+
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-import org.sapia.console.table.Cell;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.exceptions.port.PortActiveException;
@@ -59,7 +60,7 @@ public class Port extends CorusCliCommand{
     int min = cmd.assertOption(OPT_MIN, true).asInt();
     int max = cmd.assertOption(OPT_MAX, true).asInt();
     try{
-      ctx.getCorus().addPortRange(name, min, max, getClusterInfo(ctx));
+      ctx.getCorus().getPortManagementFacade().addPortRange(name, min, max, getClusterInfo(ctx));
     }catch(PortRangeConflictException e){
       ctx.getConsole().println(e.getMessage());
     }catch(PortRangeInvalidException e){
@@ -74,7 +75,7 @@ public class Port extends CorusCliCommand{
       force = true;
     }
     try{
-      ctx.getCorus().removePortRange(name, force, getClusterInfo(ctx));
+      ctx.getCorus().getPortManagementFacade().removePortRange(name, force, getClusterInfo(ctx));
     }catch(PortActiveException e){    
       ctx.getConsole().println(e.getMessage());
     }
@@ -82,27 +83,19 @@ public class Port extends CorusCliCommand{
   
   void doRelease(CliContext ctx, CmdLine cmd) throws InputException{
     String name = cmd.assertOption(OPT_NAME, true).getValue();
-    ctx.getCorus().releasePortRange(name, getClusterInfo(ctx));
+    ctx.getCorus().getPortManagementFacade().releasePortRange(name, getClusterInfo(ctx));
   }    
   
   void doList(CliContext ctx, CmdLine cmd) throws InputException{
-    displayResults(ctx.getCorus().getPortRanges(getClusterInfo(ctx)), ctx);
+    displayResults(ctx.getCorus().getPortManagementFacade().getPortRanges(getClusterInfo(ctx)), ctx);
   }
   
-  private void displayResults(Results res, CliContext ctx) {
-    HostList dists;
-    PortRange range;
-
+  private void displayResults(Results<List<PortRange>> res, CliContext ctx) {
     while (res.hasNext()) {
-      dists = (HostList) res.next();
-
-      if (dists.size() > 0) {
-        displayHeader(dists.getServerAddress(), ctx);
-
-        for (int j = 0; j < dists.size(); j++) {
-          range = (PortRange) dists.get(j);
-          displayPorts(range, ctx);
-        }
+      Result<List<PortRange>> result = res.next();
+      displayHeader(result.getOrigin(), ctx);
+      for(PortRange range:result.getData()){
+        displayPorts(range, ctx);
       }
     }
   }
@@ -110,7 +103,6 @@ public class Port extends CorusCliCommand{
   private void displayPorts(PortRange range, CliContext ctx) {
     Table   rangeTable;
     Row     row;
-    Cell    cell;
 
     rangeTable = new Table(ctx.getConsole().out(), 4, 20);
     rangeTable.getTableMetaData().getColumnMetaDataAt(COL_NAME).setWidth(10);
@@ -137,7 +129,6 @@ public class Port extends CorusCliCommand{
     Table   rangeTable;
     Row     row;
     Row     headers;
-    Cell    cell;
 
     rangeTable = new Table(ctx.getConsole().out(), 1, 78);
     rangeTable.drawLine('=');

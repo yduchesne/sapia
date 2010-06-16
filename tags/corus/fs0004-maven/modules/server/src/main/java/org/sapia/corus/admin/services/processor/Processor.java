@@ -2,8 +2,8 @@ package org.sapia.corus.admin.services.processor;
 
 import java.util.List;
 
-import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.Module;
+import org.sapia.corus.admin.common.Arg;
 import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.processor.ProcessorConfigurationImpl;

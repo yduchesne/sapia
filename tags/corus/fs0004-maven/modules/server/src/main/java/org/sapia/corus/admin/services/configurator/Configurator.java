@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.sapia.corus.admin.Arg;
 import org.sapia.corus.admin.Module;
-import org.sapia.corus.util.NameValuePair;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.NameValuePair;
 
 /**
  * This interface specifies configuration behavior: it supports managing properties
@@ -57,7 +57,7 @@ public interface Configurator extends java.rmi.Remote, Module {
    * in this instance.
    * 
    * @param scope a {@link PropertyScope}
-   * @return a list of {@link org.sapia.corus.util.NameValuePair}
+   * @return a list of {@link org.sapia.corus.admin.common.NameValuePair}
    */
   public List<NameValuePair> getPropertiesAsNameValuePairs(PropertyScope scope);
   

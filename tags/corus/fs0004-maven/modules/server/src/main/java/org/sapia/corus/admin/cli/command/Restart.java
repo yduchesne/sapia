@@ -1,12 +1,12 @@
 package org.sapia.corus.admin.cli.command;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.sapia.console.AbortException;
 import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
-import org.sapia.corus.admin.HostList;
+import org.sapia.corus.admin.Result;
 import org.sapia.corus.admin.Results;
 import org.sapia.corus.admin.cli.CliContext;
 import org.sapia.corus.admin.services.processor.Process;
@@ -22,14 +22,14 @@ public class Restart extends CorusCliCommand {
   protected void doExecute(CliContext ctx) throws AbortException,
       InputException {
     
-    String  vmId    = null;
+    String  pid    = null;
     String  osPid   = null; 
     CmdLine cmd = ctx.getCommandLine();
 
-    // restart by VM IDENTIDER
-    if (cmd.containsOption(CorusCliCommand.VM_ID_OPT, true)) {
-      vmId = cmd.assertOption(CorusCliCommand.VM_ID_OPT, true).getValue();
-      restartProcessByVmId(ctx, vmId);
+    // restart by process IDENTIDER
+    if (cmd.containsOption(VM_ID_OPT, true)) {
+      pid = cmd.assertOption(VM_ID_OPT, true).getValue();
+      restartProcessByVmId(ctx, pid);
 
       while (cmd.hasNext()) {
         sleep(1000);
@@ -42,8 +42,8 @@ public class Restart extends CorusCliCommand {
       }
 
     // restart by OS PROCESS ID
-    } else if (cmd.containsOption(CorusCliCommand.OS_PID_OPT, true)) {
-      osPid = cmd.assertOption(CorusCliCommand.OS_PID_OPT, true).getValue();
+    } else if (cmd.containsOption(OS_PID_OPT, true)) {
+      osPid = cmd.assertOption(OS_PID_OPT, true).getValue();
       restartProcessByOsPid(ctx, osPid);
       
       while (cmd.hasNext()) {
@@ -60,15 +60,13 @@ public class Restart extends CorusCliCommand {
    
   }
   
-  protected void restartProcessByVmId(CliContext ctx, String vmId) throws InputException {
+  protected void restartProcessByVmId(CliContext ctx, String pid) throws InputException {
     Process processToRestart = null;
-    Results aResult = ctx.getCorus().getProcesses(new ClusterInfo(false));
-    while (aResult.hasNext() && processToRestart == null) {
-      HostList aList = (HostList) aResult.next();
-      
-      for (Iterator it = aList.iterator(); it.hasNext() && processToRestart == null; ) {
-        Process process = (Process) it.next();
-        if (process.getProcessID().equals(vmId)) {
+    Results<List<Process>> results = ctx.getCorus().getProcessorFacade().getProcesses(new ClusterInfo(false));
+    while (results.hasNext() && processToRestart == null) {
+      Result<List<Process>> result = results.next();
+      for(Process process:result.getData()){
+        if (process.getProcessID().equals(pid)) {
           processToRestart = process;
         }
       }
@@ -77,22 +75,20 @@ public class Restart extends CorusCliCommand {
     if (processToRestart != null) {
       restartProcess(ctx, processToRestart);
     } else {
-      ctx.getConsole().println("ERROR: Could not restart process, no active process found for the VM id " + vmId);
+      ctx.getConsole().println("ERROR: Could not restart process, no active process found for the process ID " + pid);
     }
   }
   
   protected void restartProcessByOsPid(CliContext ctx, String osPid) throws InputException {
     Process processToRestart = null;
-    Results aResult = ctx.getCorus().getProcesses(new ClusterInfo(false));
-    while (aResult.hasNext() && processToRestart == null) {
-      HostList aList = (HostList) aResult.next();
-      
-      for (Iterator it = aList.iterator(); it.hasNext() && processToRestart == null; ) {
-        Process aProcess = (Process) it.next();
-        if (aProcess.getOsPid() != null && aProcess.getOsPid().equals(osPid)) {
-          String vmId = aProcess.getProcessID();
-          processToRestart = aProcess;
-          ctx.getConsole().println("Found VM " + vmId + " associated to OS pid " + osPid);
+    Results<List<Process>> results = ctx.getCorus().getProcessorFacade().getProcesses(new ClusterInfo(false));
+    while (results.hasNext() && processToRestart == null) {
+      Result<List<Process>> result = results.next();
+      for(Process process:result.getData()){
+        if (process.getOsPid() != null && process.getOsPid().equals(osPid)) {
+          String pid = process.getProcessID();
+          processToRestart = process;
+          ctx.getConsole().println("Found VM " + pid + " associated to OS pid " + osPid);
         }
       }
     }
@@ -106,7 +102,7 @@ public class Restart extends CorusCliCommand {
   
   protected void restartProcess(CliContext ctx, Process aProcess) throws InputException {
     try {
-      ctx.getCorus().restart(aProcess.getProcessID());
+      ctx.getCorus().getProcessorFacade().restart(aProcess.getProcessID());
     } catch (Exception e) {
       throw new InputException(e.getMessage());
     }

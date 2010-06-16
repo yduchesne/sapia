@@ -2,8 +2,8 @@ package org.sapia.corus.processor.task;
 
 import java.io.IOException;
 
-import org.sapia.corus.admin.Arg;
-import org.sapia.corus.admin.ArgFactory;
+import org.sapia.corus.admin.common.Arg;
+import org.sapia.corus.admin.common.ArgFactory;
 import org.sapia.corus.admin.services.deployer.dist.Distribution;
 import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.admin.services.processor.Process;
