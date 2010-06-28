@@ -75,6 +75,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>modules/client</module>
     <module>modules/server</module>
   </modules>
   
