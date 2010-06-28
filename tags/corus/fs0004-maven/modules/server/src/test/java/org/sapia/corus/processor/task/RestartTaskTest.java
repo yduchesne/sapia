@@ -1,10 +1,10 @@
 package org.sapia.corus.processor.task;
 
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
-import org.sapia.corus.admin.services.processor.DistributionInfo;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.processor.DistributionInfo;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.deployer.DistributionDatabase;
 
 /**

@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.persistence.FieldDescriptor;
 
 public class FieldDescriptorTest {
 

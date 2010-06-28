@@ -1,8 +1,8 @@
 package org.sapia.corus.processor.task;
 
-import org.sapia.corus.admin.services.processor.DistributionInfo;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.client.services.processor.DistributionInfo;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 
 
 /**

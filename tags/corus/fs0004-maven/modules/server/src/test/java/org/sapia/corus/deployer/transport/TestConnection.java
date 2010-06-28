@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.sapia.corus.client.services.deployer.transport.Connection;
+
 /**
  * @author Yanick Duchesne
  *
@@ -24,21 +26,21 @@ public class TestConnection implements Connection{
 	}
 	
   /**
-   * @see org.sapia.corus.deployer.transport.Connection#getInputStream()
+   * @see org.sapia.corus.client.services.deployer.transport.Connection#getInputStream()
    */
   public InputStream getInputStream() throws IOException {
     return _is;
   }
 
   /**
-   * @see org.sapia.corus.deployer.transport.Connection#getOutputStream()
+   * @see org.sapia.corus.client.services.deployer.transport.Connection#getOutputStream()
    */
   public OutputStream getOutputStream() throws IOException {
     return _os;
   }
   
   /**
-   * @see org.sapia.corus.deployer.transport.Connection#close()
+   * @see org.sapia.corus.client.services.deployer.transport.Connection#close()
    */
   public void close() {
 

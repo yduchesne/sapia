@@ -8,7 +8,7 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
-import org.sapia.corus.deployer.DeploymentMetadata;
+import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
 
 /**
  * @author Yanick Duchesne

@@ -3,16 +3,16 @@ package org.sapia.corus.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
-import org.sapia.corus.admin.services.processor.ExecConfig;
-import org.sapia.corus.admin.services.processor.ProcStatus;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.common.ProgressQueueImpl;
+import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.client.services.processor.ExecConfig;
+import org.sapia.corus.client.services.processor.ProcStatus;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Processor;
+import org.sapia.corus.client.services.processor.ProcessorConfiguration;
 import org.sapia.corus.interop.Status;
-import org.sapia.corus.util.progress.ProgressQueue;
-import org.sapia.corus.util.progress.ProgressQueueImpl;
 
 public class TestProcessor implements Processor{
   

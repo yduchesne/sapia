@@ -3,10 +3,10 @@ package org.sapia.corus.processor.task;
 import junit.framework.TestCase;
 
 import org.sapia.corus.TestServerContext;
-import org.sapia.corus.admin.services.processor.DistributionInfo;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.client.services.processor.DistributionInfo;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Processor;
+import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.ProcessorConfigurationImpl;
 import org.sapia.corus.taskmanager.core.Task;

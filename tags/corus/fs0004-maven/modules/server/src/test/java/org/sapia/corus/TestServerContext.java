@@ -1,9 +1,9 @@
 package org.sapia.corus;
 
-import org.sapia.corus.admin.services.configurator.Configurator;
-import org.sapia.corus.admin.services.deployer.Deployer;
-import org.sapia.corus.admin.services.port.PortManager;
-import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.client.services.configurator.Configurator;
+import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.port.PortManager;
+import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.configurator.TestConfigurator;
 import org.sapia.corus.core.InternalServiceContext;
 import org.sapia.corus.core.ServerContextImpl;

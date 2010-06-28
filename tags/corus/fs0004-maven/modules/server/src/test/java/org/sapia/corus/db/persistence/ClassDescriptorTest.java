@@ -3,6 +3,7 @@ package org.sapia.corus.db.persistence;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
 
 public class ClassDescriptorTest {
 

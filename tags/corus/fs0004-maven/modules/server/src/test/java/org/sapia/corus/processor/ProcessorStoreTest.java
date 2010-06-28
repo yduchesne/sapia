@@ -5,10 +5,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
-import org.sapia.corus.admin.services.processor.DistributionInfo;
-import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.client.services.processor.DistributionInfo;
+import org.sapia.corus.client.services.processor.Process;
 
 
 /**

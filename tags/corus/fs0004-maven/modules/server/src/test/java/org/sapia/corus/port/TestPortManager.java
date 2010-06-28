@@ -10,9 +10,9 @@
 
 package org.sapia.corus.port;
 
-import org.sapia.corus.admin.services.port.PortRange;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.port.PortRange;
 import org.sapia.corus.db.HashDbMap;
-import org.sapia.corus.db.persistence.ClassDescriptor;
 
 /**
  *

@@ -2,6 +2,8 @@ package org.sapia.corus.db.persistence;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.persistence.Record;
 
 public class TemplateTest {
 

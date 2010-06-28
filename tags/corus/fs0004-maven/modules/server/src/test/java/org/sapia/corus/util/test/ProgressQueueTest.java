@@ -4,8 +4,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.sapia.corus.util.progress.ProgressMsg;
-import org.sapia.corus.util.progress.ProgressQueueImpl;
+import org.sapia.corus.client.common.ProgressMsg;
+import org.sapia.corus.client.common.ProgressQueueImpl;
 
 
 /**
