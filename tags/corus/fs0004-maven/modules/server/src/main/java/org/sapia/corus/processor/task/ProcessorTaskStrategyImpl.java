@@ -11,26 +11,26 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
-import org.sapia.corus.admin.exceptions.port.PortUnavailableException;
-import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
-import org.sapia.corus.admin.services.configurator.Configurator;
-import org.sapia.corus.admin.services.configurator.Configurator.PropertyScope;
-import org.sapia.corus.admin.services.deployer.Deployer;
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.admin.services.deployer.dist.Env;
-import org.sapia.corus.admin.services.deployer.dist.Port;
-import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
-import org.sapia.corus.admin.services.deployer.dist.Property;
-import org.sapia.corus.admin.services.port.PortManager;
-import org.sapia.corus.admin.services.processor.ActivePort;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
-import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.client.exceptions.port.PortUnavailableException;
+import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.client.services.configurator.Configurator;
+import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.dist.Port;
+import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.deployer.dist.Property;
+import org.sapia.corus.client.services.port.PortManager;
+import org.sapia.corus.client.services.processor.ActivePort;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Processor;
+import org.sapia.corus.client.services.processor.ProcessorConfiguration;
+import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.core.Consts;
+import org.sapia.corus.deployer.config.EnvImpl;
 import org.sapia.corus.processor.NativeProcess;
 import org.sapia.corus.processor.NativeProcessFactory;
 import org.sapia.corus.processor.ProcessInfo;
@@ -138,10 +138,10 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     process.setProcessDir(processDir.getAbsolutePath());
     process.setDeleteOnKill(conf.isDeleteOnKill());
 
-    Env env = null;
+    EnvImpl env = null;
 
     try {
-      env = new Env(process.getDistributionInfo().getProfile(), dist
+      env = new EnvImpl(process.getDistributionInfo().getProfile(), dist
           .getBaseDir(), dist.getCommonDir(), process.getProcessDir(),
           getProcessProps(conf, process, dist, ctx, processProperties));
     } catch (PortUnavailableException e) {

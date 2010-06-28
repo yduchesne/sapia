@@ -3,10 +3,10 @@ package org.sapia.corus.taskmanager;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sapia.corus.client.common.ProgressMsg;
+import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskLog;
-import org.sapia.corus.util.progress.ProgressMsg;
-import org.sapia.corus.util.progress.ProgressQueue;
 
 public class ServerTaskLog implements TaskLog{
   

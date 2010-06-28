@@ -3,8 +3,8 @@ package org.sapia.corus.taskmanager.core;
 import java.util.Collections;
 import java.util.List;
 
-import org.sapia.corus.util.progress.ProgressMsg;
-import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.client.common.ProgressMsg;
+import org.sapia.corus.client.common.ProgressQueue;
 
 public class ProgressQueueTaskLog implements ProgressQueue{
 

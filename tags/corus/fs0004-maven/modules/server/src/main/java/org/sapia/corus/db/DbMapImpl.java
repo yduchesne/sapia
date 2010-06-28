@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.sapia.corus.admin.exceptions.core.IORuntimeException;
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.db.persistence.ClassDescriptor;
-import org.sapia.corus.db.persistence.Record;
+import org.sapia.corus.client.exceptions.core.IORuntimeException;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.db.RecordMatcher;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.persistence.Record;
 import org.sapia.corus.db.persistence.Template;
 import org.sapia.corus.db.persistence.TemplateMatcher;
 
@@ -99,7 +100,7 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
   }
 
   @Override
-  public org.sapia.corus.db.RecordMatcher<V> createMatcherFor(V template) {
+  public org.sapia.corus.client.services.db.RecordMatcher<V> createMatcherFor(V template) {
     return new TemplateMatcher<V>(new Template<V>(_classDescriptor, template));
   }
   

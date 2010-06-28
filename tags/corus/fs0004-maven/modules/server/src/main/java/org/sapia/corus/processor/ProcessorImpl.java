@@ -5,24 +5,26 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
-import org.sapia.corus.admin.exceptions.misc.MissingDataException;
-import org.sapia.corus.admin.exceptions.processor.ProcessLockException;
-import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
-import org.sapia.corus.admin.services.db.DbModule;
-import org.sapia.corus.admin.services.deployer.Deployer;
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
-import org.sapia.corus.admin.services.http.HttpModule;
-import org.sapia.corus.admin.services.processor.ExecConfig;
-import org.sapia.corus.admin.services.processor.ProcStatus;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
-import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.common.ProgressQueueImpl;
+import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.client.exceptions.misc.MissingDataException;
+import org.sapia.corus.client.exceptions.processor.ProcessLockException;
+import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.client.services.db.DbModule;
+import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.http.HttpModule;
+import org.sapia.corus.client.services.processor.ExecConfig;
+import org.sapia.corus.client.services.processor.ProcStatus;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Processor;
+import org.sapia.corus.client.services.processor.ProcessorConfiguration;
+import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.event.UndeploymentEvent;
@@ -42,8 +44,6 @@ import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
-import org.sapia.corus.util.progress.ProgressQueue;
-import org.sapia.corus.util.progress.ProgressQueueImpl;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -141,7 +141,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return Processor.ROLE;

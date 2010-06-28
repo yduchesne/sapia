@@ -4,6 +4,8 @@ import java.rmi.Remote;
 
 import org.apache.log.Logger;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.common.ProgressQueueImpl;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
@@ -15,8 +17,6 @@ import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLog;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TaskManagerImpl;
-import org.sapia.corus.util.progress.ProgressQueue;
-import org.sapia.corus.util.progress.ProgressQueueImpl;
 
 
 /**
@@ -48,7 +48,7 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return CorusTaskManager.ROLE;

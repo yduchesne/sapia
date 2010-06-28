@@ -1,6 +1,6 @@
 package org.sapia.corus.deployer;
 
-import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
+import org.sapia.corus.client.services.deployer.DeployerConfiguration;
 
 public class DeployerConfigurationImpl implements DeployerConfiguration{
   

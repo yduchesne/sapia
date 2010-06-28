@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.db.RecordMatcher;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
 
 /**
  * @author Yanick Duchesne

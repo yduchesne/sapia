@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.db.persistence.ClassDescriptor;
-import org.sapia.corus.db.persistence.Record;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.db.RecordMatcher;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.persistence.Record;
 import org.sapia.corus.db.persistence.Template;
 import org.sapia.corus.db.persistence.TemplateMatcher;
 
@@ -59,7 +60,7 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
     return new RecordIterator(_map.values().iterator());
   }
   
-  public org.sapia.corus.db.RecordMatcher<V> createMatcherFor(V template) {
+  public org.sapia.corus.client.services.db.RecordMatcher<V> createMatcherFor(V template) {
     return new TemplateMatcher<V>(new Template<V>(_classDescriptor, template));
   }
  

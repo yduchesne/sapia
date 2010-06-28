@@ -2,11 +2,11 @@ package org.sapia.corus.processor;
 
 import java.util.List;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.processor.Process;
 import org.sapia.corus.util.CompositeMatcher;
 import org.sapia.corus.util.IteratorFilter;
 import org.sapia.corus.util.Matcher;

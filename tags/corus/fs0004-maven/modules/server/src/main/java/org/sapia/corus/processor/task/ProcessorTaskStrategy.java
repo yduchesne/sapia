@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.Properties;
 
 import org.sapia.console.CmdLine;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 

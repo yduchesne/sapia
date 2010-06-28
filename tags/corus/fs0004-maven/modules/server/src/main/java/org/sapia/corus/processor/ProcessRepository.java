@@ -2,9 +2,9 @@ package org.sapia.corus.processor;
 
 import java.util.List;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.exceptions.processor.ProcessNotFoundException;
-import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
+import org.sapia.corus.client.services.processor.Process;
 
 public interface ProcessRepository {
 

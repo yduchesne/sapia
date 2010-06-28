@@ -2,10 +2,10 @@ package org.sapia.corus.db;
 
 import java.io.File;
 
-import org.sapia.corus.admin.exceptions.core.IORuntimeException;
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.admin.services.db.DbModule;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.exceptions.core.IORuntimeException;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.db.DbModule;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.net.TCPAddress;
@@ -76,7 +76,7 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return DbModule.ROLE;

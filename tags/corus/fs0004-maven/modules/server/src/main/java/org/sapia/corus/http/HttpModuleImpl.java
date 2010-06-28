@@ -1,8 +1,8 @@
 package org.sapia.corus.http;
 
-import org.sapia.corus.admin.services.http.HttpExtension;
-import org.sapia.corus.admin.services.http.HttpModule;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.services.http.HttpExtension;
+import org.sapia.corus.client.services.http.HttpModule;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.http.filesystem.FileSystemExtension;
@@ -29,7 +29,7 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
   }
   
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return ROLE;

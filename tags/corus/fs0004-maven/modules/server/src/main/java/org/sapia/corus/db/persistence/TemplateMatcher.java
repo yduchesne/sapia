@@ -1,6 +1,7 @@
 package org.sapia.corus.db.persistence;
 
-import org.sapia.corus.db.RecordMatcher;
+import org.sapia.corus.client.services.db.RecordMatcher;
+import org.sapia.corus.client.services.db.persistence.Record;
 
 /**
  * This class implements the {@link RecordMatcher} interface over the {@link Template} class.

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.sapia.corus.deployer.transport.Connection;
+import org.sapia.corus.client.services.deployer.transport.Connection;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 
@@ -54,7 +54,7 @@ public class HttpConnection implements Connection{
   }
   
   /**
-   * @see org.sapia.corus.deployer.transport.Connection#close()
+   * @see org.sapia.corus.client.services.deployer.transport.Connection#close()
    */
   public void close() {
   }

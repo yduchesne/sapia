@@ -3,6 +3,8 @@ package org.sapia.corus.deployer;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
+
 
 /**
  * An output stream that is used for clustered deployment.

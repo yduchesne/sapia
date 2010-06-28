@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.exceptions.CorusException;
-import org.sapia.corus.admin.exceptions.cron.DuplicateScheduleException;
-import org.sapia.corus.admin.exceptions.cron.InvalidTimeException;
-import org.sapia.corus.admin.exceptions.processor.ProcessConfigurationNotFoundException;
-import org.sapia.corus.admin.services.cron.CronJobInfo;
-import org.sapia.corus.admin.services.cron.CronModule;
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.admin.services.db.DbModule;
-import org.sapia.corus.admin.services.deployer.Deployer;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.common.IDGenerator;
+import org.sapia.corus.client.exceptions.CorusException;
+import org.sapia.corus.client.exceptions.cron.DuplicateScheduleException;
+import org.sapia.corus.client.exceptions.cron.InvalidTimeException;
+import org.sapia.corus.client.exceptions.processor.ProcessConfigurationNotFoundException;
+import org.sapia.corus.client.services.cron.CronJobInfo;
+import org.sapia.corus.client.services.cron.CronModule;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.db.DbModule;
+import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.corus.util.IDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.dyade.jdring.AlarmEntry;
@@ -66,7 +66,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return CronModule.ROLE;
@@ -77,7 +77,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.admin.services.cron.CronModule#addCronJob(CronJobInfo)
+   * @see org.sapia.corus.client.services.cron.CronModule#addCronJob(CronJobInfo)
    */
   public synchronized void addCronJob(CronJobInfo info)
                                throws InvalidTimeException, ProcessConfigurationNotFoundException, 
@@ -114,7 +114,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   }
 
   /**
-   * @see org.sapia.corus.admin.services.cron.CronModule#removeCronJob(String)
+   * @see org.sapia.corus.client.services.cron.CronModule#removeCronJob(String)
    */
   public synchronized void removeCronJob(String id) {
     _log.debug("removing cron job: " + id);

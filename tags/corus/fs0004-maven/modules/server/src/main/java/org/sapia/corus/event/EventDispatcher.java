@@ -1,6 +1,6 @@
 package org.sapia.corus.event;
 
-import org.sapia.corus.admin.Module;
+import org.sapia.corus.client.Module;
 import org.sapia.ubik.rmi.interceptor.Event;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.interceptor.InvalidInterceptorException;

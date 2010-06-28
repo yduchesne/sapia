@@ -1,6 +1,6 @@
 package org.sapia.corus.taskmanager.core;
 
-import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.client.common.ProgressQueue;
 
 /**
  * An instance of this class wraps a {@link ProgressQueue}, redirecting its output to it.

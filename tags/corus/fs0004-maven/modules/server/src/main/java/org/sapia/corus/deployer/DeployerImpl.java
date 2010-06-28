@@ -8,36 +8,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.exceptions.deployer.ConcurrentDeploymentException;
-import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
-import org.sapia.corus.admin.exceptions.deployer.RunningProcessesException;
-import org.sapia.corus.admin.services.cluster.ClusterManager;
-import org.sapia.corus.admin.services.deployer.Deployer;
-import org.sapia.corus.admin.services.deployer.DeployerConfiguration;
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.admin.services.http.HttpModule;
-import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.IDGenerator;
+import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.common.ProgressQueueImpl;
+import org.sapia.corus.client.exceptions.deployer.ConcurrentDeploymentException;
+import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.client.exceptions.deployer.RunningProcessesException;
+import org.sapia.corus.client.services.cluster.ClusterManager;
+import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.deployer.DeployerConfiguration;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.transport.AbstractDeploymentClient;
+import org.sapia.corus.client.services.deployer.transport.ClientDeployOutputStream;
+import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
+import org.sapia.corus.client.services.deployer.transport.DeploymentClientFactory;
+import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
+import org.sapia.corus.client.services.http.HttpModule;
+import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.corus.deployer.task.BuildDistTask;
 import org.sapia.corus.deployer.task.DeployTask;
 import org.sapia.corus.deployer.task.UndeployTask;
-import org.sapia.corus.deployer.transport.AbstractDeploymentClient;
-import org.sapia.corus.deployer.transport.ClientDeployOutputStream;
 import org.sapia.corus.deployer.transport.Deployment;
-import org.sapia.corus.deployer.transport.DeploymentClientFactory;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.corus.deployer.transport.DeploymentProcessor;
 import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
-import org.sapia.corus.util.IDGenerator;
-import org.sapia.corus.util.progress.ProgressQueue;
-import org.sapia.corus.util.progress.ProgressQueueImpl;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
@@ -170,7 +172,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return Deployer.ROLE;

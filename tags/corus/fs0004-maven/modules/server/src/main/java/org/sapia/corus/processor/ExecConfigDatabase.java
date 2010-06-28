@@ -2,8 +2,8 @@ package org.sapia.corus.processor;
 
 import java.util.List;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.services.processor.ExecConfig;
 
 public interface ExecConfigDatabase {
 

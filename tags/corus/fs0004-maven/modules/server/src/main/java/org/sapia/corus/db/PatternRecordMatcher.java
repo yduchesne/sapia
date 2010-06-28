@@ -8,12 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.db.persistence.ClassDescriptor;
-import org.sapia.corus.db.persistence.FieldDescriptor;
-import org.sapia.corus.db.persistence.Record;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.db.RecordMatcher;
+import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.persistence.FieldDescriptor;
+import org.sapia.corus.client.services.db.persistence.Record;
 
 /**
  * An instance of this class matches field values of a {@link Record} based on a predefined

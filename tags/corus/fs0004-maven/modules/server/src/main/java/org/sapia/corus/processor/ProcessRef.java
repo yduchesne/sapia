@@ -1,7 +1,7 @@
 package org.sapia.corus.processor;
 
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 
 public class ProcessRef {
 

@@ -4,7 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
 
 
 /**
@@ -51,7 +52,7 @@ public class DeployOutputStreamImpl extends FileOutputStream
   }
   
   /**
-   * @see org.sapia.corus.deployer.DeployOutputStream#getProgressQueue()
+   * @see org.sapia.corus.client.services.deployer.transport.DeployOutputStream#getProgressQueue()
    */
   public ProgressQueue getProgressQueue() {
     if (_queue == null) {

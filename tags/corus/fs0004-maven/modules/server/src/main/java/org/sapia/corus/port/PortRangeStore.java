@@ -12,8 +12,8 @@ package org.sapia.corus.port;
 
 import java.util.Iterator;
 
-import org.sapia.corus.admin.services.db.DbMap;
-import org.sapia.corus.admin.services.port.PortRange;
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.port.PortRange;
 
 /**
  *

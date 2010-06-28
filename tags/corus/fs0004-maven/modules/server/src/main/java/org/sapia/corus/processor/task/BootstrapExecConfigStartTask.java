@@ -2,7 +2,7 @@ package org.sapia.corus.processor.task;
 
 import java.util.List;
 
-import org.sapia.corus.admin.services.processor.ExecConfig;
+import org.sapia.corus.client.services.processor.ExecConfig;
 import org.sapia.corus.processor.ExecConfigDatabase;
 import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;

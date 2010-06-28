@@ -3,6 +3,7 @@ package org.sapia.corus.deployer.transport.mplex;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.log.Logger;
+import org.sapia.corus.client.services.deployer.transport.mplex.MplexDeploymentClient;
 import org.sapia.corus.deployer.transport.DeploymentAcceptor;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
@@ -22,8 +23,6 @@ import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketTransportProvid
  */
 public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAcceptor{
 	
-	public static final String DEPLOY_STREAM_HEADER = "corus-1.0/deployer";
-	
 	private MultiplexSocketConnector _connector;
 	private MultiplexSocketTransportProvider _provider;
 	private DeploymentConnector _deployConn;
@@ -42,7 +41,7 @@ public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAccept
   public boolean selectStream(byte[] header) {
   	try{
     	String headerStr = new String(header, 0, header.length,  "UTF-8");
-  	  return headerStr.startsWith(DEPLOY_STREAM_HEADER);
+  	  return headerStr.startsWith(MplexDeploymentClient.DEPLOY_STREAM_HEADER);
   	}catch(UnsupportedEncodingException e){
   		return false;
   	}

@@ -2,12 +2,12 @@ package org.sapia.corus.processor.task;
 
 import java.io.IOException;
 
-import org.sapia.corus.admin.common.Arg;
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Process.ProcessTerminationRequestor;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.processor.ProcessInfo;

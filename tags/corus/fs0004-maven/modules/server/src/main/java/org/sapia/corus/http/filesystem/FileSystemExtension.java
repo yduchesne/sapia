@@ -12,9 +12,9 @@ import java.util.List;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.sapia.corus.admin.services.http.HttpContext;
-import org.sapia.corus.admin.services.http.HttpExtension;
-import org.sapia.corus.admin.services.http.HttpExtensionInfo;
+import org.sapia.corus.client.services.http.HttpContext;
+import org.sapia.corus.client.services.http.HttpExtension;
+import org.sapia.corus.client.services.http.HttpExtensionInfo;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.http.HttpExtensionManager;
 import org.sapia.corus.http.helpers.NotFoundHelper;

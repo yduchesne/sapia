@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
 import org.apache.log.Logger;
+import org.sapia.corus.client.services.deployer.transport.mplex.MplexDeploymentClient;
 import org.sapia.corus.deployer.transport.Deployment;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
@@ -43,7 +44,7 @@ class AcceptorThread implements Runnable{
     
     byte[] header;
     try{
-      header = new byte[MplexDeploymentAcceptor.DEPLOY_STREAM_HEADER.getBytes("UTF-8").length];
+      header = new byte[MplexDeploymentClient.DEPLOY_STREAM_HEADER.getBytes("UTF-8").length];
     }catch(UnsupportedEncodingException e){
       _logger.error("Could not create header buffer; stopping", e);
       return;

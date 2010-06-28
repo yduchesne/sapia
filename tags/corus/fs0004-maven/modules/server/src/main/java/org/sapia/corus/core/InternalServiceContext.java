@@ -3,9 +3,9 @@ package org.sapia.corus.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sapia.corus.admin.services.deployer.Deployer;
-import org.sapia.corus.admin.services.processor.Processor;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.processor.ExecConfigDatabase;

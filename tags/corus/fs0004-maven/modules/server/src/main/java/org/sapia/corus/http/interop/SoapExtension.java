@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
-import org.sapia.corus.admin.exceptions.misc.MissingDataException;
-import org.sapia.corus.admin.services.http.HttpContext;
-import org.sapia.corus.admin.services.http.HttpExtension;
-import org.sapia.corus.admin.services.http.HttpExtensionInfo;
-import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.client.exceptions.misc.MissingDataException;
+import org.sapia.corus.client.services.http.HttpContext;
+import org.sapia.corus.client.services.http.HttpExtension;
+import org.sapia.corus.client.services.http.HttpExtensionInfo;
+import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.Poll;

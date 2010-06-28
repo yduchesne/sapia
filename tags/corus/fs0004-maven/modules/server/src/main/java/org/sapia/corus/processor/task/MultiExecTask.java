@@ -3,7 +3,7 @@ package org.sapia.corus.processor.task;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.admin.services.configurator.Configurator;
+import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.processor.ProcessRef;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.StartupLock;

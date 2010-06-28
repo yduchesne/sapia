@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sapia.corus.admin.services.cluster.ClusterManager;
+import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.mcast.AsyncEventListener;
@@ -58,7 +58,7 @@ public class ClusterManagerImpl extends ModuleHelper
     _log.info("Signaling presence to cluster on: " + _multicastAddress + ":" + _multicastPort);
     _channel.dispatch(CorusPubEvent.class.getName(),
             new CorusPubEvent(true, CorusRuntime.getTransport().getServerAddress()));
-		ClusterInterceptor interceptor = new ClusterInterceptor(_log);
+		ServerSideClusterInterceptor interceptor = new ServerSideClusterInterceptor(_log);
 		
     Hub.serverRuntime.addInterceptor(ServerPreInvokeEvent.class, interceptor);
 		Hub.serverRuntime.addInterceptor(ReplicationEvent.class, interceptor);    
@@ -76,7 +76,7 @@ public class ClusterManagerImpl extends ModuleHelper
   ////////////////////////////////////////////////////////////////////*/
 
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return ClusterManager.ROLE;

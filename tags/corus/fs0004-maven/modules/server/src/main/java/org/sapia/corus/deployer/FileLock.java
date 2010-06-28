@@ -1,6 +1,6 @@
 package org.sapia.corus.deployer;
 
-import org.sapia.corus.admin.exceptions.deployer.ConcurrentDeploymentException;
+import org.sapia.corus.client.exceptions.deployer.ConcurrentDeploymentException;
 
 
 /**

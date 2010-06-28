@@ -1,9 +1,9 @@
 package org.sapia.corus.taskmanager;
 
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.common.ProgressMsg;
+import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
-import org.sapia.corus.util.progress.ProgressMsg;
-import org.sapia.corus.util.progress.ProgressQueue;
 
 /**
  * Extends the {@link TaskManager} interface by adding the 

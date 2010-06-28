@@ -2,9 +2,9 @@ package org.sapia.corus.processor.task;
 
 import java.util.List;
 
-import org.sapia.corus.admin.services.processor.Process;
-import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.admin.services.processor.ProcessorConfiguration;
+import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Processor;
+import org.sapia.corus.client.services.processor.ProcessorConfiguration;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 

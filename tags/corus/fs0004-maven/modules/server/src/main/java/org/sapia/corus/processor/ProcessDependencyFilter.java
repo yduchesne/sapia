@@ -6,14 +6,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sapia.corus.admin.common.StringArg;
-import org.sapia.corus.admin.exceptions.deployer.DistributionNotFoundException;
-import org.sapia.corus.admin.services.deployer.Deployer;
-import org.sapia.corus.admin.services.deployer.dist.Dependency;
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
-import org.sapia.corus.admin.services.deployer.dist.ProcessConfig;
-import org.sapia.corus.admin.services.processor.Processor;
-import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.common.StringArg;
+import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
+import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.deployer.dist.Dependency;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.processor.Processor;
 
 public class ProcessDependencyFilter {
 

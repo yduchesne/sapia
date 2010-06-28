@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import org.sapia.corus.deployer.transport.Connection;
+import org.sapia.corus.client.services.deployer.transport.Connection;
 
 /**
  * Implements the <code>Connection</code> interface over a socket.
@@ -41,7 +41,7 @@ public class SocketConnection implements Connection{
   }
   
   /**
-   * @see org.sapia.corus.deployer.transport.Connection#close()
+   * @see org.sapia.corus.client.services.deployer.transport.Connection#close()
    */
   public void close() {
   	try {

@@ -1,12 +1,12 @@
 package org.sapia.corus.cron;
 
 
-import org.sapia.corus.admin.annotations.Transient;
-import org.sapia.corus.admin.common.ArgFactory;
-import org.sapia.corus.admin.services.cron.CronJobInfo;
-import org.sapia.corus.admin.services.processor.Processor;
+import org.sapia.corus.client.annotations.Transient;
+import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.services.cron.CronJobInfo;
+import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;
-import org.sapia.corus.util.progress.ProgressQueue;
 import org.sapia.corus.util.progress.ProgressQueueLogger;
 
 import fr.dyade.jdring.AlarmEntry;

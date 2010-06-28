@@ -1,6 +1,6 @@
 package org.sapia.corus.deployer.event;
 
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.ubik.rmi.interceptor.Event;
 
 

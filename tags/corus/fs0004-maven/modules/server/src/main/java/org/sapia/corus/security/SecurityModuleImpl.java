@@ -7,9 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.sapia.corus.admin.services.security.CorusSecurityException;
-import org.sapia.corus.admin.services.security.SecurityModule;
 import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.services.security.CorusSecurityException;
+import org.sapia.corus.client.services.security.SecurityModule;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.util.UriPattern;
 import org.sapia.ubik.net.TCPAddress;
@@ -44,7 +44,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   private boolean _isRunning = false;
   
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return ROLE;

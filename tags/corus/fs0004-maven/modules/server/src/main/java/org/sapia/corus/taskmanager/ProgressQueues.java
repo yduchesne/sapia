@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.sapia.corus.util.progress.ProgressMsg;
-import org.sapia.corus.util.progress.ProgressQueue;
+import org.sapia.corus.client.common.ProgressMsg;
+import org.sapia.corus.client.common.ProgressQueue;
 
 /**
  * @author Yanick Duchesne

@@ -2,7 +2,7 @@ package org.sapia.corus.processor;
 
 import java.util.Comparator;
 
-import org.sapia.corus.admin.services.processor.Process;
+import org.sapia.corus.client.services.processor.Process;
 
 /**
  * An instance of this class compares {@link Process} instances. It performs comparison 

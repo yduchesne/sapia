@@ -20,7 +20,7 @@ public class EventDispatcherImpl extends MultiDispatcher implements EventDispatc
   private Logger logger = Hierarchy.getDefaultHierarchy().getLoggerFor("EventDispatcher");
   
   /**
-   * @see org.sapia.corus.admin.Module#getRoleName()
+   * @see org.sapia.corus.client.Module#getRoleName()
    */
   public String getRoleName() {
     return ROLE;

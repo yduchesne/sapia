@@ -3,6 +3,8 @@ package org.sapia.corus.util.progress;
 import java.util.List;
 
 import org.apache.log.Logger;
+import org.sapia.corus.client.common.ProgressMsg;
+import org.sapia.corus.client.common.ProgressQueue;
 
 
 /**

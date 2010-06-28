@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
-import org.sapia.corus.deployer.DeployOutputStream;
-import org.sapia.corus.deployer.DeploymentMetadata;
+import org.sapia.corus.client.services.deployer.transport.Connection;
+import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
+import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
 
 /**
  * This class models a deployment on the server-side.

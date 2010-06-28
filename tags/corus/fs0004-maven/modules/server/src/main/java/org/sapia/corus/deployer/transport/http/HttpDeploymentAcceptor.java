@@ -1,5 +1,6 @@
 package org.sapia.corus.deployer.transport.http;
 
+import org.sapia.corus.client.services.deployer.transport.http.HttpDeploymentClient;
 import org.sapia.corus.deployer.transport.Deployment;
 import org.sapia.corus.deployer.transport.DeploymentAcceptor;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
@@ -19,8 +20,6 @@ import org.simpleframework.http.core.Container;
  */
 public class HttpDeploymentAcceptor implements Container, DeploymentAcceptor{
 	
-	public static final String DEPLOYER_CONTEXT = "/corus/deployer";
-	
 	private HttpTransportProvider _provider;
 	private DeploymentConnector   _connector;
 	
@@ -38,7 +37,7 @@ public class HttpDeploymentAcceptor implements Container, DeploymentAcceptor{
    * @see org.sapia.corus.deployer.transport.DeploymentAcceptor#start()
    */
   public void start() throws Exception {
-		_provider.getContainerMap().addService(DEPLOYER_CONTEXT, this);  	
+		_provider.getContainerMap().addService(HttpDeploymentClient.DEPLOYER_CONTEXT, this);  	
   }
   
   /**

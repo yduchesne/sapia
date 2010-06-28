@@ -2,9 +2,9 @@ package org.sapia.corus.deployer.task;
 
 import java.io.File;
 
-import org.sapia.corus.admin.exceptions.deployer.DeploymentException;
-import org.sapia.corus.admin.exceptions.deployer.DuplicateDistributionException;
-import org.sapia.corus.admin.services.deployer.dist.Distribution;
+import org.sapia.corus.client.exceptions.deployer.DeploymentException;
+import org.sapia.corus.client.exceptions.deployer.DuplicateDistributionException;
+import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.deployer.event.DeploymentEvent;
 import org.sapia.corus.taskmanager.core.Task;
