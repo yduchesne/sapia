@@ -1,6 +1,6 @@
 package org.sapia.corus.taskmanager;
 
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.common.ProgressMsg;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;

@@ -2,8 +2,9 @@ package org.sapia.corus.event;
 
 import org.apache.log.Hierarchy;
 
+
 import org.apache.log.Logger;
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.core.Service;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.interceptor.MultiDispatcher;

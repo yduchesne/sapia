@@ -2,7 +2,7 @@ package org.sapia.corus.db;
 
 import java.io.File;
 
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.exceptions.core.IORuntimeException;
 import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.db.DbModule;

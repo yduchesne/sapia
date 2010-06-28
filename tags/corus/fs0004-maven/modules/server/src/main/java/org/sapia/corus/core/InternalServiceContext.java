@@ -3,7 +3,7 @@ package org.sapia.corus.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.deployer.DistributionDatabase;

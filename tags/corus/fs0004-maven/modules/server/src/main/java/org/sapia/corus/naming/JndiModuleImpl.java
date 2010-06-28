@@ -3,7 +3,7 @@ package org.sapia.corus.naming;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.naming.JndiModule;
 import org.sapia.corus.core.CorusRuntime;

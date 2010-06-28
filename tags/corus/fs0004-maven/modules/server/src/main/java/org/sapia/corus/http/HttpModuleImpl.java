@@ -1,6 +1,6 @@
 package org.sapia.corus.http;
 
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpModule;
 import org.sapia.corus.core.CorusRuntime;

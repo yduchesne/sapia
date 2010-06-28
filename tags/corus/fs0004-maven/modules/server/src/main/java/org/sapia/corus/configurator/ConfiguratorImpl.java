@@ -1,6 +1,7 @@
 package org.sapia.corus.configurator;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -9,7 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.NameValuePair;
 import org.sapia.corus.client.services.configurator.Configurator;

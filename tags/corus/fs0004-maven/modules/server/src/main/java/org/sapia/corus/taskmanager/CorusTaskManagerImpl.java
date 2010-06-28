@@ -3,7 +3,7 @@ package org.sapia.corus.taskmanager;
 import java.rmi.Remote;
 
 import org.apache.log.Logger;
-import org.sapia.corus.annotations.Bind;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.client.common.ProgressQueueImpl;
 import org.sapia.corus.core.ModuleHelper;
