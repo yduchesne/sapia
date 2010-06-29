@@ -9,14 +9,12 @@ import org.sapia.ubik.net.ServerAddress;
  * @author Yanick Duchesne
  */
 public class CorusPubEvent implements Serializable {
+  
+  static final long serialVersionUID = 1L;
+  
   private boolean       _new;
   private ServerAddress _origin;
 
-  /**
-   * Constructor for CorusPubEvent.
-   * @param arg0
-   * @param arg1
-   */
   public CorusPubEvent(boolean isNew, ServerAddress origin) {
     _new    = isNew;
     _origin = origin;

@@ -26,7 +26,7 @@ public class Starter {
       return;
     }
     try{
-      Class clazz = Class.forName(mainClass);
+      Class<?> clazz = Class.forName(mainClass);
       Method mainMethod = clazz.getMethod("main", new Class[]{String[].class});
       mainMethod.invoke(null, new Object[]{args});
     }catch(ClassNotFoundException e){

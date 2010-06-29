@@ -58,6 +58,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     ctx.info("Killing process " + proc + ". Attempt: " + currentRetryCount
         + "; requestor: " + requestor);
     proc.kill(requestor);
+    proc.save();
     return false;
   }
 
@@ -96,6 +97,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
 
     try {
       process.setOsPid(nativeProc.exec(ctx, processDir, cmdLine));
+      process.save();
     } catch (IOException e) {
       ctx.error("Process could not be started", e);
       return false;
@@ -134,7 +136,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     if (processDir == null) {
       return false;
     }
-
+    
     process.setProcessDir(processDir.getAbsolutePath());
     process.setDeleteOnKill(conf.isDeleteOnKill());
 
@@ -175,6 +177,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     return executed;
   }
 
+  @SuppressWarnings(value="unchecked")
   private Property[] getProcessProps(ProcessConfig conf, Process proc,
       Distribution dist, TaskExecutionContext ctx, Properties processProperties)
       throws PortUnavailableException {

@@ -89,7 +89,7 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
   @Override
   public <K, V> DbMap<K, V> getDbMap(Class<K> keyType, Class<V> valueType, String name){
     try {
-      return new CacheDbMap<K, V>(_db.getDbMap(keyType, valueType, name));
+      return _db.getDbMap(keyType, valueType, name);
     } catch (java.io.IOException e) {
       throw new IORuntimeException(e);
     } 

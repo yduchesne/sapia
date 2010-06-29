@@ -1,6 +1,6 @@
 package org.sapia.corus.taskmanager.core;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sapia.corus.client.common.ProgressMsg;
@@ -59,21 +59,20 @@ public class ProgressQueueTaskLog implements ProgressQueue{
     log.error(task, asString(msg));
   }
 
-  public List fetchNext() {
-    return Collections.EMPTY_LIST;
+  public List<ProgressMsg> fetchNext() {
+    return new ArrayList<ProgressMsg>(0);
   }
 
   public boolean hasNext() {
     return false;
   }
 
-
   public synchronized boolean isClosed() {
     return closed;
   }
 
-  public List next() {
-    return Collections.EMPTY_LIST;
+  public List<ProgressMsg> next() {
+    return new ArrayList<ProgressMsg>(0);
   }
   
   private String asString(Object msg){

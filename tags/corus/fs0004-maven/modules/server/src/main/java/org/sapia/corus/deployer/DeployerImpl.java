@@ -25,6 +25,7 @@ import org.sapia.corus.client.services.deployer.transport.ClientDeployOutputStre
 import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
 import org.sapia.corus.client.services.deployer.transport.DeploymentClientFactory;
 import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
+import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.http.HttpModule;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.CorusRuntime;
@@ -36,7 +37,6 @@ import org.sapia.corus.deployer.task.UndeployTask;
 import org.sapia.corus.deployer.transport.Deployment;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.corus.deployer.transport.DeploymentProcessor;
-import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
@@ -106,19 +106,23 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     
     String pattern = CorusRuntime.getCorus().getDomain() + '_' +
       ((TCPAddress) CorusRuntime.getTransport().getServerAddress()).getPort();
- /*
+    
+    DeployerConfigurationImpl config = new DeployerConfigurationImpl();
+    config.setFileLockTimeout(_configuration.getFileLockTimeout());
+    
     if (_configuration.getDeployDir() != null) {
-      _configuration.setDeployDir(new StringProperty(_configuration.getDeployDir().getValue() + File.separator + pattern));
+      config.setDeployDir(_configuration.getDeployDir() + File.separator + pattern);
     } else {
-      _configuration.setDeployDir(new StringProperty(DEFAULT_DEPLOY_DIR + File.separator + pattern));
+      config.setDeployDir(DEFAULT_DEPLOY_DIR + File.separator + pattern);
     }
 
     if (_configuration.getTempDir() != null) {
-      _configuration.setTempDir(new StringProperty(_configuration.getTempDir().getValue() + File.separator + pattern));
+      config.setTempDir(_configuration.getTempDir() + File.separator + pattern);
     } else {
-      _configuration.setTempDir(new StringProperty(DEFAULT_TMP_DIR + File.separator + pattern));
+      config.setTempDir(DEFAULT_TMP_DIR + File.separator + pattern);
     }
-*/
+    _configuration = config;
+    
     File f = new File(new File(_configuration.getDeployDir()).getAbsolutePath());
     f.mkdirs();
     assertFile(f);
@@ -244,7 +248,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
 
     // if deployment is clustered...
     if (meta.isClustered()) {
-      Set siblings;
+      Set<ServerAddress> siblings;
 
       try {
         siblings = _cluster.getHostAddresses();
@@ -256,8 +260,8 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
         return;
       }
 
-      Set                 targets = meta.getTargets();
-      Set                 visited = meta.getVisited();
+      Set<ServerAddress>  targets = meta.getTargets();
+      Set<ServerAddress>  visited = meta.getVisited();
       ServerAddress       addr;
       ServerAddress       current = CorusRuntime.getTransport()
                                                 .getServerAddress();

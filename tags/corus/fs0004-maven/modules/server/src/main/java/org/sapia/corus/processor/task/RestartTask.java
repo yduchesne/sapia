@@ -4,15 +4,16 @@ import java.io.IOException;
 
 import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.ArgFactory;
+import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.processor.LockOwner;
 import org.sapia.corus.client.services.processor.Process;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.processor.ProcessRepository;
-import org.sapia.corus.processor.event.ProcessKilledEvent;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
@@ -24,6 +25,7 @@ import org.sapia.corus.taskmanager.core.TaskExecutionContext;
  * @author Yanick Duchesne
  */
 public class RestartTask extends ProcessTerminationTask {
+    
   public RestartTask(
       ProcessTerminationRequestor requestor,
       String corusPid, int maxRetry) {
@@ -37,8 +39,8 @@ public class RestartTask extends ProcessTerminationTask {
       ProcessorTaskStrategy strategy = ctx.getServerContext().lookup(ProcessorTaskStrategy.class);
       Process process = processes.getActiveProcesses().getProcess(corusPid());
       strategy.attemptKill(ctx, requestor(), process, super.getMaxExecution());
-    } catch (Throwable e) {
-      // no Vm for ID...
+    } catch (ProcessNotFoundException e) {
+      // no pro for ID...
       ctx.error(e);
       super.abort(ctx);
     }
@@ -68,12 +70,14 @@ public class RestartTask extends ProcessTerminationTask {
 
       synchronized (process) {
         process.releaseLock(this);
-        ProcessRestartTask restart = new ProcessRestartTask(process, 
+        LockOwner lockOwner = new LockOwner();
+        ProcessRestartTask restart = new ProcessRestartTask(lockOwner,
+                                                            process, 
                                                             dist, 
                                                             conf);
-        process.acquireLock(restart);
+        process.acquireLock(lockOwner);
+        process.save();
         ctx.getTaskManager().execute(restart);
-        
       }
     } catch (Exception e) {
       ctx.error(e);
@@ -96,13 +100,16 @@ public class RestartTask extends ProcessTerminationTask {
     private Process       _process;
     private Distribution  _dist;
     private ProcessConfig _conf;
+    private LockOwner     _lockOwner;
 
-    public ProcessRestartTask(Process proc, 
+    public ProcessRestartTask(LockOwner lockOwner,
+                              Process proc, 
                               Distribution dist,
                               ProcessConfig conf) {
-      _process = proc;
-      _dist    = dist;
-      _conf    = conf;
+      _lockOwner = lockOwner;
+      _process   = proc;
+      _dist      = dist;
+      _conf      = conf;
     }
     
     @Override
@@ -119,7 +126,8 @@ public class RestartTask extends ProcessTerminationTask {
       } catch(IOException e) {
         ctx.error("Could not restart: " + _conf.getName(), e);
       } finally {
-        _process.releaseLock(this);
+        _process.releaseLock(_lockOwner);
+        _process.save();
       }
       return null;
     }

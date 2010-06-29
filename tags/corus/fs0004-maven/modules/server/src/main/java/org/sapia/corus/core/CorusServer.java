@@ -19,7 +19,7 @@ import org.sapia.corus.client.CorusVersion;
 import org.sapia.corus.client.common.PropertiesStrLookup;
 import org.sapia.corus.client.exceptions.CorusException;
 import org.sapia.corus.client.exceptions.ExceptionCode;
-import org.sapia.corus.event.EventDispatcher;
+import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.log.CompositeTarget;
 import org.sapia.corus.log.FormatterFactory;
 import org.sapia.corus.log.StdoutTarget;

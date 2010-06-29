@@ -5,6 +5,7 @@ import org.sapia.corus.client.annotations.Transient;
 import org.sapia.corus.client.common.ArgFactory;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.client.services.cron.CronJobInfo;
+import org.sapia.corus.client.services.db.persistence.AbstractPersistent;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.util.progress.ProgressQueueLogger;
@@ -15,7 +16,7 @@ import fr.dyade.jdring.AlarmListener;
 /**
  * @author Yanick Duchesne
  */
-public class CronJob implements java.io.Serializable, AlarmListener {
+public class CronJob extends AbstractPersistent<String, CronJob> implements java.io.Serializable, AlarmListener {
 
   static final long serialVersionUID = 1L;
   
@@ -27,6 +28,12 @@ public class CronJob implements java.io.Serializable, AlarmListener {
   
   CronJob(CronJobInfo info) {
     _info = info;
+  }
+  
+  @Override
+  @Transient
+  public String getKey() {
+    return _info.getId();
   }
   
   void init(CronModuleImpl owner, ServerContext ctx){

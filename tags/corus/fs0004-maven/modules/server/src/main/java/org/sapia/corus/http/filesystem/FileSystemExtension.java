@@ -18,7 +18,6 @@ import org.sapia.corus.client.services.http.HttpExtensionInfo;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.http.HttpExtensionManager;
 import org.sapia.corus.http.helpers.NotFoundHelper;
-import org.simpleframework.http.Response;
 
 /**
  * This extension serves files from the corus.home dir. 
@@ -55,7 +54,6 @@ public class FileSystemExtension implements HttpExtension{
       requested = new File(CorusRuntime.getCorusHome()+File.separator+ctx.getPathInfo());
     }
     if(!requested.exists()){
-      Response res = ctx.getResponse();
       NotFoundHelper helper = new NotFoundHelper();
       helper.print(ctx.getRequest(), ctx.getResponse());
     }
@@ -85,8 +83,8 @@ public class FileSystemExtension implements HttpExtension{
     File[] fileElems = dir.listFiles();
     ps.println("<h2>" + title + "</h2>");
     if(fileElems != null && fileElems.length > 0){
-      List files = new ArrayList();
-      List dirs  = new ArrayList();    
+      List<File> files = new ArrayList<File>();
+      List<File> dirs  = new ArrayList<File>();    
       for (int i = 0; i < fileElems.length; i++) {
         if(fileElems[i].isDirectory()){
           dirs.add(fileElems[i]);
@@ -153,10 +151,11 @@ public class FileSystemExtension implements HttpExtension{
     }
   }
   
-  static final class FileComparator implements Comparator{
+ 
+  static final class FileComparator implements Comparator<File>{
     
-    public int compare(Object arg0, Object arg1) {
-      return ((File)arg0).getName().compareTo(((File)arg1).getName());
+    public int compare(File arg0, File arg1) {
+      return arg0.getName().compareTo(arg1.getName());
     }
   }
   

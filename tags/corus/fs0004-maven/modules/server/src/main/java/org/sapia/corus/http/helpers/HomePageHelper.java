@@ -14,10 +14,10 @@ import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 
 public class HomePageHelper {
+
+  List<HttpExtensionInfo> _extensionInfos = new ArrayList<HttpExtensionInfo>();
   
-  List _extensionInfos = new ArrayList();
-  
-  public HomePageHelper(Collection extInfos){
+  public HomePageHelper(Collection<HttpExtensionInfo> extInfos){
     _extensionInfos.addAll(extInfos);
   }
   

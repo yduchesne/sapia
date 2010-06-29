@@ -3,6 +3,7 @@ package org.sapia.corus.processor.task;
 import org.sapia.corus.client.exceptions.processor.ProcessLockException;
 import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.client.services.port.PortManager;
+import org.sapia.corus.client.services.processor.LockOwner;
 import org.sapia.corus.client.services.processor.Process;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.taskmanager.core.Task;
@@ -18,6 +19,7 @@ public abstract class ProcessTerminationTask extends Task {
 
   private String                      _corusPid;
   private ProcessTerminationRequestor _requestor;
+  private LockOwner                   _lockOwner = Process.createLockOwner();
 
   /**
    * @param maxRetry the maximum number of times this instance will try
@@ -35,8 +37,11 @@ public abstract class ProcessTerminationTask extends Task {
   
   @Override
   public Object execute(TaskExecutionContext ctx) throws Throwable {
+    Process proc = null;
     try{
-      ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid).acquireLock(this);
+      proc = ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid);
+      proc.acquireLock(_lockOwner);
+      proc.save();
     } catch (ProcessLockException e) {
       ctx.error("Could not acquire lock on process: " + _corusPid);
       ctx.error(e);
@@ -48,23 +53,14 @@ public abstract class ProcessTerminationTask extends Task {
       abort(ctx);
       return null;
     }
-    try {
-      Process proc = ctx.getServerContext()
-        .getServices()
-        .getProcesses()
-        .getActiveProcesses()
-        .getProcess(_corusPid);
-      
-      if (proc.getStatus() == Process.LifeCycleStatus.KILL_CONFIRMED) {
-        proc.releasePorts(ctx.getServerContext().getServices().lookup(PortManager.class));
-        onKillConfirmed(ctx);
-        abort(ctx);
-      } else {
-        onExec(ctx);
-      }
-    } catch (ProcessNotFoundException e) {
-      ctx.error(e);
+    proc.refresh();
+    if (proc.getStatus() == Process.LifeCycleStatus.KILL_CONFIRMED) {
+      proc.releasePorts(ctx.getServerContext().getServices().lookup(PortManager.class));
+      proc.save();
+      onKillConfirmed(ctx);
       abort(ctx);
+    } else {
+      onExec(ctx);
     }
     return null;
   }
@@ -88,7 +84,9 @@ public abstract class ProcessTerminationTask extends Task {
   @Override
   protected void abort(TaskExecutionContext ctx) {
     try{
-      ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid).releaseLock(this);
+      Process proc = ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid);
+      proc.releaseLock(this);
+      proc.save();
     }catch(Throwable err){
       //ctx.error(err);
     }finally{

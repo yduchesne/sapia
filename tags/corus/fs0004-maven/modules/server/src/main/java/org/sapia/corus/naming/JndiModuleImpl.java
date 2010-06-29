@@ -5,11 +5,11 @@ import javax.naming.NamingException;
 
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.cluster.ClusterManager;
+import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.naming.JndiModule;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
-import org.sapia.corus.event.EventDispatcher;
 import org.sapia.ubik.mcast.EventChannel;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.naming.remote.ClientListener;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.sapia.corus.client.exceptions.processor.ProcessLockException;
 import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.processor.LockOwner;
 import org.sapia.corus.client.services.processor.Process;
 import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.processor.ProcessInfo;
@@ -22,6 +23,7 @@ public class ResumeTask extends Task{
   private Process       _process;
   private Distribution  _dist;
   private ProcessConfig _conf;
+  private LockOwner     _lockOwner = new LockOwner();
 
   public ResumeTask(Process proc,
                     Distribution dist, 
@@ -30,12 +32,14 @@ public class ResumeTask extends Task{
     _process = proc;
     _dist    = dist;
     _conf    = conf;
-    proc.acquireLock(this);
+    proc.acquireLock(_lockOwner);
+    proc.save();
   }
 
   @Override
   public Object execute(TaskExecutionContext ctx) throws Throwable {
     _process.touch();
+    _process.save();
     try{
       ProcessRepository processes = ctx.getServerContext().getServices().getProcesses();
       ProcessorTaskStrategy strategy = ctx.getServerContext().lookup(ProcessorTaskStrategy.class);

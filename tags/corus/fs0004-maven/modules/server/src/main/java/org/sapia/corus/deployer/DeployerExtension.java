@@ -66,7 +66,7 @@ public class DeployerExtension implements HttpExtension{
     return null;
   }
   
-  private void outputDists(HttpContext ctx, List processes, boolean status) throws IOException{
+  private void outputDists(HttpContext ctx, List<Distribution> dists, boolean status) throws IOException{
     ctx.getResponse().set("Content-Type", "text/xml");    
     PrintStream ps = null;
     try{
@@ -82,15 +82,15 @@ public class DeployerExtension implements HttpExtension{
       attribute("port", Integer.toString(addr.getPort()), ps);
     }catch(ClassCastException e){}
     ps.println(">");    
-    for(int i = 0; i < processes.size(); i++){
-      Distribution dist = (Distribution)processes.get(i);
+    for(int i = 0; i < dists.size(); i++){
+      Distribution dist = (Distribution)dists.get(i);
       ps.println("  <distribution ");
       attribute("name", dist.getName(), ps);
       ps.println();
       attribute("version", dist.getVersion(), ps);
       ps.println(">");
       ps.println("    <processConfigs>");
-      List procs = dist.getProcesses();
+      List<ProcessConfig> procs = dist.getProcesses();
       for(int j = 0; j < procs.size(); j++){
         ProcessConfig proc = (ProcessConfig)procs.get(j);
         ps.print("      <processConfig ");
@@ -113,11 +113,11 @@ public class DeployerExtension implements HttpExtension{
     ps.close();
   }
   
-  private List filterDists(Request req) throws IOException{
+  private List<Distribution> filterDists(Request req) throws IOException{
     Arg d = arg(PARAM_DIST, req);
     Arg v = arg(PARAM_VERSION, req);    
     
-    List dists;
+    List<Distribution> dists;
     if(d != null && v != null){
       dists = _deployer.getDistributions(d, v);
     }

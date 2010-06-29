@@ -44,6 +44,7 @@ public class KillTaskTest extends BaseTaskTest{
         proc.getProcessID());
     
     proc.confirmKilled();
+    proc.save();
 
     tm.executeAndWait(kill).get();  
     super.assertTrue(kill.killed);
@@ -102,6 +103,7 @@ public class KillTaskTest extends BaseTaskTest{
     TestKill kill = new TestKill(ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, 
                                  proc.getProcessID());
     proc.confirmKilled();
+    proc.save();
     tm.executeAndWait(kill).get();
     super.assertTrue(kill.killed);
     super.assertTrue(kill.restart);
@@ -124,6 +126,7 @@ public class KillTaskTest extends BaseTaskTest{
     TestKill kill = new TestKill(
         ProcessTerminationRequestor.KILL_REQUESTOR_SERVER, proc.getProcessID());
     proc.confirmKilled();
+    proc.save();
     tm.executeAndWait(kill).get();
     super.assertTrue(kill.killed);
     super.assertTrue(kill.restart == false);

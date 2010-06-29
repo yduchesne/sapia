@@ -12,7 +12,7 @@ public interface ProcessDatabase {
    * @param process a <code>Process</code>.
    */
   public abstract void addProcess(Process process);
-
+  
   /**
    * @param corusPid a process identifier.
    * @return <code>true</code> if this instance contains the given
@@ -86,8 +86,19 @@ public interface ProcessDatabase {
   public abstract List<Process> getProcesses(Arg name,
       Arg version, String profile, Arg processName);
 
+  /**
+   * Removes the process with the given ID.
+   * 
+   * @param corusPid a Corus process ID.
+   */
   public abstract void removeProcess(String corusPid);
 
+  /**
+   * @param corusPid a Corus process ID.
+   * @return the {@link Process} corresponding to the given ID.
+   * @throws ProcessNotFoundException if no process with the given ID could
+   * be found.
+   */
   public abstract Process getProcess(String corusPid) throws ProcessNotFoundException;
 
 }

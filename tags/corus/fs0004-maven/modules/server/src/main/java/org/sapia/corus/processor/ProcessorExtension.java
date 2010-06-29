@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -80,7 +79,7 @@ public class ProcessorExtension implements HttpExtension{
     return null;
   }
   
-  private void outputProcesses(HttpContext ctx, List processes, boolean status) throws IOException, Exception{
+  private void outputProcesses(HttpContext ctx, List<Process> processes, boolean status) throws IOException, Exception{
     ctx.getResponse().set("Content-Type", "text/xml");    
     PrintStream ps = ctx.getResponse().getPrintStream();
     ps.print("<processes ");
@@ -115,13 +114,13 @@ public class ProcessorExtension implements HttpExtension{
         Status stat = proc.getProcessStatus();
         ps.println("    <status>");
         if(stat != null){        
-          List contexts = stat.getContexts();
+          List<Context> contexts = stat.getContexts();
           for(int j = 0; j < contexts.size(); j++){
             Context statusCtx = (Context)contexts.get(j);
             ps.print("      <context name=\"");
             ps.print(statusCtx.getName());
             ps.println("\">");
-            List params = statusCtx.getParams();
+            List<Param> params = statusCtx.getParams();
             for(int k = 0; k < params.size(); k++){
               Param p = (Param)params.get(k);
 
@@ -155,21 +154,21 @@ public class ProcessorExtension implements HttpExtension{
     ps.close();
   }
   
-  private List filterProcesses(Request req) throws IOException, Exception{
+  private List<Process> filterProcesses(Request req) throws IOException, Exception{
     Arg d = arg(PARAM_DIST, req);
     Arg v = arg(PARAM_VERSION, req);    
     Arg n = arg(PARAM_PROC, req);
     String i = req.getParameter(PARAM_ID);
     String p = req.getParameter(PARAM_PROFILE);
     
-    List processes;
+    List<Process> processes;
     if(i != null){
       try{
         Process proc = _processor.getProcess(i);
-        processes = new ArrayList(1);
+        processes = new ArrayList<Process>(1);
         processes.add(proc);
       }catch(ProcessNotFoundException e){
-        processes = Collections.EMPTY_LIST;
+        processes = new ArrayList<Process>(0);
       }
     }
     else if(p != null && d != null && v != null && n != null){

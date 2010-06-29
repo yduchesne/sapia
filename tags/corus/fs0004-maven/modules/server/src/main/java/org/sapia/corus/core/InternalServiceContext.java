@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.deployer.DistributionDatabase;
-import org.sapia.corus.event.EventDispatcher;
 import org.sapia.corus.processor.ExecConfigDatabase;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.task.ProcessorTaskStrategy;

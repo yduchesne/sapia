@@ -10,6 +10,7 @@ import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;
+import org.sapia.corus.interop.AbstractCommand;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.Poll;
 import org.sapia.corus.interop.Process;
@@ -68,10 +69,12 @@ public class SoapExtension implements HttpExtension, RequestListener {
     }
     
     _logger.info("Process: " + proc + " confirming shutdown");
-    _serverContext.lookup(Processor.class).getProcess(proc.getCorusPid()).confirmKilled();
+    org.sapia.corus.client.services.processor.Process corusProcess = _serverContext.lookup(Processor.class).getProcess(proc.getCorusPid());
+    corusProcess.confirmKilled();
+    corusProcess.save();
   }
   
-  public synchronized List onPoll(Process proc, Poll poll)
+  public synchronized List<AbstractCommand> onPoll(Process proc, Poll poll)
   throws Exception {
     if (proc.getCorusPid() == null) {
       throw new MissingDataException("'corusPid' not specified in header");
@@ -79,7 +82,11 @@ public class SoapExtension implements HttpExtension, RequestListener {
     
     _logger.debug("Process: " + proc + " polling...");
     
-    return _serverContext.lookup(Processor.class).getProcess(proc.getCorusPid()).poll();
+    org.sapia.corus.client.services.processor.Process corusProcess = _serverContext
+      .lookup(Processor.class).getProcess(proc.getCorusPid());
+    List<AbstractCommand> commands = corusProcess.poll();
+    corusProcess.save();
+    return commands;
   }
   
   public synchronized void onRestart(Process proc, Restart restart)
@@ -92,7 +99,7 @@ public class SoapExtension implements HttpExtension, RequestListener {
     _serverContext.lookup(Processor.class).restart(proc.getCorusPid());
   }
   
-  public synchronized List onStatus(Process proc, Status stat)
+  public synchronized List<AbstractCommand> onStatus(Process proc, Status stat)
   throws Exception {
     if (proc.getCorusPid() == null) {
       throw new MissingDataException("'corusPid' not specified in header");
@@ -100,7 +107,10 @@ public class SoapExtension implements HttpExtension, RequestListener {
     
     _logger.debug("Status received for " + proc);
     
-    return _serverContext.lookup(Processor.class).getProcess(proc.getCorusPid()).status(stat);
+    org.sapia.corus.client.services.processor.Process corusProcess = _serverContext.lookup(Processor.class).getProcess(proc.getCorusPid());
+    List<AbstractCommand> commands = corusProcess.status(stat);
+    corusProcess.save();
+    return commands;
   }
   
 }

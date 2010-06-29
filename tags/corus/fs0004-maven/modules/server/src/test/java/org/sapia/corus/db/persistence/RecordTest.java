@@ -61,5 +61,15 @@ public class RecordTest {
     assertEquals(tpo.getName(), tpo2.getName());
     assertEquals(tpo.getId(), tpo2.getId());
   }
+  
+  @Test
+  public void testPopulate(){
+    Record<TestPersistentObject> r = Record.createFor(cd, tpo);
+    TestPersistentObject tpo2 = new TestPersistentObject();
+    r.populate(cd, tpo2);
+    assertEquals(tpo2.getName(), tpo.getName());
+    assertEquals(tpo2.getId(), tpo.getId());
+    
+  }
 
 }

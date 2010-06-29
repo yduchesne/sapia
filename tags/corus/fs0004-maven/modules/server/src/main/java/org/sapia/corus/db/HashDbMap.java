@@ -37,10 +37,20 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
   public V get(K key) {
     Record<V> record = _map.get(key);
     if(record != null){
-      return record.toObject(_classDescriptor);
+      return record.toObject(this);
     }
     else{
       return null;
+    }
+  }
+  
+  public void refresh(K key, V value) {
+    Record<V> record = _map.get(key);
+    if(record == null){
+      throw new IllegalArgumentException(String.format("No record found for %s", key));
+    }
+    else{
+      record.populate(this, value);
     }
   }
 
@@ -49,7 +59,7 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
   }
 
   public void put(K key, V value) {
-    _map.put(key, Record.createFor(_classDescriptor, value));
+    _map.put(key, Record.createFor(this, value));
   }
 
   public void remove(K key) {
@@ -57,7 +67,7 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
   }
 
   public Iterator<V> values() {
-    return new RecordIterator(_map.values().iterator());
+    return new RecordIterator(this, _map.values().iterator());
   }
   
   public org.sapia.corus.client.services.db.RecordMatcher<V> createMatcherFor(V template) {
@@ -70,7 +80,7 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
     while(iterator.hasNext()){
       Record<V> rec = iterator.next();
       if(matcher.matches(rec)){
-        V obj = rec.toObject(_classDescriptor);
+        V obj = rec.toObject(this);
         result.add(obj);
       }
     }
@@ -83,16 +93,18 @@ public class HashDbMap<K, V> implements DbMap<K, V> {
   
   class RecordIterator implements Iterator<V>{
 
+    private HashDbMap<K, V> parent;
     private Iterator<Record<V>> delegate;
     
-    public RecordIterator(Iterator<Record<V>> delegate) {
+    public RecordIterator(HashDbMap<K,V> parent, Iterator<Record<V>> delegate) {
+      this.parent = parent;
       this.delegate = delegate;
     }
     
     @Override
     public V next() {
       Record<V> rec = delegate.next();
-      return rec.toObject(_classDescriptor);
+      return rec.toObject(parent);
     }
     
     @Override

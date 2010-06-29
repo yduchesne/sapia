@@ -55,7 +55,22 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
         return null;
       }
       else{
-        return rec.toObject(_classDescriptor);
+        V obj = rec.toObject(this);
+        return obj;
+      }
+    } catch (IOException e) {
+      throw new IORuntimeException(e);
+    }
+  }
+  
+  public void refresh(K key, V value) {
+    try {
+      Record<V> rec = (Record<V>)_hashtable.get(key);
+      if(rec == null){
+        throw new IllegalArgumentException(String.format("No record found for %s", key));
+      }
+      else{
+        rec.populate(this, value);
       }
     } catch (IOException e) {
       throw new IORuntimeException(e);
@@ -74,7 +89,7 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
   @Override
   public void put(K key, V value) {
     try {
-      Record<V> r = Record.createFor(_classDescriptor, value);
+      Record<V> r = Record.createFor(this, value);
       _hashtable.put(key, r);
     } catch (IOException e) {
       throw new IORuntimeException(e);
@@ -93,7 +108,7 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
   @Override
   public Iterator<V> values() {
     try {
-      return new RecordIterator(_hashtable.values());
+      return new RecordIterator(this, _hashtable.values());
     } catch (IOException e) {
       throw new IORuntimeException(e);
     }
@@ -113,7 +128,7 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
       while(enumeration.hasMoreElements()){
         Record<V> rec = (Record<V>)enumeration.nextElement();
         if(matcher.matches(rec)){
-          result.add(rec.toObject(_classDescriptor));
+          result.add(rec.toObject(this));
         }
       }
       return result;
@@ -134,10 +149,13 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
                     INNER CLASSES
   //////////////////////////////////////////////////*/
 
+  
   class RecordIterator implements Iterator<V> {
     private JDBMEnumeration _enum;
-
-    RecordIterator(JDBMEnumeration anEnum) {
+    private DbMapImpl<K, V> _parent;
+    
+    RecordIterator(DbMapImpl<K, V> parent, JDBMEnumeration anEnum) {
+      _parent = parent;
       _enum = anEnum;
     }
 
@@ -153,7 +171,7 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
     public V next() {
       try {
         Record<V> record = (Record<V>)_enum.nextElement();
-        return record.toObject(_classDescriptor);
+        return (V)record.toObject(_parent);
       } catch (IOException e) {
         throw new IORuntimeException(e);
       }

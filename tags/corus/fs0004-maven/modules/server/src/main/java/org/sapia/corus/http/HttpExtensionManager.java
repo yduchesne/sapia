@@ -134,10 +134,10 @@ public class HttpExtensionManager implements Container{
     else{
       synchronized(_extensions){
   
-        Iterator infos = _extensions.keySet().iterator();
+        Iterator<HttpExtensionInfo> infos = _extensions.keySet().iterator();
         Path path = req.getPath();
         while(infos.hasNext()){
-          HttpExtensionInfo info = (HttpExtensionInfo)infos.next();
+          HttpExtensionInfo info = infos.next();
           if(path.getSegments()[0].startsWith(info.getContextPath())){
             HttpExtension ext = (HttpExtension)_extensions.get(info);
             HttpContext ctx = new HttpContext();

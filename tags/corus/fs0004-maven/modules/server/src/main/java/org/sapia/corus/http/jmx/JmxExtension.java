@@ -106,7 +106,7 @@ public class JmxExtension implements HttpExtension{
     
     /////// GC
     
-    List gcs = ManagementFactory.getGarbageCollectorMXBeans();
+    List<GarbageCollectorMXBean> gcs = ManagementFactory.getGarbageCollectorMXBeans();
 
     attribute("gc.count", getLongTotal(gcs, "getCollectionCount"), ps);
     attribute("gc.elapsedTime", getLongTotal(gcs, "getCollectionTime"), ps);
@@ -168,10 +168,10 @@ public class JmxExtension implements HttpExtension{
     ps.print("\"");
   }    
   
-  private Object getLongTotal(List gcs, String getter) throws Exception{
+  private Object getLongTotal(List<GarbageCollectorMXBean> gcs, String getter) throws Exception{
     long total = 0;
     for(int i = 0; i < gcs.size(); i++){
-      GarbageCollectorMXBean gc = (GarbageCollectorMXBean)gcs.get(i);
+      GarbageCollectorMXBean gc = gcs.get(i);
       Method meth = gc.getClass().getMethod(getter, new Class[0]);
       meth.setAccessible(true);
       total = total + 
