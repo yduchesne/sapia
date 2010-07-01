@@ -55,6 +55,7 @@ public class ProcessorTaskStrategyTest extends TestCase{
   public void testAttemptKill() throws Throwable{
     Process          proc = new Process(dist);
     proc.setMaxKillRetry(3);
+    processes.getActiveProcesses().addProcess(proc);
     
     super.assertTrue(
        !strategy.attemptKill(

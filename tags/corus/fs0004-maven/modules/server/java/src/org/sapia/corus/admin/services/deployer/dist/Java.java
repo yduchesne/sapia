@@ -166,7 +166,8 @@ public class Java extends BaseJavaStarter {
   
   private String getMainCp() {
     DirectoryScanner ds      = new DirectoryScanner();
-    String           basedir = (_corusHome == null ? System.getProperty("user.dir") : _corusHome) + File.separator + "vm-boot-lib";
+    String           basedir = (_corusHome == null ? System.getProperty("user.dir") : _corusHome) 
+      + File.separator + "lib" + File.separator + "vm-boot";
     ds.setBasedir(basedir);
     ds.setIncludes(new String[] { "**/*.jar" });
     ds.scan();

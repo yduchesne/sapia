@@ -3,6 +3,7 @@ package org.sapia.corus.deployer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,15 +193,21 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   }
 
   public List<Distribution> getDistributions() {
-    return getDistributionStore().getDistributions();
+    List<Distribution> dists = getDistributionStore().getDistributions();
+    Collections.sort(dists);
+    return dists;
   }
 
   public List<Distribution> getDistributions(Arg name) {
-    return getDistributionStore().getDistributions(name);
+    List<Distribution> dists = getDistributionStore().getDistributions(name);
+    Collections.sort(dists);
+    return dists;
   }
   
   public List<Distribution> getDistributions(Arg name, Arg version) {
-    return getDistributionStore().getDistributions(name, version);
+    List<Distribution> dists = getDistributionStore().getDistributions(name, version);
+    Collections.sort(dists);
+    return dists;
   }
 
   public ProgressQueue undeploy(Arg distName, Arg version) {

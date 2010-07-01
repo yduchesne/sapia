@@ -19,8 +19,9 @@ public class ProcessCheckTaskTest extends BaseTaskTest {
   public void testStaleVmCheck() throws Exception {
     DistributionInfo dist = new DistributionInfo("test", "1.0", "test", "testVm");
     Process          proc = new Process(dist);
-    proc.poll();
     db.getActiveProcesses().addProcess(proc);
+    proc.touch();
+    proc.save();
     
     TestProcessor processor = (TestProcessor)ctx.lookup(Processor.class);
     ProcessorConfigurationImpl processorConf = (ProcessorConfigurationImpl)processor.getConfiguration();
@@ -29,7 +30,7 @@ public class ProcessCheckTaskTest extends BaseTaskTest {
     Thread.sleep(1500);
 
     TestVmCheck t = new TestVmCheck();
-   // proc.confirmKilled();
+    //proc.confirmKilled();
     tm.executeAndWait(t).get();
     super.assertTrue(t.killed);
   }

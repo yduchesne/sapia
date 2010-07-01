@@ -14,10 +14,8 @@ import org.sapia.corus.client.services.deployer.dist.Distribution;
 
 
 /**
- * Holds <code>Distribution</code> instances.
- * 
- * @see Distribution
- * 
+ * Holds {@link Distribution} instances.
+ *  
  * @author Yanick Duchesne
  */
 public class DistributionDatabaseImpl implements DistributionDatabase {
@@ -69,7 +67,6 @@ public class DistributionDatabaseImpl implements DistributionDatabase {
         }
       }      
     }
-
   }
   
   public synchronized List<Distribution> getDistributions() {

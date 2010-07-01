@@ -1,6 +1,7 @@
 package org.sapia.corus.processor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
     while(configs.hasNext()){
       toReturn.add(configs.next());
     }
+    Collections.sort(toReturn);
     return toReturn;
   }
   
@@ -35,6 +37,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
         toReturn.add(ec);
       }
     }
+    Collections.sort(toReturn);
     return toReturn;
   }
   
@@ -47,6 +50,7 @@ public class ExecConfigDatabaseImpl implements ExecConfigDatabase{
         toReturn.add(c);
       }
     }
+    Collections.sort(toReturn);
     return toReturn;
   }
   

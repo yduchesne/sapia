@@ -1,6 +1,7 @@
 package org.sapia.corus.processor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.sapia.corus.client.common.Arg;
@@ -59,7 +60,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     procs.addAll(_active.getProcesses());
     procs.addAll(_suspended.getProcesses());
     procs.addAll(_toRestart.getProcesses());
-
+    Collections.sort(procs);
     return procs;
   }
   
@@ -81,6 +82,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     procs.addAll(_active.getProcesses(distName));
     procs.addAll(_suspended.getProcesses(distName));
     procs.addAll(_toRestart.getProcesses(distName));
+    Collections.sort(procs);
     return procs;
   }  
 
@@ -89,7 +91,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     procs.addAll(_active.getProcesses(distName, version));
     procs.addAll(_suspended.getProcesses(distName, version));
     procs.addAll(_toRestart.getProcesses(distName, version));
-
+    Collections.sort(procs);
     return procs;
   }
 
@@ -99,7 +101,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     procs.addAll(_active.getProcesses(distName, version, profile));
     procs.addAll(_suspended.getProcesses(distName, version, profile));
     procs.addAll(_toRestart.getProcesses(distName, version, profile));
-
+    Collections.sort(procs);
     return procs;
   }
 
@@ -109,7 +111,7 @@ public class ProcessRepositoryImpl implements ProcessRepository {
     procs.addAll(_active.getProcesses(distName, version, profile, procName));
     procs.addAll(_suspended.getProcesses(distName, version, profile, procName));
     procs.addAll(_toRestart.getProcesses(distName, version, profile, procName));
-
+    Collections.sort(procs);
     return procs;
   }
 }

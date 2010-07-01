@@ -93,7 +93,7 @@ public class Magnet extends BaseJavaStarter implements java.io.Serializable {
 
   private String getAsCp() {
     DirectoryScanner ds      = new DirectoryScanner();
-    String           basedir = _corusHome + File.separator + "magnetlib";
+    String           basedir = _corusHome + File.separator + "lib" + File.separator + "magnet";
     ds.setBasedir(basedir);
     ds.setIncludes(new String[] { "**/*.jar", "**/*.zip" });
     ds.scan();
@@ -114,7 +114,7 @@ public class Magnet extends BaseJavaStarter implements java.io.Serializable {
 
   private String getMainCp() {
     DirectoryScanner ds      = new DirectoryScanner();
-    String           basedir = _corusHome + File.separator + "vm-boot-lib";
+    String           basedir = _corusHome + File.separator + "lib" + File.separator + "vm-boot";
     ds.setBasedir(basedir);
     ds.setIncludes(new String[] { "**/*.jar" });
     ds.scan();
