@@ -14,42 +14,6 @@
     <version>2.0-SNAPSHOT</version>
   </parent>
 
-  <organization>
-    <name>Sapia OSS</name>
-    <url>http://www.sapia-oss.org</url>
-  </organization>
-
-  <developers>
-    <developer>
-      <id>yduchesne</id>
-      <name>Yanick Duchesne</name>
-      <email>yd@sapia-oss.org</email>
-      <url>http://www.sapia-oss.org</url>
-      <organization>Sapia</organization>
-      <organizationUrl>http://www.sapia-oss.org</organizationUrl>
-      <roles>
-        <role>architect</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>jcdesrochers</id>
-      <name>Jean-Cedric Desrochers</name>
-      <email>jc@sapia-oss.org</email>
-      <url>http://www.sapia-oss.org</url>
-      <organization>Sapia</organization>
-      <organizationUrl>http://www.sapia-oss.org</organizationUrl>
-      <roles>
-        <role>architect</role>
-      </roles>
-    </developer>
-  </developers>
-
-  <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/branches/corus/modules/server</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/branches/corus/modules/server</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/corus/modules/server</url>
-  </scm>
-
   <licenses>
     <license>
       <name>GNU General Public License (GPL)</name>
@@ -172,8 +136,7 @@
 
     <dependency>
       <groupId>org.sapia</groupId>
-      <artifactId>sapia_corus_iop</artifactId>
-      <classifier>api</classifier>
+      <artifactId>sapia_corus_iop_api</artifactId>
       <version>2.0-SNAPSHOT</version>
     </dependency>
 
@@ -188,15 +151,15 @@
       <artifactId>sapia_as</artifactId>
       <version>1.7</version>
     </dependency>
-
+    
+    <dependency>
+	    <groupId>org.sapia</groupId>
+	    <artifactId>sapia_magnet</artifactId>
+	    <version>2.0-SNAPSHOT</version>
+	    <scope>compile</scope>
+    </dependency>
+    
   </dependencies>
-
-  <distributionManagement>
-    <repository>
-      <id>java.net-m2-repository</id>
-      <url>java-net:/maven2-repository/trunk/repository</url>
-    </repository>
-  </distributionManagement>
 
   <build>
     <finalName>${artifactId}-${version}</finalName>
@@ -211,14 +174,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.0-beta-7</version>
-        <configuration>
-          <tagBase>https://sapia.googlecode.com/svn/branches/corus/modules/server</tagBase>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <excludes>
@@ -226,48 +181,77 @@
           </excludes>
         </configuration>
       </plugin>
+      
+		  <plugin>
+		    <artifactId>maven-clean-plugin</artifactId>
+		    <configuration>
+		      <filesets>
+		        <fileset>
+		          <directory>${basedir}/lib</directory>
+		          <includes>
+		            <include>**/*</include>
+		          </includes>
+		        </fileset>
+		      </filesets>
+		    </configuration>
+		  </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+       
+          <!-- copying server dependencies -->
+          <execution>
+            <id>copy-server-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/lib/server</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <excludeArtifactIds>sapia_magnet</excludeArtifactIds>
+            </configuration>
+          </execution>
+          
+          <!-- copying VM bootstrap dependencies -->
+          <execution>
+            <id>copy-vm-bootstrap-appstarter</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/lib/vm-boot</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <includeArtifactIds>sapia_as,sapia_corus_iop_api</includeArtifactIds>
+            </configuration>
+          </execution>
+          
+          <!-- copying Magnet dependencies -->
+          <execution>
+            <id>copy-magnet-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/lib/magnet</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <includeArtifactIds>sapia_magnet,ant,bsh,jdom,log4j,piccolo,sapia_console,sapia_utils,sapia_corus_iop</includeArtifactIds>
+            </configuration>
+          </execution>          
+        </executions>
+      </plugin>
+      
     </plugins>
 
-    <!--extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>
-    </extensions-->
-
   </build>
-
- <!--profiles>
-    <profile>
-      <id>release-sign-artifacts</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.0-alpha-4</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles-->
-  
-
 </project>
