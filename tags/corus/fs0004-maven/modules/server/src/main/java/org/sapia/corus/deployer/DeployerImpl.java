@@ -29,7 +29,6 @@ import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.http.HttpModule;
 import org.sapia.corus.client.services.processor.Processor;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.corus.deployer.task.BuildDistTask;
@@ -42,7 +41,6 @@ import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.ubik.net.ServerAddress;
-import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.replication.ReplicationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,18 +58,6 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
    * The file lock timeout property name (<code>file-lock-timeout</code>).
    */
   public static final String LOCK_TIMEOUT = "file-lock-timeout";
-
-  /**
-   * The default deployment directory (<code>user.dir/deploy</code>).
-   */
-  public static final String DEFAULT_DEPLOY_DIR = CorusRuntime.getCorusHome() +
-    java.io.File.separator + "deploy";
-
-  /**
-   * The default temp directory (<code>user.dir/tmp</code>).
-   */
-  public static final String DEFAULT_TMP_DIR = CorusRuntime.getCorusHome() +
-    java.io.File.separator + "tmp";
 
   @Autowired
   private EventDispatcher _events;
@@ -104,9 +90,12 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     _store = new DistributionDatabaseImpl();
     
     services().bind(DistributionDatabase.class, _store);
+
+    String defaultDeployDir = serverContext().getHomeDir() + java.io.File.separator + "deploy";
     
-    String pattern = CorusRuntime.getCorus().getDomain() + '_' +
-      ((TCPAddress) CorusRuntime.getTransport().getServerAddress()).getPort();
+    String defaultTmpDir = serverContext().getHomeDir() + java.io.File.separator + "tmp";
+    
+    String pattern = serverContext().getDomain() + '_' + serverContext().getServerAddress().getPort();
     
     DeployerConfigurationImpl config = new DeployerConfigurationImpl();
     config.setFileLockTimeout(_configuration.getFileLockTimeout());
@@ -114,13 +103,13 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     if (_configuration.getDeployDir() != null) {
       config.setDeployDir(_configuration.getDeployDir() + File.separator + pattern);
     } else {
-      config.setDeployDir(DEFAULT_DEPLOY_DIR + File.separator + pattern);
+      config.setDeployDir(defaultDeployDir + File.separator + pattern);
     }
 
     if (_configuration.getTempDir() != null) {
       config.setTempDir(_configuration.getTempDir() + File.separator + pattern);
     } else {
-      config.setTempDir(DEFAULT_TMP_DIR + File.separator + pattern);
+      config.setTempDir(defaultTmpDir + File.separator + pattern);
     }
     _configuration = config;
     
@@ -148,14 +137,14 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
    */
   public void onServerStartedEvent(ServerStartedEvent evt) {
     try {
-      _processor = new DeploymentProcessor(this, logger());
+      _processor = new DeploymentProcessor(this, serverContext(), logger());
       _processor.init();
       _processor.start();
     } catch (Exception e) {
       logger().error("Could not start deployment processor", e);
     }
     try{
-      DeployerExtension ext = new DeployerExtension(this);
+      DeployerExtension ext = new DeployerExtension(this, _serverContext);
       _http.addHttpExtension(ext);
     }catch (Exception e){
       logger().error("Could not add deployer HTTP extension", e);
@@ -270,8 +259,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
       Set<ServerAddress>  targets = meta.getTargets();
       Set<ServerAddress>  visited = meta.getVisited();
       ServerAddress       addr;
-      ServerAddress       current = CorusRuntime.getTransport()
-                                                .getServerAddress();
+      ServerAddress       current = serverContext().getServerAddress();
       ReplicationStrategy strat   = new ReplicationStrategy(visited, targets,
           siblings);
 			
@@ -421,7 +409,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     return fLock;
   }
 
-  private synchronized void releaseFileLock(Map locks, String fileName) {
+  private synchronized void releaseFileLock(Map<String, FileLock> locks, String fileName) {
     FileLock fLock = (FileLock) locks.get(fileName);
 
     if (fLock != null) {

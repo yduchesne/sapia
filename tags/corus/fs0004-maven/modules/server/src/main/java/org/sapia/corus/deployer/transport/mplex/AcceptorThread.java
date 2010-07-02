@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import org.apache.log.Logger;
 import org.sapia.corus.client.services.deployer.transport.mplex.MplexDeploymentClient;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.deployer.transport.Deployment;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
@@ -26,12 +27,18 @@ import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
 class AcceptorThread implements Runnable{
   
   private MultiplexSocketConnector _connector;
-  private DeploymentConnector       _deployConn;
+  private DeploymentConnector      _deployConn;
+  private ServerContext            _serverContext;
   private Logger                   _logger;
   
-  AcceptorThread(MultiplexSocketConnector connector, DeploymentConnector deployConn, Logger logger){
+  AcceptorThread(
+      MultiplexSocketConnector connector, 
+      DeploymentConnector deployConn, 
+      ServerContext context, 
+      Logger logger){
     _connector = connector;
     _deployConn = deployConn;
+    _serverContext = context;
     _logger = logger;
   }
   
@@ -64,7 +71,7 @@ class AcceptorThread implements Runnable{
         continue;
       }
       
-      _deployConn.connect(new Deployment(new SocketConnection(client)));
+      _deployConn.connect(new Deployment(_serverContext, new SocketConnection(client)));
     }
   }
 }

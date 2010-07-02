@@ -77,46 +77,41 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     props.load(tmp);
     
     InternalServiceContext services = new InternalServiceContext();
-    ServerContextImpl serverContext = new ServerContextImpl(domain, corusHome,  services);
-  //  try{
-      
+    ServerContextImpl serverContext = new ServerContextImpl(this, aTransport, domain, corusHome, services);
     
-      // root context
-      PropertyContainer propContainer = new PropertyContainer() {
-        @Override
-        public String getProperty(String name) {
-          return props.getProperty(name);
-        }
-      };
-      final ModuleLifeCycleManager manager = new ModuleLifeCycleManager(serverContext, propContainer);
-      BeanFactoryPostProcessor postProcessor = new ConfigurationPostProcessor(serverContext, manager);
+    // root context
+    PropertyContainer propContainer = new PropertyContainer() {
+      @Override
+      public String getProperty(String name) {
+        return props.getProperty(name);
+      }
+    };
+    final ModuleLifeCycleManager manager = new ModuleLifeCycleManager(serverContext, propContainer);
+    BeanFactoryPostProcessor postProcessor = new ConfigurationPostProcessor(serverContext, manager);
 
-      GenericApplicationContext rootContext = new GenericApplicationContext();
-      rootContext.getBeanFactory().registerSingleton("lifecycleManager", manager);
-      rootContext.refresh();
-      
-      // core services context
-      
-      ClassPathXmlApplicationContext coreContext = new ClassPathXmlApplicationContext(rootContext);
-      coreContext.addBeanFactoryPostProcessor(postProcessor);
-      coreContext.registerShutdownHook();
-      coreContext.setConfigLocation("org/sapia/corus/core.xml");
-      coreContext.refresh();
-      manager.addApplicationContext(coreContext);
-      
-      // module context
-      ClassPathXmlApplicationContext moduleContext = new ClassPathXmlApplicationContext(coreContext);
-      moduleContext.addBeanFactoryPostProcessor(postProcessor);
-      moduleContext.registerShutdownHook();
-      moduleContext.setConfigLocation("org/sapia/corus/modules.xml");
-      moduleContext.refresh();
-      manager.addApplicationContext(moduleContext);
+    GenericApplicationContext rootContext = new GenericApplicationContext();
+    rootContext.getBeanFactory().registerSingleton("lifecycleManager", manager);
+    rootContext.refresh();
+    
+    // core services context
+    
+    ClassPathXmlApplicationContext coreContext = new ClassPathXmlApplicationContext(rootContext);
+    coreContext.addBeanFactoryPostProcessor(postProcessor);
+    coreContext.registerShutdownHook();
+    coreContext.setConfigLocation("org/sapia/corus/core.xml");
+    coreContext.refresh();
+    manager.addApplicationContext(coreContext);
+    
+    // module context
+    ClassPathXmlApplicationContext moduleContext = new ClassPathXmlApplicationContext(coreContext);
+    moduleContext.addBeanFactoryPostProcessor(postProcessor);
+    moduleContext.registerShutdownHook();
+    moduleContext.setConfigLocation("org/sapia/corus/modules.xml");
+    moduleContext.refresh();
+    manager.addApplicationContext(moduleContext);
 
-      _lifeCycle = manager;
-/*    }finally{
-      InitContext.unattach();
-    }
-*/    
+    _lifeCycle = manager;
+ 
     return serverContext;
   }
   

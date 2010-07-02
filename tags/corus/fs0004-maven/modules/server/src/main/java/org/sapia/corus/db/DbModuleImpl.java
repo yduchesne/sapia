@@ -6,9 +6,7 @@ import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.exceptions.core.IORuntimeException;
 import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.db.DbModule;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.ubik.net.TCPAddress;
 
 
 /**
@@ -36,16 +34,16 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
   public void init() throws Exception {
     if (_dbDir != null) {
       String aFilename = new StringBuffer(_dbDir.getAbsolutePath()).
-              append(File.separator).append(CorusRuntime.getCorus().getDomain()).
-              append("_").append(((TCPAddress)CorusRuntime.getTransport().getServerAddress()).getPort()).
+              append(File.separator).append(serverContext().getDomain()).
+              append("_").append(serverContext().getServerAddress().getPort()).
               toString();
       _dbDir = new File(aFilename);
 
     } else {
-      String aFilename = new StringBuffer(CorusRuntime.getCorusHome()).
+      String aFilename = new StringBuffer(serverContext().getHomeDir()).
               append(File.separator).append("db").
-              append(File.separator).append(CorusRuntime.getCorus().getDomain()).
-              append("_").append(((TCPAddress)CorusRuntime.getTransport().getServerAddress()).getPort()).
+              append(File.separator).append(serverContext().getDomain()).
+              append("_").append(serverContext().getServerAddress().getPort()).
               toString();
       _dbDir = new File(aFilename);
     }

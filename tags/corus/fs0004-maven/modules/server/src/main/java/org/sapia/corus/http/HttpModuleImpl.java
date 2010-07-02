@@ -3,7 +3,6 @@ package org.sapia.corus.http;
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpModule;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.http.filesystem.FileSystemExtension;
 import org.sapia.corus.http.interop.SoapExtension;
@@ -40,11 +39,11 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
    */
   public void init() throws Exception {
     // Create the interop and http extension transports
-    String transportType = CorusRuntime.getTransport().getTransportProvider().getTransportType();
+    String transportType = serverContext().getTransport().getTransportProvider().getTransportType();
     if (transportType.equals(MultiplexSocketTransportProvider.TRANSPORT_TYPE)) {
-      _httpExt = new HttpExtensionManager(logger());      
+      _httpExt = new HttpExtensionManager(logger(), serverContext());      
     } else if (transportType.equals(HttpTransportProvider.DEFAULT_HTTP_TRANSPORT_TYPE)) {
-      _httpExt = new HttpExtensionManager(logger());      
+      _httpExt = new HttpExtensionManager(logger(), serverContext());      
     } else {
       throw new IllegalStateException("Could not initialize the http module using the transport type: " + transportType);
     }
@@ -55,8 +54,8 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
     
     //////////// adding default extensions ///////////
     
-    addHttpExtension(new FileSystemExtension());
-    addHttpExtension(new JmxExtension());    
+    addHttpExtension(new FileSystemExtension(serverContext()));
+    addHttpExtension(new JmxExtension(serverContext()));    
     SoapExtension ext = new SoapExtension(serverContext());
     addHttpExtension(ext);    
     

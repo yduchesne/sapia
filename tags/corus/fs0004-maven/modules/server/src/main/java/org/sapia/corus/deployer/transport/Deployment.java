@@ -7,30 +7,27 @@ import java.io.ObjectInputStream;
 import org.sapia.corus.client.services.deployer.transport.Connection;
 import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
 import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
+import org.sapia.corus.core.ServerContext;
 
 /**
  * This class models a deployment on the server-side.
  * 
  * @author Yanick Duchesne
- *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2004 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class Deployment {
 	
 	static final int BUFSZ = 2048;
-	
+
+	private ServerContext _context;
+  private Connection _conn;
 	private DeploymentMetadata _meta;
-	private Connection _conn;
 	
 	/**
 	 * @param conn the <code>Connection</code> that represents the network
 	 * link with the client that is performing the deployment.
 	 */
-	public Deployment(Connection conn){
+	public Deployment(ServerContext context, Connection conn){
+    _context = context;
 		_conn = conn;
 	}
   
@@ -81,7 +78,7 @@ public class Deployment {
 			deployOutput.write(buf, 0, read);
 		}
 		deployOutput.close();
-		ClientCallback cb = new ClientCallback();
+		ClientCallback cb = new ClientCallback(_context);
 		cb.handleResult(this, deployOutput.getProgressQueue());
 	}
 }

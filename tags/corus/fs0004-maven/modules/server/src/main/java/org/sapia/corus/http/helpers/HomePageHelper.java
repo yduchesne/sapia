@@ -8,17 +8,19 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.http.HttpExtensionManager;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 
 public class HomePageHelper {
 
-  List<HttpExtensionInfo> _extensionInfos = new ArrayList<HttpExtensionInfo>();
+  private List<HttpExtensionInfo> _extensionInfos = new ArrayList<HttpExtensionInfo>();
+  private ServerContext _context;
   
-  public HomePageHelper(Collection<HttpExtensionInfo> extInfos){
+  public HomePageHelper(ServerContext context, Collection<HttpExtensionInfo> extInfos){
     _extensionInfos.addAll(extInfos);
+    _context = context;
   }
   
   public void print(Request req, Response res) throws Exception{
@@ -26,8 +28,7 @@ public class HomePageHelper {
       res.set("Content-Type", "text/html");
       res.setCode(200);
       PrintStream ps = res.getPrintStream();
-      ps.println("<html><body><h1>Welcome to Corus @ " + 
-          CorusRuntime.getCorus().getDomain() + "</h1> ");
+      ps.println("<html><body><h1>Welcome to Corus @ " + _context.getDomain() + "</h1> ");
       ps.println("<h2>Available Extensions</h2>");
       ps.println("<table border=\"0\">");
       ps.println("<th>Context Path</th><th>Name</th><th>Description</th>");

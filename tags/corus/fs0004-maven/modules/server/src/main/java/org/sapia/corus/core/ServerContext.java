@@ -1,14 +1,26 @@
 package org.sapia.corus.core;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import org.sapia.corus.client.Corus;
 import org.sapia.ubik.net.TCPAddress;
 
 public interface ServerContext {
+
+  /**
+   * @return this instance's {@link Corus}.
+   */
+  public Corus getCorus();
+  
   /**
    * @return the name of the Corus server.
    */
   public String getServerName();
   
-  
+  /**
+   * @param serverName a name to assign to this Corus server.
+   */
   public void overrideServerName(String serverName);
   
   /**
@@ -21,11 +33,18 @@ public interface ServerContext {
    */
   public String getDomain();
   
+  public Properties getProcessProperties() throws IOException;
+  
   /**
    * @return the address of the Corus server corresponding to this
    * instance.
    */
   public TCPAddress getServerAddress();
+  
+  /**
+   * @return the {@link CorusTransport}.
+   */
+  public CorusTransport getTransport();
   
   /**
    * @return the {@link InternalServiceContext} containing the services

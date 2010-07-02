@@ -24,6 +24,8 @@ public class TestServerContext extends ServerContextImpl{
   
   public TestServerContext() {
     super(
+        null,
+        null, 
         new TCPAddress("localhost", 33000), 
         "test", 
         "home",

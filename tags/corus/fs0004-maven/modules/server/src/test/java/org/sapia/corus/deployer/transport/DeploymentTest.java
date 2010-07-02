@@ -12,12 +12,6 @@ import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
 
 /**
  * @author Yanick Duchesne
- *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2004 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class DeploymentTest extends TestCase{
 
@@ -36,7 +30,7 @@ public class DeploymentTest extends TestCase{
     oos.writeObject(meta);
     bos.write(data);
     ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-    Deployment depl = new Deployment(new TestConnection(bis, new ByteArrayOutputStream()));
+    Deployment depl = new Deployment(null, new TestConnection(bis, new ByteArrayOutputStream()));
     meta = depl.getMetadata();
     super.assertEquals("test", meta.getFileName());
 		super.assertEquals(data.length, meta.getContentLength());    

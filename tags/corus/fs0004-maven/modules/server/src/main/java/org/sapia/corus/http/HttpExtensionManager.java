@@ -11,7 +11,7 @@ import org.apache.log.Logger;
 import org.sapia.corus.client.services.http.HttpContext;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.http.helpers.HomePageHelper;
 import org.sapia.corus.http.helpers.NotFoundHelper;
 import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
@@ -36,14 +36,16 @@ public class HttpExtensionManager implements Container{
   private MultiplexSocketConnector _httpConnector;  
   private ContainerServer _containerServer;
   private Logger _logger;
+  private ServerContext _context;
   private Map<HttpExtensionInfo, HttpExtension> _extensions = Collections.synchronizedMap(new HashMap<HttpExtensionInfo, HttpExtension>());
-  
-  public HttpExtensionManager(Logger logger) {
+
+  public HttpExtensionManager(Logger logger, ServerContext context) {
      _logger = logger;
+     _context = context;
   }
   
   public void init() throws Exception {
-    TransportProvider provider = CorusRuntime.getTransport().getTransportProvider();
+    TransportProvider provider = _context.getTransport().getTransportProvider();
       
     if (!(provider instanceof MultiplexSocketTransportProvider)) {
       throw new IllegalStateException(
@@ -53,7 +55,7 @@ public class HttpExtensionManager implements Container{
   
   public void start() throws Exception{
     _logger.info("Starting http extension manager");
-    MultiplexSocketTransportProvider mplexProvider = (MultiplexSocketTransportProvider) CorusRuntime.getTransport().getTransportProvider();
+    MultiplexSocketTransportProvider mplexProvider = (MultiplexSocketTransportProvider) _context.getTransport().getTransportProvider();
     
     // Create the connector for HTTP post to /corus/ext context
     HttpStreamSelector selector = new HttpStreamSelector(null, null);
@@ -127,7 +129,7 @@ public class HttpExtensionManager implements Container{
 
     if(req.getPath().getSegments().length == 0){
       synchronized(_extensions){
-        HomePageHelper helper = new HomePageHelper(_extensions.keySet());
+        HomePageHelper helper = new HomePageHelper(_context, _extensions.keySet());
         helper.print(req, res);
       }
     }

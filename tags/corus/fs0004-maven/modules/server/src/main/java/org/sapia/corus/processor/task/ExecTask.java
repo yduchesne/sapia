@@ -4,7 +4,6 @@ import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.client.services.processor.DistributionInfo;
 import org.sapia.corus.client.services.processor.Process;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
@@ -37,7 +36,7 @@ public class ExecTask extends Task{
     ProcessInfo info = new ProcessInfo(process, _dist, _processConf, false);
     ctx.info("Executing process: " + _processConf.getName());          
     
-    if(strategy.execProcess(ctx, info, CorusRuntime.getProcessProperties())){
+    if(strategy.execProcess(ctx, info, ctx.getServerContext().getProcessProperties())){
       ctx.getServerContext().getServices().getProcesses().getActiveProcesses().addProcess(process);
     }
     else{

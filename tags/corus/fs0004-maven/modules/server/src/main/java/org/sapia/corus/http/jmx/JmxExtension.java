@@ -15,7 +15,7 @@ import java.util.List;
 import org.sapia.corus.client.services.http.HttpContext;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.ubik.net.TCPAddress;
 
 /**
@@ -30,6 +30,12 @@ import org.sapia.ubik.net.TCPAddress;
 public class JmxExtension implements HttpExtension{
 
   public static final String HTTP_JMX_CONTEXT = "jmx";
+  
+  private ServerContext context;
+  
+  public JmxExtension(ServerContext context) {
+    this.context = context;
+  }
   
   public HttpExtensionInfo getInfo() {
     HttpExtensionInfo info = new HttpExtensionInfo();
@@ -53,9 +59,9 @@ public class JmxExtension implements HttpExtension{
     
     PrintStream ps = ctx.getResponse().getPrintStream();
     ps.print("<vmStatus");
-    xmlAttribute("domain", CorusRuntime.getCorus().getDomain(), ps);
+    xmlAttribute("domain", context.getDomain(), ps);
     try{
-      TCPAddress addr = (TCPAddress)CorusRuntime.getTransport().getServerAddress();
+      TCPAddress addr = context.getServerAddress();
       xmlAttribute("host", addr.getHost(), ps);      
       xmlAttribute("port", Integer.toString(addr.getPort()), ps);
     }catch(ClassCastException e){}

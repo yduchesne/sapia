@@ -15,7 +15,7 @@ import javax.activation.MimetypesFileTypeMap;
 import org.sapia.corus.client.services.http.HttpContext;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.http.HttpExtensionManager;
 import org.sapia.corus.http.helpers.NotFoundHelper;
 
@@ -37,6 +37,12 @@ public class FileSystemExtension implements HttpExtension{
   
   static final MimetypesFileTypeMap MIME_TYPES = new MimetypesFileTypeMap();
   
+  private ServerContext context;
+  
+  public FileSystemExtension(ServerContext context) {
+    this.context = context;
+  }
+  
   public HttpExtensionInfo getInfo() {
     HttpExtensionInfo info = new HttpExtensionInfo();
     info.setContextPath(HTTP_FILESYSTEM_CONTEXT);
@@ -48,10 +54,10 @@ public class FileSystemExtension implements HttpExtension{
   public void process(HttpContext ctx) throws Exception {
     File requested;
     if(ctx.getPathInfo().length() == 0 || ctx.getPathInfo().trim().equals("/")){
-      requested = new File(CorusRuntime.getCorusHome());
+      requested = new File(context.getHomeDir());
     }
     else{
-      requested = new File(CorusRuntime.getCorusHome()+File.separator+ctx.getPathInfo());
+      requested = new File(context.getHomeDir()+File.separator+ctx.getPathInfo());
     }
     if(!requested.exists()){
       NotFoundHelper helper = new NotFoundHelper();

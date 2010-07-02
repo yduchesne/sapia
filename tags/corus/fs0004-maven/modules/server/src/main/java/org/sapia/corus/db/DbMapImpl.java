@@ -63,6 +63,7 @@ public class DbMapImpl<K, V> implements DbMap<K, V> {
     }
   }
   
+  @SuppressWarnings(value="unchecked")
   public void refresh(K key, V value) {
     try {
       Record<V> rec = (Record<V>)_hashtable.get(key);

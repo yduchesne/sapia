@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.log.Logger;
 import org.sapia.corus.client.services.deployer.transport.mplex.MplexDeploymentClient;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.deployer.transport.DeploymentAcceptor;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
@@ -14,23 +15,20 @@ import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketTransportProvid
  * Implements the <code>DeploymentAcceptor</code> over a <code>MultiplexSocketTransportProvider</code>.
  * 
  * @author Yanick Duchesne
- *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2004 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAcceptor{
 	
 	private MultiplexSocketConnector _connector;
+	private ServerContext _context;
 	private MultiplexSocketTransportProvider _provider;
 	private DeploymentConnector _deployConn;
 	private Logger              _logger;
 	private Thread              _acceptor;
 	
-	public MplexDeploymentAcceptor(MultiplexSocketTransportProvider provider,
+	public MplexDeploymentAcceptor(ServerContext context, 
+	                               MultiplexSocketTransportProvider provider,
 	                               Logger logger){
+	  _context  = context;
 		_provider = provider;
 		_logger   = logger;
 	}
@@ -71,7 +69,7 @@ public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAccept
    */
   public void start() throws Exception{
 		_logger.debug("Starting mplex deployment acceptor thread");  	
-		_acceptor = new Thread(new AcceptorThread(_connector, _deployConn, _logger));
+		_acceptor = new Thread(new AcceptorThread(_connector, _deployConn, _context, _logger));
 		_acceptor.setName("DeploymentAcceptor");
 		_acceptor.setDaemon(true);
 		_acceptor.start();

@@ -1,7 +1,7 @@
 package org.sapia.corus.deployer.transport;
 
 import org.apache.log.Logger;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.deployer.transport.http.HttpDeploymentAcceptor;
 import org.sapia.corus.deployer.transport.mplex.MplexDeploymentAcceptor;
 import org.sapia.ubik.rmi.server.transport.http.HttpTransportProvider;
@@ -13,23 +13,25 @@ import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketTransportProvid
 public class DeploymentProcessor {
 	
 	private DeploymentAcceptor _acceptor;
-	private DeploymentConnector _connector;	
+	private DeploymentConnector _connector;
+	private ServerContext _context;
 	private Logger _logger;
 	
-	public DeploymentProcessor(DeploymentConnector connector, Logger logger){
+	public DeploymentProcessor(DeploymentConnector connector, ServerContext context, Logger logger){
 		_logger    = logger;
 		_connector = connector;
+		_context = context;
 	}
 	
   public void init() throws Exception{
-    if(CorusRuntime.getTransport().getTransportProvider() instanceof MultiplexSocketTransportProvider){
-    	MultiplexSocketTransportProvider provider = (MultiplexSocketTransportProvider)CorusRuntime.getTransport().getTransportProvider();
-    	_acceptor = new MplexDeploymentAcceptor(provider, _logger);
+    if(_context.getTransport().getTransportProvider() instanceof MultiplexSocketTransportProvider){
+    	MultiplexSocketTransportProvider provider = (MultiplexSocketTransportProvider)_context.getTransport().getTransportProvider();
+    	_acceptor = new MplexDeploymentAcceptor(_context, provider, _logger);
     	_acceptor.registerConnector(_connector);
     }
-    else if(CorusRuntime.getTransport().getTransportProvider() instanceof HttpTransportProvider){
-    	HttpTransportProvider provider = (HttpTransportProvider)CorusRuntime.getTransport().getTransportProvider();
-    	_acceptor = new HttpDeploymentAcceptor(provider);
+    else if(_context.getTransport().getTransportProvider() instanceof HttpTransportProvider){
+    	HttpTransportProvider provider = (HttpTransportProvider)_context.getTransport().getTransportProvider();
+    	_acceptor = new HttpDeploymentAcceptor(_context, provider);
 			_acceptor.registerConnector(_connector);    	
     }
     else{

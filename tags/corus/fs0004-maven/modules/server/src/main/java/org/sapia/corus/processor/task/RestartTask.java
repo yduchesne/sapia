@@ -10,7 +10,6 @@ import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.client.services.processor.LockOwner;
 import org.sapia.corus.client.services.processor.Process;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.processor.ProcessRepository;
@@ -117,7 +116,7 @@ public class RestartTask extends ProcessTerminationTask {
       try {
         ProcessRepository repository = ctx.getServerContext().getServices().getProcesses();
         ProcessorTaskStrategy strategy = ctx.getServerContext().lookup(ProcessorTaskStrategy.class);
-        if(strategy.execProcess(ctx, new ProcessInfo(_process, _dist, _conf, true), CorusRuntime.getProcessProperties())){
+        if(strategy.execProcess(ctx, new ProcessInfo(_process, _dist, _conf, true), ctx.getServerContext().getProcessProperties())){
           repository.getProcessesToRestart().removeProcess(_process.getProcessID());
           _process.touch();
           _process.setStatus(Process.LifeCycleStatus.ACTIVE);        

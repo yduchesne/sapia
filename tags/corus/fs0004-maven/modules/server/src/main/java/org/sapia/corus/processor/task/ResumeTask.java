@@ -7,7 +7,6 @@ import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.client.services.processor.LockOwner;
 import org.sapia.corus.client.services.processor.Process;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.processor.ProcessInfo;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.taskmanager.core.Task;
@@ -43,7 +42,7 @@ public class ResumeTask extends Task{
     try{
       ProcessRepository processes = ctx.getServerContext().getServices().getProcesses();
       ProcessorTaskStrategy strategy = ctx.getServerContext().lookup(ProcessorTaskStrategy.class);
-      if(strategy.execProcess(ctx, new ProcessInfo(_process, _dist, _conf, true), CorusRuntime.getProcessProperties())){
+      if(strategy.execProcess(ctx, new ProcessInfo(_process, _dist, _conf, true), ctx.getServerContext().getProcessProperties())){
         processes.getSuspendedProcesses().removeProcess(_process.getProcessID());
         _process.setStatus(Process.LifeCycleStatus.ACTIVE);
         processes.getActiveProcesses().addProcess(_process);

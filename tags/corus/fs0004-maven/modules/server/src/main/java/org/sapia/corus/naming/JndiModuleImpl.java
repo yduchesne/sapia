@@ -7,7 +7,6 @@ import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.naming.JndiModule;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.ubik.mcast.EventChannel;
@@ -85,8 +84,8 @@ public class JndiModuleImpl extends ModuleHelper implements JndiModule, Intercep
   public void onServerStartedEvent(ServerStartedEvent evt){
     try{
       EventChannel ec = _cluster.getEventChannel();
-      CorusRuntime.getTransport().exportObject(_context);
-      _listener = JNDIServerHelper.createClientListener(ec, CorusRuntime.getTransport().getServerAddress());
+      serverContext().getTransport().exportObject(_context);
+      _listener = JNDIServerHelper.createClientListener(ec, serverContext().getTransport().getServerAddress());
     }catch(Exception e){
       logger().error("Could not initialize client listener properly in JNDI module", e);
     }

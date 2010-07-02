@@ -1,7 +1,12 @@
 package org.sapia.corus.core;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.UUID;
 
+import org.sapia.corus.client.Corus;
 import org.sapia.ubik.net.TCPAddress;
 
 /**
@@ -12,95 +17,127 @@ import org.sapia.ubik.net.TCPAddress;
  */
 public class ServerContextImpl implements ServerContext {
 
+  static final String CORUS_PROCESS_FILE = "corus_process";
+
+  private Corus corus;
   private String serverName = UUID.randomUUID().toString().substring(0, 8);
   private String domain;
   private TCPAddress serverAddress;
+  private CorusTransport transport;
   private InternalServiceContext services;
   private String homeDir;
   
   public ServerContextImpl(
+      Corus corus,
+      CorusTransport transport,
       TCPAddress addr, 
       String domain, 
       String homeDir, 
       InternalServiceContext services){
-    this(domain, homeDir, services);
+    this(corus, transport, domain, homeDir, services);
     this.serverAddress = addr;
   }
   
   public ServerContextImpl(
+      Corus corus,
+      CorusTransport transport,
       String domain, 
       String homeDir, 
       InternalServiceContext services){
+    this.corus = corus;
+    this.transport = transport;
     this.domain = domain;
     this.homeDir = homeDir;
     this.services = services;
   }
   
-  /**
-   * @return the name of the Corus server.
-   */
+  @Override
+  public Corus getCorus() {
+    return corus;
+  }
+  
+  @Override
   public String getServerName() {
     return serverName;
   }
   
-  /**
-   * @param serverName the name of the Corus server.
-   */
   void setServerName(String serverName) {
     this.serverName = serverName;
   }
 
-  /**
-   * Overrides this instance's server name.
-   * @param serverName the name of the Corus server.
-   */
   @Override
   public void overrideServerName(String serverName) {
     this.serverName = serverName;
   }
   
-  /**
-   * @return the home directory of the Corus server.
-   */
+  @Override
   public String getHomeDir() {
     return homeDir;
   }
   
-  /**
-   * @return the domain of the Corus server.
-   */
+  @Override
   public String getDomain() {
     return domain;
   }
   
-  /**
-   * @return the address of the Corus server corresponding to this
-   * instance.
-   */
+  @Override  
   public TCPAddress getServerAddress() {
-    if(serverAddress == null){
-      throw new IllegalStateException("Server address not yet available");
-    }
     return serverAddress;
   }
   
-  /**
-   * @return the {@link InternalServiceContext} containing the services
-   * of the Corus server.
-   */
+  @Override
+  public CorusTransport getTransport() {
+    return transport;
+  }
+  
+  @Override
   public InternalServiceContext getServices() {
     return services;
   }
   
-  /**
-   * Looks up a service of the given interface (internally delegates the call to
-   * this instances {@link InternalServiceContext}.
-   * @param <S> a service interface type
-   * @param serviceInterface the service interface for which to find a service instance.
-   * @return the service instance that was found.
-   */
+  @Override
   public <S> S lookup(Class<S> serviceInterface){
     return services.lookup(serviceInterface);
+  }
+  
+  /**
+   * This method returns properties that can be defined for all processes managed
+   * by all Corus servers on this host, or for processes that are part of a 
+   * given domain on this host.
+   * <p>
+   * Properties must be specified in Java property files under the Corus home
+   * directory. For multi-domain properties, a file named 
+   * <code>corus_process.properties</code> is searched. For domain-specific
+   * properties, a file named <code>corus_process_someDomain.properties</code>
+   * is searched.
+   * <p>
+   * Domain properties override global (multi-domain) properties.
+   * <p>
+   * The properties are passed to the processes upon their startup.
+   */
+  @Override
+  public Properties getProcessProperties() throws IOException{
+    File home = new File(getHomeDir() + File.separator + "config");
+    File globalProps = new File(home, CORUS_PROCESS_FILE + ".properties");
+    Properties globals = new Properties();
+    if(globalProps.exists()){
+      FileInputStream stream = new FileInputStream(globalProps);
+      try{
+        globals.load(stream);
+      }finally{
+        stream.close();
+      }
+    }
+    File domainProps = new File(home, CORUS_PROCESS_FILE + "_" + getDomain() + ".properties");
+    if(domainProps.exists()){
+      FileInputStream stream = new FileInputStream(domainProps);
+      try{
+        globals.load(stream);
+      }finally{
+        stream.close();
+      }
+    }    
+    return globals;
   }
   
   void setServerAddress(TCPAddress addr){

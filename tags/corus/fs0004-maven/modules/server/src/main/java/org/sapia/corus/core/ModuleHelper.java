@@ -19,7 +19,7 @@ public abstract class ModuleHelper implements ApplicationContextAware, Service, 
   
   protected Logger  _log = Hierarchy.getDefaultHierarchy().getLoggerFor(getClass().getName());
 
-  protected ApplicationContext     _appContext;
+  protected ApplicationContext _appContext;
   
   @Autowired
   protected ServerContext _serverContext;

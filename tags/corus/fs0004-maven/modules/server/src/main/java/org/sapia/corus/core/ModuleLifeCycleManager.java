@@ -1,10 +1,13 @@
 package org.sapia.corus.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
+import org.sapia.corus.client.Corus;
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.core.property.PropertyContainer;
 import org.sapia.corus.core.property.PropertyProvider;
@@ -39,6 +42,11 @@ class ModuleLifeCycleManager implements ServerContext, PropertyProvider{
   }
   
   ///////// ServerContext interface
+  
+  @Override
+  public Corus getCorus() {
+    return delegate.getCorus();
+  }
 
   @Override
   public String getDomain() {
@@ -53,6 +61,16 @@ class ModuleLifeCycleManager implements ServerContext, PropertyProvider{
   @Override
   public TCPAddress getServerAddress() {
     return delegate.getServerAddress();
+  }
+  
+  @Override
+  public CorusTransport getTransport() {
+    return delegate.getTransport();
+  }
+  
+  @Override
+  public Properties getProcessProperties() throws IOException {
+    return delegate.getProcessProperties();
   }
   
   @Override

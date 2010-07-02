@@ -6,7 +6,7 @@ import org.sapia.corus.client.Module;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.cluster.ClusteredCommand;
 import org.sapia.corus.client.services.cluster.ClusteredInvoker;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.replication.ReplicationEvent;
 import org.sapia.ubik.rmi.server.invocation.ServerPreInvokeEvent;
@@ -18,13 +18,15 @@ public class ServerSideClusterInterceptor implements Interceptor {
   private static ThreadLocal<ClusterInfo> _registration = new ThreadLocal<ClusterInfo>();
   private Logger             _log;
   private ClusterManager     _cluster;
-
+  private ServerContext      _context;
+  /*
   public ServerSideClusterInterceptor(ClusterManager cluster) {
     _cluster = cluster;
-  }
+  }*/
 
-  ServerSideClusterInterceptor(Logger log) {
+  ServerSideClusterInterceptor(Logger log, ServerContext context) {
     _log = log;
+    _context = context;
   }
 
   public static void clusterCurrentThread(ClusterInfo cluster) {
@@ -38,7 +40,7 @@ public class ServerSideClusterInterceptor implements Interceptor {
 			if (evt.getTarget() instanceof Module) {
 				try {
 					ClusteredInvoker invoker = (ClusteredInvoker)cmd.getReplicatedInvoker();
-					invoker.setUp(CorusRuntime.getCorus(), _cluster);
+					invoker.setUp(_context.getCorus(), _cluster);
 					invoker.setModuleName(((Module)evt.getTarget()).getRoleName());
 					  																									
 				} catch (Throwable t) {
@@ -54,7 +56,7 @@ public class ServerSideClusterInterceptor implements Interceptor {
   public void onReplicationEvent(ReplicationEvent evt) {
     if (evt.getReplicatedCommand() instanceof ClusteredCommand) {
     	ClusteredInvoker invoker = (ClusteredInvoker)((ClusteredCommand)evt.getReplicatedCommand()).getReplicatedInvoker();
-     	invoker.setUp(CorusRuntime.getCorus(), _cluster);
+     	invoker.setUp(_context.getCorus(), _cluster);
     }
   }
 

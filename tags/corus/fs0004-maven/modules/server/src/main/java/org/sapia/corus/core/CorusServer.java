@@ -201,7 +201,6 @@ public class CorusServer {
    
       // Initialize Corus, export it and start it
       CorusImpl corus = new CorusImpl(h, new FileInputStream(aFilename), domain, aTransport, corusHome);
-      CorusRuntime.init(corus, corusHome, aTransport);
       ServerContext context =  corus.getServerContext();
       aTransport.exportObject(corus);
       corus.start();

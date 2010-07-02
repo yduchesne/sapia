@@ -15,7 +15,7 @@ import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
 import org.sapia.corus.client.services.processor.Process;
 import org.sapia.corus.client.services.processor.Processor;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.interop.Context;
 import org.sapia.corus.interop.Param;
 import org.sapia.corus.interop.Status;
@@ -37,9 +37,11 @@ public class ProcessorExtension implements HttpExtension{
   private static final String PARAM_ID = "i";
   
   private Processor _processor;
+  private ServerContext _context;
   
-  ProcessorExtension(Processor proc){
+  ProcessorExtension(Processor proc, ServerContext context){
     _processor = proc;
+    _context = context;
   }
   
   public HttpExtensionInfo getInfo() {
@@ -83,9 +85,9 @@ public class ProcessorExtension implements HttpExtension{
     ctx.getResponse().set("Content-Type", "text/xml");    
     PrintStream ps = ctx.getResponse().getPrintStream();
     ps.print("<processes ");
-    attribute("domain", CorusRuntime.getCorus().getDomain(), ps);
+    attribute("domain", _context.getDomain(), ps);
     try{
-      TCPAddress addr = (TCPAddress)CorusRuntime.getTransport().getServerAddress();
+      TCPAddress addr = _context.getServerAddress();
       attribute("host", addr.getHost(), ps);      
       attribute("port", Integer.toString(addr.getPort()), ps);
     }catch(ClassCastException e){}

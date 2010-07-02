@@ -112,7 +112,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   }
   
   public void start() throws Exception {
-    ProcessorExtension ext = new ProcessorExtension(this);
+    ProcessorExtension ext = new ProcessorExtension(this, serverContext());
     _http.addHttpExtension(ext);
     
     BootstrapExecConfigStartTask boot = new BootstrapExecConfigStartTask(_startLock);

@@ -19,6 +19,11 @@ public class Template<T> {
   Object instance;
   PatternRecordMatcher<T> matcher;
   
+  /**
+   * @param desc the {@link ClassDescriptor} that provides meta data about the
+   * given object.
+   * @param instance the {@link Object} to use to build this template.
+   */
   public Template(ClassDescriptor<T> desc, Object instance){
     this.descriptor = desc;
     this.instance = instance;

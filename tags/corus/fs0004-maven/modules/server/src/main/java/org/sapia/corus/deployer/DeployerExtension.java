@@ -13,9 +13,8 @@ import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.client.services.http.HttpContext;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
-import org.sapia.corus.core.CorusRuntime;
+import org.sapia.corus.core.ServerContext;
 import org.sapia.ubik.net.TCPAddress;
-
 import org.simpleframework.http.Request;
 
 public class DeployerExtension implements HttpExtension{
@@ -28,9 +27,11 @@ public class DeployerExtension implements HttpExtension{
   private static final String PARAM_VERSION = "v";
   
   private Deployer _deployer;
+  private ServerContext _context;
   
-  DeployerExtension(Deployer dep){
+  DeployerExtension(Deployer dep, ServerContext context){
     _deployer = dep;
+    _context = context;
   }
   
   public HttpExtensionInfo getInfo() {
@@ -75,9 +76,9 @@ public class DeployerExtension implements HttpExtension{
       throw new IOException("Error caught while processing request", e);
     }
     ps.println("<distributions");
-    attribute("domain", CorusRuntime.getCorus().getDomain(), ps);
+    attribute("domain", _context.getDomain(), ps);
     try{
-      TCPAddress addr = (TCPAddress)CorusRuntime.getTransport().getServerAddress();
+      TCPAddress addr = _context.getServerAddress();
       attribute("host", addr.getHost(), ps);      
       attribute("port", Integer.toString(addr.getPort()), ps);
     }catch(ClassCastException e){}

@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.sapia.corus.client.services.cluster.ClusterManager;
-import org.sapia.corus.core.CorusRuntime;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.mcast.AsyncEventListener;
 import org.sapia.ubik.mcast.EventChannel;
@@ -49,7 +48,7 @@ public class ClusterManagerImpl extends ModuleHelper
   public void init() throws Exception {
     instance = this;
     _channel = new EventChannel(
-        CorusRuntime.getCorus().getDomain(), 
+        _serverContext.getDomain(), 
         _multicastAddress,
         _multicastPort);
     _channel.registerAsyncListener(CorusPubEvent.class.getName(), this);
@@ -57,8 +56,8 @@ public class ClusterManagerImpl extends ModuleHelper
     _channel.setBufsize(4000);    
     _log.info("Signaling presence to cluster on: " + _multicastAddress + ":" + _multicastPort);
     _channel.dispatch(CorusPubEvent.class.getName(),
-            new CorusPubEvent(true, CorusRuntime.getTransport().getServerAddress()));
-		ServerSideClusterInterceptor interceptor = new ServerSideClusterInterceptor(_log);
+            new CorusPubEvent(true, serverContext().getServerAddress()));
+		ServerSideClusterInterceptor interceptor = new ServerSideClusterInterceptor(_log, serverContext());
 		
     Hub.serverRuntime.addInterceptor(ServerPreInvokeEvent.class, interceptor);
 		Hub.serverRuntime.addInterceptor(ReplicationEvent.class, interceptor);    
@@ -124,7 +123,7 @@ public class ClusterManagerImpl extends ModuleHelper
 
         try {
           _channel.dispatch(CorusPubEvent.class.getName(),
-                  new CorusPubEvent(false, CorusRuntime.getTransport().getServerAddress()));
+                  new CorusPubEvent(false, serverContext().getTransport().getServerAddress()));
         } catch (IOException e) {
           _log.debug("Event channel could not dispatch event", e);
         }
