@@ -192,9 +192,73 @@
 		            <include>**/*</include>
 		          </includes>
 		        </fileset>
+            <fileset>
+              <directory>${basedir}/etc/demoApp/lib</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+            </fileset>
 		      </filesets>
 		    </configuration>
 		  </plugin>
+		  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+        
+          <!-- building server jar that's put in server classpath -->
+          <execution>
+            <id>server-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>server</classifier>
+              <outputDirectory>${basedir}/lib/server</outputDirectory>
+              <excludes>
+                <exclude>**/examples/**/*</exclude>
+                <exclude>org/sapia/**/starter/Starter*</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+
+          <!-- building demo jar that's put in server classpath -->
+          <execution>
+            <id>demo-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>demo</classifier>
+              <finalName>sapia_corus</finalName>
+              <outputDirectory>${basedir}/etc/demoApp/lib</outputDirectory>
+              <includes>
+                <include>**/examples/**/*</include>
+              </includes>
+            </configuration>
+          </execution>
+          
+          <!-- building starter jar that's put in server classpath -->
+          <execution>
+            <id>starter-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>starter</classifier>
+              <finalName>sapia_corus</finalName>
+              <outputDirectory>${basedir}/lib/server</outputDirectory>
+              <includes>
+                <include>org/sapia/**/starter/Starter*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -219,7 +283,7 @@
           
           <!-- copying VM bootstrap dependencies -->
           <execution>
-            <id>copy-vm-bootstrap-appstarter</id>
+            <id>copy-vm-bootstrap</id>
             <phase>package</phase>
             <goals>
               <goal>copy-dependencies</goal>
