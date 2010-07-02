@@ -55,13 +55,13 @@ if [ ! -x "${JAVACMD}" ] ; then
     exit 1
 fi
 
-MAINCLASS=org.sapia.corus.CorusServer
-CORUS_CLASSPATH=${CORUS_HOME}/dist/sapia_corus.jar
-for JAR in ${CORUS_HOME}/lib/*.jar
+MAINCLASS=org.sapia.corus.core.CorusServer
+CORUS_CLASSPATH=""
+for JAR in ${CORUS_HOME}/lib/server/*.jar
 do
     # if the directory is empty, then it will return the input string
     # this is stupid, so case for it
-    if [ "${JAR}" != "${CORUS_HOME}/lib/*.jar" ] ; then
+    if [ "${JAR}" != "${CORUS_HOME}/lib/server/*.jar" ] ; then
         if [ -z "${CORUS_CLASSPATH}" ] ; then
             CORUS_CLASSPATH=${JAR}
         else
@@ -73,7 +73,7 @@ for JAR in ${CORUS_HOME}/extra-lib/*.jar
 do
     # if the directory is empty, then it will return the input string
     # this is stupid, so case for it
-    if [ "${JAR}" != "${CORUS_HOME}/lib/*.jar" ] ; then
+    if [ "${JAR}" != "${CORUS_HOME}/extra-lib/*.jar" ] ; then
         if [ -z "${CORUS_CLASSPATH}" ] ; then
             CORUS_CLASSPATH=${JAR}
         else
@@ -88,6 +88,8 @@ if $cygwin; then
     JAVA_HOME_OVERRIDE=`cygpath --path --windows "${JAVA_HOME_OVERRIDE}"`
     CORUS_CLASSPATH=`cygpath --path --windows "${CORUS_CLASSPATH}"`
 fi
+
+echo "${JAVACMD} -Dcorus.home=${CORUS_HOME} -cp ${CORUS_CLASSPATH} ${MAINCLASS}"
 
 ${JAVACMD} -Dcorus.home="${CORUS_HOME}" -cp ${CORUS_CLASSPATH} ${MAINCLASS} "$@"
 

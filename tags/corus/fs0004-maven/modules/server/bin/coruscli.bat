@@ -25,7 +25,7 @@ SET LOCALCLASSPATH=
 
 if "%LOCALCLASSPATH_DEFINED%"=="true" goto okLcp
 
-for %%i in (%CORUS_HOME%\lib\*.jar) do call %CORUS_HOME%\bin\lcp.bat %%i
+for %%i in (%CORUS_HOME%\lib\server\*.jar) do call %CORUS_HOME%\bin\lcp.bat %%i
 for %%i in (%CORUS_HOME%\extra-lib\*.jar) do call %CORUS_HOME%\bin\lcp.bat %%i
 
 set LOCALCLASSPATH_DEFINED=true
@@ -34,8 +34,8 @@ set LOCALCLASSPATH_DEFINED=true
 
 rem echo %LOCALCLASSPATH%
 
-set CLASSPATH=%CLASSPATH%;%LOCALCLASSPATH%;%CORUS_HOME%/dist/sapia_corus.jar
+set CLASSPATH=%CLASSPATH%;%LOCALCLASSPATH%
 
-"%JAVA_HOME%/bin/java" -Dcorus.home="%CORUS_HOME%" org.sapia.corus.admin.cli.CorusCli %1 %2 %3 %4
+"%JAVA_HOME%/bin/java" -Dcorus.home="%CORUS_HOME%" org.sapia.corus.client.cli.CorusCli %1 %2 %3 %4
 
 :end
