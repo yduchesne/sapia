@@ -33,9 +33,14 @@ public class CorusImpl implements Corus, RemoteContextProvider {
   private ModuleLifeCycleManager      _lifeCycle;
   private String                      _domain;
 
-  CorusImpl(Hierarchy h, InputStream config, String domain,
-      CorusTransport aTransport, String corusHome) throws IOException, Exception{
-    init(h, config, domain, aTransport, corusHome);
+  CorusImpl(
+      Hierarchy h, 
+      InputStream config, 
+      String domain,
+      TCPAddress serverAddress,
+      CorusTransport aTransport, 
+      String corusHome) throws IOException, Exception{
+    init(h, config, domain, serverAddress, aTransport, corusHome);
   }
 
   public String getVersion() {
@@ -54,8 +59,13 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     _lifeCycle.setServerAddress(addr);
   }
   
-  private ServerContext init(Hierarchy h, InputStream config, String domain,
-                          CorusTransport aTransport, String corusHome) throws IOException, Exception {
+  private ServerContext init(
+                          Hierarchy h, 
+                          InputStream config, 
+                          String domain,
+                          TCPAddress address,
+                          CorusTransport aTransport, 
+                          String corusHome) throws IOException, Exception {
     _domain = domain;
     
     // loading default properties.
@@ -77,7 +87,7 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     props.load(tmp);
     
     InternalServiceContext services = new InternalServiceContext();
-    ServerContextImpl serverContext = new ServerContextImpl(this, aTransport, domain, corusHome, services);
+    ServerContextImpl serverContext = new ServerContextImpl(this, aTransport, address, domain, corusHome, services);
     
     // root context
     PropertyContainer propContainer = new PropertyContainer() {

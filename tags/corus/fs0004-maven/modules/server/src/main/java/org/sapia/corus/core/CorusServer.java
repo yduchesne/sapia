@@ -200,7 +200,7 @@ public class CorusServer {
       CorusTransport aTransport = new TcpCorusTransport(host, port);
    
       // Initialize Corus, export it and start it
-      CorusImpl corus = new CorusImpl(h, new FileInputStream(aFilename), domain, aTransport, corusHome);
+      CorusImpl corus = new CorusImpl(h, new FileInputStream(aFilename), domain, new TCPAddress(host, port), aTransport, corusHome);
       ServerContext context =  corus.getServerContext();
       aTransport.exportObject(corus);
       corus.start();

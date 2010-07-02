@@ -15,7 +15,7 @@
   
   <!-- ============ CLUSTER ============ -->
 
-  <bean id="org.sapia.corus.cluster.ClusterManager" 
+  <bean id="org.sapia.corus.client.services.cluster.ClusterManager" 
         class="org.sapia.corus.cluster.ClusterManagerImpl" 
         scope="singleton">
     <property name="mcastAddress" value="${corus.server.multicast.address}" />
@@ -24,7 +24,7 @@
 
   <!-- ============ JNDI ============ -->
 
-  <bean id="org.sapia.corus.admin.services.naming.JndiModule" 
+  <bean id="org.sapia.corus.client.services.naming.JndiModule" 
         class="org.sapia.corus.naming.JndiModuleImpl" 
         scope="singleton">
   </bean> 
@@ -36,13 +36,13 @@
     <property name="deployDir" value="${corus.server.deploy.dir}" />
   </bean>
   
-  <bean id="org.sapia.corus.admin.services.deployer.Deployer" 
+  <bean id="org.sapia.corus.client.services.deployer.Deployer" 
         class="org.sapia.corus.deployer.DeployerImpl" 
         scope="singleton" />
   
   <!-- ============ PROCESSOR ============ -->
 
-  <bean id="processor.configuration" class="org.sapia.corus.admin.services.processor.ProcessorConfigurationImpl">
+  <bean id="processor.configuration" class="org.sapia.corus.processor.ProcessorConfigurationImpl">
     <property name="processCheckInterval" value="${corus.process.check-interval}" />
     <property name="killInterval"         value="${corus.process.kill-interval}" />
     <property name="startInterval"        value="${corus.process.start-interval}" />
@@ -50,21 +50,21 @@
     <property name="processTimeout"       value="${corus.process.timeout}" />
   </bean>
 
-  <bean id="org.sapia.corus.admin.services.processor.Processor" 
+  <bean id="org.sapia.corus.client.services.processor.Processor" 
         class="org.sapia.corus.processor.ProcessorImpl" 
         scope="singleton" />
 
 
   <!-- ============ CRON ============ -->
 
-  <bean id="org.sapia.corus.cron.CronModule" 
+  <bean id="org.sapia.corus.client.services.cron.CronModule" 
         class="org.sapia.corus.cron.CronModuleImpl" 
         scope="singleton">
   </bean> 
 
   <!-- ============ SECURITY ============ -->
 
-  <bean id="org.sapia.corus.security.SecurityModule" 
+  <bean id="org.sapia.corus.client.services.security.SecurityModule" 
         class="org.sapia.corus.security.SecurityModuleImpl" 
         scope="singleton">
     <property name="allowedHostPatterns"   value="${corus.server.security.hostPattern.allow}" />

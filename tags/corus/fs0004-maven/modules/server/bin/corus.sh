@@ -89,7 +89,4 @@ if $cygwin; then
     CORUS_CLASSPATH=`cygpath --path --windows "${CORUS_CLASSPATH}"`
 fi
 
-echo "${JAVACMD} -Dcorus.home=${CORUS_HOME} -cp ${CORUS_CLASSPATH} ${MAINCLASS}"
-
 ${JAVACMD} -Dcorus.home="${CORUS_HOME}" -cp ${CORUS_CLASSPATH} ${MAINCLASS} "$@"
-

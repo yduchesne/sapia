@@ -33,6 +33,21 @@ public interface ServerContext {
    */
   public String getDomain();
   
+  /**
+   * This method returns properties that can be defined for all processes managed
+   * by all Corus servers on this host, or for processes that are part of a 
+   * given domain on this host.
+   * <p>
+   * Properties must be specified in Java property files under the Corus home
+   * directory. For multi-domain properties, a file named 
+   * <code>corus_process.properties</code> is searched. For domain-specific
+   * properties, a file named <code>corus_process_someDomain.properties</code>
+   * is searched.
+   * <p>
+   * Domain properties override global (multi-domain) properties.
+   * <p>
+   * The properties are passed to the processes upon their startup.
+   */
   public Properties getProcessProperties() throws IOException;
   
   /**
