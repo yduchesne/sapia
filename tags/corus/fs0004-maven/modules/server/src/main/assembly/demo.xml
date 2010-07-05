@@ -1,0 +1,18 @@
+<assembly>
+  <id>demo</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+    <fileSet>
+       <directory>etc/demoApp</directory>
+       <includes>
+          <include>**/*.xml</include>
+          <include>**/*.jar</include>
+       </includes>
+    </fileSet>
+  </fileSets>
+  
+</assembly>
