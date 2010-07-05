@@ -106,6 +106,11 @@ public class ServerContextImpl implements ServerContext {
   }
   
   @Override
+  public Object lookup(String name) {
+    return services.lookup(name);
+  }
+  
+  @Override
   public Properties getProcessProperties() throws IOException{
     File home = new File(getHomeDir() + File.separator + "config");
     File globalProps = new File(home, CORUS_PROCESS_FILE + ".properties");

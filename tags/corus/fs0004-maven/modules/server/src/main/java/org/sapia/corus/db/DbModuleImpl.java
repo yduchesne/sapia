@@ -48,6 +48,8 @@ public class DbModuleImpl extends ModuleHelper implements DbModule{
       _dbDir = new File(aFilename);
     }
     
+    logger().debug(String.format("DB module directory %s", _dbDir.getAbsolutePath()));
+    
     if (!_dbDir.exists()) {
       if (!_dbDir.mkdirs()) {
         throw new IllegalStateException("Could not make directory: " + _dbDir.getAbsolutePath());

@@ -310,7 +310,22 @@
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
               <includeArtifactIds>sapia_magnet,ant,bsh,jdom,log4j,piccolo,sapia_console,sapia_utils,sapia_corus_iop</includeArtifactIds>
-              <excludeArtifactIds>sapia_corus_iop_api</excludeArtifactIds>
+            </configuration>
+          </execution>          
+          
+          <!-- copying Demo dependencies -->
+          <execution>
+            <id>copy-demo-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/etc/demoApp/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <includeArtifactIds>jdom,sapia_utils,sapia_corus_iop</includeArtifactIds>
             </configuration>
           </execution>          
         </executions>
@@ -318,11 +333,34 @@
       
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/src.xml</descriptor>
-          </descriptors>
-        </configuration>
+        <executions>
+          <execution>
+            <id>make-server-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+		        <configuration>
+		          <descriptors>
+		            <descriptor>src/main/assembly/server.xml</descriptor>
+		          </descriptors>
+		        </configuration>
+          </execution>
+          <execution>
+	          <id>make-demo-dist</id>
+	          <phase>package</phase>
+	          <goals>
+	            <goal>single</goal>
+	          </goals>
+	          <configuration>
+              <includeBaseDirectory>false</includeBaseDirectory>
+	            <descriptors>
+	              <descriptor>src/main/assembly/demo.xml</descriptor>
+	            </descriptors>
+	          </configuration>
+          </execution>
+
+        </executions>
       </plugin>
       
     </plugins>

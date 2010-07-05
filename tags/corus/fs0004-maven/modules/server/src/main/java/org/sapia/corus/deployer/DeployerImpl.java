@@ -116,13 +116,13 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     File f = new File(new File(_configuration.getDeployDir()).getAbsolutePath());
     f.mkdirs();
     assertFile(f);
-
+    logger().debug(String.format("Deploy dir: %s", f.getAbsolutePath()));
+    
     f = new File(new File(_configuration.getTempDir()).getAbsolutePath());
     f.mkdirs();
     assertFile(f);
-
-    logger().debug("Deploy dir: " + f.getPath());
-
+    logger().debug(String.format("Temporary dir: %s", f.getPath()));
+    
     logger().info("Initializing: rebuilding distribution objects");
 
     _taskman.executeAndWait(new BuildDistTask(_configuration.getDeployDir(), getDistributionStore()));

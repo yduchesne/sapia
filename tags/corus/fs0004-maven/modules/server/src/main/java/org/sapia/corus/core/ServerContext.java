@@ -76,4 +76,10 @@ public interface ServerContext {
    */
   public <S> S lookup(Class<S> serviceInterface);
   
+  /**
+   * Looks up the service with the given name and returns it. 
+   * @param name the name of the service to return.
+   * @return an {@link Object} matching the given name.
+   */
+  public Object lookup(String name);
 }

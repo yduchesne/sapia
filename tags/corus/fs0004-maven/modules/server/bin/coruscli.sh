@@ -57,23 +57,11 @@ fi
 
 MAINCLASS=org.sapia.corus.client.cli.CorusCli
 CORUS_CLASSPATH=""
-for JAR in ${CORUS_HOME}/server/lib/*.jar
+for JAR in ${CORUS_HOME}/lib/server/*.jar
 do
     # if the directory is empty, then it will return the input string
     # this is stupid, so case for it
-    if [ "${JAR}" != "${CORUS_HOME}/server/lib/*.jar" ] ; then
-        if [ -z "${CORUS_CLASSPATH}" ] ; then
-            CORUS_CLASSPATH=${JAR}
-        else
-            CORUS_CLASSPATH="${JAR}":${CORUS_CLASSPATH}
-        fi
-    fi
-done
-for JAR in ${CORUS_HOME}/extra-lib/*.jar
-do
-    # if the directory is empty, then it will return the input string
-    # this is stupid, so case for it
-    if [ "${JAR}" != "${CORUS_HOME}/extra-ib/*.jar" ] ; then
+    if [ "${JAR}" != "${CORUS_HOME}/lib/server/*.jar" ] ; then
         if [ -z "${CORUS_CLASSPATH}" ] ; then
             CORUS_CLASSPATH=${JAR}
         else

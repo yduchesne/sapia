@@ -93,6 +93,12 @@ class ModuleLifeCycleManager implements ServerContext, PropertyProvider{
     return delegate.lookup(serviceInterface);
   }
   
+  @Override  
+  public Object lookup(String name){
+    return delegate.lookup(name);
+  }
+
+  
   ///////// PropertyProvider interface
   
   @Override
@@ -117,16 +123,6 @@ class ModuleLifeCycleManager implements ServerContext, PropertyProvider{
   
   void addApplicationContext(ApplicationContext ctx){
     contexts.add(ctx);
-  }
-
-  Object lookup(String name){
-    for(ApplicationContext ctx:contexts){
-      Object bean = ctx.getBean(name);
-      if(bean != null){
-        return bean;
-      }
-    }
-    return null;
   }
   
   void startServices() throws Exception{

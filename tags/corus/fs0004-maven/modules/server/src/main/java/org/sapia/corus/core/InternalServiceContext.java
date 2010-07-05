@@ -108,6 +108,19 @@ public class InternalServiceContext {
   }
   
   /**
+   * Looks up the service with the given name and returns it. 
+   * @param name the name of the service to return.
+   * @return an {@link Object} matching the given name.
+   */
+  public Object lookup(String name){
+    Object service = services.get(name);
+    if(service == null){
+      throw new IllegalStateException(String.format("No internal service found for: %s", name));
+    }
+    return service;
+  }
+  
+  /**
    * Binds the given service instance "under" the given interface.
    * @param serviceInterface the interface to use to internally bind the service (this
    * interface can later be used for lookup).

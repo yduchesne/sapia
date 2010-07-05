@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.mcast.AsyncEventListener;
@@ -20,6 +21,7 @@ import org.sapia.ubik.rmi.server.invocation.ServerPreInvokeEvent;
 /**
  * @author Yanick Duchesne
  */
+@Bind(moduleInterface=ClusterManager.class)
 public class ClusterManagerImpl extends ModuleHelper
   implements ClusterManager, AsyncEventListener {
   static ClusterManagerImpl instance;
