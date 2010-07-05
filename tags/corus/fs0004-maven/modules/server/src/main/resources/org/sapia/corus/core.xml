@@ -15,14 +15,14 @@
                   
   <!-- ============ DB ============ -->
 
-  <bean id="org.sapia.corus.db.DbModule" 
+  <bean name="org.sapia.corus.db.DbModule" 
         class="org.sapia.corus.db.DbModuleImpl" 
         scope="singleton">
   </bean>
 
   <!-- ============ CONFIGURATOR ============ -->
 
-  <bean id="org.sapia.corus.admin.services.configurator.Configurator" 
+  <bean name="org.sapia.corus.admin.services.configurator.Configurator" 
         class="org.sapia.corus.configurator.ConfiguratorImpl"
         scope="singleton">
   </bean>
@@ -30,32 +30,30 @@
   <!-- ============ TASK MANAGER ============ -->
   
 
-  <bean id="org.sapia.corus.taskmanager.CorusTaskManager" 
+  <bean name="org.sapia.corus.taskmanager.CorusTaskManager" 
         class="org.sapia.corus.taskmanager.CorusTaskManagerImpl" 
         scope="singleton">
   </bean>
 
   <!-- ============ EVENT DISPATCHER ============ -->
 
-  <bean id="org.sapia.corus.event.EventDispatcher" 
+  <bean name="org.sapia.corus.event.EventDispatcher" 
         class="org.sapia.corus.event.EventDispatcherImpl" 
         scope="singleton">
   </bean>
 
   <!-- ============ HTTP ============ -->
 
-  <bean id="org.sapia.corus.admin.services.http.HttpModule" 
+  <bean name="org.sapia.corus.admin.services.http.HttpModule" 
         class="org.sapia.corus.http.HttpModuleImpl" 
         scope="singleton">
   </bean>
 
   <!-- ============ PORTS ============ -->
   
-  <bean id="org.sapia.corus.admin.services.port.PortManager" 
+  <bean name="org.sapia.corus.admin.services.port.PortManager" 
         class="org.sapia.corus.port.PortManagerImpl" 
         scope="singleton">
   </bean>
 
-  <!-- import resource="modules.xml"/-->
-  
 </beans>
