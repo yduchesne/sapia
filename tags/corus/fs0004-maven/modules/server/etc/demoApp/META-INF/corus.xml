@@ -4,6 +4,7 @@
           profile="test">
       <vmType>-client</vmType>
       <xoption  name="ms" value="16M" />
+      <property  name="corus.process.log.level" value="debug" />
     </java>
   </process>
   
@@ -12,6 +13,7 @@
           profile="test">
       <vmType>-server</vmType>
       <xoption  name="ms" value="16M" />
+      <property  name="corus.process.log.level" value="debug" />
     </java>
   </process>
 
@@ -20,6 +22,7 @@
           profile="prod">
       <vmType>-server</vmType>
       <xoption  name="ms" value="16M" />
+      <property  name="corus.process.log.level" value="debug" />
       <dependency dist="demo" version="1.0" process="noopApp" profile="test" />
     </java>
   </process>
@@ -28,6 +31,7 @@
     <java mainClass="org.sapia.corus.examples.NotRespondingApplication"
           profile="test">
       <xoption  name="ms" value="16M" />
+      <property  name="corus.process.log.level" value="debug" />
     </java>
   </process>
 
@@ -35,6 +39,7 @@
     <magnet magnetFile="restartAppMagnet.xml" profile="test">
       <vmType>-client</vmType>
       <xoption  name="ms" value="16M" />
+      <property  name="corus.process.log.level" value="debug" />
     </magnet>
   </process>
   
@@ -42,6 +47,7 @@
     <magnet magnetFile="noopAppMagnet.xml" profile="test">
       <vmType>-server</vmType>
       <xoption  name="ms" value="16M" />
+      <property  name="corus.process.log.level" value="debug" />
     </magnet>
   </process>
   
@@ -50,6 +56,7 @@
     <magnet magnetFile="echoServerMagnet.xml" profile="test">
       <vmType>-server</vmType>
       <xoption  name="ms" value="16M" />
+      <property  name="corus.process.log.level" value="debug" />
     </magnet>
   </process>  
 </distribution>
