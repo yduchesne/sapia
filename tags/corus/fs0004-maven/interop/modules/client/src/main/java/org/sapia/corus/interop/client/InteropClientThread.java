@@ -82,16 +82,28 @@ class InteropClientThread extends Thread {
       return;
     }
 
-    _parent._log.debug("Starting interop client thread");
+    if(_parent._log.isDebugEnabled())
+      _parent._log.debug("Starting interop client thread");
 
     while (true) {
 	  try {
+	    if(_parent._log.isDebugEnabled())
+	      _parent._log.debug(String.format("Sleeping for %s...", _analysisInterval));
+	    
 		  Thread.sleep(_analysisInterval);
 	  } catch (InterruptedException e) {
+	    _parent._log.warn("Interop thread was interrupted");
 		  break;
 	  }      
-      if (_parent._proto != null) {
+	  
+  	  if(_parent._proto == null){
+  	    _parent._log.info("Protocol not set on InteropClient; will not be polling Corus");
+  	  }
+  	  else {
         try {
+          if(_parent._log.isDebugEnabled())
+            _parent._log.debug("Checking if polling is due...");
+          
           List<AbstractCommand> response = new ArrayList<AbstractCommand>();
           Status status = null;
           long currentTime = System.currentTimeMillis();
@@ -106,11 +118,17 @@ class InteropClientThread extends Thread {
             _lastPoll = currentTime;
             
             if (status == null) {
+              if(_parent._log.isDebugEnabled())
+                _parent._log.debug("Polling");
               response = _parent._proto.poll();
             } else {
+              if(_parent._log.isDebugEnabled())
+                _parent._log.debug("Polling and sending status");
               response = _parent._proto.pollAndSendStatus(status);
             }
-          } else if (status != null) {          
+          } else if (status != null) {
+            if(_parent._log.isDebugEnabled())
+              _parent._log.debug("Sending status");
             response = _parent._proto.sendStatus(status);
           }
 
@@ -118,11 +136,13 @@ class InteropClientThread extends Thread {
 
           for (int i = 0; i < response.size(); i++) {
             command = (AbstractCommand) response.get(i);
-            _parent._log.debug("Command received from corus server; command ID is: " +
-                               command.getCommandId());
+            if(_parent._log.isDebugEnabled())
+              _parent._log.debug("Command received from corus server; command ID is: " +
+                                 command.getCommandId());
 
             if (command instanceof Ack) {
-              _parent._log.debug("Command was an Ack - ignoring");
+              if(_parent._log.isDebugEnabled())
+                _parent._log.debug("Command was an Ack - ignoring");
 
               // in this case, noop.
               // according to the interop spec, an
@@ -139,10 +159,9 @@ class InteropClientThread extends Thread {
           }
         } catch (FaultException e) {
           _parent._log.fatal("corus server generated a SOAP fault", e);
-        } catch (IOException e) {
+        } catch (Exception e) {
           _parent._log.info("Error caught sending SOAP request to corus server", e);
-
-        }
+        } 
       }
     }
 

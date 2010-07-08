@@ -26,4 +26,11 @@ public interface Log {
   public void fatal(Object o);
 
   public void fatal(Object o, Throwable t);
+  
+  public boolean isDebugEnabled();
+  
+  public boolean isInfoEnabled();
+  
+  public boolean isWarnEnabled();
+  
 }

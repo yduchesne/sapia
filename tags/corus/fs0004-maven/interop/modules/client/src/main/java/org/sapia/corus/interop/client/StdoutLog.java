@@ -64,6 +64,21 @@ public class StdoutLog implements Log {
       System.out.println("INTEROP [FATAL] " + o);
     }
   }
+  
+  @Override
+  public boolean isDebugEnabled() {
+    return isValid(DEBUG);
+  }
+  
+  @Override
+  public boolean isInfoEnabled() {
+    return isValid(INFO);
+  }
+  
+  @Override
+  public boolean isWarnEnabled() {
+    return isValid(WARNING);
+  }
 
   public boolean isValid(int lvl) {
     return lvl >= _lvl;
