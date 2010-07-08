@@ -15,7 +15,7 @@ import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.ubik.net.TCPAddress;
-import org.simpleframework.http.Request;
+import simple.http.Request;
 
 public class DeployerExtension implements HttpExtension{
   

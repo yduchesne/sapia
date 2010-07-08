@@ -1,19 +1,23 @@
 package org.sapia.corus.deployer.transport.http;
 
 import org.sapia.corus.client.services.deployer.transport.http.HttpDeploymentClient;
+
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.deployer.transport.Deployment;
 import org.sapia.corus.deployer.transport.DeploymentAcceptor;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
 import org.sapia.ubik.rmi.server.transport.http.HttpTransportProvider;
-import org.simpleframework.http.core.Container;
+
+import simple.http.ProtocolHandler;
+import simple.http.Request;
+import simple.http.Response;
 
 /**
  * Implements the <code>DeploymentAcceptor</code> interface over a <code>HttpTransportProvider</code>.
  * 
  * @author Yanick Duchesne
  */
-public class HttpDeploymentAcceptor implements Container, DeploymentAcceptor{
+public class HttpDeploymentAcceptor implements ProtocolHandler, DeploymentAcceptor{
 	
   private ServerContext         _context;
 	private HttpTransportProvider _provider;
@@ -51,8 +55,7 @@ public class HttpDeploymentAcceptor implements Container, DeploymentAcceptor{
   }
   
   @Override
-  public void handle(org.simpleframework.http.Request req,
-      org.simpleframework.http.Response res) {
+  public void handle(Request req, Response res) {
   	_connector.connect(new Deployment(_context, new HttpConnection(req, res)));
   }
 

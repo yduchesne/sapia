@@ -10,7 +10,7 @@ import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
- * Absract class that provides convenient basic behavior for process-terminating tasks.
+ * Abstract class that provides convenient basic behavior for process-terminating tasks.
  * 
  * @author Yanick Duchesne
  *
@@ -33,6 +33,10 @@ public abstract class ProcessTerminationTask extends Task {
     setMaxExecution(maxRetry);
     _requestor = requestor;
     _corusPid  = corusPid;
+  }
+  
+  LockOwner lockOwner(){
+    return _lockOwner;
   }
   
   @Override
@@ -85,7 +89,7 @@ public abstract class ProcessTerminationTask extends Task {
   protected void abort(TaskExecutionContext ctx) {
     try{
       Process proc = ctx.getServerContext().getServices().getProcesses().getActiveProcesses().getProcess(_corusPid);
-      proc.releaseLock(this);
+      proc.releaseLock(_lockOwner);
       proc.save();
     }catch(Throwable err){
       //ctx.error(err);

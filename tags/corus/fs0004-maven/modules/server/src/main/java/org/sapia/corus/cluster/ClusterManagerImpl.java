@@ -56,10 +56,10 @@ public class ClusterManagerImpl extends ModuleHelper
     _channel.registerAsyncListener(CorusPubEvent.class.getName(), this);
     _channel.start();
     _channel.setBufsize(4000);    
-    _log.info("Signaling presence to cluster on: " + _multicastAddress + ":" + _multicastPort);
+    _logger.info("Signaling presence to cluster on: " + _multicastAddress + ":" + _multicastPort);
     _channel.dispatch(CorusPubEvent.class.getName(),
             new CorusPubEvent(true, serverContext().getServerAddress()));
-		ServerSideClusterInterceptor interceptor = new ServerSideClusterInterceptor(_log, serverContext());
+		ServerSideClusterInterceptor interceptor = new ServerSideClusterInterceptor(_logger, serverContext());
 		
     Hub.serverRuntime.addInterceptor(ServerPreInvokeEvent.class, interceptor);
 		Hub.serverRuntime.addInterceptor(ReplicationEvent.class, interceptor);    
@@ -110,7 +110,7 @@ public class ClusterManagerImpl extends ModuleHelper
     try {
       event = remote.getData();
     } catch (IOException e) {
-      _log.debug("Could not get event data", e);
+      _logger.debug("Could not get event data", e);
 
       return;
     }
@@ -121,16 +121,16 @@ public class ClusterManagerImpl extends ModuleHelper
       _hostsAddresses.add(evt.getOrigin());
 
       if (evt.isNew()) {
-        _log.debug("New corus discovered: " + addr);
+        _logger.debug("New corus discovered: " + addr);
 
         try {
           _channel.dispatch(CorusPubEvent.class.getName(),
                   new CorusPubEvent(false, serverContext().getTransport().getServerAddress()));
         } catch (IOException e) {
-          _log.debug("Event channel could not dispatch event", e);
+          _logger.debug("Event channel could not dispatch event", e);
         }
       } else {
-        _log.debug("Existing corus discovered: " + addr);
+        _logger.debug("Existing corus discovered: " + addr);
       }
     } 
   }

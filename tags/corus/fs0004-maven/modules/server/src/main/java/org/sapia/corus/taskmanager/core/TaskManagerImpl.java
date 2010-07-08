@@ -16,10 +16,6 @@ public class TaskManagerImpl implements TaskManager{
   private Logger          logger;
   
   public TaskManagerImpl(Logger logger, ServerContext serverContext) {
-    this(logger, serverContext, 5);
-  }
-  
-  public TaskManagerImpl(Logger logger, ServerContext serverContext, int parallelThreads) {
     this.logger = logger;
     this.serverContext = serverContext;
     this.background = new Timer("TaskManagerDaemon", true);
@@ -32,11 +28,7 @@ public class TaskManagerImpl implements TaskManager{
   
   public void execute(final Task task, final SequentialTaskConfig conf) {
     if(task.isMaxExecutionReached()){
-      TaskExecutionContext ctx = new TaskExecutionContext(
-          task,
-          createLogFor(task, conf.getLog()), 
-          serverContext, 
-          self());
+      TaskExecutionContext ctx = createExecutionContext(task, conf);
       try{
         task.onMaxExecutionReached(ctx);
       }catch(Throwable err){
@@ -48,11 +40,7 @@ public class TaskManagerImpl implements TaskManager{
     else{
       threadpool.execute(new Runnable(){
         public void run() {
-          TaskExecutionContext ctx = new TaskExecutionContext(
-              task,
-              createLogFor(task, conf.getLog()), 
-              serverContext, 
-              self());
+          TaskExecutionContext ctx = createExecutionContext(task, conf);
           try{
             Object result = task.execute(ctx);
             if(conf.getListener() != null){
@@ -79,11 +67,7 @@ public class TaskManagerImpl implements TaskManager{
   public FutureResult executeAndWait(final Task task, final TaskConfig conf) {
     final FutureResult result = new FutureResult();
     if(task.isMaxExecutionReached()){
-      TaskExecutionContext ctx = new TaskExecutionContext(
-          task,
-          createLogFor(task, conf.getLog()), 
-          serverContext, 
-          self());
+      TaskExecutionContext ctx = createExecutionContext(task, conf);
       Object value = null;
       try{
         task.onMaxExecutionReached(ctx);
@@ -96,12 +80,7 @@ public class TaskManagerImpl implements TaskManager{
       }
     }
     else{
-      final TaskExecutionContext ctx = new TaskExecutionContext(
-          task,
-          createLogFor(task, conf.getLog()), 
-          serverContext, 
-          self());
-      
+      final TaskExecutionContext ctx = createExecutionContext(task, conf);
       threadpool.execute(new Runnable(){
         public void run() {
           Object value = null;
@@ -130,14 +109,9 @@ public class TaskManagerImpl implements TaskManager{
           if(config.getListener() != null){
             config.getListener().executionAborted(task);
           }
-          
         }
         else if(task.isMaxExecutionReached()){
-          TaskExecutionContext ctx = new TaskExecutionContext(
-              task,
-              createLogFor(task, config.getLog()), 
-              serverContext, 
-              self());
+          TaskExecutionContext ctx = createExecutionContext(task, config);
           try{
             task.onMaxExecutionReached(ctx);
           }catch(Throwable err){
@@ -150,11 +124,7 @@ public class TaskManagerImpl implements TaskManager{
           }
         }
         else{
-          TaskExecutionContext ctx = new TaskExecutionContext(
-              task,
-              createLogFor(task, config.getLog()), 
-              serverContext, 
-              self());
+          TaskExecutionContext ctx = createExecutionContext(task, config);
           try{
             task.execute(ctx);
           }catch(Throwable t){
@@ -167,80 +137,28 @@ public class TaskManagerImpl implements TaskManager{
     }, config.getExecDelay(), config.getExecInterval());
   }
   
-  public void fork(final Task task) {
-    fork(task, ForkedTaskConfig.create());
-  }
-  
-  public void fork(final Task task, final ForkedTaskConfig config) {
-    if(task.isMaxExecutionReached()){
-      TaskExecutionContext ctx = new TaskExecutionContext(
-          task,
-          createLogFor(task, config.getLog()), 
-          serverContext, 
-          self());
-      try{
-        task.onMaxExecutionReached(ctx);
-      }catch(Throwable err){
-        ctx.error(err);
-      }finally{
-        task.cleanup(ctx);
-      }
-    }
-    else{
-      threadpool.execute(new Runnable(){
-        public void run() {
-          Object value = null;
-          TaskExecutionContext ctx = new TaskExecutionContext(
-              task,
-              createLogFor(task, config.getLog()),
-              serverContext, 
-              self());
-          try{
-            value = task.execute(ctx);
-          }catch(Throwable t){
-            value = t;
-          }finally{
-            task.incrementExecutionCount();
-            if(config.getListener() != null){
-              if(value instanceof Throwable){
-                config.getListener().executionFailed(task, (Throwable)value);
-              }
-              else{
-                config.getListener().executionSucceeded(task, value);
-              }
-            }
-            task.cleanup(ctx);
-          }
-        }
-      });
-    }
-  }
-  
   public void shutdown(){
     threadpool.shutdown();
   }
   
-  protected TaskLog createLogFor(Task task, TaskLog delegate){
-    if(task.isRoot()){
-      if(delegate == null){
-        return new LoggerTaskLog(logger);
-      }
-      else{
-        return new RootTaskLog(logger, delegate);
-      }
+  protected TaskLog wrapLogFor(Task task, TaskLog log){
+    if(log == null){
+      return new LoggerTaskLog(logger);
+    }
+    else if(task.isRoot()){
+      return new RootTaskLog(logger, log);
     }
     else{
-      if(delegate == null){
-        return new LoggerTaskLog(logger);
-      }
-      else{
-        return new ChildTaskLog(delegate);
-      }
+      return log;
     }
   }
   
-  private TaskManager self(){
-    return this;
+  private TaskExecutionContext createExecutionContext(Task task, TaskConfig config){
+    return new TaskExecutionContext(
+        task,
+        wrapLogFor(task, config.getLog()), 
+        serverContext, 
+        this);
   }
 
 }

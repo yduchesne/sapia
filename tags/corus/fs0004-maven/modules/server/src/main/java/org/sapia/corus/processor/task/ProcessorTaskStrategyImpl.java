@@ -97,7 +97,6 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
 
     try {
       process.setOsPid(nativeProc.exec(ctx, processDir, cmdLine));
-      process.save();
     } catch (IOException e) {
       ctx.error("Process could not be started", e);
       return false;

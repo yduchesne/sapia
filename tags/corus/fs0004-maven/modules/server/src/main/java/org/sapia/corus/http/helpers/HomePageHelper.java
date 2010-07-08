@@ -10,8 +10,9 @@ import java.util.List;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.http.HttpExtensionManager;
-import org.simpleframework.http.Request;
-import org.simpleframework.http.Response;
+
+import simple.http.Request;
+import simple.http.Response;
 
 public class HomePageHelper {
 

@@ -37,6 +37,7 @@ public class ExecTask extends Task{
     ctx.info("Executing process: " + _processConf.getName());          
     
     if(strategy.execProcess(ctx, info, ctx.getServerContext().getProcessProperties())){
+      ctx.info(String.format("Added process to active process list: %s", process));          
       ctx.getServerContext().getServices().getProcesses().getActiveProcesses().addProcess(process);
     }
     else{

@@ -82,14 +82,14 @@ public class TaskExecutionContext {
   
   ///////////// Inner task manager impl
   
-  class InnerTaskManager implements TaskManager{
+  static class InnerTaskManager implements TaskManager{
     
-    TaskManager taskManager;
+    TaskManager owner;
     Task task;
     TaskLog log;
     public InnerTaskManager(Task task, TaskLog log, TaskManager delegate) {
       this.task = task;
-      this.taskManager = delegate;
+      this.owner = delegate;
       this.log = log;
     }
     
@@ -98,8 +98,7 @@ public class TaskExecutionContext {
     }
     
     public void execute(Task child, SequentialTaskConfig conf) {
-      initLog(conf);
-      taskManager.execute(child, conf);
+      owner.execute(child, conf);
     }
     
     public FutureResult executeAndWait(Task child) {
@@ -108,19 +107,15 @@ public class TaskExecutionContext {
     
     public FutureResult executeAndWait(Task child, TaskConfig conf) {
       task.addChild(child);
-      initLog(conf);
-      return taskManager.executeAndWait(child, conf);
+      if(conf.getLog() == null){
+        conf.setLog(log);
+      }
+      return owner.executeAndWait(child, conf);
     }
     
     
     public void executeBackground(Task child, BackgroundTaskConfig conf) {
-      taskManager.executeBackground(child, conf);
-    }
-    
-    private void initLog(TaskConfig conf){
-      if(conf.getLog() == null){
-        conf.setLog(log);
-      }
+      owner.executeBackground(child, conf);
     }
     
   }

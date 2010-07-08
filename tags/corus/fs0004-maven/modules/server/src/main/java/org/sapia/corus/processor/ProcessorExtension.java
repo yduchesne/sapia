@@ -20,7 +20,8 @@ import org.sapia.corus.interop.Context;
 import org.sapia.corus.interop.Param;
 import org.sapia.corus.interop.Status;
 import org.sapia.ubik.net.TCPAddress;
-import org.simpleframework.http.Request;
+
+import simple.http.Request;
 
 public class ProcessorExtension implements HttpExtension{
   

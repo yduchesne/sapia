@@ -46,6 +46,7 @@ public class ProcessCheckTask extends Task{
         // will cleanup process dir, remove process from 
         // process store.
         if (!proc.isLocked()) {
+          ctx.warn("Process not locked, cleaning up: " + proc);
           strategy.killConfirmed(ctx, proc);
         }
       }

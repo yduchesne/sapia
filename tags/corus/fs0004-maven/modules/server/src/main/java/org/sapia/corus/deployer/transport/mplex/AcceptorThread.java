@@ -61,7 +61,7 @@ class AcceptorThread implements Runnable{
       try {
         client = _connector.accept();
       } catch (Exception e) {
-        _logger.error("Could not accept client connection; stopping", e);
+        _logger.info("Could not accept client connection; server probably shutting down", e);
         return;
       } 
       try {

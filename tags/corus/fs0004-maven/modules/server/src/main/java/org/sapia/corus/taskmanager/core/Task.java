@@ -21,56 +21,124 @@ public abstract class Task {
   private String name;
   private Task parent;
 
+  /**
+   * Creates a new instance of this class.
+   */
   public Task() {
+    this.name = getClass().getSimpleName();
   }
   
+  /**
+   * Creates a new instance of this class.
+   *
+   * @param name the name of the task.
+   */
   public Task(String name) {
     this.name = name;
   }
   
+  /**
+   * @return this instance's name.
+   */
   public String getName() {
-    if(name == null){ 
-      name = getClass().getSimpleName(); 
-    }
     return name;
   }
   
+  /**
+   * @param maxExecution the maximum number of times that this task
+   * should be executed.
+   * 
+   * @see #isMaxExecutionReached()
+   */
   public void setMaxExecution(int maxExecution) {
     this.maxExecution = maxExecution;
   }
-  
-  @Override
-  public String toString() {
-    return "["+getName()+"]";
+
+  /**
+   * Executes this task.
+   * 
+   * @param ctx a {@link TaskExecutionContext}
+   * @return an arbitrary object resulting from the execution.
+   * @throws Throwable if an error occurs during execution.
+   */
+  public abstract Object execute(TaskExecutionContext ctx) throws Throwable;
+
+  /**
+   * @return <code>true</code> if this task has no parent.
+   * @see #getParent()
+   */
+  public boolean isRoot(){
+    return parent == null;
   }
   
+  /**
+   * @return <code>true</code> if this instance is a child task.
+   * 
+   * @see #addChild(Task)
+   */
+  public boolean isChild(){
+    return parent != null;
+  }
+
+  /**
+   * @return <code>true</code> if the maximum number of executions has been reached.
+   */
+  boolean isMaxExecutionReached(){
+    return maxExecution > 0 && executionCount >= maxExecution;
+  }
+
+  /**
+   * @return <code>true</code> if this task has been flagged as aborted.
+   * 
+   * @see #abort()
+   */
   boolean isAborted() {
     return aborted;
   }
   
-  boolean isMaxExecutionReached(){
-    return maxExecution > 0 && executionCount >= maxExecution;
-  }
-  
-  public abstract Object execute(TaskExecutionContext ctx) throws Throwable;
-  
+  /**
+   * Flags this task as aborted.
+   */
   protected synchronized void abort(){
     aborted = true;
   }
+  
+  /**
+   * Flags this task as aborted.
+   * 
+   * @param ctx a {@link TaskExecutionContext}
+   */
   protected synchronized void abort(TaskExecutionContext ctx){
     abort();
   }
   
+  /**
+   * Method that is internally called when the maximum number of executions
+   * has been reached, if any maximum is specified.
+   * 
+   * @param ctx the {@link TaskExecutionContext}
+   * @throws Throwable
+   * @see {@link #setMaxExecution(int)}
+   */
   protected void onMaxExecutionReached(TaskExecutionContext ctx) throws Throwable{}
 
+  /**
+   * @return the number of times this task has been executed thus far.
+   */
   protected int getExecutionCount() {
     return executionCount;
   }
   
+  /**
+   * @return the maximum number of times to execute this task.
+   */
   protected int getMaxExecution() {
     return maxExecution;
   }
   
+  /**
+   * Increments this instance's execution count.
+   */
   void incrementExecutionCount(){
     if(executionCount == Integer.MAX_VALUE){
       executionCount = 0;
@@ -78,18 +146,16 @@ public abstract class Task {
     executionCount++;
   }
   
+  /**
+   * @return this instance's parent {@link Task}
+   */
   Task getParent() {
     return parent;
   }
   
-  public boolean isRoot(){
-    return parent == null;
-  }
-  
-  public boolean isChild(){
-    return parent != null;
-  }
-  
+  /**
+   * @param child a {@link Task} to add to this instance.
+   */
   void addChild(Task child){
     if(child != this){
       child.parent = this;
@@ -106,5 +172,10 @@ public abstract class Task {
       parent.children.remove(this);
     }
   }
-  
+
+  @Override
+  public String toString() {
+    return "["+getName()+"]";
+  }
+
 }

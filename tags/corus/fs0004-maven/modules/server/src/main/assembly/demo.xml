@@ -10,7 +10,7 @@
        <directory>etc/demoApp/META-INF</directory>
        <outputDirectory>META-INF</outputDirectory>
        <includes>
-          <include>META-INF/*.xml</include>
+          <include>*.xml</include>
        </includes>
     </fileSet>
     <fileSet>

@@ -15,13 +15,16 @@ import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.http.helpers.HomePageHelper;
 import org.sapia.corus.http.helpers.NotFoundHelper;
 import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
+import org.sapia.ubik.net.mplex.ServerSocketAdapter;
 import org.sapia.ubik.rmi.server.transport.TransportProvider;
 import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketTransportProvider;
-import org.simpleframework.http.Path;
-import org.simpleframework.http.Request;
-import org.simpleframework.http.Response;
-import org.simpleframework.http.core.Container;
-import org.simpleframework.http.core.ContainerServer;
+
+import simple.http.ProtocolHandler;
+import simple.http.Request;
+import simple.http.Response;
+import simple.http.connect.Connection;
+import simple.http.connect.ConnectionFactory;
+import simple.util.net.Path;
 
 /**
  * An instance of this class manages {@link HttpExtension}s.
@@ -29,12 +32,12 @@ import org.simpleframework.http.core.ContainerServer;
  * @author yduchesne
  *
  */
-public class HttpExtensionManager implements Container{
+public class HttpExtensionManager implements ProtocolHandler{
   
   public static final String FOOTER = "<hr><i>Corus HTTP Service - <a href=\"http://www.sapia-oss.org/projects/corus\">www.sapia-oss.org</a></i>";
   
   private MultiplexSocketConnector _httpConnector;  
-  private ContainerServer _containerServer;
+  private Connection _connection;
   private Logger _logger;
   private ServerContext _context;
   private Map<HttpExtensionInfo, HttpExtension> _extensions = Collections.synchronizedMap(new HashMap<HttpExtensionInfo, HttpExtension>());
@@ -61,19 +64,11 @@ public class HttpExtensionManager implements Container{
     HttpStreamSelector selector = new HttpStreamSelector(null, null);
     _httpConnector = mplexProvider.createSocketConnector(selector);
     
-    // Create the Simple server
-    _containerServer = new ContainerServer(this, 10);
+    _connection = ConnectionFactory.getConnection(this);
+    _connection.connect(new ServerSocketAdapter(_httpConnector));
   }
   
   public void dispose(){
-    if(_containerServer != null){
-      try{
-        _containerServer.stop();
-      } catch (Exception e) {
-        _logger.error("Error stopping the http server", e);
-      }
-
-    }
     if(_httpConnector != null){
       try {
         _httpConnector.close();
@@ -138,9 +133,12 @@ public class HttpExtensionManager implements Container{
   
         Iterator<HttpExtensionInfo> infos = _extensions.keySet().iterator();
         Path path = req.getPath();
+        if(_logger.isDebugEnabled()){
+          _logger.debug(String.format("Trying to find HTTP extension for %s", path.getPath()));
+        }
         while(infos.hasNext()){
           HttpExtensionInfo info = infos.next();
-          if(path.getSegments()[0].startsWith(info.getContextPath())){
+          if(path.getPath().startsWith(info.getContextPath())){
             HttpExtension ext = (HttpExtension)_extensions.get(info);
             HttpContext ctx = new HttpContext();
             ctx.setRequest(req);

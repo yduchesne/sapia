@@ -28,6 +28,7 @@ import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.client.services.processor.ProcessorConfiguration;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.core.ModuleHelper;
+import org.sapia.corus.db.CachingDbMap;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.processor.task.BootstrapExecConfigStartTask;
@@ -92,9 +93,17 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     _execConfigs = new ExecConfigDatabaseImpl(_db.getDbMap(String.class, ExecConfig.class, "processor.execConfigs"));
     services().bind(ExecConfigDatabase.class, _execConfigs);
     
-    ProcessDatabase suspended = new ProcessDatabaseImpl(_db.getDbMap(String.class, Process.class, "processor.suspended"));
-    ProcessDatabase active = new ProcessDatabaseImpl(_db.getDbMap(String.class, Process.class, "processor.active"));
-    ProcessDatabase toRestart = new ProcessDatabaseImpl(_db.getDbMap(String.class, Process.class, "processor.toRestart"));
+    ProcessDatabase suspended = new ProcessDatabaseImpl(
+        new CachingDbMap<String, Process>(_db.getDbMap(String.class, Process.class, "processor.suspended"))
+    );
+    
+    ProcessDatabase active = new ProcessDatabaseImpl(
+        new CachingDbMap<String, Process>(_db.getDbMap(String.class, Process.class, "processor.active"))
+    );
+    
+    ProcessDatabase toRestart = new ProcessDatabaseImpl(
+        new CachingDbMap<String, Process>(_db.getDbMap(String.class, Process.class, "processor.toRestart"))
+    );
 
     _processes = new ProcessRepositoryImpl(suspended, active, toRestart);
     services().bind(ProcessRepository.class, _processes);

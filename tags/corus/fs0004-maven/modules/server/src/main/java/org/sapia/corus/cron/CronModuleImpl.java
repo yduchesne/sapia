@@ -82,8 +82,8 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   public synchronized void addCronJob(CronJobInfo info)
                                throws InvalidTimeException, ProcessConfigurationNotFoundException, 
                                       CorusException {
-    if (_log.isInfoEnabled()) {
-      _log.info("adding cron job: " + info);
+    if (_logger.isInfoEnabled()) {
+      _logger.info("adding cron job: " + info);
     }
 
     if (!_deployer.getDistribution(ArgFactory.parse(info.getDistribution()), 
@@ -117,7 +117,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
    * @see org.sapia.corus.client.services.cron.CronModule#removeCronJob(String)
    */
   public synchronized void removeCronJob(String id) {
-    _log.debug("removing cron job: " + id);
+    _logger.debug("removing cron job: " + id);
     _jobs.remove(id);
     _alarms.removeAllAlarms();
     _alarms = new AlarmManager();

@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.sapia.corus.http.HttpExtensionManager;
-import org.simpleframework.http.Request;
-import org.simpleframework.http.Response;
+
+import simple.http.Request;
+import simple.http.Response;
 
 public class NotFoundHelper implements OutputHelper{
   

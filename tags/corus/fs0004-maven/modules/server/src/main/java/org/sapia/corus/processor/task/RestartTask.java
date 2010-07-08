@@ -37,7 +37,7 @@ public class RestartTask extends ProcessTerminationTask {
       ProcessRepository processes = ctx.getServerContext().getServices().getProcesses();
       ProcessorTaskStrategy strategy = ctx.getServerContext().lookup(ProcessorTaskStrategy.class);
       Process process = processes.getActiveProcesses().getProcess(corusPid());
-      strategy.attemptKill(ctx, requestor(), process, super.getMaxExecution());
+      strategy.attemptKill(ctx, requestor(), process, super.getExecutionCount());
     } catch (ProcessNotFoundException e) {
       // no pro for ID...
       ctx.error(e);
@@ -68,13 +68,13 @@ public class RestartTask extends ProcessTerminationTask {
                     "' will be restarted... ");
 
       synchronized (process) {
-        process.releaseLock(this);
-        LockOwner lockOwner = new LockOwner();
-        ProcessRestartTask restart = new ProcessRestartTask(lockOwner,
+        process.releaseLock(lockOwner());
+        LockOwner newLockOwner = new LockOwner();
+        ProcessRestartTask restart = new ProcessRestartTask(newLockOwner,
                                                             process, 
                                                             dist, 
                                                             conf);
-        process.acquireLock(lockOwner);
+        process.acquireLock(newLockOwner);
         process.save();
         ctx.getTaskManager().execute(restart);
       }

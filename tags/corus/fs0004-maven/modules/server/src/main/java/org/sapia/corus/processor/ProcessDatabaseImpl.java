@@ -13,7 +13,7 @@ import org.sapia.corus.util.Matcher;
 
 
 /**
- * Holds <code>Process</code> instances.
+ * Holds {@link Process} instances.
  * 
  * @author Yanick Duchesne
  */

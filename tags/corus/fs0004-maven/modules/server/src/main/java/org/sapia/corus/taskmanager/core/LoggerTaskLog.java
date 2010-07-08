@@ -6,7 +6,7 @@ public class LoggerTaskLog implements TaskLog{
 
   private Logger logger;
   
-  LoggerTaskLog(Logger logger) {
+  public LoggerTaskLog(Logger logger) {
     this.logger = logger;
   }
 

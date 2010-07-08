@@ -376,7 +376,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   }
 
   synchronized ProgressQueue unlockDeployFile(String fileName) {
-    _log.info("Finished uploading " + fileName);
+    _logger.info("Finished uploading " + fileName);
     releaseFileLock(_deployLocks, fileName);
     ProgressQueue progress = new ProgressQueueImpl();
     try {
@@ -389,7 +389,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
             TaskConfig.create(new TaskLogProgressQueue(progress)));
       
     } catch (Throwable e) {
-      _log.error("Could not deploy", e);
+      _logger.error("Could not deploy", e);
       progress.error(e);
     }
     return progress;

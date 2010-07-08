@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public abstract class ModuleHelper implements ApplicationContextAware, Service, Module, InitializingBean, DisposableBean{
   
-  protected Logger  _log = Hierarchy.getDefaultHierarchy().getLoggerFor(getClass().getName());
+  protected Logger  _logger = Hierarchy.getDefaultHierarchy().getLoggerFor(getClass().getName());
 
   protected ApplicationContext _appContext;
   
@@ -47,7 +47,7 @@ public abstract class ModuleHelper implements ApplicationContextAware, Service, 
   public void start() throws Exception {}
 
   public Logger logger(){
-    return _log;  
+    return _logger;  
   }
 
   public ApplicationContext env(){

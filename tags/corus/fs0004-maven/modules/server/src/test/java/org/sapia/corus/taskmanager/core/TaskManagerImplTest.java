@@ -70,29 +70,14 @@ public class TaskManagerImplTest extends TestCase {
     assertTrue("Task executed more than max", t.getExecutionCount() > 0 && t.getExecutionCount() <= 3);
   }
   
-  public void testForkTask() throws Exception{
-    TestTask t = new TestTask(getName());
-    tm.fork(t);
-    t.waitFor();
-    assertTrue("Task was not executed", t.completed);
-  }
-
-  public void testForkTaskWithListener() throws Exception{
-    TestTask t = new TestTask(getName());
-    TestTaskListener ls = new TestTaskListener();
-    
-    tm.fork(t, ForkedTaskConfig.create(ls));
-    ls.waitFor();
-    assertTrue("Task listener not called", ls.succeeded);
-  }
   
-  public void testForkTaskErrorWithListener() throws Exception{
-    ErrorTask t = new ErrorTask(getName());
-    TestTaskListener ls = new TestTaskListener();
-    tm.fork(t, ForkedTaskConfig.create(ls));
-    ls.waitFor();
-    assertTrue("Task listener not called", ls.failed);
-  }
+  /*
+  public void testNestedTask() throws Exception{
+    ContainerTask container = new ContainerTask();
+    tm.execute(container);
+    Thread.sleep(2000000);
+  }*/
+  
 
   
   class TestTask extends Task{
@@ -189,5 +174,25 @@ public class TaskManagerImplTest extends TestCase {
       }
     }
     
+  }
+  
+  class ContainerTask extends Task{
+    
+    @Override
+    public Object execute(TaskExecutionContext ctx) throws Throwable {
+      ctx.debug("Executing container task");
+      ctx.getTaskManager().execute(new NestedTask());
+      return null;
+    }
+    
+  }
+  
+  class NestedTask extends Task{
+    
+    @Override
+    public Object execute(TaskExecutionContext ctx) throws Throwable {
+      ctx.debug("Executing nested task");
+      return null;
+    }
   }
 }

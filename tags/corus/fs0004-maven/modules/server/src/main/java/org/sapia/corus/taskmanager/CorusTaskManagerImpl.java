@@ -9,8 +9,9 @@ import org.sapia.corus.client.common.ProgressQueueImpl;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
-import org.sapia.corus.taskmanager.core.ForkedTaskConfig;
 import org.sapia.corus.taskmanager.core.FutureResult;
+import org.sapia.corus.taskmanager.core.LoggerTaskLog;
+import org.sapia.corus.taskmanager.core.RootTaskLog;
 import org.sapia.corus.taskmanager.core.SequentialTaskConfig;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskConfig;
@@ -76,14 +77,6 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   public void executeBackground(Task task, BackgroundTaskConfig cfg) {
     _delegate.executeBackground(task, cfg);
   }
-  
-  public void fork(Task task) {
-    _delegate.fork(task);
-  }
-  
-  public void fork(Task task, ForkedTaskConfig cfg) {
-    _delegate.fork(task, cfg);
-  }
 
   public ProgressQueue getProgressQueue(int level){
   	ProgressQueue queue = new ProgressQueueImpl();
@@ -98,14 +91,18 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
     }
     
     @Override
-    protected TaskLog createLogFor(Task task, TaskLog delegate) {
-      if(task.isRoot()){
-        return new ServerTaskLog(_queues, super.createLogFor(task, delegate));
+    protected TaskLog wrapLogFor(Task task, TaskLog log) {
+      if(log == null){
+        return new ServerTaskLog(_queues, new LoggerTaskLog(_logger));
       }
       else{
-        return super.createLogFor(task, delegate);
+        if(task.isRoot()){
+          return new ServerTaskLog(_queues, new RootTaskLog(_logger, log));
+        }
+        else{
+          return log;
+        }
       }
     }
-    
   }
 }

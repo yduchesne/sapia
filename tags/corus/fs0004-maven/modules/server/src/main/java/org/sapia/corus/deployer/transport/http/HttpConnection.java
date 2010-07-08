@@ -5,8 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.sapia.corus.client.services.deployer.transport.Connection;
-import org.simpleframework.http.Request;
-import org.simpleframework.http.Response;
+
+import simple.http.Request;
+import simple.http.Response;
 
 /**
  * Implements the <code>Connection</code> interface over HTTP response/request
