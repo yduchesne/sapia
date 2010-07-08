@@ -9,11 +9,13 @@ import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.ProcessorConfigurationImpl;
+import org.sapia.corus.taskmanager.core.InternalTaskLog;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TestTaskLog;
 import org.sapia.corus.taskmanager.core.TestTaskManager;
+import org.sapia.corus.taskmanager.core.log.NullTaskLog;
 
 public class ProcessorTaskStrategyTest extends TestCase{
 
@@ -46,7 +48,7 @@ public class ProcessorTaskStrategyTest extends TestCase{
             return null;
           }
         },
-        new TestTaskLog(),
+        new InternalTaskLog(new NullTaskLog(),  new TestTaskLog()),
         ctx,
         tm
         );

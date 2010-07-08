@@ -165,8 +165,8 @@ public abstract class Task {
   
   void cleanup(TaskExecutionContext ctx){
 
-    if(isRoot() && children.size() == 0 && ctx.getLog() != null){
-      ctx.getLog().close();
+    if(isRoot() && children.size() == 0){
+      ctx.close();
     }
     else if(isChild()){
       parent.children.remove(this);

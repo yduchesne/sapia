@@ -17,9 +17,9 @@ import org.sapia.corus.processor.ProcessRef;
 import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
-import org.sapia.corus.taskmanager.core.ProgressQueueTaskLog;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.log.ProgressQueueTaskLog;
 
 /**
  * Executes the processes corresponding to given {@link ProcessDef}s.
@@ -45,8 +45,8 @@ public class ExecNewProcessesTask extends Task{
       return null;
     }
     
-    Deployer deployer = ctx.getServerContext().lookup(Deployer.class);
-    Processor processor = ctx.getServerContext().lookup(Processor.class);
+    Deployer deployer = ctx.getServerContext().getServices().getDeployer();
+    Processor processor = ctx.getServerContext().getServices().getProcessor();
     ProcessRepository processes = ctx.getServerContext().lookup(ProcessRepository.class);
     ProcessDependencyFilter filter = new ProcessDependencyFilter(new ProgressQueueTaskLog(this, ctx.getLog()));
     
@@ -106,7 +106,7 @@ public class ExecNewProcessesTask extends Task{
             .setExecInterval(processor.getConfiguration().getExecIntervalMillis()));
     }
     else{
-      ctx.getLog().error(this, "No processes found to execute");
+      ctx.error("No processes found to execute");
     }
     return null;
   }

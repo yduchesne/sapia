@@ -2,21 +2,18 @@ package org.sapia.corus.taskmanager;
 
 import java.rmi.Remote;
 
-import org.apache.log.Logger;
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.client.common.ProgressQueueImpl;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.FutureResult;
-import org.sapia.corus.taskmanager.core.LoggerTaskLog;
-import org.sapia.corus.taskmanager.core.RootTaskLog;
 import org.sapia.corus.taskmanager.core.SequentialTaskConfig;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskConfig;
-import org.sapia.corus.taskmanager.core.TaskLog;
+import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TaskManagerImpl;
+import org.sapia.corus.taskmanager.core.log.LoggerTaskLog;
 
 
 /**
@@ -27,19 +24,18 @@ import org.sapia.corus.taskmanager.core.TaskManagerImpl;
 @Bind(moduleInterface=CorusTaskManager.class)
 public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManager, Remote{
   
-  private InternalTaskManager _delegate; 
+  private TaskManager _delegate; 
   private ProgressQueues _queues = new ProgressQueues();
 
-  /**
-   * @see org.sapia.corus.core.soto.Service#init()
-   */
+  /*////////////////////////////////////////////////////////////////////
+                        Service INTERFACE METHODS
+  ////////////////////////////////////////////////////////////////////*/
+
   public void init() throws Exception {
-    _delegate = new InternalTaskManager(logger(), serverContext());
+    _delegate = new TaskManagerImpl(
+        new ServerTaskLog(_queues, new LoggerTaskLog(_logger)), serverContext());
   }
 
-  /**
-   * @see org.sapia.corus.core.soto.Service#dispose()
-   */
   public void dispose() {
   }
 
@@ -83,26 +79,5 @@ public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManag
   	_queues.addProgressQueue(queue, level);
   	return queue;
   }
-  
-  class InternalTaskManager extends TaskManagerImpl{
-    
-    public InternalTaskManager(Logger logger, ServerContext ctx) {
-      super(logger, ctx);
-    }
-    
-    @Override
-    protected TaskLog wrapLogFor(Task task, TaskLog log) {
-      if(log == null){
-        return new ServerTaskLog(_queues, new LoggerTaskLog(_logger));
-      }
-      else{
-        if(task.isRoot()){
-          return new ServerTaskLog(_queues, new RootTaskLog(_logger, log));
-        }
-        else{
-          return log;
-        }
-      }
-    }
-  }
+
 }

@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import org.apache.log.Hierarchy;
 import org.sapia.corus.TestServerContext;
+import org.sapia.corus.taskmanager.core.log.LoggerTaskLog;
 
 public class TaskManagerImplTest extends TestCase {
 
@@ -14,7 +15,7 @@ public class TaskManagerImplTest extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
     tm = new TaskManagerImpl(
-        Hierarchy.getDefaultHierarchy().getLoggerFor("taskmanager"), 
+        new LoggerTaskLog(Hierarchy.getDefaultHierarchy().getLoggerFor("taskmanager")), 
         TestServerContext.create());
   }
 

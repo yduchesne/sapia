@@ -2,6 +2,7 @@ package org.sapia.corus.taskmanager.core;
 
 import org.sapia.corus.core.ServerContextImpl;
 import org.sapia.corus.core.ServerContext;
+import org.sapia.corus.taskmanager.core.log.ChildTaskLog;
 
 /**
  * Encapsulates state pertaining to the execution of a given task.
@@ -13,11 +14,11 @@ public class TaskExecutionContext {
 
   private Task task;
   
-  private TaskLog log;
+  private InternalTaskLog log;
   private TaskManager taskManager;
   private ServerContext serverContext;
   
-  public TaskExecutionContext(Task t, TaskLog log, ServerContext ctx, TaskManager taskMan) {
+  public TaskExecutionContext(Task t, InternalTaskLog log, ServerContext ctx, TaskManager taskMan) {
     this.task = t;
     this.log = log;
     this.serverContext = ctx;
@@ -25,10 +26,17 @@ public class TaskExecutionContext {
   }
 
   /**
-   * @return the TaskV2 associated to this instance.
+   * @return the {@link Task} associated to this instance.
    */
   public Task getTask() {
     return task;
+  }
+  
+  /**
+   * @return this instance's {@link TaskLog}
+   */
+  public TaskLog getLog() {
+    return log;
   }
   
   /**
@@ -45,13 +53,6 @@ public class TaskExecutionContext {
     return taskManager;
   }
 
-  /**
-   * @return this instance's {@link TaskLog}
-   */
-  public TaskLog getLog() {
-    return log;
-  }
-  
   public void debug(String msg){
     log.debug(task, msg);
   }
@@ -80,14 +81,19 @@ public class TaskExecutionContext {
     log.error(task, "Error caught", err);
   }
   
+  public void close(){
+    if(log != null) log.close();
+  }
+  
   ///////////// Inner task manager impl
   
   static class InnerTaskManager implements TaskManager{
     
     TaskManager owner;
     Task task;
-    TaskLog log;
-    public InnerTaskManager(Task task, TaskLog log, TaskManager delegate) {
+    InternalTaskLog log;
+    
+    public InnerTaskManager(Task task, InternalTaskLog log, TaskManager delegate) {
       this.task = task;
       this.owner = delegate;
       this.log = log;
@@ -98,6 +104,9 @@ public class TaskExecutionContext {
     }
     
     public void execute(Task child, SequentialTaskConfig conf) {
+      if(conf.getLog() == null){
+        conf.setLog(log.getTaskLog());
+      }
       owner.execute(child, conf);
     }
     
@@ -108,11 +117,10 @@ public class TaskExecutionContext {
     public FutureResult executeAndWait(Task child, TaskConfig conf) {
       task.addChild(child);
       if(conf.getLog() == null){
-        conf.setLog(log);
+        conf.setLog(new ChildTaskLog(log.getTaskLog()));
       }
       return owner.executeAndWait(child, conf);
     }
-    
     
     public void executeBackground(Task child, BackgroundTaskConfig conf) {
       owner.executeBackground(child, conf);

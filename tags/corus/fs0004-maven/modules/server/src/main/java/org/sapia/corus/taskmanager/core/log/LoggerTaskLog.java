@@ -1,6 +1,8 @@
-package org.sapia.corus.taskmanager.core;
+package org.sapia.corus.taskmanager.core.log;
 
 import org.apache.log.Logger;
+import org.sapia.corus.taskmanager.core.Task;
+import org.sapia.corus.taskmanager.core.TaskLog;
 
 public class LoggerTaskLog implements TaskLog{
 

@@ -1,10 +1,12 @@
-package org.sapia.corus.taskmanager.core;
+package org.sapia.corus.taskmanager.core.log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.sapia.corus.client.common.ProgressMsg;
 import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.taskmanager.core.Task;
+import org.sapia.corus.taskmanager.core.TaskLog;
 
 public class ProgressQueueTaskLog implements ProgressQueue{
 

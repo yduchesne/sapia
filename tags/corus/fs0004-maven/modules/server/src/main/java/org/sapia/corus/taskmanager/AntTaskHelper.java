@@ -28,7 +28,7 @@ public class AntTaskHelper {
     public Object execute(TaskExecutionContext ctx) throws Throwable {
       try {
         Project p = new Project();
-        p.addBuildListener(new AntTaskLog(this, ctx.getLog()));
+        p.addBuildListener(new AntTaskLog(ctx));
         _antTask.setProject(p);
         _antTask.execute();
       } catch (Throwable t) {

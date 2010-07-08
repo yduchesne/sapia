@@ -3,7 +3,7 @@ package org.sapia.corus.taskmanager;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.sapia.corus.taskmanager.core.Task;
+import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.TaskLog;
 
 /**
@@ -13,12 +13,10 @@ import org.sapia.corus.taskmanager.core.TaskLog;
  */
 public class AntTaskLog implements BuildListener {
   
-  private Task _task;
-  private TaskLog _out;
+  private TaskExecutionContext _context;;
   
-  AntTaskLog(Task task, TaskLog out){
-    _task = task;
-    _out = out;
+  AntTaskLog(TaskExecutionContext context){
+    _context = context;
   }
 
   /**
@@ -30,22 +28,22 @@ public class AntTaskLog implements BuildListener {
 
     switch (priority) {
       case Project.MSG_DEBUG:
-        _out.debug(_task, msg);
+        _context.debug(msg);
   
         break;
         
       case Project.MSG_INFO:
-        _out.info(_task, msg);
+        _context.info(msg);
 
         break;
 
       case Project.MSG_WARN:
-        _out.warn(_task, msg);
+        _context.warn(msg);
 
         break;
 
       case Project.MSG_ERR:
-        _out.error(_task, msg);
+        _context.error(msg);
 
         break;
     }

@@ -5,7 +5,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log.Logger;
 import org.sapia.corus.core.ServerContext;
 
 public class TaskManagerImpl implements TaskManager{
@@ -13,10 +12,10 @@ public class TaskManagerImpl implements TaskManager{
   private Timer           background;
   private ExecutorService threadpool;
   private ServerContext   serverContext;
-  private Logger          logger;
+  private TaskLog         globalTaskLog;
   
-  public TaskManagerImpl(Logger logger, ServerContext serverContext) {
-    this.logger = logger;
+  public TaskManagerImpl(TaskLog globalTaskLog, ServerContext serverContext) {
+    this.globalTaskLog = globalTaskLog;
     this.serverContext = serverContext;
     this.background = new Timer("TaskManagerDaemon", true);
     this.threadpool = Executors.newCachedThreadPool();
@@ -47,7 +46,7 @@ public class TaskManagerImpl implements TaskManager{
               conf.getListener().executionSucceeded(task, result);
             }
           }catch(Throwable t){
-            ctx.getLog().error(task, "Problem occurred executing task", t);
+            ctx.error("Problem occurred executing task", t);
             if(conf.getListener() != null){
               conf.getListener().executionFailed(task, t);
             }
@@ -115,7 +114,7 @@ public class TaskManagerImpl implements TaskManager{
           try{
             task.onMaxExecutionReached(ctx);
           }catch(Throwable err){
-            ctx.getLog().error(task, "Error terminating task");
+            ctx.error("Error terminating task");
           }
           super.cancel();
           background.purge();
@@ -128,7 +127,7 @@ public class TaskManagerImpl implements TaskManager{
           try{
             task.execute(ctx);
           }catch(Throwable t){
-            ctx.getLog().error(task, "Problem occurred executing task", t);
+            ctx.error("Problem occurred executing task", t);
           }finally{
             task.incrementExecutionCount();
           }
@@ -141,15 +140,12 @@ public class TaskManagerImpl implements TaskManager{
     threadpool.shutdown();
   }
   
-  protected TaskLog wrapLogFor(Task task, TaskLog log){
+  private InternalTaskLog wrapLogFor(Task task, TaskLog log){
     if(log == null){
-      return new LoggerTaskLog(logger);
-    }
-    else if(task.isRoot()){
-      return new RootTaskLog(logger, log);
+      return new InternalTaskLog(globalTaskLog);
     }
     else{
-      return log;
+      return new InternalTaskLog(globalTaskLog, log);
     }
   }
   
