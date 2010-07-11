@@ -54,7 +54,7 @@ public class CorusServer {
       if (corusHome == null) {
         throw new CorusException("corus.home system property not set", ExceptionCode.INTERNAL_ERROR.getFullCode());
       } else {
-        // hack to avoid headackes with backslashes in Properties.load()
+        // hack to avoid headaches with backslashes in Properties.load()
         corusHome = corusHome.replace('\\', '/');
         corusHome = corusHome.replace("\"", "");
         System.setProperty("corus.home", corusHome);

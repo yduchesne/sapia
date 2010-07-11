@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.client.common.StringArg;
 import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
@@ -17,6 +18,14 @@ import org.sapia.corus.client.services.processor.Processor;
 
 public class ProcessDependencyFilter {
 
+  interface FilterCallback{
+    
+    public Distribution getDistribution(Arg name, Arg version) throws DistributionNotFoundException;
+    
+    public List<org.sapia.corus.client.services.processor.Process> getProcesses(Arg name, Arg version, String profile, Arg processName);
+    
+  }
+  
   private Set<ProcessRef> rootProcesses = new HashSet<ProcessRef>();
   private ProgressQueue progress;
   private List<ProcessRef> filteredProcesses = new ArrayList<ProcessRef>();
@@ -35,13 +44,32 @@ public class ProcessDependencyFilter {
     return this;
   }
 
-  public void filterDependencies(Deployer deployer, Processor processor) {
+  public void filterDependencies(final Deployer deployer, final Processor processor) {
+    FilterCallback cb = new FilterCallback() {
+      
+      @Override
+      public List<org.sapia.corus.client.services.processor.Process> getProcesses(Arg distName, Arg version, String profile,
+          Arg processName){
+        return processor.getProcesses(distName, version, profile, processName);
+      }
+      
+      @Override
+      public Distribution getDistribution(Arg name, Arg version)
+          throws DistributionNotFoundException {
+        return deployer.getDistribution(name, version);
+      }
+    };
+    
+    filterDependencies(cb);
+  }
+  public void filterDependencies(FilterCallback callback) {
+
     DependencyGraphNode results = new DependencyGraphNode();
     
     for (ProcessRef rootProcess : rootProcesses) {
       DependencyGraphNode root = new DependencyGraphNode(rootProcess);
       doFilterDependencies(root, rootProcess.getDist()
-          .getVersion(), rootProcess.getProfile(), deployer, processor);
+          .getVersion(), rootProcess.getProfile(), callback);
       results.add(root);
     }
     Collection<ProcessRef> flattened = results.flatten();
@@ -50,8 +78,7 @@ public class ProcessDependencyFilter {
   }
 
   private void doFilterDependencies(DependencyGraphNode parentNode,
-      String defaultVersion, String defaultProfile, Deployer deployer,
-      Processor processor) {
+      String defaultVersion, String defaultProfile, FilterCallback callback) {
 
     List<Dependency> deps = parentNode.getProcessRef().getProcessConfig().getDependenciesFor(defaultProfile);
     if (deps.size() > 0) {
@@ -60,13 +87,13 @@ public class ProcessDependencyFilter {
           String currentVersion = dep.getVersion() != null ? dep.getVersion() : defaultVersion;
           String currentProfile = dep.getProfile() != null ? dep.getProfile() : defaultProfile;
           try {
-            Distribution dist = deployer.getDistribution(new StringArg(
+            Distribution dist = callback.getDistribution(new StringArg(
                 dep.getDist()), new StringArg(currentVersion));
             if (dist != null) {
               ProcessConfig depProcess = dist.getProcess(dep.getProcess());
               if (depProcess != null) {
                 if (depProcess.containsProfile(currentProfile)) {
-                  if (processor.getProcesses(
+                  if (callback.getProcesses(
                       new StringArg(dist.getName()),
                       new StringArg(currentVersion), currentProfile,
                       new StringArg(dep.getProcess())).size() == 0) {
@@ -74,7 +101,7 @@ public class ProcessDependencyFilter {
                     DependencyGraphNode childNode = new DependencyGraphNode(ref);
                     if (parentNode.add(ref)) {
                       doFilterDependencies(childNode, defaultVersion,
-                          currentProfile, deployer, processor);
+                          currentProfile, callback);
                     }
                   } else {
                     progress

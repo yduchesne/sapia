@@ -506,6 +506,9 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   private List<Status> copyStatus(List<Process> processes) {
     List<Status>   stat   = new ArrayList<Status>(processes.size());
     for (Process p:processes) {
+      if(_logger.isDebugEnabled()){
+        _logger.debug(String.format("Returning status %s", p.getProcessStatus()));
+      }
       stat.add(copyStatus(p));
     }
 

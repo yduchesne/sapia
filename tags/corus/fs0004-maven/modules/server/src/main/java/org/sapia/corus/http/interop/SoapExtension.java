@@ -12,6 +12,8 @@ import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.interop.AbstractCommand;
 import org.sapia.corus.interop.ConfirmShutdown;
+import org.sapia.corus.interop.Context;
+import org.sapia.corus.interop.Param;
 import org.sapia.corus.interop.Poll;
 import org.sapia.corus.interop.Process;
 import org.sapia.corus.interop.Restart;
@@ -108,8 +110,15 @@ public class SoapExtension implements HttpExtension, RequestListener {
       throw new MissingDataException("'corusPid' not specified in header");
     }
     
-    if(_logger.isDebugEnabled())
+    if(_logger.isDebugEnabled()){
       _logger.debug("Status received for " + proc);
+      for(Context ctx: stat.getContexts()){
+        _logger.debug("Context: " + ctx.getName());
+        for(Param p: ctx.getParams()){
+          _logger.debug(String.format("   %s = %s", p.getName(), p.getValue()));
+        }
+      }
+    }
     
     org.sapia.corus.client.services.processor.Process corusProcess = _serverContext.lookup(Processor.class).getProcess(proc.getCorusPid());
     List<AbstractCommand> commands = corusProcess.status(stat);

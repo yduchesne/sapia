@@ -1,5 +1,6 @@
 package org.sapia.corus.db;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -8,6 +9,7 @@ import java.util.Map;
 import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.db.RecordMatcher;
 import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.persistence.Persistent;
 
 /**
  * A {@link DbMap} implementation that does LRU-based caching.
@@ -105,12 +107,62 @@ public class CachingDbMap<K, V> implements DbMap<K, V>{
 
   @Override
   public Iterator<V> values() {
-    return delegate.values();
+    return new CacheIterator(delegate.values());
   }
 
   @Override
   public Collection<V> values(RecordMatcher<V> matcher) {
-    return delegate.values(matcher);
+    Collection<V> values = delegate.values(matcher);
+    Collection<V> toReturn = new ArrayList<V>(values.size());
+    
+    for(V val : values){
+      toReturn.add(getCachedValue(val));
+    }
+    return toReturn;
   }
 
+  @SuppressWarnings(value="unchecked")
+  private V getCachedValue(V val){
+    if(val instanceof Persistent){
+      Persistent<K, V> p = (Persistent<K, V>)val;
+      K key = p.getKey();
+      V cached = cache.get(key);
+      if(cached != null){
+        return cached;
+      }
+      else{
+        return val;
+      }
+    }
+    else{
+      return val;
+    }
+  }
+
+  class CacheIterator implements Iterator<V>{
+    
+    Iterator<V> delegateIterator;
+    
+    public CacheIterator(Iterator<V> delegateIterator) {
+      this.delegateIterator = delegateIterator;
+    }
+    
+    @Override
+    public boolean hasNext() {
+      return delegateIterator.hasNext();
+    }
+    
+    @Override
+    public V next() {
+      V next = delegateIterator.next();
+      return getCachedValue(next);
+    }
+    
+    @Override
+    public void remove() {
+    }
+    
+  }
+  
+  
 }
