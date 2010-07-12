@@ -2,9 +2,9 @@
 
 Typically, you'll "interact" with Sapia projects to:
 
-1) Depend on releases of specific libraries
-2) Build from source
-3) Publish new releases (this requires developer access)
+# Depend on releases of specific libraries
+# Build from source
+# Publish new releases (this requires developer access)
 
 1) and 2) are the typical use cases (they only require read access to the Maven repository where the Sapia libs are published).
 
