@@ -5,3 +5,7 @@ Welcome to Sapia's wiki. Here you can witness our latest musings and quickie not
 This section links to the project-related pages.
 
 * [Ubik Ubik Home]
+
+= Misc =
+
+* [MavenSetup How to set up your Maven installation to work with Maven projects]
