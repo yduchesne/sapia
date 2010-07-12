@@ -29,6 +29,7 @@ public class ClusterManagerImpl extends ModuleHelper
   private int _multicastPort       = Consts.DEFAULT_MCAST_PORT;
   private EventChannel      _channel;
   private Set<ServerAddress>   _hostsAddresses = Collections.synchronizedSet(new HashSet<ServerAddress>());
+  private ServerSideClusterInterceptor _interceptor;
   
   /**
    * @param addr this instance's multicast address.
@@ -59,10 +60,14 @@ public class ClusterManagerImpl extends ModuleHelper
     _logger.info("Signaling presence to cluster on: " + _multicastAddress + ":" + _multicastPort);
     _channel.dispatch(CorusPubEvent.class.getName(),
             new CorusPubEvent(true, serverContext().getServerAddress()));
-		ServerSideClusterInterceptor interceptor = new ServerSideClusterInterceptor(_logger, serverContext());
-		
-    Hub.serverRuntime.addInterceptor(ServerPreInvokeEvent.class, interceptor);
-		Hub.serverRuntime.addInterceptor(ReplicationEvent.class, interceptor);    
+  }
+  
+  @Override
+  public void start() throws Exception {
+    super.start();
+    _interceptor = new ServerSideClusterInterceptor(_logger, serverContext());
+    Hub.serverRuntime.addInterceptor(ServerPreInvokeEvent.class, _interceptor);
+    Hub.serverRuntime.addInterceptor(ReplicationEvent.class, _interceptor);    
   }
   
   /**
