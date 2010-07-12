@@ -50,4 +50,11 @@ In your `settings.xml` file, add the following within the `servers` element:
 
 == Configure the Java.net Credentials ==
 
-The Java.net wagon expects your credentials to be present in this file: `~/.java.net` - i.e.: note that the file is under your home directory. 
+The Java.net wagon expects your credentials to be present in this file: `~/.java.net` - i.e.: note that the file is under your home directory. The content should be as follows:
+
+{{{
+userName=jsmith
+password=mysecretpass
+}}}
+
+More information is available [https://javanettasks.dev.java.net/nonav/maven/config.html here]
