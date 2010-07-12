@@ -27,6 +27,7 @@ public class ServerSideClusterInterceptor implements Interceptor {
   ServerSideClusterInterceptor(Logger log, ServerContext context) {
     _log = log;
     _context = context;
+    _cluster = context.getServices().lookup(ClusterManager.class);
   }
 
   public static void clusterCurrentThread(ClusterInfo cluster) {
@@ -55,8 +56,9 @@ public class ServerSideClusterInterceptor implements Interceptor {
 
   public void onReplicationEvent(ReplicationEvent evt) {
     if (evt.getReplicatedCommand() instanceof ClusteredCommand) {
-    	ClusteredInvoker invoker = (ClusteredInvoker)((ClusteredCommand)evt.getReplicatedCommand()).getReplicatedInvoker();
-     	invoker.setUp(_context.getCorus(), _cluster);
+      ClusteredCommand cmd = (ClusteredCommand)evt.getReplicatedCommand();
+      ClusteredInvoker invoker = (ClusteredInvoker)cmd.getReplicatedInvoker();
+      invoker.setUp(_context.getCorus(), _cluster);
     }
   }
 
