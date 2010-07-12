@@ -26,3 +26,28 @@ If you want to include Sapia libraries as dependencies in your projects, you mus
 }}}
 
 If you are building the Sapia projects from source, these already include the above information in their POM, so you may just check out and do a `mvn install`.
+
+= 3) Publishing releases =
+
+To publish releases, you'll need the following:
+
+  # An account at Java.net, in order to upload the releases to their Maven 2 repository.
+  # An account at Google code, and write-access to the Sapia projects (meaning you need to be a committer).
+
+More concretely:
+
+== Configure the Google Code Credentials ==
+
+In your `settings.xml` file, add the following within the `servers` element:
+
+{{{
+  <server>
+	<id>sapia.googlecode.com</id>
+	<username>johnsmith</username>
+	<password>hhje7298ska</password>
+  </server>
+}}}
+
+== Configure the Java.net Credentials ==
+
+The Java.net wagon expects your credentials to be present in this file: `~/.java.net` - i.e.: note that the file is under your home directory. 
