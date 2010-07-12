@@ -1,0 +1,17 @@
+#how to set up your Maven installation to work with Sapia projects
+
+= Introduction =
+
+Typically, you'll "interact" with Sapia projects to:
+
+1) Depend on releases of specific libraries
+2) Build from source
+3) Publish new releases (this requires developer access)
+
+1) and 2) are the typical use cases (they only require read access to the Maven repository where the Sapia libs are published).
+
+3) Is a bit more involving: it requires an account at Java.net.
+
+= 1) and 2) Using Maven to acquire dependencies =
+
+If you want to include Sapia libraries as dependencies in your projects, you
