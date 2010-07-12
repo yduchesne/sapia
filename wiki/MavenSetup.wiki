@@ -14,7 +14,7 @@ Typically, you'll "interact" with Sapia projects to:
 
 = 1) and 2) Using Maven to acquire dependencies =
 
-If you want to include Sapia libraries as dependencies in your projects, you must configure the Java.net Maven 2 repository:
+If you want to include Sapia libraries as dependencies in your projects, you must configure the Java.net Maven 2 repository - either in your projects' POM, or in your `settings.xml` file:
 
 {{{
 <repository>
@@ -24,3 +24,5 @@ If you want to include Sapia libraries as dependencies in your projects, you mus
   <layout>default</layout>
 </repository>
 }}}
+
+If you are building the Sapia projects from source, these already include the above information in their POM, so you may just check out and do a `mvn install`.
