@@ -1,5 +1,3 @@
-#how to set up your Maven installation to work with Sapia projects
-
 = Introduction =
 
 Typically, you'll "interact" with Sapia projects to:
