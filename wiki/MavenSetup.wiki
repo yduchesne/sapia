@@ -12,4 +12,12 @@ Typically, you'll "interact" with Sapia projects to:
 
 = 1) and 2) Using Maven to acquire dependencies =
 
-If you want to include Sapia libraries as dependencies in your projects, you
+If you want to include Sapia libraries as dependencies in your projects, you must configure the Java.net Maven 2 repository:
+
+{{{
+<repository>
+  <id>java.net</id>
+  <url>http://download.java.net/maven/1</url>
+  <layout>legacy</layout>
+</repository>
+}}}
