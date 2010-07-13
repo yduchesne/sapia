@@ -5,6 +5,8 @@ package org.sapia.util.xml.confix;
 // ---------------------------
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -198,6 +200,12 @@ public abstract class AbstractXMLProcessor implements ConfixProcessorIF {
           if (aParamType.isAssignableFrom(aValue.getClass())) {
             return aMethod.invoke(aTarget, new Object[] { aValue });
           }
+          // If the method parameter is an enum
+          else if (aParamType.isEnum() && aValue instanceof String) {
+            return aMethod.invoke(aTarget, new Object[] {
+                    getEnumValueOf(aParamType, (String) aValue)});
+//                    Enum.valueOf(aParamType, (String) aValue)});
+          }
           // If the method parameter is a boolean type
           else if ((aParamType.equals(boolean.class) ||
             aParamType.equals(Boolean.class)) && aValue instanceof String) {
@@ -291,14 +299,17 @@ public abstract class AbstractXMLProcessor implements ConfixProcessorIF {
           }
         }
       }
+      
     } catch (NumberFormatException nfe) {
       String aMessage = "'" + aValue +
         "' is not a valid numeric value for method '" + aMethodName + "'";
       throw new ConfigurationException(aMessage, nfe);
+      
     } catch (IllegalAccessException iae) {
       String aMessage = "Security error invoking the method '" + aMethodName +
         "'to assign the value " + aValue + " on the object " + aTarget;
       throw new ConfigurationException(aMessage, iae);
+      
     } catch (InvocationTargetException ite) {
       String aMessage = "Application error invoking the method '" +
         aMethodName + "'to assign the value " + aValue + " on the object " +
@@ -309,12 +320,34 @@ public abstract class AbstractXMLProcessor implements ConfixProcessorIF {
       } else {
         throw new ConfigurationException(aMessage, ite.getTargetException());
       }
+      
+    } catch (Exception e) {
+      String aMessage = "System error invoking the method '" + aMethodName +
+        "'to assign the value " + aValue + " on the object " + aTarget;
+      throw new ConfigurationException(aMessage, e);
     }
     
     String aMessage = "No method found for the name '" + aMethodName +
       "' on the object " + aTarget + " - value: " + aValue + " (" +
       aValue.getClass() + ")";
     throw new NoSuchMethodException(aMessage);
+  }
+  
+  private static <E extends Enum<E>> Object getEnumValueOf(Class<E> aClass, String aName) throws Exception {
+    Method m = aClass.getMethod("values");
+    Object[] results=(Object[]) m.invoke(null);
+    
+    for (int i = 0; i < results.length; i++) {
+      Object c = results[i];
+      Method mc = c.getClass().getMethod("name");
+      String name = (String) mc.invoke(c);
+    
+      if (name != null && name.equalsIgnoreCase(aName)) {
+        return c;
+      }
+    }
+    
+    throw new IllegalArgumentException("No value '" + aName + "' found on the enum " + aClass);
   }
   
   /**

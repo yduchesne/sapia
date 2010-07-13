@@ -13,13 +13,16 @@ import org.apache.log4j.LogManager;
 
 // Import of Junit classes
 // ---------------------------
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 // Import of Sapia's utility classes
 // ---------------------------------
+import org.sapia.util.xml.ProcessingException;
 import org.sapia.util.xml.confix.ReflectionFactory;
 import org.sapia.util.xml.confix.SAXProcessor;
+import org.sapia.util.xml.confix.test.EnumValue.TestType;
 
 
 /**
@@ -137,6 +140,23 @@ public class SAXProcessorCompositeTest extends TestCase {
 //    "    </Config>" +
 //    "    <Gui />" +
 //    "</Null>";
+  
+  private static final String XML_ENUM_ATTRIBUTE_CONFIG =
+    "<config name=\"enumAsAttribute\">" +
+    "  <enumValue type=\"VOID\" description=\"this is a description\" />" +
+    "</config>";
+  
+  private static final String XML_ENUM_NESTED_CONFIG =
+    "<config name=\"enumAsNestedElement\">" +
+    "  <enumValue description=\"this is another description\">" +
+    "    <type>NOT_AWARE</type>" +
+    "  </enumValue>" +
+    "</config>";
+  
+  private static final String XML_ENUM_INVALID_CONFIG =
+    "<config name=\"enumAsAttribute\">" +
+    "  <enumValue type=\"INVALID\" description=\"this is a description\" />" +
+    "</config>";
 
   static {
     BasicConfigurator.configure();
@@ -384,4 +404,94 @@ public class SAXProcessorCompositeTest extends TestCase {
 //    Object anObject = _theProcessor.process(anInput);
 //    assertTrue("The returned object is not a Config", anObject instanceof Config);
 //  }
+  
+  public void testEnum_asAttribute() throws Exception {
+    ByteArrayInputStream anInput =
+            new ByteArrayInputStream(XML_ENUM_ATTRIBUTE_CONFIG.getBytes());
+    Object anObject = _theProcessor.process(anInput);
+    assertTrue("The returned object is not a Config", anObject instanceof Config);
+    
+    Config aConfig = (Config) anObject;
+    assertEquals("The name of the config is invalid", "enumAsAttribute", aConfig.getName());
+    assertEquals("The size of the named value list is invalid", 0, aConfig.getNamedValues().size());
+
+    assertEquals("The length of the custom object array is invalid", 2, aConfig.getCustomObject().length);
+    assertEquals("The first custom object is invalid", "enumValue", aConfig.getCustomObject()[0]);
+    
+    EnumValue enumVal = (EnumValue) aConfig.getCustomObject()[1];
+    assertEquals("The description of the enum value is invalid", "this is a description", enumVal.getDescription());
+    assertEquals("The type of the enum value is invalid", TestType.VOID, enumVal.getType());
+  }
+  
+  public void testEnum_asAttribute_lowerCase() throws Exception {
+    String xmlString = "<config name=\"enumAsAttribute\">" +
+                       "  <enumValue type=\"void\" description=\"this is a description\" />" +
+                       "</config>";
+    ByteArrayInputStream anInput =
+            new ByteArrayInputStream(xmlString.getBytes());
+    Object anObject = _theProcessor.process(anInput);
+    assertTrue("The returned object is not a Config", anObject instanceof Config);
+    
+    Config aConfig = (Config) anObject;
+    assertEquals("The name of the config is invalid", "enumAsAttribute", aConfig.getName());
+    assertEquals("The size of the named value list is invalid", 0, aConfig.getNamedValues().size());
+
+    assertEquals("The length of the custom object array is invalid", 2, aConfig.getCustomObject().length);
+    assertEquals("The first custom object is invalid", "enumValue", aConfig.getCustomObject()[0]);
+    
+    EnumValue enumVal = (EnumValue) aConfig.getCustomObject()[1];
+    assertEquals("The description of the enum value is invalid", "this is a description", enumVal.getDescription());
+    assertEquals("The type of the enum value is invalid", TestType.VOID, enumVal.getType());
+  }
+  
+  public void testEnum_asChildElement() throws Exception {
+    ByteArrayInputStream anInput =
+            new ByteArrayInputStream(XML_ENUM_NESTED_CONFIG.getBytes());
+    Object anObject = _theProcessor.process(anInput);
+    assertTrue("The returned object is not a Config", anObject instanceof Config);
+    
+    Config aConfig = (Config) anObject;
+    assertEquals("The name of the config is invalid", "enumAsNestedElement", aConfig.getName());
+    assertEquals("The size of the named value list is invalid", 0, aConfig.getNamedValues().size());
+
+    assertEquals("The length of the custom object array is invalid", 2, aConfig.getCustomObject().length);
+    assertEquals("The first custom object is invalid", "enumValue", aConfig.getCustomObject()[0]);
+    
+    EnumValue enumVal = (EnumValue) aConfig.getCustomObject()[1];
+    assertEquals("The description of the enum value is invalid", "this is another description", enumVal.getDescription());
+    assertEquals("The type of the enum value is invalid", TestType.NOT_AWARE, enumVal.getType());
+  }
+  
+  public void testEnum_asChildElement_lowerCase() throws Exception {
+    String xmlString =
+            "<config name=\"enumAsNestedElement\">" +
+            "  <enumValue description=\"this is another description\">" +
+            "    <type>not_aware</type>" +
+            "  </enumValue>" +
+            "</config>";
+    ByteArrayInputStream anInput = new ByteArrayInputStream(xmlString.getBytes());
+    Object anObject = _theProcessor.process(anInput);
+    assertTrue("The returned object is not a Config", anObject instanceof Config);
+    
+    Config aConfig = (Config) anObject;
+    assertEquals("The name of the config is invalid", "enumAsNestedElement", aConfig.getName());
+    assertEquals("The size of the named value list is invalid", 0, aConfig.getNamedValues().size());
+
+    assertEquals("The length of the custom object array is invalid", 2, aConfig.getCustomObject().length);
+    assertEquals("The first custom object is invalid", "enumValue", aConfig.getCustomObject()[0]);
+    
+    EnumValue enumVal = (EnumValue) aConfig.getCustomObject()[1];
+    assertEquals("The description of the enum value is invalid", "this is another description", enumVal.getDescription());
+    assertEquals("The type of the enum value is invalid", TestType.NOT_AWARE, enumVal.getType());
+  }
+  
+  public void testEnum_invalid() throws Exception {
+    try {
+      ByteArrayInputStream anInput =
+              new ByteArrayInputStream(XML_ENUM_INVALID_CONFIG.getBytes());
+      _theProcessor.process(anInput);
+      Assert.fail();
+    } catch (ProcessingException expected) {
+    }
+  }
 }
