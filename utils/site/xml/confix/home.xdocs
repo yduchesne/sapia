@@ -29,7 +29,7 @@
         <li>supports XML namespace definitions;</li>
         <li>XML attributes are mapped to "setters";</li>
         <li>automatic type conversion: XML attributes are automatically converted to the type
-        specified by their corresponding setters (int, boolean, long, etc.)</li>
+        specified by their corresponding setters (enums or primitive types like int, boolean, long, etc.)</li>
         <li>implements the factory pattern: separates XML traversal from object creation - the
         latter is delegated to "object factories".</li>
         <li>allows parts of the XML to bypass the conversion mechanism: the XML will remain
@@ -200,7 +200,8 @@ public class Family{
       <ul>
         <li>The processor tries to find a setter on the parent object that matches the XML element name corresponding to the new object;</li>
         <li>if a setter is found, it is invoked - the type of the new object must match the type of the parameter that is accepted by
-        the setter;</li>
+        the setter. The processor will perform the conversion from the string value of the XML into the Enum or primitive type of
+        the declared method;</li>
         <li>if no setter is found, an adder is searched;</li>
         <li>if an adder is found, it is invoked;</li>
         <li>if no setter or adder is found, an exception is thrown.</li>
