@@ -1,11 +1,7 @@
 package org.sapia.util.xml.confix;
 
 
-// Import of Sapia's utility classes
 // ---------------------------------
-import org.sapia.util.CompositeException;
-
-
 /**
  * Thrown when an XML processor could not complete the processing of
  * a XML configuration.
@@ -18,7 +14,7 @@ import org.sapia.util.CompositeException;
  *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
  * </dl>
  */
-public class ConfigurationException extends CompositeException {
+public class ConfigurationException extends Exception {
   /////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////  CONSTRUCTORS  /////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////

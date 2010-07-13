@@ -92,7 +92,7 @@ public class SAXProcessor extends AbstractXMLProcessor {
     } catch (ParserConfigurationException pce) {
       String aMessage = "Error getting the SAX parser to process the input stream";
       if (aSAXHandler != null && aSAXHandler.getSaxException() != null) {
-        throw new ProcessingException(aMessage, aSAXHandler.getSaxException());
+        throw new ProcessingException(aMessage, aSAXHandler.getSaxException().getException());
       } else {
         throw new ProcessingException(aMessage, pce);
       }
@@ -100,7 +100,7 @@ public class SAXProcessor extends AbstractXMLProcessor {
     } catch (IOException ioe) {
       String aMessage = "Error reading input stream to process";
       if (aSAXHandler != null && aSAXHandler.getSaxException() != null) {
-        throw new ProcessingException(aMessage, aSAXHandler.getSaxException());
+        throw new ProcessingException(aMessage, aSAXHandler.getSaxException().getException());
       } else {
         throw new ProcessingException(aMessage, ioe);
       }
@@ -108,9 +108,9 @@ public class SAXProcessor extends AbstractXMLProcessor {
     } catch (SAXException se) {
       String aMessage = "Error parsing the XML of the input stream.";
       if (aSAXHandler != null && aSAXHandler.getSaxException() != null) {
-        throw new ProcessingException(aMessage, aSAXHandler.getSaxException());
+        throw new ProcessingException(aMessage, aSAXHandler.getSaxException().getException());
       } else {
-        throw new ProcessingException(aMessage, se);
+        throw new ProcessingException(aMessage, se.getException());
       }
 
     } finally {
