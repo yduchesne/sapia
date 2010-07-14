@@ -364,11 +364,11 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     doRestart(pid, ProcessTerminationRequestor.KILL_REQUESTOR_PROCESS);
   }
   
-  private void doRestart(String dynId, ProcessTerminationRequestor origin) throws ProcessNotFoundException{
-    Process     proc    = _processes.getActiveProcesses().getProcess(dynId);
+  private void doRestart(String pid, ProcessTerminationRequestor origin) throws ProcessNotFoundException{
+    Process     proc    = _processes.getActiveProcesses().getProcess(pid);
     RestartTask restart = new RestartTask(
         origin, 
-        dynId, proc.getMaxKillRetry());
+        pid, proc.getMaxKillRetry());
 
     _taskman.executeBackground(
         restart,
@@ -411,6 +411,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
       }
 
       proc.touch();
+      proc.save();
 
       try {
         resume = new ResumeTask(proc, dist, conf);
@@ -429,10 +430,10 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     ProgressQueue q = new ProgressQueueImpl();
 
     if (restartCount == 0) {
-      q.warning("No suspended VMs to restart.");
+      q.warning("No suspended processes to restart.");
       q.close();
     } else {
-      q.warning("Restarted " + restartCount + " suspended VMs.");
+      q.warning("Restarted " + restartCount + " suspended processes.");
       q.close();
     }
 
