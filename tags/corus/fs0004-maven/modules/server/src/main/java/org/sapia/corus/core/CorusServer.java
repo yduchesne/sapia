@@ -35,11 +35,12 @@ import org.sapia.ubik.util.Localhost;
  */
 public class CorusServer {
   public static final int    DEFAULT_PORT    = 33000;
+  public static final String CONFIG_FILE_OPT = "c";
   public static final String PORT_OPT        = "p";
   public static final String DOMAIN_OPT      = "d";
   public static final String BIND_ADDR_OPT   = "a";
   public static final String DEBUG_VERBOSITY = "v";
-  public static final String FILE            = "f";
+  public static final String DEBUG_FILE      = "f";
   public static final String HELP            = "help";
   public static final String PROP_SYSLOG_HOST     = "corus.server.syslog.host";
   public static final String PROP_SYSLOG_PORT     = "corus.server.syslog.port";
@@ -78,9 +79,14 @@ public class CorusServer {
         return;
       }
       
+      String configFileName = "corus.properties";
+      if (cmd.containsOption(CONFIG_FILE_OPT , true)) {
+        configFileName = cmd.assertOption(CONFIG_FILE_OPT, true).getValue();
+      }
+      
       String aFilename = new StringBuffer(corusHome).
         append(File.separator).append("config").
-        append(File.separator).append("corus.properties").
+        append(File.separator).append(configFileName).
         toString();      
       
       File propFile = new File(aFilename);
@@ -140,29 +146,25 @@ public class CorusServer {
       
       h.setDefaultPriority(p);
       
-      if (cmd.containsOption(FILE, false)) {
+      if (cmd.containsOption(DEBUG_FILE, false)) {
         Formatter     formatter = FormatterFactory.createDefaultFormatter();
         RotateStrategyByTime strategy = new RotateStrategyByTime(1000 * 60 * 60 * 24);
-        File                 logsDir  = new File(corusHome + File.separator +
-          "logs");
+        File                 logsDir  = new File(corusHome + File.separator + "logs");
         logsDir.mkdirs();
         
-        File logFile = new File(logsDir.getAbsolutePath() + File.separator +
-          domain + "_" + port + ".log");
+        File logFile = new File(logsDir.getAbsolutePath() + File.separator + domain + "_" + port + ".log");
         
-        RevolvingFileStrategy fileStrategy = new RevolvingFileStrategy(logFile,
-          5);
-        RotatingFileTarget target = new RotatingFileTarget(formatter, strategy,
-          fileStrategy);
-        if(logTarget == null){
+        RevolvingFileStrategy fileStrategy = new RevolvingFileStrategy(logFile, 5);
+        RotatingFileTarget target = new RotatingFileTarget(formatter, strategy, fileStrategy);
+        if (logTarget == null) {
           logTarget = new CompositeTarget();
         }
         logTarget.addTarget(target);
-      }
-      else{
+        
+      } else {
         Formatter formatter = FormatterFactory.createDefaultFormatter();
         StdoutTarget target = new StdoutTarget(formatter);
-        if(logTarget == null){
+        if (logTarget == null) {
           logTarget = new CompositeTarget();
         }
         logTarget.addTarget(target);
@@ -172,15 +174,15 @@ public class CorusServer {
       String syslogPort = corusProps.getProperty(PROP_SYSLOG_PORT);
       String syslogProto = corusProps.getProperty(PROP_SYSLOG_PROTOCOL);
       
-      if(syslogHost != null && syslogPort != null && syslogProto != null){
+      if (syslogHost != null && syslogPort != null && syslogProto != null) {
         SyslogTarget target = new SyslogTarget(syslogProto, syslogHost, Integer.parseInt(syslogPort));
-        if(logTarget == null){
+        if (logTarget == null) {
           logTarget = new CompositeTarget();
         }
         logTarget.addTarget(target);
       }
       
-      if(logTarget != null){
+      if (logTarget != null) {
         h.setDefaultLogTarget(logTarget);
       }
       
@@ -233,9 +235,12 @@ public class CorusServer {
     System.out.println();
     System.out.println("Corus server command-line syntax:");
     System.out.println();
-    System.out.println("corus -d domain [-p port] [-v DEBUG|INFO|WARN|ERROR] [-f] [-http]");
+    System.out.println("corus [-c filename] [-d domain] [-p port] [-v DEBUG|INFO|WARN|ERROR] [-f] [-http]");
     System.out.println();
     System.out.println("where:");
+    System.out.println("  -c      specifies the corus configuration file to use (in the CORUS_HOME/config directory).");
+    System.out.println("          If not specified the default file corus.properties will be used.");
+    System.out.println();
     System.out.println("  -d      specifies the name of the domain to which the");
     System.out.println("          corus server should be associated.");
     System.out.println();
