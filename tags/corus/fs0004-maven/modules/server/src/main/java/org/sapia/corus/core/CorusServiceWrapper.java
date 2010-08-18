@@ -64,11 +64,16 @@ public class CorusServiceWrapper implements WrapperListener, Runnable {
    * @see org.tanukisoftware.wrapper.WrapperListener#controlEvent(int)
    */
   public void controlEvent(int anEvent) {
-    if ((anEvent == WrapperManager.WRAPPER_CTRL_LOGOFF_EVENT) &&
-      WrapperManager.isLaunchedAsService()) {
+    if (WrapperManager.isControlledByNativeWrapper()) {
+      // The Wrapper will take care of this event
       System.out.println("Ignoring logoff event");
-      // Ignore
-    } else {
+      
+    // We are not being controlled by the Wrapper, so
+    // handle the event ourselves.
+    } else if ((anEvent == WrapperManager.WRAPPER_CTRL_C_EVENT) ||
+          (anEvent == WrapperManager.WRAPPER_CTRL_CLOSE_EVENT) ||
+          (anEvent == WrapperManager.WRAPPER_CTRL_LOGOFF_EVENT) ||
+          (anEvent == WrapperManager.WRAPPER_CTRL_SHUTDOWN_EVENT)){
       WrapperManager.stop(0);
     }
   }
