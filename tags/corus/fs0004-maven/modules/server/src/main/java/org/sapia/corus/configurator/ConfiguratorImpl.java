@@ -17,8 +17,8 @@ import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.db.DbModule;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.corus.core.property.PropertyContainer;
-import org.sapia.corus.core.property.PropertyProvider;
+import org.sapia.corus.core.PropertyContainer;
+import org.sapia.corus.core.PropertyProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Bind(moduleInterface=Configurator.class)

@@ -38,7 +38,7 @@ public class HttpDeploymentAcceptor implements ProtocolHandler, DeploymentAccept
    * @see org.sapia.corus.deployer.transport.DeploymentAcceptor#start()
    */
   public void start() throws Exception {
-		_provider.getContainerMap().addService(HttpDeploymentClient.DEPLOYER_CONTEXT, this);  	
+		_provider.getServiceMapper().addService(HttpDeploymentClient.DEPLOYER_CONTEXT, this);  	
   }
   
   /**

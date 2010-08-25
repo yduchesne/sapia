@@ -12,7 +12,7 @@ import org.sapia.corus.client.common.CompositeStrLookup;
 import org.sapia.corus.client.common.PropertiesStrLookup;
 import org.sapia.corus.client.exceptions.core.ServiceNotFoundException;
 import org.sapia.corus.client.services.naming.JndiModule;
-import org.sapia.corus.core.property.PropertyContainer;
+import org.sapia.corus.core.PropertyContainer;
 import org.sapia.corus.util.IOUtils;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.naming.remote.RemoteContext;
