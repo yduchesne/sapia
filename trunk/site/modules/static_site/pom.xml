@@ -4,11 +4,11 @@
   <parent>
     <groupId>org.sapia</groupId>
     <artifactId>sapia_site_parent</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>sapia_site_content</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>Sapia Site</name>
 
   <build>
@@ -17,7 +17,7 @@
 	    <plugin>
 	      <groupId>org.sapia</groupId>
 	      <artifactId>sapia_site_doc_plugin</artifactId>
-	      <version>1.0</version>
+	      <version>1.1-SNAPSHOT</version>
         <executions>
           <execution>
             <phase>site</phase>
