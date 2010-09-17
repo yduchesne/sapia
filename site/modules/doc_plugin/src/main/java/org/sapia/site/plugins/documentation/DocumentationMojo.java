@@ -41,13 +41,13 @@ public class DocumentationMojo extends AbstractMojo{
   private boolean copyResources = true;
 
   /**
-   * @parameter default-value="${basedir}/site/xml"
+   * @parameter default-value="${basedir}/sapia/site/xml"
    */
   private String basedir;
 
   
   /**
-   * @parameter default-value="${basedir}/site/html"
+   * @parameter default-value="${basedir}/target/site"
    */
   private String destdir;
 
@@ -89,7 +89,7 @@ public class DocumentationMojo extends AbstractMojo{
         
         delete.setTaskName("delete");
         delete.setTaskType("delete");
-        
+        delete.setIncludeEmptyDirs(true);
         delete.execute();
       }
     }
@@ -112,9 +112,13 @@ public class DocumentationMojo extends AbstractMojo{
       JavaResource javaResource = new JavaResource();
       javaResource.setName(xslResource);
       transform.setXslResource(javaResource);
-      File tmpXslt = new File(System.getProperty("java.io.tmp.dir") + File.pathSeparator + "sapia-"+UUID.randomUUID() + ".xsl");
-      copyResource(javaResource, tmpXslt);
-      transform.setXslResource(new FileResource(tmpXslt));
+      try{
+        File tmpXslt = File.createTempFile("sapia-"+UUID.randomUUID(), ".xsl");
+        copyResource(javaResource, tmpXslt);
+        transform.setXslResource(new FileResource(tmpXslt));
+      }catch(IOException e){
+        throw new MojoExecutionException("Could not create temp file", e);
+      }
     }
     
     transform.setTaskName("xslt");
