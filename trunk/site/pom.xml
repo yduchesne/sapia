@@ -48,9 +48,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/site/</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/site/</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/tags/</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/site</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/site</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/tags/site</url>
   </scm>
 
   <licenses>
