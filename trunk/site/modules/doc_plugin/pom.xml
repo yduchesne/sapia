@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sapia</groupId>
     <artifactId>sapia_site_parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <name>Sapia Doc Plugin</name>
