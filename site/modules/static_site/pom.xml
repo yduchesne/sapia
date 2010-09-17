@@ -17,20 +17,6 @@
 	    <plugin>
 	      <groupId>org.sapia</groupId>
 	      <artifactId>sapia_site_doc_plugin</artifactId>
-	      <version>1.1-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <phase>site</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-	    </plugin>
-
-	    <plugin>
-	      <groupId>org.sapia</groupId>
-	      <artifactId>sapia_site_doc_plugin</artifactId>
 	      <version>1.0</version>
 
         <executions>
