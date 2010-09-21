@@ -47,10 +47,10 @@
         </div>
 	      <div id="menu">
 		      <ul>
-			      <li><a href="home.html" title="">Home</a></li>
-			      <li><a href="projects.html" title="">Projects</a></li>
-			      <li><a href="about.html" title="">About Us</a></li>
-			      <li><a href="contact.html" title="">Contact</a></li>
+			      <li><a href="http://www.sapia-oss.org/index.html" title="">Home</a></li>
+			      <li><a href="http://www.sapia-oss.org/projects.html" title="">Projects</a></li>
+			      <li><a href="http://www.sapia-oss.org/about.html" title="">About Us</a></li>
+			      <li><a href="http://www.sapia-oss.org/contact.html" title="">Contact</a></li>
 		      </ul>
 	      </div>
       </div>
