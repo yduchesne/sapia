@@ -478,6 +478,8 @@ hr {
   font-family: courier, courier new;
   color: black;
   background: #efefef;
+  overflow: scroll;
+  padding: 25px;
 }
 
 /* Product */
