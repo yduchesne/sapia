@@ -56,9 +56,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/tags</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/tags</url>
   </scm>
 
   <packaging>pom</packaging>
