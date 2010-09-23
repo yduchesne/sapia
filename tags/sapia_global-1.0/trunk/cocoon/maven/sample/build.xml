@@ -1,0 +1,26 @@
+<project name="sapia-cocoon-sample" default="build" basedir=".">
+
+  <target name="build">
+		<exec executable="mvn">
+			<arg value="compile"/>
+		</exec>
+    <jar destfile="${basedir}/sapia_cocoon.jar">
+      <fileset dir="${basedir}/target/classes">
+        <include name="org/sapia/cocoon/*.class" />
+      	<include name="org/sapia/cocoon/**/*.class" />
+      </fileset>
+    </jar>
+  </target>
+	
+	<target name="mvn-install" depends="build">
+	  <exec executable="mvn">
+	    <arg value="-DgroupId=org.sapia-oss"/>
+	    <arg value="-DartifactId=sapia_cocoon"/>
+	  	<arg value="-Dversion=2.2b1"/>
+	  	<arg value="-Dpackaging=jar"/>
+	  	<arg value="-Dfile=${basedir}/sapia_cocoon.jar"/>
+	  	<arg value="install:install-file"/>
+	  </exec>
+	</target>	
+
+</project>
