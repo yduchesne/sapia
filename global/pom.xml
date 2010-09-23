@@ -83,14 +83,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-         <!--executions>
-           <execution>
-             <phase>site</phase>
-             <goals>
-               <goal>site</goal>
-             </goals>
-           </execution>
-         </executions-->
         <configuration>
           <outputDirectory>${basedir}/target/site/maven</outputDirectory>
           <generatedSiteDirectory>${basedir}/target/site/maven</generatedSiteDirectory>
