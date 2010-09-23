@@ -67,12 +67,18 @@ public class DocumentationMojo extends AbstractMojo{
 
 
   public void execute() throws MojoExecutionException{
-    Project proj = new Project();
-    proj.init();
-    deleteDestDir(proj);
-    transformXdocs(proj);
-    copyResources(proj);
-    renameXdocs(proj);
+    
+    if(!new File(basedir).exists()){
+      super.getLog().warn(String.format("Base directory %s not found", basedir));
+    }
+    else{
+      Project proj = new Project();
+      proj.init();
+      deleteDestDir(proj);
+      transformXdocs(proj);
+      copyResources(proj);
+      renameXdocs(proj);
+    }
   }
   
   private void deleteDestDir(Project proj) throws MojoExecutionException{
