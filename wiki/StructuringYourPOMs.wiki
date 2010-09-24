@@ -20,4 +20,10 @@ In order to inherit from the global POM, just declare a 'parent' element, as in 
   </parent>
 }}}
 
-Use the most current version of the global POM.
+Use the most current version of the global POM. Then, you only need specifying the essentials as part of your project POM:
+
+  * name, description, artifact ID, group ID, version
+  * packaging
+  * license (if different than Apache 2.0)
+  * dependencies
+  *
