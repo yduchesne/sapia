@@ -1,4 +1,4 @@
-#Describes how POM hierarchy works in Sapia projects
+Describes how POM hierarchy works in Sapia projects
 
 = How-To =
 
