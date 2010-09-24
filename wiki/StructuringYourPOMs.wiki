@@ -6,9 +6,9 @@ Whenever a project is created in the Sapia repository, a POM must be set up. In 
 
 It goes like this: we've defined a global parent POM, which is kept in the repository, and released whenever me modify it. That POM defines elements such as: 
 
-* Project developers
-* Documentation plugin configuration
-* etc.  
+  * Project developers
+  * Documentation plugin configuration 
+  * etc.  
 
 In order to inherit from the global POM, just declare a 'parent' element, as in the following snippet:
 
