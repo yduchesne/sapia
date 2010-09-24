@@ -15,9 +15,9 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/corus</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/corus</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/tags/corus</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/trunk/corus</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/trunk/corus</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/trunk/corus</url>
   </scm>
 
   <licenses>
@@ -37,18 +37,5 @@
     <module>modules/client</module>
     <module>modules/server</module>
   </modules>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.0-beta-7</version>
-        <configuration>
-          <tagBase>https://sapia.googlecode.com/svn/tags/corus</tagBase>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
