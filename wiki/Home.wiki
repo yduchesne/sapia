@@ -10,4 +10,4 @@ This section links to the project-related pages.
 
 * [MavenSetup How to set up your Maven installation to work with Maven projects]
 
-* [PomStructure How to structure your project POMs]
+* [StructureYourPOMs How to structure your project POMs]
