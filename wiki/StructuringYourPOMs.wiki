@@ -26,4 +26,3 @@ Use the most current version of the global POM. Then, you only need specifying t
   * packaging
   * license (if different than Apache 2.0)
   * dependencies
-  *
