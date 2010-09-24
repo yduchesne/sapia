@@ -17,4 +17,9 @@ The xdocs files must be kept under a project structure identical to this one:
 }}}
 Then, as part of documentation generation, the standard Maven site is also generated according to the [http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html  Maven conventions].
 
-The Maven site will be generated under 
+
+== Output ==
+
+The xdocs files are tranformed with XSL, and the output is saved under `target/site`. For its part, the Maven site is generated under `target/site/maven`.
+
+It is thus up to the content of the xdocs files to point to the maven site accordingly.
