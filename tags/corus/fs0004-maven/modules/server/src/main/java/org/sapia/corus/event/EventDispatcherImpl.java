@@ -5,8 +5,8 @@ import org.apache.log.Hierarchy;
 
 import org.apache.log.Logger;
 import org.sapia.corus.client.annotations.Bind;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.event.EventDispatcher;
-import org.sapia.corus.core.Service;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.interceptor.MultiDispatcher;
 
@@ -29,17 +29,17 @@ public class EventDispatcherImpl extends MultiDispatcher implements EventDispatc
   }
   
   /**
-   * @see org.sapia.corus.core.soto.Service#init()
+   * @see org.sapia.corus.client.services.soto.Service#init()
    */
   public void init() throws Exception {}
   
   /**
-   * @see org.sapia.corus.core.soto.Service#start()
+   * @see org.sapia.corus.client.services.soto.Service#start()
    */
   public void start() throws Exception {}
   
   /**
-   * @see org.sapia.corus.core.soto.Service#dispose()
+   * @see org.sapia.corus.client.services.soto.Service#dispose()
    */
   public void dispose() {}
   

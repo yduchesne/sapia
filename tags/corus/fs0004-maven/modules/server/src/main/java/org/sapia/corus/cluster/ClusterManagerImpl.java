@@ -46,7 +46,7 @@ public class ClusterManagerImpl extends ModuleHelper
   }
 
   /**
-   * @see org.sapia.corus.core.soto.Service#init()
+   * @see org.sapia.corus.client.services.soto.Service#init()
    */
   public void init() throws Exception {
     instance = this;
@@ -71,7 +71,7 @@ public class ClusterManagerImpl extends ModuleHelper
   }
   
   /**
-   * @see org.sapia.corus.core.soto.Service#dispose()
+   * @see org.sapia.corus.client.services.soto.Service#dispose()
    */
   public void dispose() {
     _channel.close();

@@ -153,7 +153,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   }
 
   /**
-   * @see org.sapia.corus.core.soto.Service#dispose()
+   * @see org.sapia.corus.client.services.soto.Service#dispose()
    */
   public void dispose() {
     if (_processor != null) {

@@ -97,7 +97,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.corus.core.soto.Service#init()
+   * @see org.sapia.corus.client.services.soto.Service#init()
    */
   public void init() throws Exception {
     logger().info("Initializing the security module");
@@ -113,7 +113,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.corus.core.soto.Service#dispose()
+   * @see org.sapia.corus.client.services.soto.Service#dispose()
    */
   public void dispose() {
     logger().info("Stopping the security module");

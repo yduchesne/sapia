@@ -35,7 +35,7 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
   }
 
   /**
-   * @see org.sapia.corus.core.soto.Service#init()
+   * @see org.sapia.corus.client.services.soto.Service#init()
    */
   public void init() throws Exception {
     // Create the interop and http extension transports

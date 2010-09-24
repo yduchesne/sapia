@@ -19,12 +19,12 @@ import org.sapia.corus.client.exceptions.port.PortActiveException;
 import org.sapia.corus.client.exceptions.port.PortRangeConflictException;
 import org.sapia.corus.client.exceptions.port.PortRangeInvalidException;
 import org.sapia.corus.client.exceptions.port.PortUnavailableException;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.db.DbModule;
 import org.sapia.corus.client.services.port.PortManager;
 import org.sapia.corus.client.services.port.PortRange;
 import org.sapia.corus.core.ModuleHelper;
-import org.sapia.corus.core.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

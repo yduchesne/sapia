@@ -9,6 +9,7 @@ import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
 import org.sapia.corus.client.Corus;
 import org.sapia.corus.client.annotations.Bind;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.core.PropertyContainer;
 import org.sapia.corus.core.PropertyProvider;
 import org.sapia.ubik.net.TCPAddress;

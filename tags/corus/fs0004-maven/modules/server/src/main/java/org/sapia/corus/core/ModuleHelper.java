@@ -3,6 +3,7 @@ package org.sapia.corus.core;
 import org.apache.log.Hierarchy;
 import org.apache.log.Logger;
 import org.sapia.corus.client.Module;
+import org.sapia.corus.client.services.Service;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;

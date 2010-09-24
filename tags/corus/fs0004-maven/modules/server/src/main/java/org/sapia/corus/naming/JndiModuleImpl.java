@@ -35,7 +35,7 @@ public class JndiModuleImpl extends ModuleHelper implements JndiModule, Intercep
   private ClientListener _listener;
   
   /**
-   * @see org.sapia.corus.core.soto.Service#init()
+   * @see org.sapia.corus.client.services.soto.Service#init()
    */
   public void init() throws Exception {
     EventChannel ec = _cluster.getEventChannel();
@@ -44,7 +44,7 @@ public class JndiModuleImpl extends ModuleHelper implements JndiModule, Intercep
   }
   
   /**
-   * @see org.sapia.corus.core.soto.Service#dispose()
+   * @see org.sapia.corus.client.services.soto.Service#dispose()
    */
   public void dispose() {
     try{
