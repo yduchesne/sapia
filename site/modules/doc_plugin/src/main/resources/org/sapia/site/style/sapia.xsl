@@ -261,7 +261,23 @@
 
    <xsl:template match="sapia:class">    
        <span style="font-family: courier, courier new">
-       <xsl:apply-templates/>       
+	      <xsl:choose>
+	        <xsl:when test="@link">
+	          <a>      
+	            <xsl:attribute name="href"><xsl:value-of select="@link"/></xsl:attribute>      
+  	          <xsl:choose>
+                <xsl:when test="@target">
+                  <xsl:attribute name="target"><xsl:value-of select="@target"/></xsl:attribute>      
+                </xsl:when>
+	            </xsl:choose>
+              <xsl:apply-templates/>       
+	          </a>
+	        </xsl:when>
+	        <xsl:otherwise>
+            <xsl:apply-templates/>       	          
+	        </xsl:otherwise>
+	      </xsl:choose>       
+       
        </span>
    </xsl:template>   
 

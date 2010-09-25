@@ -5,6 +5,7 @@
   <sapia:sect1 title="Section 1">
     <sapia:sect-desc>
 
+      Link to the <sapia:class link="http://download-llnw.oracle.com/javase/6/docs/api/java/lang/String.html" target="target_window">String</sapia:class> class.
       <table class="rich_table gradient">
         <thead><th>What ?</th><th>How ?</th><th>Where ?</th></thead>
         <tbody><tr>
