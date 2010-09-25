@@ -68,7 +68,7 @@
       <plugin>
         <groupId>org.sapia</groupId>
         <artifactId>sapia_site_doc_plugin</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
 
         <executions>
           <execution>
