@@ -103,8 +103,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <outputDirectory>${basedir}/target/site/api</outputDirectory>
-          <reportOutputDirectory>${basedir}/target/site/api</reportOutputDirectory>
+          <destDir>api</destDir>
+          <outputDirectory>${basedir}/target/site</outputDirectory>
+          <reportOutputDirectory>${basedir}/target/site</reportOutputDirectory>
         </configuration>
       </plugin>
 
