@@ -70,8 +70,6 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <destDir>api</destDir>
-          <outputDirectory>${basedir}/target/site</outputDirectory>
-          <reportOutputDirectory>${basedir}/target/site</reportOutputDirectory>
         </configuration>
       </plugin>
     </plugins>
@@ -83,6 +81,9 @@
         <groupId>org.sapia</groupId>
         <artifactId>sapia_site_doc_plugin</artifactId>
         <version>1.5</version>
+        <configuration>
+          <deleteDestdir>false</deleteDestdir>
+        </configuration>
 
         <executions>
           <execution>
