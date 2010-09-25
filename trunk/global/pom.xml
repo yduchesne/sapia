@@ -56,9 +56,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/tags</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/tags</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.1</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.1</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.1</url>
   </scm>
 
   <packaging>pom</packaging>
@@ -102,7 +102,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.7</version>
         <configuration>
           <outputDirectory>${basedir}/target/site/api</outputDirectory>
           <reportOutputDirectory>${basedir}/target/site/api</reportOutputDirectory>
