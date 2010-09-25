@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_global</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
 
   <organization>
     <name>Sapia OSS</name>
