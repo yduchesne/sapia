@@ -4,10 +4,10 @@
     <sapia:vsection name="Confix" href="confix/index.html"/>
     <sapia:vsection name="Application Starter" href="appstarter/index.html"/>
     <sapia:vsection name="Template" href="template/index.html"/>
-    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Javadoc" href="maven/utils/api/index.html"/>
     <sapia:vsection name="Download" href="download.html"/>
     <sapia:vsection name="Mailing List" href="list.html"/>
-    <sapia:vsection name="Maven" href="maven/index.html"/>
+    <sapia:vsection name="Maven" href="maven/utils/index.html"/>
   </sapia:vmenu>
 
   <sapia:sect1 title="Sapia Utilities">
