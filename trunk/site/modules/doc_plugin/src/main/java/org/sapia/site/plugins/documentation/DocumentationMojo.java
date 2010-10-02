@@ -427,8 +427,15 @@ public class DocumentationMojo extends AbstractMojo{
 
     
     // project mailing lists
-    List mailingLists = getMailingLists();
-    if(mailingLists.size() > 0){
+    List mailingLists = visit(new ProjectVisitor<List>() {
+      public List visit(MavenProject project) {
+        if(project.getMailingLists().size() > 0){
+          return project.getMailingLists();
+        }
+        return null;
+      }
+    });
+    if(mailingLists != null && mailingLists.size() > 0){
       MailingList list = (MailingList)mailingLists.get(0);
       createMailingListParams(list, null, transform);
     }
@@ -500,13 +507,18 @@ public class DocumentationMojo extends AbstractMojo{
     return value;
   }
   
-  private List getMailingLists(){
+  private <T> T visit(ProjectVisitor<T> visitor){
     MavenProject current = this.project;
+    T value = null;
     do{
-      if(current.getMailingLists().size() > 0){
-        return current.getMailingLists();
-      }
-    }while((current = current.getParent()) != null);
-    return this.project.getMailingLists();
+      value = visitor.visit(current);
+    }while((current = current.getParent()) != null && value == null);
+    return value;
+  }
+  
+  interface ProjectVisitor<T>{
+    
+    
+    T visit(MavenProject project);
   }
 }
