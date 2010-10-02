@@ -10,8 +10,9 @@
 
 	<name>Sapia Doc Plugin</name>
 
+    <groupId>org.sapia</groupId>
 	<artifactId>sapia_site_doc_plugin</artifactId>
-	<version>1.6-SNAPSHOT</version>
+
 	<packaging>maven-plugin</packaging>
 
 	<dependencies>
