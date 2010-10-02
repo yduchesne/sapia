@@ -7,7 +7,9 @@
     <version>1.6-SNAPSHOT</version>
   </parent>
 
+  <groupId>org.sapia</groupId>
   <artifactId>sapia_site_content</artifactId>
+
   <name>Sapia Site</name>
 
   <build>
