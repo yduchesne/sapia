@@ -28,6 +28,10 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <generateDownloadPage>false</generateDownloadPage>
+          <generateMailingListPage>false</generateMailingListPage>
+        </configuration>
 	    </plugin>
 
       <plugin>
