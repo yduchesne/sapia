@@ -8,7 +8,6 @@
   </parent>
 
   <artifactId>sapia_site_content</artifactId>
-  <version>1.6-SNAPSHOT</version>
   <name>Sapia Site</name>
 
   <build>
@@ -17,7 +16,7 @@
 	    <plugin>
 	      <groupId>org.sapia</groupId>
 	      <artifactId>sapia_site_doc_plugin</artifactId>
-	      <version>1.2</version>
+	      <version>${project.version}</version>
 
         <executions>
           <execution>

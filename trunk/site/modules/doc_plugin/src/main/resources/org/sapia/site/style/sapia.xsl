@@ -3,7 +3,36 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 <xsl:output method="html" indent="yes" encoding="US-ASCII" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
-                
+
+<xsl:param name="project.name" required="yes" as="xs:string"/>
+<xsl:param name="project.description" required="yes" as="xs:string"/>
+<xsl:param name="project.version" required="yes" as="xs:string"/>
+<xsl:param name="project.groupId" required="yes" as="xs:string"/>
+<xsl:param name="project.artifactId" required="yes" as="xs:string"/>               
+<xsl:param name="project.inceptionYear" required="yes" as="xs:string"/>
+<xsl:param name="project.packaging" required="yes" as="xs:string"/>
+<xsl:param name="project.url" required="yes" as="xs:string"/>
+<xsl:param name="project.organization.name" required="yes" as="xs:string"/>
+<xsl:param name="project.organization.url" required="yes" as="xs:string"/>
+<xsl:param name="project.mailinglist.name" required="yes" as="xs:string"/>
+<xsl:param name="project.mailinglist.subscribe" required="yes" as="xs:string"/>
+<xsl:param name="project.mailinglist.unsubscribe" required="yes" as="xs:string"/>
+<xsl:param name="project.mailinglist.post" required="yes" as="xs:string"/>
+<xsl:param name="project.mailinglist.archive" required="yes" as="xs:string"/>
+<xsl:param name="project.scm.connection" required="yes" as="xs:string"/>
+<xsl:param name="project.scm.developerConnection" required="yes" as="xs:string"/>
+<xsl:param name="project.scm.url" required="yes" as="xs:string"/>
+<xsl:param name="project.scm.tag" required="yes" as="xs:string"/>
+<xsl:param name="project.build.directory" required="yes" as="xs:string"/>
+<xsl:param name="project.build.outputDirectory" required="yes" as="xs:string"/>
+<xsl:param name="project.build.finalName" required="yes" as="xs:string"/>
+<xsl:param name="project.mailinglist" required="yes" as="xs:string"/>
+<xsl:param name="build.currentYear" required="yes" as="xs:string"/>
+<xsl:param name="build.currentDate" required="yes" as="xs:string"/>
+<xsl:param name="build.currentTime" required="yes" as="xs:string"/>
+<xsl:param name="build.timestamp" required="yes" as="xs:string"/>
+<xsl:param name="build.username" required="yes" as="xs:string"/>
+
 <!-- ========================================= PAGE ========================================= -->
                 
 <xsl:template match="/sapia:page">
@@ -21,7 +50,19 @@
         </xsl:choose>
       </link>
 
-      <title><xsl:value-of select="@title"/></title>
+      <xsl:choose>
+        <xsl:when test="@title">
+          <title><xsl:value-of select="@title"/></title>
+        </xsl:when>
+        <xsl:when test="title">
+          <xsl:apply-templates select="title" />
+        </xsl:when>
+        <xsl:otherwise>
+          <title>Sapia Open Source</title>
+        </xsl:otherwise>
+      </xsl:choose>
+
+    
       <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
 
     </head>
@@ -77,7 +118,7 @@
         </div>
       </div>
       <div id="footer">
-	      <p class="legal">Copyright (c) 2002-2011 Sapia Open Source. All rights reserved.</p>
+	      <p class="legal">Copyright (c) 2002-<xsl:value-of select="$build.currentYear"/> Sapia Open Source. All rights reserved.</p>
       </div>
     </body>
   </html>    
@@ -257,7 +298,111 @@
        </span>
    </xsl:template>   
 
-<!-- =========================================     CLASS     ========================================= -->
+<!-- =========================================      DEPENDENCY     ========================================= -->
+
+   <xsl:template match="sapia:dependency">    
+       <pre>
+          &lt;dependency&gt;
+            &lt;groupId&gt;<xsl:value-of select="$project.groupId"/>&lt;/groupId&gt;
+            &lt;artifactId&gt;<xsl:value-of select="$project.artifactId"/>&lt;/artifactId&gt;
+            &lt;version&gt;<xsl:value-of select="$project.version"/>&lt;/version&gt;
+          &lt;/dependency&gt;
+       </pre>
+   </xsl:template>   
+
+<!-- =========================================      PARAM     ========================================= -->
+
+   <xsl:template match="sapia:param">    
+      <xsl:choose>
+	      <xsl:when test="@value = 'project.name'">
+           <xsl:value-of select="$project.name"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.description'">
+           <xsl:value-of select="$project.description"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.version'">
+           <xsl:value-of select="$project.version"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.groupId'">
+           <xsl:value-of select="$project.groupId"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.artifactId'">
+           <xsl:value-of select="$project.artifactId"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.inceptionYear'">
+           <xsl:value-of select="$project.inceptionYear"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.packaging'">
+           <xsl:value-of select="$project.packaging"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.url'">
+           <xsl:value-of select="$project.url"/>
+        </xsl:when>
+        <xsl:when test="@value = 'project.mailinglist.name'">
+           <xsl:value-of select="$project.mailinglist.name"/>
+        </xsl:when>
+        <xsl:when test="@value = 'project.mailinglist.subscribe'">
+           <xsl:value-of select="$project.mailinglist.subscribe"/>
+        </xsl:when>
+        <xsl:when test="@value = 'project.mailinglist.unsubscribe'">
+           <xsl:value-of select="$project.mailinglist.unsubscribe"/>
+        </xsl:when>
+        <xsl:when test="@value = 'project.mailinglist.archive'">
+           <xsl:value-of select="$project.mailinglist.archive"/>
+        </xsl:when>
+        <xsl:when test="@value = 'project.mailinglist.post'">
+           <xsl:value-of select="$project.mailinglist.post"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.organization.name'">
+           <xsl:value-of select="$project.organization.name"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.organization.url'">
+           <xsl:value-of select="$project.organization.url"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.scm.connection'">
+           <xsl:value-of select="$project.scm.connection"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.scm.developerConnection'">
+           <xsl:value-of select="$project.scm.developerConnection"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.scm.url'">
+           <xsl:value-of select="$project.scm.url"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.scm.tag'">
+           <xsl:value-of select="$project.scm.tag"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.build.directory'">
+           <xsl:value-of select="$project.build.directory"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.build.outputDirectory'">
+           <xsl:value-of select="$project.build.outputDirectory"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'project.build.finalName'">
+           <xsl:value-of select="$project.build.finalName"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'build.currentYear'">
+           <xsl:value-of select="$build.currentYear"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'build.currentDate'">
+           <xsl:value-of select="$build.currentDate"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'build.currentTime'">
+           <xsl:value-of select="$build.currentTime"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'build.timestamp'">
+           <xsl:value-of select="$build.timestamp"/>
+        </xsl:when>
+	      <xsl:when test="@value = 'build.username'">
+           <xsl:value-of select="$build.username"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>ERROR - Could not find value for param: </xsl:text>
+          <xsl:value-of select="@value"/>
+        </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>   
+
+   <!-- =========================================     CLASS     ========================================= -->
 
    <xsl:template match="sapia:class">    
        <span style="font-family: courier, courier new">
