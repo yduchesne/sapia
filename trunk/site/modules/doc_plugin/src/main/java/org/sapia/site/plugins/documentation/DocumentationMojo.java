@@ -55,11 +55,21 @@ import org.apache.tools.ant.util.FileNameMapper;
  *   <li><code>project.build.outputDirectory</code>
  *   <li><code>project.build.finalName</code>
  * </ul>
+ *
+ * The following properties correspond to the first <code>mailingList</code> element that appears
+ * in the POM:
+ * 
+ * <ul>
+ *   <li><code>project.mailinglist.name</code>
+ *   <li><code>project.mailinglist.archive</code>
+ *   <li><code>project.mailinglist.subscribe</code>
+ *   <li><code>project.mailinglist.unsubscribe</code>
+ *   <li><code>project.mailinglist.post</code>
+ * </ul>
  * 
  * The following non-Maven properties are also exported:
  * 
  * <ul>
- *   <li><code>project.mailinglist</code>(the first mailing list specified in the POM).
  *   <li><code>build.currentYear</code>
  *   <li><code>build.currentDate</code>
  *   <li><code>build.currentTime</code>
@@ -67,10 +77,12 @@ import org.apache.tools.ant.util.FileNameMapper;
  *   <li><code>build.username</code> (current value of <code>System.getProperty("user.name")</code>)
  * </ul>
  * 
- * This plugin embeds Ant's {@link XSLTProcess} task in order to process xdocs files
- * using Sapia's stylesheet. The above parameters can be recuperated in xdocs files using
- * the method outlined 
- * <a href="http://en.wikibooks.org/wiki/Apache_Ant/Passing_Parameters_to_XSLT">here</a>.
+ * In order to access the value for the above parameters from within xdocs files, use a <code>sapia:param</code>
+ * element, as specified below:
+ * 
+ * <pre>
+ *   &lt;sapia:param value="build.currentYear" /&gt;
+ * </pre>
  * 
  * @goal generate
  */
