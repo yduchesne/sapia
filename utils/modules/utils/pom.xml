@@ -35,7 +35,7 @@
       <groupId>piccolo</groupId>
       <artifactId>piccolo</artifactId>
       <version>1.0.3</version>
-      <scope>optional</scope>
+      <optional>true</optional>    
     </dependency> 
 
   </dependencies>
