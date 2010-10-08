@@ -27,11 +27,14 @@
       <p>The latest Sapia <a href="http://code.google.com/p/sapia/source/browse/#svn/tags">application starter release</a> jar can be downloaded from the Java.net repository, as a dependency:
       </p>
 
-<pre><![CDATA[<dependency>
-    <groupId>org.sapia</groupId>
-    <artifactId>sapia_as</artifactId>
-    <version>1.8</version>
-</dependency>]]></pre>
+
+      <pre>
+        &lt;dependency>
+            &lt;groupId&gt;org.sapia&lt;/groupId&gt;
+            &lt;artifactId&gt;sapia_as&lt;/artifactId&gt;
+            &lt;version><sapia:param value="project.version" />&lt;/version&gt;
+        &lt;/dependency&gt;
+      </pre>
     </sapia:sect2>
   </sapia:sect1>
 </sapia:page>
