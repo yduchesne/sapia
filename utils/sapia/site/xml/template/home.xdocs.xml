@@ -1,4 +1,4 @@
-<sapia:page title="Template" cssPath="../css/sapia.css" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+<sapia:page title="Template" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
   <sapia:vmenu>
       <sapia:vsection name="Project Home" href="home.html" />
       <sapia:vsection name="Javadoc" href="../maven/utils/api/index.html" />
