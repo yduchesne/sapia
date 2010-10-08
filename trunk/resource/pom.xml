@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org/projects/resource/index.html</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_resource</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
 
   <parent>
     <groupId>org.sapia</groupId>
@@ -14,9 +14,9 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/trunk/resource</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/trunk/resource</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/trunk/resource</url>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/tags/sapia_resource-1.2</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_resource-1.2</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_resource-1.2</url>
   </scm>
 
   <packaging>jar</packaging>
