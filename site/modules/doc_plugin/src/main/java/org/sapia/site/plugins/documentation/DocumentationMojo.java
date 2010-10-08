@@ -153,10 +153,10 @@ public class DocumentationMojo extends AbstractMojo{
 
   public void execute() throws MojoExecutionException{
     
-    if(project.getPackaging() != null && project.getPackaging().equalsIgnoreCase("pom")){
+    if(project.getPackaging() != null && (project.getPackaging().equalsIgnoreCase("pom") && omitPOM)){
       super.getLog().warn(
           String.format(
-              "POM packaging specified for project %s, doc plugin execution will be bypassed", 
+              "POM packaging specified for project %s, doc plugin execution will be omitted", 
               project.getName() == null ? project.getArtifactId() : project.getName()
           )
       );
