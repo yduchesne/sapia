@@ -31,6 +31,27 @@
 
   <packaging>pom</packaging>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_site_doc_plugin</artifactId>
+        <configuration>
+          <omitPOM>false</omitPOM>
+        </configuration>
+
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <modules>
     <module>modules/utils</module>
     <module>modules/as</module>
