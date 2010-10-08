@@ -1,4 +1,4 @@
-<sapia:page title="Resource Framework" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+<sapia:page title="Sapia Utilities" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
   <sapia:vmenu>
     <sapia:vsection name="Project Home" href="home.html"/>
@@ -33,11 +33,8 @@
       <p>The latest Sapia <a href="http://code.google.com/p/sapia/source/browse/#svn/tags">utilities release</a> jar can be downloaded from the Java.net repository, as a dependency:
       </p>
 
-<pre><![CDATA[<dependency>
-    <groupId>org.sapia</groupId>
-    <artifactId>sapia_utils</artifactId>
-    <version>1.8</version>
-</dependency>]]></pre>
+      <sapia:dependency/>
+  
     </sapia:sect2>
   </sapia:sect1>
 </sapia:page>
