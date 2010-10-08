@@ -103,6 +103,11 @@ public class DocumentationMojo extends AbstractMojo{
   /**
    * @parameter
    */
+  private boolean omitPOM = true;
+
+  /**
+   * @parameter
+   */
   private boolean generateDownloadPage = true; 
 
   /**
