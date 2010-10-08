@@ -43,15 +43,15 @@
     <sapia:sect2 title="Design">
       <p>Regis is designed as follows:</p>
       <ul>
-        <li>A  <sapia:class link="api/org/sapia/regis/Registry.html" target="target_window">Registry</sapia:class> is a  
-            hierarchy of <sapia:class link="api/org/sapia/regis/Node.html" target="target_window">Node</sapia:class>s.</li>        
+        <li>A  <sapia:class link="maven/api/org/sapia/regis/Registry.html" target="target_window">Registry</sapia:class> is a  
+            hierarchy of <sapia:class link="maven/api/org/sapia/regis/Node.html" target="target_window">Node</sapia:class>s.</li>        
         <li>A Registry has a single root Node.</li>                
         <li>A Registry is typically instantiated through a  
-            <sapia:class link="api/org/sapia/regis/RegistryFactory.html" target="target_window">RegistryFactory</sapia:class>.</li>
+            <sapia:class link="maven/api/org/sapia/regis/RegistryFactory.html" target="target_window">RegistryFactory</sapia:class>.</li>
         <li>A Node has a name (identifying it uniquely under its parent Node), and an absolute   
-            <sapia:class link="api/org/sapia/regis/Path.html" target="target_window">Path</sapia:class>, representing the Node's
+            <sapia:class link="maven/api/org/sapia/regis/Path.html" target="target_window">Path</sapia:class>, representing the Node's
             fully qualified name, starting from the root Node.</li>
-        <li>The <sapia:class link="api/org/sapia/regis/RWNode.html" target="target_window">RWNode</sapia:class>
+        <li>The <sapia:class link="maven/api/org/sapia/regis/RWNode.html" target="target_window">RWNode</sapia:class>
             interface is implemented by Nodes that provide "write" operations.</li>
       </ul>
     </sapia:sect2>
@@ -184,7 +184,7 @@ while(names.hasNext()){
       <sapia:sect3 title="Registry Factories">
         <p>In order to be able to access configuration properties, one has
         to acquire a <sapia:class>Registry</sapia:class> instance. That is done
-        using a <sapia:class link="api/org/sapia/regis/RegistryContext.html" target="target_window">RegistryContext</sapia:class>.
+        using a <sapia:class link="maven/api/org/sapia/regis/RegistryContext.html" target="target_window">RegistryContext</sapia:class>.
         </p>
         <p>The <sapia:class>RegistryContext</sapia:class> class plays a role
         analogous to the <sapia:class>InitialContext</sapia:class> in JNDI: an
@@ -215,7 +215,7 @@ Registry regis = context.connect(props);
         accessed (or in other words, the type of registry applications use) will mostly be different. This is especially true
         on developer workstations, where the registry used locally in development will most preferrably be the 
         <sapia:class>LocalRegistry</sapia:class> (as compared to other environments, where the <sapia:class>RemoteRegistry</sapia:class>
-        will be favored). The <sapia:class link="api/org/sapia/regis/RegistryContext.html" target="target_window">javadoc</sapia:class> of the
+        will be favored). The <sapia:class link="maven/api/org/sapia/regis/RegistryContext.html" target="target_window">javadoc</sapia:class> of the
         <sapia:class>RegistryContext</sapia:class> class explains registry boostrapping in details, but let's say for starters
         that you can specify (as a property) a list of property resources that will be sequentially processed in order to acquire
         the properties necessary to instantiate a registry:</p>
@@ -240,12 +240,12 @@ Registry regis = context.connect(props);
 
 
         <sapia:sect4 title="Local Registry Factory">
-          <p>The <sapia:class link="api/org/sapia/regis/local/LocalRegistryFactory.html" target="target_window">LocalRegistryFactory</sapia:class> instantiates
+          <p>The <sapia:class link="maven/api/org/sapia/regis/local/LocalRegistryFactory.html" target="target_window">LocalRegistryFactory</sapia:class> instantiates
           an in-memory registry intended for testing or non-distributed,
           embedded use. The registry supports write-operations (it creates
           <sapia:class>RWNode</sapia:class>s), but is not
           transactional - even though it creates instances of the
-          <sapia:class link="api/org/sapia/regis/RWSession.html" target="target_window">RWSession</sapia:class> interface. The following code 
+          <sapia:class link="maven/api/org/sapia/regis/RWSession.html" target="target_window">RWSession</sapia:class> interface. The following code 
           shows how to instantiate an in-memory registry:
           </p>
 <sapia:code>
@@ -266,7 +266,7 @@ try{
         </sapia:sect4>
          
         <sapia:sect4 title="Hibernate Registry Factory">
-          <p>The <sapia:class link="api/org/sapia/regis/hibernate/HibernateRegistryFactory.html" target="target_window">HibernateRegistryFactory</sapia:class> instantiates
+          <p>The <sapia:class link="maven/api/org/sapia/regis/hibernate/HibernateRegistryFactory.html" target="target_window">HibernateRegistryFactory</sapia:class> instantiates
           a registry based on Hibernate. The registry supports write-operations (it creates
           <sapia:class>RWNode</sapia:class>s and <sapia:class>RWSessions</sapia:class>s). The following code shows
           how to instantiate a Hibernate registry:
@@ -323,7 +323,7 @@ try{
         </sapia:sect4>
 
         <sapia:sect4 title="Prevayler Registry Factory">
-          <p>As you might guess, using a Registry instantiation by a <sapia:class link="api/org/sapia/regis/prevayler/PrevaylerRegistryFactory.html" target="prevaylerFactory">PrevaylerRegistryFactory</sapia:class>
+          <p>As you might guess, using a Registry instantiation by a <sapia:class link="maven/api/org/sapia/regis/prevayler/PrevaylerRegistryFactory.html" target="prevaylerFactory">PrevaylerRegistryFactory</sapia:class>
           allows you configuration to be kept across process restarts. Using the class is straightforward, since it follows the same pattern as the previous factories (having
           a look at the javadoc should be good enough to be able to start using the Prevayler registry).
           </p>
@@ -335,7 +335,7 @@ try{
         </sapia:sect4>
 
         <sapia:sect4 title="Caching Registry Factory" alias="cachingRegistry">
-          <p>A <sapia:class link="api/org/sapia/regis/cache/CacheRegistryFactory.html" target="target_window">CacheRegistryFactory</sapia:class>
+          <p>A <sapia:class link="maven/api/org/sapia/regis/cache/CacheRegistryFactory.html" target="target_window">CacheRegistryFactory</sapia:class>
           is meant to wrap another <sapia:class>RegistryFactory</sapia:class> instance, and provides caching support on top of it.
           </p>
           
@@ -453,7 +453,7 @@ for more info.
             
             <sapia:note>
               For more details, have a look at the 
-              <sapia:class link="api/org/sapia/regis/remote/RegistryExporter.html">RegistryExporter</sapia:class> 
+              <sapia:class link="maven/api/org/sapia/regis/remote/RegistryExporter.html">RegistryExporter</sapia:class> 
               class.
             </sapia:note>
           </sapia:sect5>
@@ -461,7 +461,7 @@ for more info.
             <p>From a client application's point of view, looking up a remote 
             registry involves the same steps as using any other registry. In
             this case, though, a 
-            <sapia:class link="api/org/sapia/regis/remote/client/RemoteRegistryFactory.html">RemoteRegistryFactory</sapia:class>
+            <sapia:class link="maven/api/org/sapia/regis/remote/client/RemoteRegistryFactory.html">RemoteRegistryFactory</sapia:class>
             must be used, configured with the appropriate properties. The following snippet
             shows how to connect to a remote registry bound to a specific port, and one bound
             to the JNDI, under a given name:</p>
@@ -488,7 +488,7 @@ Registry reg = ctx.connect();
             <p/>         
             <sapia:note>
               For more details, have a look at the 
-              <sapia:class link="api/org/sapia/regis/remote/client/RemoteRegistryFactory.html">RemoteRegistryFactory</sapia:class> 
+              <sapia:class link="maven/api/org/sapia/regis/remote/client/RemoteRegistryFactory.html">RemoteRegistryFactory</sapia:class> 
               class.
             </sapia:note>
                
@@ -943,7 +943,7 @@ databases
       <sapia:sect3 title="Loading">
         <p>In order to load a configuration into a registry, that registry must
         support read-write operations. Loading a configuration involves
-        using a <sapia:class link="api/org/sapia/regis/loader/RegistryConfigLoader.html">RegistryConfigLoader</sapia:class>:</p>
+        using a <sapia:class link="maven/api/org/sapia/regis/loader/RegistryConfigLoader.html">RegistryConfigLoader</sapia:class>:</p>
 
 <sapia:code>
 RWSession session = (RWSession)reg.open();
@@ -1273,7 +1273,7 @@ session.close();
         you want to create a proxy over.</li>
         <li>Design your configuration according to your interface - conversely, the configuration
         could be designed first, and the Java interface designed based on that configuration.</li>
-        <li>Use the <sapia:class link="api/org/sapia/regis/bean/BeanFactory.html">BeanFactory</sapia:class>
+        <li>Use the <sapia:class link="maven/api/org/sapia/regis/bean/BeanFactory.html">BeanFactory</sapia:class>
         class to create an implementation of your Java interface "over" the configuration node that you target.</li>
       </ul>
       <sapia:sect3 title="Define a Java interface">
@@ -1331,7 +1331,7 @@ public interface SessionManagerConf{
 </sapia:code>
 
       <p>In order to optimize session usage you can use the 
-      <sapia:class link="api/org/sapia/regis/SessionUtil.html">SessionUtil</sapia:class>
+      <sapia:class link="maven/api/org/sapia/regis/SessionUtil.html">SessionUtil</sapia:class>
       class, like so:</p>
 <sapia:code>
   ...
@@ -1352,8 +1352,8 @@ public interface SessionManagerConf{
     
     <sapia:sect2 title="Registry Server" alias="registryServer">
       <p>
-      	Regis comes with a registry server that embeds a <sapia:class link="api/org/sapia/regis/remote/RegistryExporter.html">RegistryExporter</sapia:class> class.
-      	The javadoc of the <sapia:class link="api/org/sapia/regis/remote/RegistryServer.html">RegistryServer</sapia:class> class provides all details 
+      	Regis comes with a registry server that embeds a <sapia:class link="maven/api/org/sapia/regis/remote/RegistryExporter.html">RegistryExporter</sapia:class> class.
+      	The javadoc of the <sapia:class link="maven/api/org/sapia/regis/remote/RegistryServer.html">RegistryServer</sapia:class> class provides all details 
       	nessary to configure a server instance.
       </p>
       <p>
@@ -1375,7 +1375,7 @@ public interface SessionManagerConf{
       <sapia:sect3 title="Configuration Upload"> 
         <p>
          An Ant task is provided to allow uploading configuration files into
-         a registry server (see the <sapia:class link="api/org/sapia/regis/ant/RegistryTask.html">javadoc</sapia:class>
+         a registry server (see the <sapia:class link="maven/api/org/sapia/regis/ant/RegistryTask.html">javadoc</sapia:class>
          for more information). The example below demonstrates the task's usage (the registry
          server is presumed to be published in Ubik's JNDI server):
         </p>
@@ -1403,7 +1403,7 @@ public interface SessionManagerConf{
       <sapia:sect3 title="Configuration Testing"> 
         <p>
          Regis provides an Ant task allowing to test a configuration prior to loading it into
-         a registry (see the <sapia:class link="api/org/sapia/regis/ant/CheckConfigTask.html">javadoc</sapia:class>
+         a registry (see the <sapia:class link="maven/api/org/sapia/regis/ant/CheckConfigTask.html">javadoc</sapia:class>
          for more information). The example below illustrates how to use the task:
         </p>
   <sapia:code><![CDATA[<!-- declaring the taskdef -->
