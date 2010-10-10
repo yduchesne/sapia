@@ -1,0 +1,10 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:mq="soto:activemq">
+          
+  <soto:service id="factory">
+    <mq:factory>
+      <brokerURL>tcp://localhost:61616</brokerURL>
+    </mq:factory> 
+  </soto:service>         
+  
+</soto:app>
