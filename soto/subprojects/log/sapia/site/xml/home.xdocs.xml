@@ -1,0 +1,138 @@
+<sapia:page title="Logging Services" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+    <sapia:vsection name="Project Home" href="../../home.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Logging Services">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org/home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../html/home.html" />
+      <sapia:path name="services" />
+      <sapia:path name="logging" />        
+    </sapia:section>
+    <toc/>
+    <sapia:sect2 title="Overview">
+    
+      <p>As of now, Soto comes with the <sapia:class link="maven/api/org/sapia/soto/log/Log4jService.html" target="target_window">Log4jService</sapia:class>
+      class.</p>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Usage">
+      
+      <sapia:sect3 title="The log4j service">
+	      <p>The <sapia:class>Log4jService</sapia:class>'s purpose is to initialized Log4j's runtime with an XML Log4j configuration file. Configuring
+	      the service is straightforward:</p>
+	      
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto"
+    xmlns:log="soto:log"
+... 
+  <soto:service>
+    <log:log4j configPath="config/log.xml" />
+  </soto:service>
+...
+</soto:app>]]>
+</sapia:code>  
+	
+	      <p>The <sapia:command>configPath</sapia:command> attribute must correspond to a configuration file that respects Log4j's configuration format.
+	      In addition, the attribute supports Soto's resource location mechanism. Thus, in the above configuration, the path could be <sapia:command>resource:/config/log.xml</sapia:command> 
+	      (which would look in the classpath for the config); or <sapia:command>file:/config/log.xml</sapia:command>; etc. Any protocol scheme recognized by Soto would fit.</p>
+	      
+	      <p>Once the service has been initialized, the Log4j runtime as also been initialized. You do not need using that service directly; you
+	      use the Log4j API (mainly, the <sapia:class>Logger</sapia:class> class)- that's why the service has no "id" attribute specified: it does not make sense in this case, since references to
+	      that service are not appropriate.</p>
+	      
+	      <sapia:note>
+	        If you do not want Log4j to validate your XML configuration, or if you wish to avoid errors at load time if Log4j can't find the DTD, remove the DTD
+		reference from your Log4j configuration file. 
+	      </sapia:note>
+      </sapia:sect3>
+
+      <sapia:sect3 title="Logger injection">
+        <p>Another feature of the log4j service is the ability to inject loggers at runtime in a service. This allows a complete
+        isolation between the service's implementation and the logging usage. Two steps are required to perform logger 
+        injection: first the loggers to be injected must be defined in the log4j service definition and second a reference to
+        the declared logger must be used to inject the logger in a service.</p>
+
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto"
+    xmlns:log="soto:log"
+... 
+  <soto:service>
+    <log:log4j configPath="config/log.xml">
+      <log:loggerDef id="main" name="org.acme.app" />
+    </log:log4j>
+  </soto:service>
+...
+</soto:app>]]>
+</sapia:code>
+    
+        <p>The previous definition declares only one logger with two attributes:
+        <ul>
+	        <li><sapia:command>id</sapia:command>: the identifier of this logger for the log4j service.</li>
+	        <li><sapia:command>name</sapia:command>: the name of the log4j logger.</li>
+        </ul>
+        </p>
+        
+        <p>Making such a definition gives the ability to change the logger names without affecting how the loggers are used by the services.
+        It is possible to define as many logger definition as needed inside the <sapia:command>log:log4j</sapia:command> element. Now that
+        the loggers are defines we can pass to the second step and inject the logger in a service at runtime. For this, imagine the
+        following service that contains, among other things, a private logger attribute and a setter for the logger attribute.
+        </p>
+
+<sapia:code>public class FooBar implements Service {
+  
+  private Logger _logger;
+  ...
+  
+  public void setLogger(Logger aLogger) {
+    _logger = aLogger;
+  }
+  ...
+}</sapia:code>
+
+        <p>The following soto configuration adds the logger reference inside the <sapia:command>FooBar</sapia:command>
+        service to inject the logger defined for the name "org.acme.app".
+        </p>
+
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto"
+    xmlns:log="soto:log"
+... 
+  <soto:service>
+    <log:log4j configPath="config/log.xml">
+      <log:loggerDef id="main" name="org.acme.app" />
+    </log:log4j>
+  </soto:service>
+...
+  <sample:foobar>
+    <Logger>
+      <log:loggerRef id="main" type="log4j" />
+    </Logger>
+  </sample:foobar>
+</soto:app>]]>
+</sapia:code>
+
+        <p>The <sapia:command>log:loggerRef</sapia:command> element defines a logger reference to a previously declared
+        logger definition. When it encounters this element the log4j service will search for a logger definition for the
+        identifier passed. It will then create a logger instance for the defined name, in our example a logger for the name
+        "org.acme.app".</p>
+        
+        <p>The <sapia:command>type</sapia:command> attribute of the <sapia:command>log:loggerRef</sapia:command> element gives
+        the control of the specific type of logger injected in the service. In the example the value "<b>log4j</b>" indicates
+        that the object injected will be a log4j <sapia:command>Logger</sapia:command> instance. It is however a common practice
+        to use a more abstract logging kit like the Jakarta commons-logging module. In that scenario it is obvious that your service
+        implementation will use a commons-logging <sapia:command>Log</sapia:command> instance and that you wont be able to inject a
+        log4j <sapia:command>Logger</sapia:command> object. For such use case the <sapia:command>type</sapia:command> attribute can
+        take the value "<b>commons</b>" to change the type of injected logger to be a commons-logging <sapia:command>Log</sapia:command>
+        object.</p>
+            
+      </sapia:sect3>
+      
+    </sapia:sect2>
+    
+  </sapia:sect1>
+</sapia:page>
