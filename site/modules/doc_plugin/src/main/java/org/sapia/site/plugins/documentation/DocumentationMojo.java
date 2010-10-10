@@ -381,7 +381,7 @@ public class DocumentationMojo extends AbstractMojo{
 
     param = transform.createParam();
     param.setName("project.version");
-    param.setExpression(asString(project.getVersion()));
+    param.setExpression(asString(project.getVersion().replace("-SNAPSHOT", "")));
 
     param = transform.createParam();
     param.setName("project.artifactId");
