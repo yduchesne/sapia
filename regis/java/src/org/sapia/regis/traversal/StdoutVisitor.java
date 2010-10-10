@@ -21,14 +21,14 @@ public class StdoutVisitor implements Visitor{
     for(int i = 0; i < indents; i++){
       indentation.append("    ");
     }
-    System.out.print(indentation + " => ");
+    System.out.print(indentation + " |--+ ");
     System.out.println(node.getName());
     
     Iterator keys = node.getPropertyKeys().iterator();
     while(keys.hasNext()){
       String key = (String)keys.next();
       System.out.print(indentation);
-      System.out.print("   ");
+      System.out.print("    - ");
       System.out.println(key + " = " + node.getProperty(key).asString()); 
     }
   }
