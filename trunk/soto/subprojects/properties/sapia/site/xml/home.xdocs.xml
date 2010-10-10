@@ -1,0 +1,316 @@
+<sapia:page title="Property Service" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:vmenu xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+    <sapia:vsection name="Project Home" href="../../home.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Property Service">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org/home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../html/home.html" />
+      <sapia:path name="services" />
+      <sapia:path name="property service" />    
+    </sapia:section>
+    <toc/>
+    
+    <sapia:sect2 title="Namespace">
+      <ul>
+        <li><b>URI</b>: <sapia:command>soto:properties</sapia:command></li>
+        <li><b>Prefix</b>: <sapia:command>props</sapia:command></li>
+      </ul>
+    </sapia:sect2>    
+    
+    <sapia:sect2 title="Overview">
+    
+      <p>The <sapia:class link="maven/api/org/sapia/soto/properties/PropertyService.html" target="prop_service">PropertyService</sapia:class> is used to
+      retrieve <sapia:class>java.util.Properties</sapia:class> instances. The implementation provides various nifty features that are otherwise
+      not available by using straight Java property files:</p>
+
+      <ul>
+        <li>Variable interpolation: given properties can act as variables for other properties.</li>
+        <li>Property "injection" - through Soto's configuration format.</li>
+        <li>Composite properties: a given <sapia:class>Properties</sapia:class> instance can be composed of other such instances.</li>
+      </ul>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Usage">    
+
+      <sapia:sect3 title="The Property Service">
+      <p>Using the property service is straightforward: you first need to declare a 
+      <sapia:command>props:configuration</sapia:command> element as part of your Soto application. This element
+      will evaluate to a <sapia:class target="prop_api" link="maven/api/org/sapia/soto/properties/PropertyServiceImpl.html">
+      PropertyServiceImpl</sapia:class> instance at runtime.
+      </p>
+      
+      <p>As children of that element, you declare <sapia:command>properties</sapia:command> elements:</p>
+
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto" 
+  xmlns:log="soto:log" 
+  xmlns:props="soto:properties">
+
+  <soto:namespace prefix="props">
+    <def class="org.sapia.soto.properties.example.PropertyExample" 
+         name="bean" />
+  </soto:namespace>
+  
+  <soto:service id="properties">
+    <props:configuration>
+      <properties name="main"      
+                  uri="main.properties" />
+      <properties name="secondary" 
+                  depends="main" 
+                  uri="secondary.properties" />
+    </props:configuration>
+  </soto:service>
+...
+</soto:app>]]>
+</sapia:code>
+
+      <p>The nested <sapia:command>properties</sapia:command> are known as "property definitions"; at runtime, they yield
+      <sapia:class>java.util.Properties</sapia:class> instances. Each such element takes the following attributes:</p>
+      <ul>
+        <li><sapia:command>name</sapia:command>: the logical name of the properties.</li>
+        <li><sapia:command>uri</sapia:command>: the URI of the corresponding properties file (respecting the Java properties format; 
+        the URI will be resolved using Soto's resource resolving capabilities).</li>
+        <li><sapia:command>depends</sapia:command>: the comma-delimited list of names corresponding to the other properties on which
+        the current element depends; this implies two things: first, these dependencies are used to interpolate possible variables
+        in the current properties (more on interpolation in the next); second, this also means that the current properties inherit the properties of these dependencies.</li>        
+      </ul>
+
+     </sapia:sect3>
+     
+     <sapia:sect3 title="Interpolation">
+       <p>
+       As mentioned, each <sapia:command>properties</sapia:command> element corresponds to a Java properties file. The property service 
+       allows using variables in the files, as so:
+       </p>
+<sapia:code>
+baseUrl=http://www.acme-properties.org
+soapUrl=${baseUrl}/soap
+appUrl=${baseUrl}/app
+</sapia:code>
+       <p>The above shows that within a file, given properties can act has variables for others (provided they appear first in the configuration). These
+       other rules apply when performing interpolation:</p>
+       
+       <ul>
+         <li>If a value for a given variable is not found in the current file, the dependencies (as per the <sapia:command>depends</sapia:command> attribute)
+         are searched, in the order in which they have been declared.</li>
+         <li>If still no value is found in the dependencies, the "parent" properties/parameters are searched (those inherited from parent includes, and 
+          eventually the system properties.</li>
+         <li>If still no value is found, an exception is thrown.</li>
+       </ul>
+       
+     </sapia:sect3>     
+
+     <sapia:sect3 title="Property Injection">
+     <p>You inject your Soto services with properties originating from a property service as follows:</p>
+
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto" 
+  xmlns:log="soto:log" 
+  xmlns:props="soto:properties">
+
+  <soto:namespace prefix="props">
+    <def class="org.sapia.soto.properties.example.PropertyExample" 
+         name="bean" />
+  </soto:namespace>
+  
+  <soto:service id="properties">
+    <props:configuration>
+      <properties name="main"      
+                  uri="main.properties" />
+      <properties name="secondary" 
+                  depends="main" 
+                  uri="secondary.properties" />
+    </props:configuration>
+  </soto:service>
+  
+  <soto:service id="bean">
+    <props:bean>
+      <property>
+        <props:property path="properties/main, secondary/foo" />
+      </property>
+      <properties>
+      	<props:properties path="properties/main, secondary" />
+      </properties>
+    </props:bean>
+  </soto:service>
+</soto:app>]]>
+</sapia:code>
+
+      <p>
+        The above shows that you can inject an individual property value (by using a 
+        <sapia:command>props:property</sapia:command> element), or a <sapia:class>java.util.Properties</sapia:class>
+        instance, through a <sapia:command>props:properties</sapia:command> element. 
+      </p>
+      <p>
+        Both elements take a <sapia:command>path</sapia:command> attribute, which is composed of
+        an identifier of the property service instance that is referenced and the comma-delimited list
+        of property definition that are referred to. In the case of the <sapia:command>props:property</sapia:command>
+        element, the last component of the path must be the actual key of the desired property. 
+      </p>
+    </sapia:sect3>
+
+    <sapia:sect3 title="Property URIs">
+      <p>The <sapia:command>props</sapia:command> protocol (or scheme) is supported as part of Soto's resource resolving
+      scheme in order to allow:</p>
+      
+      <ul>
+        <li>Retrieving the stream of a given properties file not as a file per-say, by from a property service. This is useful
+        when using property files that contain variables that must be rendered prior to being used.</li>
+        <li>Retrieving the stream of a text file that contains variables; these variables are replaced by their corresponding
+         property values at runtime.</li>
+      </ul>
+      
+      <p>In the first case, we could have the following:</p>
+
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto" 
+  xmlns:log="soto:log" 
+  xmlns:props="soto:properties">
+
+  <soto:namespace prefix="props">
+    <def class="org.sapia.soto.properties.example.PropertyExample" 
+         name="bean" />
+  </soto:namespace>
+  
+  <soto:service id="properties">
+    <props:configuration>
+      <properties name="log4j" uri="log4j.properties" />
+    </props:configuration>
+  </soto:service>
+  
+  <soto:service id="bean">
+    <props:bean logConfig="props:/properties/log4j" />
+  </soto:service>
+</soto:app>]]>
+</sapia:code>      
+      
+      <p>In the above example, the <sapia:command>logConfig</sapia:command> attribute would correspond to a URI pointing to a file
+      holding Java properties - for the sake of our example, imagine that it is a Log4J properties file. The URI, in this case,
+      as the following format: <sapia:command>props:/property_service_id/properties_list</sapia:command>, where:</p>
+      <ul>
+        <li><sapia:command>property_service_id</sapia:command> corresponds to the identifier of the referred property service.</li>
+        <li><sapia:command>properties_list</sapia:command> consists of a comma-delimited list of names corresponding to existing
+         property definitions.</li>
+      </ul>
+     
+      <p>Now, in the second and more complex case, imagine that our bean rather expects a stream corresponding to Log4J's 
+      configuration format; imagine also that this file holds variables (for example, <sapia:command>${debug.level}</sapia:command>, 
+      and so on). In this case, we could store the values of these variables as properties in a property service, and have
+      them interpolated by using a <sapia:command>props</sapia:command> URI:</p>
+      
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto" 
+  xmlns:log="soto:log" 
+  xmlns:props="soto:properties">
+
+  <soto:namespace prefix="props">
+    <def class="org.sapia.soto.properties.example.PropertyExample" 
+         name="bean" />
+  </soto:namespace>
+  
+  <soto:service id="properties">
+    <props:configuration>
+      <properties name="log4j" uri="log4j.properties" />
+    </props:configuration>
+  </soto:service>
+  
+  <soto:service id="bean">
+    <props:bean 
+      logConfig="props:/properties/log4j?resource:/com/myapp/log4j.xml" />
+  </soto:service>
+</soto:app>]]>
+</sapia:code>
+
+      <p>Note, in this case, that the URI of the Log4J XML configuration is itself part
+      of our <sapia:command>props</sapia:command> URI; it is given at the end, after
+      a question mark. The specified properties are used to interpolate variables
+     in the log4j.xml file.</p>
+    
+    </sapia:sect3>
+
+    <sapia:sect3 title="Includes">
+      <p>The <sapia:command>props:include</sapia:command> element can be used to include
+      Soto configuration files into others. In this case, the properties specified as part
+      of the include are used to interpolate variables in included files:</p>
+      
+<sapia:code>
+<![CDATA[<props:include path="properties/main, secondary"   
+               uri="includedService.xml">
+  <param name="some.property" value="test" />
+</props:include>
+  ]]>
+</sapia:code>
+
+    </sapia:sect3>
+    
+    <sapia:sect3 title="Conditional Instantiation">
+      <p>A property service can be used in conjunction with special tags in order to allow conditionally instantiating objects/services 
+      based existing (or non-existing) properties, using familiar if/choose constructs (similar to the <sapia:command>soto:if</sapia:command> 
+      and <sapia:command>soto:choose</sapia:command> elements).</p>
+
+      <sapia:sect4 title="If">
+        <p>The <sapia:command>conf:if</sapia:command> element as shown below:</p>
+
+<sapia:code>
+<![CDATA[<soto:service id="someBean">
+  <props:if path="properties/main, secondary/foo" value="fu">
+	  <props:bean uri="props:/properties/main?content.xml" />
+  </props:if>
+</soto:service>]]>
+</sapia:code>
+
+        <p>The above <sapia:command>props:if</sapia:command> element will trigger the instantiation of the 
+        object corresponding to the <sapia:command>props:bean</sapia:command> element if the
+        property corresponding to the given path is defined, and its value matches the one specified. The 
+        <sapia:command>props:if</sapia:command> element's spec is as follows:</p>
+
+        <ul>
+          <li><sapia:command>path</sapia:command>: a property path.</li>
+          <li><sapia:command>value</sapia:command> (optional): the value against which the
+          actual property should be compared.</li>
+        </ul>
+
+        <p>If the <sapia:command>value</sapia:command> attribute is specified, the attribute's value is compared with
+        the specified property value (if that property is defined), and this comparison will evaluate to true if both
+        values are identical. If the attribute is not given, the instantiation will occur if the given property exists.</p>
+
+      </sapia:sect4>
+
+      <sapia:sect4 title="Choose">
+        <p>The <sapia:command>props:choose</sapia:command> tag is analoguous to the <sapia:command>props:if</sapia:command>
+        tag, except that in this case multiple tests can be performed, resulting in an instantiation for the first
+        condition that evaluates to true:</p>
+        
+<sapia:code>
+<![CDATA[<soto:service id="someBean">
+  <props:choose>
+    <when path="properties/main, secondary/foo" value="fu">
+      <props:bean uri="props:/properties/main?content.xml">
+        <property>test1</property>
+      </props:bean>
+    </when>
+    <otherwise>
+      <props:bean uri="props:/properties/main?content.xml">
+        <property>test2</property>
+      </props:bean>  	  
+    </otherwise>
+  </props:choose>
+</soto:service>]]>
+</sapia:code>        
+      </sapia:sect4>
+  
+    </sapia:sect3>
+
+    </sapia:sect2>
+    <sapia:sect2 title="Conclusion">
+      <p>The property service can be used to supplement Java properties. It offers a powerful variable interpolation
+      mechanism, as well as other useful features such as conditional instantiation, </p>
+    </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>
