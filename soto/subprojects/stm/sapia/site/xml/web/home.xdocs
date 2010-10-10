@@ -1,0 +1,679 @@
+<sapia:page title="Soto State Machine" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:refreshMenu page="leftmenu.html" />
+  <sapia:sect1 title="STM for the Web">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../../../../site/html/home.html" />      
+      <sapia:path name="state machine" href="../home.html" />
+      <sapia:path name="web" />      
+    </sapia:section>
+    
+    <toc/>
+
+    <sapia:sect2 title="Intro">
+      <p>Soto's State Machine API (dubbed STM) is well suited to implement web-based 
+      applications whose functional interfaces are provided as web services, whether SOAP-based or
+      not. Such an approach will no doubt become more and more popular with the advent of rich client 
+      frameworks such as <a target="laszlo" href="http://www.laszlosystems.com/">Laszlo</a> or 
+      <a target="gumby" href="http://www.sapia-oss.org/projects/gumby/">Gumby</a> (yes, shameless plug
+      in the latter case...). In fact, the combination of rich clients and XML/HTTP-based communication such as 
+      <a target="rest" href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">REST</a>
+      has the potential to greatly simplify web-based application development, significantly improve user 
+      experience, and distribute workload among clients and servers more evenly.</p>
+      <p>
+      STM has been adapted to the Web, and can even be integrated as part of 
+      <a target="cocoon" href="http://cocoon.apache.org/">Cocoon</a> (as a Generator). STM relies on URI matching 
+      (such as described in the REST thesis, and as implemented in Cocoon) to associate incoming HTTP requests to given states. 
+      </p>
+      <sapia:note>There is an example web application that comes with the Soto distribution. Its resources are
+      under the <sapia:command>etc/webapp</sapia:command> directory. You can start it by typing 
+      <sapia:command>ant demo-webapp</sapia:command> from the root of the distribution, and then log
+      to <sapia:command>http://localhost:8080/addressbook/</sapia:command> - enter any username and
+      password when prompted, they are not validated. Mine you: having a look at the application's configuration
+      is a must.</sapia:note>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Overview">
+      <p>As was briefly explained, STM as been adapted to the web and can be used in
+      the following "modes":
+        <ul>
+          <li>"Standard" servlet/web app usage.</li>
+          <li>Using Cocoon API's as part of a non-Cocoon servlet.</li>
+          <li>Within Cocoon.</li>
+        </ul>
+      </p>
+      <p>
+        In the first two cases, two servlets have been implemented that both inherit from the 
+        <sapia:class link="../../api/org/sapia/soto/state/web/AbstractStmServlet.html">AbstractStmServlet</sapia:class>      
+        class. This class provides basic support for loading a Soto container (given a configuration) and
+        also allows using the Freemarker templating engine in conjunction with JSP taglibs. In the third case, an STM-based
+        application is embedded directly into Cocoon.
+      </p>
+      <p>
+        Chronologically, STM in the context of the web had been designed with Cocoon in mind. Usage without dependency
+        on the Cocoon API was introduced later on. We will first describe the Cocoon integration part, and then describe
+        usage for web apps that are not intended to use Cocoon's API, which as been greatly inspired by the first
+        Cocoon-based integration.
+      </p>
+    </sapia:sect2>
+    <sapia:sect2 title="Cocoon Integration">  
+      <p>For the sake of web/Cocoon integration, a specialized 
+      <sapia:class target="context" link="../../api/org/sapia/soto/state/Context.html">Context</sapia:class>
+      implementation has been implemented: the 
+      <sapia:class target="cocoonctx" link="../../api/org/sapia/soto/state/cocoon/CocoonContext.html">CocoonContext</sapia:class>
+      class. The class allows STM-based state machines to be embedded in a standalone servlet  
+      (see the <sapia:class link="../../api/org/sapia/soto/state/cocoon/standalone/StandaloneServlet.html">StandaloneServlet</sapia:class> class), or in Cocoon 
+      (see the <sapia:class link="../../api/org/sapia/soto/state/cocoon/STMGenerator.html">STMGenerator</sapia:class> class).</p>
+      
+      <p>That is really all there is to it, aside from some details pertaining to evolving in a web environment: if you 
+      look at the <sapia:class>CocoonContext</sapia:class> more closely, you'll see that it gives you access to methods
+      that betray its "web" nature: <sapia:command>getRequest()</sapia:command>, <sapia:command>getResponse()</sapia:command>...
+      The methods respectively return instances of the <sapia:class target="cocoon" link="http://cocoon.apache.org/2.1/apidocs/org/apache/cocoon/environment/Request.html">Request</sapia:class> 
+      and <sapia:class target="cocoon" link="http://cocoon.apache.org/2.1/apidocs/org/apache/cocoon/environment/Response.html">Response</sapia:class> Cocoon-related interfaces.
+      </p>
+      <sapia:note>
+      Since Cocoon can be invoked through a command-line, the "request" and "response" entities have been abstracted with interfaces by 
+      Cocoon developers. Yet, STM's <sapia:class>CocoonContext</sapia:class> class has been thought with web usage in mind. In such a context,
+      the concrete implementations that you get are instances of 
+      <sapia:class link="http://cocoon.apache.org/2.1/apidocs/org/apache/cocoon/environment/http/HttpResponse.html" target="cocoon">HttpRequest</sapia:class> 
+      and <sapia:class link="http://cocoon.apache.org/2.1/apidocs/org/apache/cocoon/environment/http/HttpRequest.html" target="cocoon">HttpResponse</sapia:class>.
+      </sapia:note>
+      
+      <p>For more abstraction of the web environment, the <sapia:class>CocoonContext</sapia:class> class implements interfaces
+      that spares application from having to deal with http-related details (except in some cases, when such details can really not be
+      done away with). The interface are as follows:</p>
+      <ul>
+        <li><sapia:class link="../../api/org/sapia/soto/state/Input.html" target="input">Input</sapia:class>: provides methods
+        to "set" and "get" an <sapia:class>InputStream</sapia:class>. It should be implemented by <sapia:class>Context</sapia:class>
+        implementations that support acquiring data from a stream.</li>
+        <li><sapia:class link="../../api/org/sapia/soto/state/Output.html" target="output">Output</sapia:class>: provides methods
+        to "set" and "get" an <sapia:class>OutputStream</sapia:class>. It should be implemented by <sapia:class>Context</sapia:class>
+        implementations that support writing data to a stream.</li>
+        <li><sapia:class link="../../api/org/sapia/soto/state/xml/XMLContext.html" target="xmlcontext">XMLContext</sapia:class>: provides
+        methods to "set" and "get" a SAX <sapia:class>ContentHandler</sapia:class>. It is used to output data as SAX events.</li>
+        <li><sapia:class link="../../api/org/sapia/soto/state/MVC.html" target="mvc">MVC</sapia:class>: provides
+        methods to "set" and "get" parameters that are to be bound to a  "view" (as in MVC). The parameters act as models and are retrieved 
+        from eventual view implementations through the name under which they were bound (this interface is in fact inherited by the
+        <sapia:class>XMLContext</sapia:class> interface.</li>       
+      </ul>
+      <p>
+      The above interfaces allow pluging in various view technologies. In fact, STM has tags for XML/XSL processing and pipelining, and also integrates
+      the <a link="http://freemarker.sourceforge.net/">Freemarker</a> templating engine. Generally, such engines need a) having access
+      to named parameters that are "inserted" in a view (or template); b) rendering the view to some kind of output, generally a stream and, in the
+      case of XML processing, a <sapia:class>ContentHandler</sapia:class>.
+      </p>      
+    </sapia:sect2>
+    <sapia:sect2 title="Basics">
+     <p>Typically, you will work "from" a servlet or Cocoon (which has its own servlet). This section explains both approaches.</p>
+     <sapia:sect3 title="The Dispatcher">
+       <p>
+       The <sapia:class target="dispatcher" link="../../api/org/sapia/soto/state/dispatcher/Dispatcher.html">Dispatcher</sapia:class>
+       interface specifies, well, dispatching behavior. A dispatcher implementation is expected to match a given request URI to a given
+       state machine. In the context of STM's web integration, the standalone servlet (which we'll see next) expects a 
+       <sapia:class>Dispatcher</sapia:class> to be provided to it (as part of your application); the servlet will call the 
+       <sapia:command>dispatch()</sapia:command> method of the provided dispatcher, passing to it the URI that is "invoked", and
+       a <sapia:class>Context</sapia:class> instance corresponding to the request (in fact, a <sapia:class>CocoonContext</sapia:class>
+       instance).
+       </p>
+       <p>To spare you trouble, there is a <sapia:class>Dispatcher</sapia:class> implementation that comes with STM. It is powerful
+       and will probably answer 99.5% of your needs: the 
+       <sapia:class target="disptacherImpl" link="../../api/org/sapia/soto/state/dispatcher/DispatcherImpl.html">DispatcherImpl</sapia:class>
+       class matches incoming URIs to given state machines. A Soto service implementation has in addition been implemented on top of that class
+       (it in fact inherits from it). Thus, to configure such a service as part of a Soto application that consists of state machines (among
+       other things), you need declaring the corresponding tag in a your Soto config file:
+       </p>
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto" 
+          xmlns:stm="sapia:stm"
+  ... 
+  <soto:service id="myApp/dispatcher">
+    <stm:dispatcher>
+      <match pattern="/webservices/rest/**" target="{1}">
+        <soto:serviceRef id="myApp/xmlapi" />
+      </match>
+      <match pattern="/**" target="{1}">
+        <soto:serviceRef id="myApp/html" />
+      </match>        
+    </stm:dispatcher>
+  </soto:service>
+  ...
+</soto:app>]]></sapia:code>
+       <p>The above shows how a dispatcher (in this case, a 
+       <sapia:class target="dispatchersvc" link="../../api/org/sapia/soto/state/dispatcher/DispatcherService.html">DispatcherService</sapia:class>
+       instance) is configured. Note that it is encpasulated in a <sapia:command>soto:service</sapia:command> element (of course, since it 
+       <b>is</b> a Soto service like any other).</p>
+       
+       <p>Then, note that the service's configuration can contain one-to-many 
+       <sapia:command>match</sapia:command> elements, that take a URI pattern and a "target" (i.e.: the path of the target state to trigger).
+       You can see that this path can hold a kind of variable: it this case, it just indicates that the variable should be replaced
+       at invocation time by the part of the URI that that pattern has matched. The actual number of the variable corresponds to the set
+       of characters that were matched, with respect to the given pattern. For example, imagine the following URI pattern and target, 
+       respectively:</p>
+       
+       <ul>
+         <li><sapia:command>http://localhost:8080/petstore/webservices/rest/dogList?dogType=dalmatian</sapia:command></li>
+         <li><sapia:command>**/webservices/rest/**</sapia:command></li>
+         <li><sapia:command>{2}</sapia:command></li>         
+       </ul>
+       
+       <p>
+       Then in that case, the given variable will correspond to the second set of asterisks in the pattern (or, rather, to
+       the characters that these asterisks match) - in this case, the <sapia:command>dogList</sapia:command> character string. 
+       Double-asterisks match multiple tokens in the path (path tokens are separated by path delimiters, such as '/'). Single asterisks match a single 
+       token. Thus, <sapia:command>/webservices/rest/**</sapia:command> matches <sapia:command>/webservices/rest/complex/path</sapia:command> 
+       and <sapia:command>/webservices/rest/simplePath</sapia:command>, but <sapia:command>/webservices/rest/*</sapia:command> would match 
+       only <sapia:command>/webservices/rest/simplePath</sapia:command> (given these two URIs).
+       </p>
+       
+       <p>
+       Now, what do we match to, exactly? You can see that each <sapia:command>match</sapia:command> element takes a single 
+       <sapia:command>soto:serviceRef</sapia:command> element. Such an element refers to an already configured Soto service (not shown
+       in our example, for sake of simplicity). In this case, the Soto service is expected to be a 
+       <sapia:class link="../../api/org/sapia/soto/state/StateMachineService.html" target="statemachine">StateMachineService</sapia:class>.
+       Indeed, a dispatcher service triggers states in a state machine service. More generally: a dispatcher matches URIs to states - 
+       in given state machines. 
+       </p>
+       
+       <p>
+       Concretely, this means that you can cleanly demarcate your application's functionalities on the basis of URIs. URIs act
+       as namespaces for business logic that is componentized. You map your URIs to multiple state machines, or two a single state
+       machine subdivided as modules, etc. Remember that URIs are easily mapped to states (as understood by the STM API), since
+       states are also paths. This approach respects REST principles.
+       </p>
+       
+     </sapia:sect3>
+     <sapia:sect3 title="The Standalone Cocoon Servlet">
+       <p>
+       You can embed STM in a servlet on your own. But a preferred way is to use the already made 
+       <sapia:class target="standalone" link="../../api/org/sapia/soto/state/cocoon/standalone/StandaloneServlet.html">StandaloneServlet</sapia:class>
+       (read the servlet's Javadoc for complementary details). We named the servlet "standalone", as opposed to embedding into Cocoon. 
+       </p>
+       <p>
+       Using that servlet is straightforward. Two details are important:
+       <ol>
+         <li>You must provide the path to the main soto configuration file of your application (remember that you can subdivide your applications
+         in multiple files through Soto's include mechanism, and through STM modules). That path is provided as a servlet initialization parameter,
+         in the <sapia:command>web.xml</sapia:command> configuration file.</li>
+         <li>You must configure a <code>Dispatcher</code> as part of your application (which, as we explained, will dispatch requests to the
+         proper state machines).</li>
+       </ol>
+       The sample below illustrates how to configure your <sapia:command>web.xml</sapia:command> file:</p>
+       
+<sapia:code><![CDATA[
+<web-app>
+  <display-name>Web App Example</display-name>
+
+  <servlet>
+    <servlet-name>stateServlet</servlet-name>
+    <display-name>Soto State Machine Servlet</display-name>
+    <servlet-class>
+      org.sapia.soto.state.cocoon.standalone.StandaloneServlet
+    </servlet-class>
+
+    <init-param>
+      <param-name>soto-config-resource</param-name>
+      <param-value>soto/main.xml</param-value>
+    </init-param>
+    <init-param>
+      <param-name>soto-dispatcher-id</param-name>
+      <param-value>dispatcher</param-value>
+    </init-param>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>stateServlet</servlet-name>
+    <url-pattern>/do/*</url-pattern>
+  </servlet-mapping>
+</web-app>
+]]></sapia:code>
+       <p/>
+       <sapia:note>
+       See the <a href="#app_structure">Application Structure</a> section for more on packaging webapps with STM.
+       </sapia:note>
+     </sapia:sect3>
+     <sapia:sect3 title="Cocoon Integration">
+       <p>STM can be integrated in the form of a Cocoon Generator. An <sapia:class>STMGenerator</sapia:class> interacts with
+       a <sapia:class>CocoonDispatcher</sapia:class> (a component that was implemented as part of STM in order to allow embedding
+       a Soto container as a Cocoon component). The <sapia:class>CocoonDispatcher</sapia:class> loads your Soto applications (dispatcher, state machines, etc) 
+       as part of Cocoon. The <sapia:class>STMGenerator</sapia:class> is just a Cocoon generator that delegates its calls to the 
+       <sapia:class>CocoonDispatcher</sapia:class>. Thus, in the end, to Cocoon, your STM application becomes just another source of SAX 
+       events and can participate in Cocoon pipelines.</p>
+       
+       <p>To integrate a STM-based application within Cocoon, you first have to hide the following lines in the <sapia:command>cocoon.xconf</sapia:command> 
+       file:</p>
+       
+<sapia:code><![CDATA[<component class="org.sapia.soto.state.cocoon.CocoonDispatcher"
+      role="org.sapia.soto.state.cocoon.CocoonDispatcher">
+  <parameter name="soto-config-resource"  value="soto/main.xml"/>    
+  <parameter name="soto-dispatcher-id"    value="myApp/dispatcher"/>      
+</component>]]></sapia:code>
+
+       <p>As in the case of the servlet setup, your Soto configuration is first looked up under the root of your webapp, and if that
+       fails, in your classpath (see the <a href="#app_structure">application structure</a> section for more information). 
+       The <sapia:class>CocoonDispatcher</sapia:class> is an Avalon component (Avalon is the framework on which
+       Cocoon was built) that in fact wraps the <sapia:class>Dispatcher</sapia:class> that you provide as part of your Soto
+       applications. In that sense, it fulfills a role analoguous to the one of the standalone servlet.</p>
+       
+       <p>
+       Then you need configuring the following under the <sapia:command>map:generators</sapia:command> element of your Cocoon sitemap:
+       </p>
+       
+<sapia:code><![CDATA[
+<map:generator label="content" 
+               logger="sitemap.generator.stm" 
+               name="stm" 
+               pool-grow="2" 
+               pool-max="16" 
+               pool-min="2" 
+               src="org.sapia.soto.state.cocoon.STMGenerator" />
+]]></sapia:code>
+
+       <p>
+       This in fact creates the <sapia:class>STMGenerator</sapia:class> sitemap component. Once that is done, you are ready to use
+       the generator as part of cocoon pipelines:
+       </p>
+<sapia:code><![CDATA[
+<map:pipelines>
+  ...
+  <map:match pattern="webservices/**">
+    <map:generate type="stm"/>
+    <map:transform src="stylesheets/xml2html.xslt">   
+    <map:serialize/>      
+  </map:match>
+  ...
+</map:pipelines>    
+]]></sapia:code>
+       <p>The above demonstrates how XML data generated by a STM application can be fully integrated into Cocoon pipelines, such as 
+       XSL transformations.</p>
+     </sapia:sect3>    
+    </sapia:sect2>
+    <sapia:sect2 title="Advanced Issues">
+      <sapia:sect3 title="Application Structure" alias="app_structure">
+        <sapia:sect4 title="Resource Organization">
+         <p>Whether you use STM in a standalone servlet or in Cocoon, your application's structure is identical:
+         it respects the standard Java webapp structure:
+         </p>
+<sapia:code>
+WEB-INF/
+  web.xml
+  lib/
+  classes/
+  soto/
+    services.xml
+    main.xml
+    shoppingcart/
+      main.xml
+      ...
+    inventory/
+      main.xml
+      ...
+index.html
+index.jsp
+...
+</sapia:code>
+          <p>Note that the root of your application can vary (depending on the container you're using): the archive file containing
+          your resources might be extracted by the web container upon deployment, or it might not. Depending on how your
+          web archive has been deployed, the root of your web application corresponds to the directory where the archive has been
+          extracted, or to the root of the archive itself. In any case, Soto's resource resolving mechanism will always attempt to
+          find resources relative to the "webapp" root (through the <sapia:class>ServletContext</sapia:class>'s 
+          <sapia:command>getRealPath()</sapia:command> method), and resort to the classpath in case of failure.
+          </p>
+          <sapia:note>The only exception to how Soto resolves resource in this case is if you specify a scheme in the URI that 
+          identifies the resources you are attempting to resolve.</sapia:note>
+        </sapia:sect4>
+        <sapia:sect4 title="Soto Configuration Files">
+          <p>
+          Now, given the structure illustrated above, let's see how Soto config files are organized and relate to one another.
+          Arbitrarily, we decided to place all Soto configuration files under a "soto" directory, under the webapp root. That
+          directory contains a <sapia:command>main.xml</sapia:command> (it of course could be name otherwise). That file is the
+          entry point into our application (and it is the file that our <sapia:class>StandaloneServlet</sapia:class> or
+          <sapia:class>STMGenerator</sapia:class> is interested in). Here is the skeleton of that file:
+          </p>
+<sapia:code><![CDATA[
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:stm="soto:stm">
+    
+  <!-- ==== INCLUDE BACKEND SERVICES ==== -->        
+
+  <soto:include uri="services.xml" />      
+  
+  <!-- ==== MAIN STATE MACHINE ==== -->
+  
+  <soto:service id="example/statemachine">
+    <stm:machine>
+      <stm:states>
+      
+        <!-- ==== GLOBALS ==== -->
+         
+        <stm:globals>
+          <!-- here define any global parameters that we need -->
+        </stm:globals>
+        
+         <!-- ==== MODULES (CHILD STATE MACHINES) ==== -->      
+        
+        <stm:module name="shoppingcart" 
+                    inheritGlobals="true" 
+                    inheritModules="true"
+                    uri="shoppingcart/main.xml">
+        </stm:module>
+
+        <stm:module name="inventory" 
+                    inheritGlobals="true" 
+                    inheritModules="true"
+                    uri="inventory/main.xml">
+        </stm:module>              
+       </stm:states>
+    </stm:machine>
+  </soto:service>
+  
+  <!-- ==== DISPATCHER ==== -->
+  
+  <soto:service id="example/dispatcher">
+    <stm:dispatcher>
+      <match pattern="/**" target="{1}">
+        <soto:serviceRef id="example/app" />
+      </match>
+  </soto:service>
+</soto:app>]]></sapia:code>
+
+          <sapia:sect5 title="Backend Services">
+            <p>Right at the top of the configuration, we include the so-called "back-end"
+            services. These are plain-vanilla Soto services that do not know anything about
+            the web. They provide the support to your application (connections to databases,
+            scheduling, authentication, etc). We configure them separately not only because
+            it makes the root configuration file smaller, but also because if we configure
+            Soto services as part of STM modules, they risk being dynamically reloaded if 
+            module configurations are modified.
+            </p>
+            
+            <sapia:note>
+            Indeed, when a module file is modified, its corresponding state machine is
+            automatically reloaded. If you configure Soto services as part of these
+            files, then these services will be instantiated twice in the same container if
+            reloading occurs. Thus, STM modules should be left strictly to the definition of states.
+            </sapia:note>
+            
+            <p>
+            In the case of this configured application for example, we could have a 
+            <sapia:class>ShoppingCartService</sapia:class> and an 
+            <sapia:class>InventoryService</sapia:class> dealing with 
+            <sapia:class>Customer</sapia:class>s, <sapia:class>Item</sapia:class>s,
+            etc. Backend services thus deal with your object model,
+            not with requests, responses and HTTP parameters.
+            </p>
+          </sapia:sect5>
+          <sapia:sect5 title="Globals">
+            <p>In the "global" section, we could perform tasks that apply
+            to every request. For example, we could check if the current request
+            has a session created, and if not, redirect to a login screen; we
+            could check security credentials prior to a state being triggered. We could
+            also set the mime type of the response or its "charset"...
+            </p>
+          </sapia:sect5>
+          <sapia:sect5 title="Modules">
+            <p>A module is a way to include a state machine into another. An STM-based application
+            typically relies on hierarchically organized state machines. The state machines typically
+            handle web requests, performing the required actions and using backend services to do so.
+            </p>
+            <p>
+            In our example configuration, we include two modules. Each of these modules has its own
+            states - note how the URIs of the included modules match our web application's directory
+            structure.
+            </p>
+          </sapia:sect5>
+        </sapia:sect4>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Requests, Sessions, and the Likes">
+        <p>
+        Once you have setup your application structure, you're ready for implementation. The class that gives
+        you access to web-related objects (session, request, response, parameters...) is the 
+        The <sapia:class target="cocoonctx" link="../../api/org/sapia/soto/state/cocoon/CocoonContext.html">CocoonContext</sapia:class>
+        class. As was explained previously, it is a <sapia:class>Context</sapia:class> implementation that presents the following
+        scopes (see the class' Javadoc for more details):
+        </p>
+        <ul>
+          <li>The <sapia:command>env</sapia:command> scope: abstracts the Soto container itself (allows getting references to configured
+          services).</li>       
+          <li>The <sapia:command>session</sapia:command> scope: abstracts the session associated to the request to which the
+          context corresponds.</li>
+          <li>The <sapia:command>request</sapia:command> scope: hides the request object (allows setting and getting
+          request attributes).</li>
+          <li>The <sapia:command>reponse</sapia:command> scope: hides the response object (allows settting response headers).</li>
+          <li>The <sapia:command>headers</sapia:command> scope: abstracts request and response headers (allow getting request headers
+          and setting response headers).</li>
+          <li>The <sapia:command>params</sapia:command> scope: abstracts request parameters (allows getting a given request parameter's value).</li>
+        </ul>
+        <p>In addition, the <sapia:class>CocoonContext</sapia:class> inherit a scope from its parent class: 
+        <sapia:class link="../../api/org/sapia/soto/state/ContextImpl.html">ContextImpl</sapia:class>. This scopes is as 
+        follows:</p>
+        
+        <ul>
+          <li>The <sapia:command>context</sapia:command> scope: abstracts the <sapia:command>push()</sapia:command> and 
+          <sapia:command>pop()</sapia:command> methods - for example, <sapia:command>context.put("currentObject", someObject, "context")</sapia:command>
+          corresponds to <sapia:command>context.push(someObject)</sapia:command> and <sapia:command>context.get("currentObject", "context")</sapia:command>
+          corresponds to <sapia:command>context.currentObject()</sapia:command>.</li>
+        </ul>
+        
+        <p>Thus given an instance of the <sapia:class>CocoonContext</sapia:class>:</p>
+        <sapia:code>// The following retrieves a service from the "env" scope 
+// (corresponding to the container).
+
+shoppincartService = (ShoppingCartService)
+  context.get("example/shoppingcart", "env");</sapia:code>
+        <p/>
+        <sapia:code>// The following retrieves a request attribute
+
+attribute = (SomeAttribute)context.get("someAttribute", "request");</sapia:code>
+        <p/>
+        <sapia:code>// The following retrieves a request parameter
+
+param = context.get("someParam", "params");</sapia:code>
+        <p>And so on... The advantage of working as above is that you do not have to cast the <sapia:class>Context</sapia:class>
+        instance that you receive as a <sapia:class>CocoonContext</sapia:class> class to have access to web-related data.</p>
+        
+        <p>Of course, there are some limitations: for example, if you wish to create a session, or have access to multiple
+        request parameters with a given name. In such a case, you just cast to <sapia:class>CocoonContext</sapia:class> and
+        you can have access to the request and response objects.</p>
+      </sapia:sect3>
+      <sapia:sect3 title="MVC">
+        <p>MVC with STM is well-supported: the Controller part is handled by the state machines. The Model part is played
+        by the <sapia:class>Context</sapia:class> instance. And the View part is fullfilled by specific templating technologies
+        that have been integrated into the framework. To STM, a so-called "view" is a state in a request, like any other. To
+        the developer, the view is the last state in a request.</p>
+        
+        <sapia:sect4 title="Common Ground">
+          <p>Whatever the view technology you're going to use, request handling always follows the same flow: a request comes in,
+          a corresponding state (or series of states) is/are triggered. The last state corresponds to the view.
+          </p>
+          <p>
+          By convention, views expect the "model" to be provided as the current object on the <sapia:class>Context</sapia:class>'s
+          stack. By convention also, views export the model to their corresponding template using the "well-known" 
+          <sapia:command>Model</sapia:command> key (this key is in fact a constant that is specified as part of the 
+          <sapia:class target="mvc" link="../../api/org/sapia/soto/state/MVC.html">MVC</sapia:class> interface). In addition, 
+          views will export any additional so-called "view parameters" that the <sapia:class>Context</sapia:class>
+          holds (again, have look at the <sapia:class>MVC</sapia:class>, more precisely at the <sapia:command>getViewParams()</sapia:command>
+          method).
+          </p>
+          <p>
+          Therefore, as a developer, if you want to provide a model to a view, you must push it onto the context's stack:
+          </p>
+          <sapia:code>// assuming context is an instance of Context
+context.push(someModel);</sapia:code>
+          <p>
+          And if you want to add additional parameters intended for the view:
+          </p>
+          <sapia:code>context.put(someParam, "view");</sapia:code>
+          <p>
+          Then depending on the view technology you're using, you will generally be provided with a notation to retrieve the
+          model and the view parameters (for example, with Jelly and Freemarker, you would use the <sapia:command>${Model}</sapia:command>
+          variable to retrieve the model object).
+          </p>
+          <p>
+          <sapia:note>
+          All view implementations that are part of Soto export the current web application's context path to
+          the view parameters, under the <sapia:command>contextPath</sapia:command>. Thus, the context path can be recuperated from
+          within view templates using the underlying technology's notation (for example, in Jelly, it would be ${contextPath}).
+          </sapia:note>
+          </p>
+        </sapia:sect4>
+        <sapia:sect4 title="Jelly/XML/XSL">
+          <p>
+          <a href="http://jakarta.apache.org/commons/jelly" target="jelly">Jelly</a> as been integrated into STM, together with 
+          XSL processing support, in order to allow building next-generation web applications that will provide functionality to 
+          rich client interfaces in the form of web services (preferrably REST-based). Of course, in the meantime, until this grandiose 
+          scheme is achieved, you can benefit from STM's XML and XSL processing capabilities for more down-to-earth uses.
+          </p>
+          <p>
+          STM supports XML generation through toolkits such as Jelly, and transformation pipelining through XSL. To STM, generating XML with a Jelly
+          script (for example) and processing that XML as successive steps in an XSL pipeline, are just "STM steps" in the course
+          of handling a request. Generally, using Jelly and XSL in STM involves: handling a model to a Jelly view (in fact, a Jelly script); 
+          creating XML from that model (through the said script); optionally, passing the generated XML through a series of XSL transformation.  
+          </p>
+          <p>
+          An interesting feature of STM's XML/XSL processing capabilities is to allow "conditional XSL processing", that is: XSL transformations
+          (which are implemented as <sapia:class>Step</sapia:class>s) can be triggered conditionnaly, through STM's provided
+          conditional branching instructions (such as <sapia:command>stm:if</sapia:command> and <sapia:command>stm:choose</sapia:command>).
+          Here's a (partial) example that illustrates what we are trying to mean:
+          </p>
+<sapia:code><![CDATA[...
+<xml:jelly id="displayUserAccount" src="jelly/users/userAccount.xml">
+  
+  <stm:choose>
+    <when test="outputType == 'wap'" scopes="request">
+      <xml:style src="stylesheets/wap/users/userAccount.xsl" />
+    </when>
+    <otherwise>
+      <xml:style src="stylesheets/html/users/userAccount.xsl" />
+      <xml:style src="stylesheets/html/page/headerFooter.xsl" />          
+    </otherwise>
+  </stm:choose>  
+  
+</xml:jelly>
+...]]></sapia:code>
+          <p>Now, imagine that the goal of the above is to display the data of a user account.
+          The first state (not shown) would consist of actually retrieving some <sapia:class>UserAccount</sapia:class>
+          object, pushing it onto the stack, and then triggering the <sapia:command>displayUserAccount</sapia:command>
+          state. Note that the state consists of a Jelly tag. It is a state that itself contains steps. Let's assume that the Jelly script 
+          (indicated with the <sapia:command>src</sapia:command> attribute on the <sapia:command>xml:jelly</sapia:command> element) 
+          takes the <sapia:class>UserAccount</sapia:class> object and generates XML corresponding to it. Next,
+          we choose in what output format to transform the generated XML based on an <sapia:command>outputType</sapia:command>
+          variable that is expected as part of the request scope (lets assume that the variable has been set previously, according
+          to the client we are interacting with).
+          </p>
+          <p>
+          That's were conditional transformation kicks in: if the <sapia:command>outputType</sapia:command> variable equals to 
+          <sapia:command>wap</sapia:command>, then the user account's XML is transformed to WAP, otherwise it is transformed to HTML, 
+          and that HTML itself is passed in another stylesheet that adds a header and a footer.
+          </p>
+          <sapia:note>For more on supported STM tags, see the <a href="../doc/StmTagReference.pdf">STM Tag Reference</a>.</sapia:note>
+        </sapia:sect4>
+        <sapia:sect4 title="Freemarker">
+          <p>For more traditional web development, STM also integrates <a target="freemarker" href="http://freemarker.sourceforge.net">Freemarker</a>
+          as a templating technology. In this case, transformation pipelines are of course not supported. The 
+          <sapia:command>freemarker:template</sapia:command> tag is typically used like so: 
+          </p>
+<sapia:code><![CDATA[...
+  <stm:state id="displayUserAccount" >
+    <freemarker:template src="freemarker/users/userAccount.ftl">
+  </stm:state>
+...]]></sapia:code>
+          <p>
+          The following would also be valid:
+          </p>
+<sapia:code><![CDATA[...
+  <freemarker:template id="displayUserAccount" 
+                       src="freemarker/users/userAccount.ftl">
+...]]></sapia:code>         
+          
+          <p>Note that for Freemarker templates to operate as expected (to operate at all, actually), you must configure a 
+          <sapia:class link="../../api/org/sapia/soto/state/freemarker/FreemarkerService.html" target="freemarkerservice">FreemarkerService</sapia:class>
+          as part of your applications. In the context of our example, we do so in the <sapia:command>services.xml</sapia:command> file 
+          that is included in our root configuration file. Here's how a <sapia:class>FreemarkerService</sapia:class> is declared: 
+          </p>
+<sapia:code><![CDATA[...
+  <freemarker:configuration>
+    <setting name="default_encoding" value="UTF-8" /> 
+    <localized>true</localized>
+  </freemarker:configuration>
+...]]></sapia:code>             
+          <p>Note that applications themselves do not deal with the <sapia:class>FreemarkerService</sapia:class> directly; the service
+          is used under the cover by STM's freemarker tag implementations.
+          </p> 
+          <sapia:note>The <a href="../doc/StmTagReference.pdf">STM Tag Reference</a> describes Freemarker usage in more details.</sapia:note>
+        </sapia:sect4>
+      </sapia:sect3>              
+      <sapia:sect3 title="REST">
+        <sapia:sect4 title="Handling URIs">
+          <p>In REST, a single URI can correspond to many different actions. These actions are expected to be consistent with the HTTP
+          <sapia:command>GET</sapia:command>, <sapia:command>PUT</sapia:command>, <sapia:command>DELETE</sapia:command> and 
+          <sapia:command>POST</sapia:command> methods. Therefore, when designing a REST-based web app, you will have to determine to
+          which type of action a given URI corresponds to. More concretely, you have to decide, based on a single given URI, if
+          the action should correspond to a put, get, etc. Soto comes with built-in tags that allow processing URIs in a rest-compliant
+          fashion. Here is an example:
+          </p>
+<sapia:code><![CDATA[...
+<cocoon:rest id="dog">
+    <get>
+      <stm:stateRef id="doDeleteDog" />
+    </get>
+    <post>
+      <stm:stateRef id="doUpdateDog" />
+    </post> 
+    <put>
+      <stm:stateRef id="doCreateDog" />
+    </put>
+    <delete>
+      <stm:stateRef id="doDeleteDog" />
+    </delete>   
+  </cocoon:rest>
+...]]></sapia:code>                       
+        </sapia:sect4>
+        <sapia:sect4 title="URI Matching Limitations" alias="uri_limitations">
+          <p>
+          The default dispatcher implementation that comes with Soto has some limitations with regards to how URIs are handled. In REST,
+          the "correct" way to refer to a given resource (let's say, a dog description in a petstore application), would be as follows: 
+          </p>
+          
+          <sapia:code>http://localhost:8080/petstore/webservices/rest/dog/1234</sapia:code>
+          
+          <p>The last part of the URI (<sapia:command>1234</sapia:command>) would correspond to the identifier of the description we
+          want. In this case, that part of the URI acts as a criterion; it can potentially vary with any request. The default dispatcher
+          caches already matched URIs (<b>excluding the parameters)</b> so that it does not have to pass them through pattern matching 
+          at every request; in this case, if there are a million dogs in the database, then the dispatcher caches one million URIs... 
+          This is certainly not the desired effect. Thus, currently, a URI should rather be provided as follows:</p>
+          
+          <sapia:code>http://localhost:8080/petstore/webservices/rest/dog?id=1234</sapia:code>
+          
+          <p>In the above case, whatever the dog, a single URI is cached.</p>
+        </sapia:sect4>
+      </sapia:sect3>
+    </sapia:sect2>
+    <sapia:sect2 title="Usage without Cocoon">
+      <p>Strictly using STM in the context of Cocoon can prove burdensome. Thus, a serlvet
+      (<sapia:class link="../../api/org/sapia/soto/state/web/StmServlet.html">StmServlet</sapia:class>) has been implemented
+      that inherits from <sapia:class>AbstractStmServlet</sapia:class>; this servlet offers the same mechanisms as the Cocoon one,
+      except for the following details: the actual <sapia:class>Context</sapia:class> implementation is the 
+      <sapia:class link="../../api/org/sapia/soto/state/web/WebContext.html">WebContext</sapia:class> class.
+      The <sapia:class>WebContext</sapia:class> class also implements the <sapia:class>Input</sapia:class>,
+      <sapia:class>Output</sapia:class>, <sapia:class>XMLContext</sapia:class> and <sapia:class>MVC</sapia:class>.
+      </p>
+      <p>
+        Aside from changing the servlet class in the <sapia:command>web.xml</sapia:command> descriptor, the only difference
+        with STM's Cocoon integration is that the HTTP-related objects (as per the servlet API) are made directly available through
+        the <sapia:class>WebContext</sapia:class> instance, namely:
+        <ul>
+          <li>HttpServletRequest</li>
+          <li>HttpServletResponse</li>
+          <li>HttpSession</li>
+        </ul>
+      </p>
+    </sapia:sect2>
+		<sapia:sect2 title="Conclusion">
+		  <p>For more details, and as a necessary complement, you try the sample address book application that comes with Soto. Having
+			a look at the way it is implemented will greatly help. In addition, you should also go through the STM Tag Reference.</p>
+		</sapia:sect2>
+    
+  </sapia:sect1>
+
+</sapia:page>
