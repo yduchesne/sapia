@@ -39,10 +39,22 @@
 
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Central</name>
+      <layout>default</layout>
+      <url>http://repo1.maven.org/maven2</url>
+    </repository>
+    <repository>
       <id>java.net</id>
       <name>Java.net Maven2 Repository</name>
       <layout>default</layout>
       <url>http://download.java.net/maven/2</url>
+    </repository>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus</name>
+      <layout>default</layout>
+      <url>http://repository.codehaus.org</url>
     </repository>
   </repositories>
 
