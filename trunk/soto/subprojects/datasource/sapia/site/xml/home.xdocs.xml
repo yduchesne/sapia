@@ -1,0 +1,177 @@
+<sapia:page title="Datasource Service" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+    <sapia:vsection name="Project Home" href="index.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+  <sapia:sect1 title="Datasource Service">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org/home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../index.html" />
+      <sapia:path name="services" />
+      <sapia:path name="datasource" />      
+    </sapia:section>
+    <toc/>
+    <sapia:sect2 title="Overview">
+    
+      <p>The <sapia:class link="maven/api/org/sapia/soto/datasource/DataSourceService.html" target="target_window">DataSourceService</sapia:class> interface extends Java's
+      <sapia:class target="target_window" 
+                   link="http://java.sun.com/j2se/1.4.2/docs/api/javax/sql/DataSource.html">DataSource</sapia:class>
+      interface AND Soto's <sapia:class>Service</sapia:class>. Thus, by definition, it is a DataSource that obeys to
+      the Service lifecycle, and is understood as such by Soto's runtime.</p>
+      
+      <sapia:note>To your application, an instance of <sapia:class>DataSourceService</sapia:class> can be used directly
+      as a <sapia:class>DataSource</sapia:class>, without casting.</sapia:note>
+      
+      <p>Currently, there are two <sapia:class>DataSourceService</sapia:class> implementations, based on 
+      <a href="http://jakarta.apache.org/commons/dbcp/" target="target_window">Jakarta's DBCP library</a>. These implementations
+      are the following:
+      </p>
+      <ul>
+        <li><sapia:class link="maven/api/org/sapia/soto/datasource/DBCPDataSourceService.html" target="target_window">DBCPDataSourceService</sapia:class>, which extends Jakarta's
+	<sapia:class target="target_window" link="http://jakarta.apache.org/commons/dbcp/apidocs/org/apache/commons/dbcp/BasicDataSource.html">BasicDataSource</sapia:class>.</li>
+	<li>
+          <sapia:class link="maven/api/org/sapia/soto/datasource/DBCPSharedDsService.html" target="target_window">DBCPSharedDsService</sapia:class>, which extends Jakarta's
+	  <sapia:class target="target_window" link="http://jakarta.apache.org/commons/dbcp/apidocs/org/apache/commons/dbcp/datasources/SharedPoolDataSource.html">SharedPoolDataSource.</sapia:class>	
+	</li>
+      </ul>
+
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Usage">
+      <p>Both datasource service implementations inherit from one of the Jakarta DBCP datasource classes mentioned above. These classes have setters that allow specifying
+      given configuration properties. These setters can of course be accessed through Soto's convenient configuration notation, which is translated
+      into method calls at runtime. Thus, to inquire about what properties are available for configuration, have a look at the Javadoc of the DBCP classes from
+      which the datasource service implementations inherit.</p>
+      
+      <p>For a <sapia:class>DBCPDataSourceService</sapia:class> instance, set at least the usual JDCB driver, URL, username and password; for a <sapia:class>DBCPSharedService</sapia:class>, setting its
+      <sapia:class link="http://java.sun.com/j2se/1.4.2/docs/api/javax/sql/ConnectionPoolDataSource.html">ConnectionPoolDataSource</sapia:class> instance is mandatory.
+      The DBCP toolkit comes with such an implementation (in the form of the 
+      <sapia:class link="http://jakarta.apache.org/commons/dbcp/apidocs/org/apache/commons/dbcp/cpdsadapter/DriverAdapterCPDS.html" target="target_window">DriverAdapterCPDS</sapia:class> 
+      class for JDBC drivers that have no support for a <sapia:class>ConnectionPoolDataSource</sapia:class>).</p>
+      
+      <sapia:sect3 title="Configuring" >
+      
+        <p>The configuration snippet below shows how to use a <sapia:class>DBCPSharedService</sapia:class> instance:</p>
+      
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:log="soto:log"
+...
+<soto:service id="some/datasource">
+  <dbcp:shared>
+    <connectionPoolDataSource>
+
+      <!-- this tag instantiates a DriverAdapterCPDS -->
+      <dbcp:pooled-ds>
+        <user>admin</user>
+        <password>foo</password>
+        <driver>com.mckoi.JDBCDriver</driver>  
+        <url>jdbc:mckoi://localhost/</url>
+      </dbcp:pooled-ds>
+    </connectionPoolDataSource>   
+  </dbcp:shared>
+</soto:service>
+...
+</soto:app>]]>
+</sapia:code>
+
+        <p>The snippet below shows how to use the <sapia:class>DBCPDataSourceService</sapia:class>:</p>
+      
+<sapia:code>
+<![CDATA[...
+<soto:service id="some/datasource">
+  <dbcp:basic>
+    <user>admin</user>
+    <password>foo</password>
+    <driver>com.mckoi.JDBCDriver</driver>  
+    <url>jdbc:mckoi://localhost/</url>
+  </dbcp:basic>
+</soto:service>
+...]]>      
+</sapia:code>
+
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Associating with other Services">
+        <p>Wiring up a service to a datasource is done through Soto's configuration notation. For example,
+	imagine this service:
+	</p>
+	
+<sapia:code>public class DatabaseService implements org.sapia.soto.Service{
+
+...
+
+  public void setDataSource(javax.sql.DataSource){
+    ...
+  }
+
+...
+
+}</sapia:code>
+
+       <p>We would assign a datasource to our service like so:</p>
+       
+<sapia:code>
+<![CDATA[...
+<soto:service id="some/datasource">
+  <dbcp:shared>
+    <connectionPoolDataSource>
+
+      <!-- this tag instantiates a DriverAdapterCPDS -->
+      <dbcp:pooled-ds>
+        <user>admin</user>
+        <password>foo</password>
+        <driver>com.mckoi.JDBCDriver</driver>  
+        <url>jdbc:mckoi://localhost/</url>
+      </dbcp:pooled-ds>
+    </connectionPoolDataSource>   
+  </dbcp:shared>
+</soto:service>
+
+<soto:service id="some/dbService">
+  <dataSource>
+    <serviceRef id="some/datasource" />
+  </dataSource>
+</soto:service>
+...]]>
+</sapia:code>       
+
+        <p>The following would also work - and makes sense provided our  
+	datasource is not meant to be used by other services:</p>
+      
+<sapia:code>
+<![CDATA[...
+<soto:service id="some/dbService">
+  <dataSource>
+    <dbcp:shared>
+      <connectionPoolDataSource>
+
+        <!-- this tag instantiates a DriverAdapterCPDS -->
+        <dbcp:pooled-ds>
+          <user>admin</user>
+          <password>foo</password>
+          <driver>com.mckoi.JDBCDriver</driver>  
+          <url>jdbc:mckoi://localhost/</url>
+        </dbcp:pooled-ds>
+      </connectionPoolDataSource>   
+    </dbcp:shared>
+  </dataSource>
+</soto:service>
+...]]>
+</sapia:code>	
+	
+      </sapia:sect3>
+    
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Conclusion">
+      <p>A <sapia:class>DataSourceService</sapia:class> service can be used directly as a 
+      <sapia:class>DataSource</sapia:class>. Once you have defined a datasource service in
+      a Soto configuration file, you can wire it up to other services.</p>
+    </sapia:sect2>
+    
+  </sapia:sect1>
+</sapia:page>
