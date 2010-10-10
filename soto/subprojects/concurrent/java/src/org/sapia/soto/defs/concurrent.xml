@@ -1,0 +1,13 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="concurrent">
+    <def class="org.sapia.soto.util.concurrent.ExecutorService"              name="executor" />
+    <def class="org.sapia.soto.util.concurrent.ThrottledExecutorService"     name="throttledExecutor" />
+    
+    <def class="java.util.concurrent.ThreadPoolExecutor$AbortPolicy"         name="abortPolicy" />
+    <def class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy"    name="callerRunsPolicy" />
+    <def class="java.util.concurrent.ThreadPoolExecutor$DiscardOldestPolicy" name="discardOldestPolicy" />
+    <def class="java.util.concurrent.ThreadPoolExecutor$DiscardPolicy"       name="discardCurrentPolicy" />
+
+    <def class="org.sapia.soto.util.concurrent.PerishableObjectMonitorService" name="perishableObjectMonitor" />
+  </soto:namespace>  
+</soto:defs>
