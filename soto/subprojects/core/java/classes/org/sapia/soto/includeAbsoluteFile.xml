@@ -1,0 +1,18 @@
+<soto:app xmlns:soto="http://www.sapia-oss.org/soto/core/2003"
+	    xmlns:jmx="http://www.sapia-oss.org/soto/jmx/2003"
+          xmlns:aop="http://www.sapia-oss.org/soto/aop/2003"
+          xmlns:sample="http://www.sapia-oss.org/soto/sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.examples.MasterService"    name="master" />
+    <def class="org.sapia.soto.examples.SecondaryService" name="secondary" />
+    <def class="org.sapia.soto.TestLayer"                 name="testLayer" />          
+  </soto:namespace>
+
+  <soto:service id="master"> 
+    <sample:master/>
+  </soto:service>
+
+  <soto:include uri="file:/${user.dir}/etc/test/included.xml" />
+
+</soto:app>

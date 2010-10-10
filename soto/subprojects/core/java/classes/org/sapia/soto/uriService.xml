@@ -1,0 +1,8 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:test-uri="resource:/org/sapia/soto/uriDefs.xml">
+  
+  <soto:service id="some/service"> 
+    <test-uri:testTag />
+  </soto:service>
+
+</soto:app>
