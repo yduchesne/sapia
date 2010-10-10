@@ -90,6 +90,21 @@
         <groupId>xerces</groupId>
         <artifactId>xmlParserAPIs</artifactId>
     </dependency>
+    <dependency>
+        <groupId>commons-jelly</groupId>
+        <artifactId>commons-jelly</artifactId>
+        <version>1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>pnuts</groupId>
+        <artifactId>pnuts</artifactId>
+        <version>1.2</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4.1</version>
+    </dependency>
   </dependencies>
 
 </project>
