@@ -1,0 +1,5 @@
+<soto:defs xmlns:soto="sapia:ldap">
+  <soto:namespace prefix="ldap">                  
+    <def class="org.sapia.soto.ldap.server.LdapServiceImpl"  name="server" />
+  </soto:namespace>
+</soto:defs>  
