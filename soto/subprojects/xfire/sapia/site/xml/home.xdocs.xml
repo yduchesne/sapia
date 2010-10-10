@@ -1,0 +1,375 @@
+<sapia:page title="Soto XFire" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+    <sapia:vsection name="Project Home" href="../../home.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Soto XFire Integration">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org/home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../home.html" />
+      <sapia:path name="xfire"/>      
+    </sapia:section>
+    
+    <toc/>
+
+    <sapia:sect2 title="Namespace">
+      <ul>
+        <li><b>URI</b>: <sapia:command>soto:xfire</sapia:command></li>
+        <li><b>Prefix</b>: <sapia:command>xfire</sapia:command></li>
+      </ul>
+    </sapia:sect2>    
+    
+    <sapia:sect2 title="Overview">
+      <sect-desc>
+        <p><a href="http://http://xfire.codehaus.org/">XFire</a> is a very simple
+        yet powerful web services framework for Java. It has been integrated as
+        part of Soto in order to allow dynamically exporting Soto services as
+        web services.</p>
+      </sect-desc>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Design">
+      <p>Soto's XFire integration is materialized by two classes: a servlet, and a Soto
+      layer implementation, serving as a bridge between the servlet and Soto services:</p>
+      
+      
+      <ul>
+        <li>The
+        <sapia:class link="maven/api/org/sapia/soto/xfire/SotoXFireServlet.html">SotoXFireServlet</sapia:class> 
+        loads a Soto application container, and holds the XFire runtime - which handles all incoming SOAP calls
+        and translates these into method calls on the appropriate Soto services. The servlet actually
+        extends XFire's own <sapia:class>XFireServlet</sapia:class></li>
+
+        <li>The <sapia:class link="maven/api/org/sapia/soto/xfire/XFireLayer.html">XFireLayer</sapia:class> class
+        implements the Soto <sapia:class>Layer</sapia:class> interface (layers are a core feature of Soto): an
+        <sapia:class>XFireLayer</sapia:class> instance registers a given Soto service as a web service (registration
+        is indirectly done with the servlet).</li>
+      </ul>
+
+    </sapia:sect2>
+    <sapia:sect2 title="Learning by Example">
+      <sect-desc>
+        <p>The integration of XFire into Soto is pretty simple and straightforward, and is best learned through a 
+        step-by-step example.</p>
+      </sect-desc>      
+      
+      <sapia:sect3 title="The Service Interface" >
+ 
+      <p>The first step is to implement the interface of your service. Keep in mind that it is that interface that
+      will be published as a web service - and from which a WSDL will be generated:</p>
+<sapia:code>
+package com.acme.xfire;
+
+public interface HelloService{
+ 
+  public String getSalutation() throws GreetingException; 
+ 
+}</sapia:code>
+
+     <p>Remember that XFire handles the deserialization of method call parameters from SOAP to Java,
+     and the Java-to-SOAP serialization of return values.</p>
+
+     </sapia:sect3>
+
+     <sapia:sect3 title="The Service Implementation" >
+ 
+      <p>The second step is to provide an implementation of that interface:</p>
+<sapia:code>
+package com.acme.xfire;
+
+public interface HelloServiceImpl implements HelloService{
+ 
+  public String getSalutation(){
+    return "Hello World!!!";
+  }
+ 
+}</sapia:code>
+
+     </sapia:sect3>
+     
+     <sapia:sect3 title="The Service Configuration" >
+ 
+      <p>Now we prepare the Soto configuration, the one that will be loaded by the servlet:</p>
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:xfire="soto:xfire">
+    
+  <soto:service>
+    <!-- the service implementation -->  
+    <soto:new class="org.sapia.soto.xfire.sample.HelloServiceImpl" />
+
+    <!-- the layer -->
+    <xfire:layer interface="org.sapia.soto.xfire.sample.HelloService" />
+    
+  </soto:service>  
+  
+</soto:app>]]></sapia:code>
+
+      <p>Notice the <sapia:command>xfire:layer</sapia:command> element. It corresponds to an
+      <sapia:class link="maven/api/org/sapia/soto/xfire/XFireLayer.html">XFireLayer</sapia:class>
+      instance. The element must be present at the same level as the Soto service that it registers
+      as a web service. It takes the following attributes (or elements, in which case the values must
+      be specified as the corresponding elements' text) - <b>which are all optional if using the JSR 181 support</b>
+      - see further below:</p>
+      
+        <ul>
+          <li><b>interface</b> (mandatory): the interface whose methods will be published and made available 
+          for receiving SOAP calls (and for which a WSDL will be generated).</li>
+          <li><b>name</b> (optional): the name of the web service under which the service instance will be published
+          (defaults to the short class name).</li>
+          <li><b>namespace</b> (optional): the namespace of the web service 
+          (defaults to the package name of the interface).</li>          
+        </ul>
+        
+        <sapia:note>
+        The <sapia:class>XFireLayer</sapia:class> class extends XFire's 
+        <sapia:class link="">ObjectServiceFactory</sapia:class> class.
+        Thus, all methods of that class can be called in an IOC fashion. Refer 
+        to XFire's <a href="">documentation</a> for more details.
+        </sapia:note>
+        
+        
+      <p>In addition to the above attributes, the <sapia:command>soto:xfire</sapia:command>
+      element can also take nested <sapia:command>property</sapia:command> elements, as follows:</p>
+
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:xfire="soto:xfire">
+    
+    ...
+    <xfire:layer interface="org.sapia.soto.xfire.sample.HelloService">
+      <property name="propname" value="propvalue" />
+    </xfire:layer>
+    ...
+  </soto:service>  
+  
+</soto:app>]]></sapia:code>      
+
+       <p>Each such property is eventually internally passed in to the 
+       <sapia:class link="">Service</sapia:class> object that wraps the
+       actual Soto service instance and is registered with XFire's runtime. 
+       Such properties are used by XFire to further determine how given web 
+       services are to be treated (see the XFire docs for more information).</p>
+     </sapia:sect3>     
+
+     <sapia:sect3 title="The Servlet Configuration" >
+ 
+      <p>The last step is to prepare the serlvet configuration, as follows:</p>
+<sapia:code><![CDATA[<?xml version="1.0"?>
+<web-app>
+  <display-name>XFire Example</display-name>
+
+  <servlet>
+    <servlet-name>xfire</servlet-name>
+    <display-name>Soto XFire Servlet</display-name>
+    <servlet-class>org.sapia.soto.xfire.SotoXFireServlet</servlet-class>
+    
+    <init-param>
+      <param-name>soto-config-resource</param-name>
+      <param-value>soto/services.xml</param-value>      
+    </init-param>
+    
+  </servlet>
+	
+  <servlet-mapping>
+    <servlet-name>xfire</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>]]></sapia:code>
+
+      <p>The servlet takes the <sapia:command>soto-config-resource</sapia:command>
+      parameter, which indicates the path to the Soto configuration file. If a
+      relative URI is given (and without a protocol), the file is resolved
+      relatively to the <sapia:command>WEB-INF</sapia:command> directory
+      of the web application. An absolute URL with a protocol recognized by Soto could 
+      also be used, for example: <sapia:command>resource:/com/acme/xfire/services.xml</sapia:command>.</p>
+      
+      <p>Upon loading the configuration, all Soto services registered as 
+      web services throught an XFire layer will be exported by the servlet 
+      - i.e.: made available for SOAP calls.</p>
+     </sapia:sect3>     
+    </sapia:sect2>
+     <sapia:sect2 title="JSR 181 and JAXB/JAXWS 2.0">
+       <p>XFire supports web service annotations as described in JSR 181. It also supports the annotations
+       of JAXB and JAXWS 2.0 (see <a href="https://jax-ws.dev.java.net/nonav/2.1.2m1/docs/annotations.html" target="jaxb">here</a> 
+       for details). Using these annotations makes implementing web services straight from Java code a much more robust and 
+       complete experience.</p>
+       
+      <p>The Soto-XFire integration comes with a custom Ant task that generates the web service documentation
+      file (as explained <a href="http://xfire.codehaus.org/Documenting+WSDL" target="wsdldoc">here</a>) from a given web service's
+      Javadoc. XFire uses that documentation file to populates the WSDL that it generates dynamically for the corresponding
+      web service.</p>
+      
+      <p>Then, a servlet filter is provided that can be used to transform the WSDLs into developer-friendly HTML pages. The
+      style sheet, which is <a href="http://tomi.vanek.sk/index.php?page=wsdl-viewer">this one</a>, can be customized (more details below).</p>
+      
+      <sapia:sect3 title="Implementing a Web Service with JSR 181">
+        <p>The following snippet illustrates implementation of a web service with JSR 181 annotations:</p>
+        
+<sapia:code>@WebService(name="HelloService",
+            serviceName="HelloWebService",
+            targetNamespace="http://www.sapia-oss.org/soto/xfire/")
+public class Jsr181HelloService implements HelloService{
+  
+  @WebMethod(action="urn:getGreeting")
+  @WebResult(name="greeting")
+  public String getGreeting() {
+    return "Hello World";
+  }
+}</sapia:code>
+
+       <p>Then, the Soto configuration goes as follows:</p>
+       
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:xfire="soto:xfire">
+    
+  <soto:service>
+    <soto:new 
+      class="org.sapia.soto.xfire.sample.Jsr181HelloService" />
+    <xfire:layer />
+  </soto:service>  
+  
+</soto:app>]]></sapia:code>
+	  
+	  <p>In the above case, note that the <sapia:command>xfire:layer</sapia:command> element does not take any attributes that
+	  are required when not using annotations (as explained in the previous section).</p>       
+	  </sapia:sect3>
+	  
+	  <sapia:sect3 title="JAXB 2.0">
+	    <p>XFire also supports JAXWS 2.0 and JAXB 2.0 annotations (see 
+	    the code-first approach explained <a href="http://xfire.codehaus.org/JAXB+2.0" target="xfire-jaxb20">here</a> for details). 
+	    When using these annotations (in addition to the JSR 181 ones), you must appropriately configure de service factory that is 
+	    internally used, as such:</p>
+	    
+<sapia:code><![CDATA[<xfire:layer>
+  <serviceFactory>
+    <soto:new 
+      class="org.codehaus.xfire.jaxb2.JaxbServiceFactory" />   
+  </serviceFactory>
+</xfire:layer>]]></sapia:code>	    
+
+        <p>The annotations will be taken into account by XFire at marshalling/unmarshalling time, and when generating the WSDL.</p>
+
+	  </sapia:sect3>
+	  
+	  <sapia:sect3 title="Service Documentation Generation">
+	    <p>The Soto-XFire integration comes with an Ant task that takes the comments from the Javadoc of your web services in order
+	    to generate XFire-specific documentation files. The content of these files (and, therefore, the content of your Javadoc)
+	    is extrated by XFire at runtime and inserted into the WSDL that it generates for your web services).</p>
+	    
+	    <p>The Ant <a href="maven/api/org/sapia/soto/xfire/ant/WsDocGeneratorTask.html" target="wsdocgen">task</a> relies on the following libraries to do its work:</p>
+	    <ul>
+          <li><sapia:command>xfire-jsr181.jar</sapia:command></li>
+	      <li><sapia:command>sapia_soto_xfire_ant.jar</sapia:command> (generated as part of this subproject).</li>
+	      <li><sapia:command>jaxws-api.jar (2.0 or above), jaxb-api.jar (2.0 or above)</sapia:command> - if your classes are compiled with JAXB or JAXWS annotations.</li>
+		  <li><sapia:command>qdox.jar</sapia:command> (see the <a target="qdox" href="http://qdox.codehaus.org/">project page</a>).</li>	      	      
+	      <li><sapia:command>freemarker.jar</sapia:command> (used to generate the XML files).</li>		  
+	    </ul>
+	    
+	    <p>It is used as follows:</p>
+	    
+<sapia:code><![CDATA[<taskdef name="wsdocgen" 
+    classname="org.sapia.soto.xfire.ant.WsDocGeneratorTask">
+      <classpath>
+        <path>
+          <fileset dir="${tasklib.dir}">
+            <include name="*.jar" />
+          </fileset>
+        </path>
+      </classpath>
+</taskdef>
+
+    <wsdocgen sourceDir="${src.dir}" destDir="${classes.dir}">
+      <classpath>
+        <pathelement location="${classes.dir}" />      
+        <path>
+          <fileset dir="${lib.dir}">
+            <include name="*.jar" />
+            <exclude name="xfire-jsr181*.jar" />
+          	<exclude name="jaxws*.jar" />          	
+          	<exclude name="jaxb*.jar" />          	          	
+          </fileset>
+        </path>
+      </classpath>
+    </wsdocgen>]]></sapia:code>	    	    
+    	
+    	<p>The task will search in the given source directory for the Java source files whose Javadoc should
+    	be used to generate the corresponding service documentation files.</p>
+    	
+    	<p>When performing the search, the task will make sure that the compiled classes corresponding
+    	to the source files have each been annotated with a <sapia:command>@WebService</sapia:command>
+    	annotation (that is why a classpath must be specified: in order for the compiled classes to be
+    	loaded and instrospected). All such classes will have a documentation XML file generated in 
+    	the specified destination directory, under a hierarchy corresponding to the corresponding class'
+    	fully qualified name (this in order to allow packaging of the documentation files in a .jar file,
+    	in such a way that they are found in the classpath by XFire at runtime).</p>
+    	
+    	<p>The following shows a properly documented web service class:</p>
+    
+<sapia:code>/**
+ * This is a web service based on JSR-181 annotations.
+ */
+@WebService(name="HelloService",
+            serviceName="HelloWebService",
+            targetNamespace="http://www.sapia-oss.org/soto/xfire/")
+public class Jsr181HelloService implements HelloService{
+  
+  /**
+   * @param firstName the first name of the person to greet.
+   * @param lastName the last name of the person to greet.
+   * @throws GreetingException if a problem occurs attempting to greet the person.
+   * @return a greeting.
+   */
+  @WebMethod(action="urn:getGreeting")
+  @WebResult(name="greeting")
+  public String getGreeting(String firstName, 
+  	String lastName) throws GreetingException{
+    return "Hello World";
+  }
+}</sapia:code>    
+
+      <p>In order to be properly processed, the Javadoc must follow these rules:
+        <li>There must be one <sapia:command>@param</sapia:command> tag for each parameter in the method's signature.</li>
+        <li>The name of the <sapia:command>@param</sapia:command> javadoc tags must match the name of the parameters in the method's signature.</li>        
+        <li>There must be one <sapia:command>@throws</sapia:command> tag for each exception in the method's signature.</li>
+      </p>
+      
+      <sapia:note>There is an important limitation with regards to XFire's documentation injection scheme: if the @WebService annotation
+      of your web service class has the <sapia:command>enpointInterface</sapia:command> attribute specified, then XFire will not use your 
+      documentation to populate the WSDL. Therefore, in order for your documentation to appear in the WSDL, do not use this attribute and
+      use javadoc tags in your web service class.</sapia:note>
+	  
+	  </sapia:sect3>
+	  
+	  <sapia:sect3 title="WSDL to HTML">
+	    <p>As mentioned previously, this subproject bundles a <a href="maven/api/org/sapia/soto/xfire/WsdlToHtmlFilter.html" target="filter">servlet filter</a> 
+	    that produces a developer-friendly HTML page for a given web service's WSDL. The filter can be invoked by typing 
+	    an URL of the form: <sapia:command>http://host:port/contextPath/ServiceName?html</sapia:command>
+        - this URL is analoguous to the one supported by XFire to download the WSDL for a given web service: 
+        <sapia:command>http://host:port/contextPath/ServiceName?wsdl</sapia:command>. Only the last token differs (html instead of wsdl).</p>
+        
+        <p>The filter is configured as follows in your web.xml:</p>
+        
+<sapia:code><![CDATA[<filter>
+    <filter-name>wsdl-transform</filter-name>
+    <filter-class>org.sapia.soto.xfire.WsdlToHtmlFilter</filter-class>
+</filter>
+
+<filter-mapping>
+    <filter-name>wsdl-transform</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>]]></sapia:code>	    	            
+        
+	  </sapia:sect3>
+
+     </sapia:sect2>
+    
+    <sapia:sect2 title="Conclusion">
+      <p>Soto's XFire integration allows publishing "standard" Soto services as web services,
+      with a minimal configuration effort.</p>
+    </sapia:sect2>
+  </sapia:sect1>
+
+</sapia:page>
