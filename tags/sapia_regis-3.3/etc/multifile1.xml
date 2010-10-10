@@ -1,0 +1,24 @@
+<registry>
+  <node name="databases">
+    <node name="000">
+      <property name="username" value="jsmith" />
+      <property name="password" value="foo123" />      
+      <property name="url"      value="jdbc://saturn:5432/" />            
+    </node>
+    <node name="001">
+      <property name="username" value="jsmith" />
+      <property name="password" value="foo123" />      
+      <property name="url"      value="jdbc://pluto:5432/" />            
+    </node>    
+  </node>
+  <node name="users">
+    <node name="account1">
+      <property name="username" value="jsmith" />
+      <property name="password" value="foo123" />      
+    </node>
+    <node name="account2">
+      <property name="username" value="bill" />
+      <property name="password" value="gates123" />      
+    </node>    
+  </node>  
+</registry>
