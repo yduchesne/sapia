@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Soto Spring Integration</name>
+  <description>Adapts Soto to Spring</description>
+  <url>http://www.sapia-oss.org/projects/soto/subprojects/spring/index.html</url>
+  <artifactId>sapia_soto_spring</artifactId>
+
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_soto_parent</artifactId>
+    <version>3.2-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>2.0.6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>2.0.6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>2.0.6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>2.0.6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jmx</artifactId>
+        <version>2.0.6</version>
+    </dependency>
+
+
+  </dependencies>
+
+</project>
