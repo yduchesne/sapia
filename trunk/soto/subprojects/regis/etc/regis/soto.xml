@@ -1,0 +1,94 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.regis.TestRegisClient" name="client" />
+    <def class="org.sapia.soto.regis.TestDbService"   name="dbService" />
+    <def class="org.sapia.soto.regis.TestServer"      name="server" />
+    <def class="org.sapia.soto.regis.TestProvider"    name="provider" />
+  </soto:namespace>
+    
+  <soto:service id="registry">
+    <regis:registry uri="bootstrap.properties" />
+  </soto:service>
+  
+  <regis:foreach uri="dbService.xml">
+    <nodes>
+      <regis:query path="registry/databases" />
+    </nodes>
+    <param name="password" alias="user.password" />
+  </regis:foreach>  
+  
+  <soto:bind id="db02Node">
+    <regis:node path="registry/databases/002" />
+  </soto:bind>
+  <soto:service id="includedDbService">
+    <regis:include path="registry/databases/002" uri="dbService2.xml">
+      <param name="password" alias="user.password" />
+    </regis:include>
+  </soto:service>
+  
+  <soto:service id="includedCompositeDbService">
+    <regis:include uri="dbService3.xml">
+      <path alias="db0">registry/databases/000</path>
+      <path alias="db2">registry/databases/002</path>      
+    </regis:include>
+  </soto:service>  
+  
+  <soto:service id="client">
+    <sample:client>
+      <config>
+        <regis:bean path="registry/users/backoffice/account1" 
+                    implements="org.sapia.soto.regis.TestConfig" />
+      </config>
+      <node>
+        <regis:node path="registry/users/backoffice/account1" />
+      </node>      
+      <nodes>
+        <regis:query path="registry/users/backoffice">
+          <param name="username" value="cbrown" />
+        </regis:query>
+      </nodes>      
+      <dbServices>
+        <soto:select>
+          <attribute name="sample:type" value="database" />
+        </soto:select>
+      </dbServices>
+      <compositeNode>
+        <regis:node>
+          <path alias="aliasAccount1">registry/users/backoffice/account1</path>
+          <path>registry/users/backoffice/account2</path>
+        </regis:node>      
+      </compositeNode>      
+    </sample:client>
+  </soto:service>  
+  
+  <soto:include uri="dbService4Include.xml" />
+  
+  <soto:service id="chooseTest">
+    <regis:choose>
+      <when nodeRef="db02Node" name="url" value="jdbc://pluto:5432/">
+        <soto:map>
+          <entry key="prop" value="test1" />
+        </soto:map>
+      </when>
+      <when nodeRef="db02Node" name="url" value="jdbc://mercury:5432/">
+        <soto:map>
+          <entry key="prop" value="test2" />
+        </soto:map>      
+      </when>      
+    </regis:choose>
+  </soto:service>
+  
+  <regis:if nodeRef="db02Node" name="url" value="jdbc://mercury:5432/">
+    <soto:service id="ifTest">    
+      <soto:map>
+        <entry key="prop" value="test1" />
+      </soto:map>      
+    </soto:service>
+  </regis:if>
+  
+  <regis:include uri="server.soto.xml" path="registry/server" />
+  
+</soto:app>
