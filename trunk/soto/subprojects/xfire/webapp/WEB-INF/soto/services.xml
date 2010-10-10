@@ -1,0 +1,22 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:xfire="soto:xfire">
+    
+  <soto:service>
+    <!-- the service implementation -->  
+    <soto:new class="org.sapia.soto.xfire.sample.HelloServiceImpl" />
+
+    <!-- the layer -->
+    <xfire:layer interface="org.sapia.soto.xfire.sample.HelloService" />
+    
+  </soto:service>  
+  
+  <soto:service>
+    <soto:new class="org.sapia.soto.xfire.sample.Jsr181HelloService" />
+	<xfire:layer> 
+	  <serviceFactory>
+        <soto:new class="org.codehaus.xfire.jaxb2.JaxbServiceFactory" />   
+	  </serviceFactory>
+	</xfire:layer>
+  </soto:service>    
+  
+</soto:app>
