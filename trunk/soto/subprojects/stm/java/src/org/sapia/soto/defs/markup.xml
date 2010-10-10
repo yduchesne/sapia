@@ -1,0 +1,5 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="mu">
+    <def class="org.sapia.soto.state.markup.MarkupStep" name="*" />          
+  </soto:namespace>
+</soto:defs>  
