@@ -3,33 +3,33 @@
 
     <sapia:vsection name="Project Home" href="home.html"/>
     <sapia:vsection name="Layers">  
-      <sapia:vitem name="AOP" href="subprojects/aop/home.html"/>  
-      <sapia:vitem name="JMX" href="subprojects/jmx/home.html"/>
+      <sapia:vitem name="AOP" href="projects/aop/home.html"/>  
+      <sapia:vitem name="JMX" href="projects/jmx/home.html"/>
     </sapia:vsection>
 
     <sapia:vsection name="Services">  
-      <sapia:vitem name="Properties" href="subprojects/properties/home.html"/>
-      <sapia:vitem name="i18n" href="subprojects/i18n/home.html"/>
-      <sapia:vitem name="Datasource" href="subprojects/datasource/home.html"/>
-      <sapia:vitem name="Logging"    href="subprojects/log/home.html"/>
+      <sapia:vitem name="Properties" href="projects/properties/home.html"/>
+      <sapia:vitem name="i18n"       href="projects/i18n/home.html"/>
+      <sapia:vitem name="Datasource" href="projects/datasource/home.html"/>
+      <sapia:vitem name="Logging"    href="projects/log/home.html"/>
     </sapia:vsection>
     
     <sapia:vsection name="Integration Projects">
-      <sapia:vitem name="Ubik"       href="subprojects/ubik/home.html"/>      
-      <sapia:vitem name="Registry"   href="subprojects/regis/home.html"/>    
-      <sapia:vitem name="Hibernate"  href="subprojects/hibernate/home.html"/>
-      <sapia:vitem name="ActiveMQ"   href="subprojects/activemq/home.html"/>
-      <sapia:vitem name="Jetty"      href="subprojects/jetty/home.html"/>    
-      <sapia:vitem name="XFire"      href="subprojects/xfire/home.html"/>            
-      <sapia:vitem name="LDAP"       href="subprojects/ldap/home.html"/>                
-      <sapia:vitem name="Freemarker" href="subprojects/freemarker/home.html"/>                    
+      <sapia:vitem name="Ubik"       href="projects/ubik/home.html"/>      
+      <sapia:vitem name="Registry"   href="projects/regis/home.html"/>    
+      <sapia:vitem name="Hibernate"  href="projects/hibernate/home.html"/>
+      <sapia:vitem name="ActiveMQ"   href="projects/activemq/home.html"/>
+      <sapia:vitem name="Jetty"      href="projects/jetty/home.html"/>    
+      <sapia:vitem name="XFire"      href="projects/xfire/home.html"/>            
+      <sapia:vitem name="LDAP"       href="projects/ldap/home.html"/>                
+      <sapia:vitem name="Freemarker" href="projects/freemarker/home.html"/>                    
     </sapia:vsection>    
     
 
-    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>  
-    <sapia:vsection name="Download" href="download.html"/>  
+    <sapia:vsection name="Javadoc"      href="maven/api/index.html"/>  
+    <sapia:vsection name="Download"     href="download.html"/>  
     <sapia:vsection name="Mailing List" href="list.html"/>  
-    <sapia:vsection name="Maven" href="maven/index.html"/>  
+    <sapia:vsection name="Maven"        href="maven/index.html"/>  
   </sapia:vmenu>
 
   <sapia:sect1 title="Download">
