@@ -1,11 +1,20 @@
-<sapia:page title="Soto State Machine" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
-  <sapia:refreshMenu page="leftmenu.html" />
+<sapia:page title="Soto State Machine" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">  
+
+  <sapia:vmenu>
+    <sapia:vsection name="Soto Home" href="../../../index.html"/>
+    <sapia:vsection name="STM Home" href="../index.html"/>
+    <sapia:vsection name="Project Home" href="index.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
   <sapia:sect1 title="STM for the Web">
     <sapia:section>
       <sapia:path name="home" href="http://www.sapia-oss.org" />
       <sapia:path name="projects" />
-      <sapia:path name="soto" href="../../../../../site/html/home.html" />      
-      <sapia:path name="state machine" href="../home.html" />
+      <sapia:path name="soto" href="../../../index.html" />      
+      <sapia:path name="state machine" href="../index.html" />
       <sapia:path name="web" />      
     </sapia:section>
     
