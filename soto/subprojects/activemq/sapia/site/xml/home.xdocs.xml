@@ -2,6 +2,7 @@
   <sapia:vmenu>
     <sapia:vsection name="Project Home" href="index.html"/>
     <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
     <sapia:vsection name="Maven" href="maven/index.html"/>
   </sapia:vmenu>
 
