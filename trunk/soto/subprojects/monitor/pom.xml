@@ -15,19 +15,15 @@
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto_freemarker</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto_ubik</artifactId>
-      <version>${project.version}</version>
     </dependency>
-
     <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>

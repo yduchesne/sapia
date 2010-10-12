@@ -16,17 +16,14 @@
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto_stm</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>freemarker</groupId>

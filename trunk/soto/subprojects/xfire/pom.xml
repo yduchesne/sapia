@@ -13,11 +13,9 @@
   </parent>
 
   <dependencies>
-
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.xfire</groupId>
