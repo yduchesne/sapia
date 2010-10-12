@@ -15,17 +15,14 @@
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto_ubik</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_soto_jmx</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
         <groupId>org.sapia</groupId>

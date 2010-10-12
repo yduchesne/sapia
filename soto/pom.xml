@@ -68,6 +68,134 @@
   <dependencyManagement>
     <dependencies>
 
+      <!-- soto modules -->
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_aop</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_concurrent</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_configuration</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_corus</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_datasource</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_freemarker</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_hibernate</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_i18n</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_jetty</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_jgroups</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_jmx</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_jython</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_ldap</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_log</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_monitor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_prevayler</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_properties</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_regis</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_scheduler</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_stm</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_ubik</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_validation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_soto_xfire</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!-- end soto modules -->
+
       <!-- cocoon stuff -->
       <dependency>
         <groupId>avalon</groupId>
@@ -277,6 +405,18 @@
           <groupId>quartz</groupId>
           <artifactId>quartz</artifactId>
           <version>1.5.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>1.4.3</version>
+          <optional>true</optional>
+      </dependency>
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <version>1.4.3</version>
+          <optional>true</optional>
       </dependency>
       <dependency>
           <groupId>trove</groupId>
