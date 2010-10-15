@@ -50,7 +50,7 @@ public class CorusCli extends CommandConsole {
   public static void main(String[] args) {
     String host = null;
     try{
-      host = Localhost.getLocalAddress().getHostAddress();
+      host = Localhost.getAnyLocalAddress().getHostAddress();
     }catch(UnknownHostException e){}
     int port = DEFAULT_PORT;
 
@@ -68,11 +68,11 @@ public class CorusCli extends CommandConsole {
         if(cmd.containsOption(HOST_OPT, true)){
           host = cmd.assertOption(HOST_OPT, true).getValue();
           if(host.equalsIgnoreCase("localhost")){
-            host = Localhost.getLocalAddress().getHostAddress();
+            host = Localhost.getAnyLocalAddress().getHostAddress();
           }
         }
         else{
-          host = Localhost.getLocalAddress().getHostAddress();
+          host = Localhost.getAnyLocalAddress().getHostAddress();
         }
   
         if (cmd.containsOption(PORT_OPT, true)) {
