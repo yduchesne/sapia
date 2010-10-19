@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sapia.corus.client.annotations.Transient;
 
@@ -127,7 +128,7 @@ public class ClassDescriptor<T> {
           AccessorInfo ai = new AccessorInfo();
           ai.accessor = m;
           ai.name = m.getName().substring(GET_PREFIX.length());
-          if(m.isAnnotationPresent(Transient.class)){
+          if(isTransient(m)){
             transientAccessors.add(ai);
           }
           else if(!transientAccessors.contains(ai)){
@@ -138,7 +139,7 @@ public class ClassDescriptor<T> {
           AccessorInfo ai = new AccessorInfo();
           ai.accessor = m;
           ai.name = m.getName().substring(IS_PREFIX.length());
-          if(m.isAnnotationPresent(Transient.class)){
+          if(isTransient(m)){
             transientAccessors.add(ai);
           }
           else if(!transientAccessors.contains(ai)){
@@ -224,18 +225,30 @@ public class ClassDescriptor<T> {
       return true;
     }
     else{
-      Class<?> parent = m.getDeclaringClass().getSuperclass();
-      if (parent != null) {
-        try{
-          Method superMethod = parent.getDeclaredMethod(m.getName(), m.getParameterTypes());
-          return isTransient(superMethod);
-        }catch(NoSuchMethodException e){
-          return false;
+      for(Object element:ClassUtils.getAllInterfaces(m.getDeclaringClass())){
+        Class<?> intf = (Class<?>)element;
+        if(isTransientInClass(m, intf)){
+          return true;
         }
       }
-      else{
-        return false;
+      for(Object element:ClassUtils.getAllSuperclasses(m.getDeclaringClass())){
+        Class<?> clazz = (Class<?>)element;
+        if(isTransientInClass(m, clazz)){
+          return true;
+        }
       }
+      return false;
     }
+  }
+  
+  private boolean isTransientInClass(Method m, Class<?> clazz){
+    try{
+      m = clazz.getDeclaredMethod(m.getName(), m.getParameterTypes());
+      if(m.isAnnotationPresent(Transient.class)){
+        return true;
+      }
+    }catch(NoSuchMethodException e){
+    }
+    return false;
   }
 }
