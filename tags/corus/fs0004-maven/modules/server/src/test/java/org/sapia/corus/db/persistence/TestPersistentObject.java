@@ -1,6 +1,9 @@
 package org.sapia.corus.db.persistence;
 
-public class TestPersistentObject {
+import org.sapia.corus.client.services.db.DbMap;
+import org.sapia.corus.client.services.db.persistence.Persistent;
+
+public class TestPersistentObject implements Persistent<String, TestPersistentObject>{
   
   private long id = System.currentTimeMillis();
   private String name;
@@ -29,4 +32,23 @@ public class TestPersistentObject {
   public void setName(String name) {
     this.name = name;
   }
+  
+  @Override
+  public void refresh() {
+  }
+  
+  @Override
+  public String getKey() {
+    return name;
+  }
+  
+  @Override
+  public void save() {
+  }
+  
+  @Override
+  public void setDbMap(DbMap<String, TestPersistentObject> db) {
+  }
+  
+  
 }

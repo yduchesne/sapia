@@ -4,15 +4,25 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.sapia.corus.client.services.db.persistence.ClassDescriptor;
+import org.sapia.corus.client.services.db.persistence.NoSuchFieldException;
 
 public class ClassDescriptorTest {
 
   @Test
   public void testGetDescriptorForName() {
     ClassDescriptor<TestPersistentObject> cd = new ClassDescriptor<TestPersistentObject>(TestPersistentObject.class);
-    System.out.println(cd);
-    assertTrue("No descriptor found for field 'name'", cd.getFieldForName("name") != null);
-    assertTrue("No descriptor found for field 'id'", cd.getFieldForName("id") != null);
+    cd.getFieldForName("name");
+    cd.getFieldForName("id");
+  }
+  
+  @Test
+  public void testGetDescriptorForTransientAccessor() {
+    ClassDescriptor<TestPersistentObject> cd = new ClassDescriptor<TestPersistentObject>(TestPersistentObject.class);
+    try{
+      cd.getFieldForName("key");
+      fail("Field 'key' should not be persistent attribute");
+    }catch(NoSuchFieldException e){}
+      
   }
   
   @Test
