@@ -31,20 +31,28 @@ public abstract class CorusCliCommand implements Command {
    */
   public void execute(Context ctx) throws AbortException, InputException {
     CliContext cliCtx = (CliContext)ctx;
-    try{
+    
+    try {
       doExecute(cliCtx);
       cliCtx.setError(null);
-    }catch(InputException e){
-      cliCtx.setError(e);
-      if(cliCtx.isAbordOnError()){
+      
+    } catch (InputException ie) {
+      cliCtx.setError(ie);
+      if (cliCtx.isAbordOnError()) {
         throw new AbortException();
       }
-    }catch(RuntimeException e){
-      cliCtx.setError(e);
-      if(cliCtx.isAbordOnError()){
+      
+    } catch (AbortException ae) {
+      cliCtx.setError(ae);
+      throw ae;
+      
+    } catch (RuntimeException re) {
+      cliCtx.setError(re);
+      if (cliCtx.isAbordOnError()) {
         throw new AbortException();
       }
     }
+    
   }
 
   protected abstract void doExecute(CliContext ctx)
