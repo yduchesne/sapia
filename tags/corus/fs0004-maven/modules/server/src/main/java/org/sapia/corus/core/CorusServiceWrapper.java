@@ -65,8 +65,14 @@ public class CorusServiceWrapper implements WrapperListener, Runnable {
    */
   public void controlEvent(int anEvent) {
     if (WrapperManager.isControlledByNativeWrapper()) {
-      // The Wrapper will take care of this event
-      System.out.println("Ignoring logoff event");
+      if ((anEvent == WrapperManager.WRAPPER_CTRL_LOGOFF_EVENT) &&
+              WrapperManager.isLaunchedAsService()) {
+        // The Wrapper will take care of this event
+        System.out.println("Ignoring logoff event");
+        // Ignore
+      } else {
+        WrapperManager.stop(0);
+      }
       
     // We are not being controlled by the Wrapper, so
     // handle the event ourselves.
