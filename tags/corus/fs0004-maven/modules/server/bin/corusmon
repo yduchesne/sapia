@@ -71,7 +71,7 @@ if [ ! -x "${JAVACMD}" ] ; then
     exit 1
 fi
 
-MAINCLASS=org.sapia.corus.CorusMonitor
+MAINCLASS=org.sapia.corus.core.CorusMonitor
 CORUS_CLASSPATH=""
 for JAR in ${CORUS_HOME}/lib/server/*.jar
 do
@@ -138,5 +138,5 @@ if [ -n "$CYGHOME" ]; then
 fi
 
 java_exec_command="exec \"${JAVACMD}\" -cp \"${CORUS_CLASSPATH}\" -Dcorus.home=\"${CORUS_HOME}\" $java_sys_opts ${MAINCLASS} \"$@\""
-echo $java_exec_command
+#echo $java_exec_command
 eval $java_exec_command

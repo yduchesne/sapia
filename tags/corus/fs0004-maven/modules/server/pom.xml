@@ -143,7 +143,7 @@
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_console</artifactId>
-      <version>1.4</version>
+      <version>1.5-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -345,6 +345,18 @@
 		            <descriptor>src/main/assembly/server.xml</descriptor>
 		          </descriptors>
 		        </configuration>
+          </execution>
+          <execution>
+            <id>make-server-linux64-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/server-linux64.xml</descriptor>
+                  </descriptors>
+                </configuration>
           </execution>
           <execution>
 	          <id>make-demo-dist</id>

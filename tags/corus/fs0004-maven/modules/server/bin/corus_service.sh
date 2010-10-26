@@ -30,14 +30,14 @@ APP_LONG_NAME="Sapia Corus Server"
 
 # Wrapper
 WRAPPER_CMD="$CORUS_HOME/bin/wrapper"
-WRAPPER_CONF="$CORUS_HOME/config/corus_service.properties"
+WRAPPER_CONF="$CORUS_HOME/config/corus_service.wrapper.properties"
 
 # Process second argument (used to specify specific corus server port)
 if [ -n "${2}" ]
 then
     APP_NAME="${APP_NAME}_${2}"
     APP_LONG_NAME="${APP_LONG_NAME} [${2}]"
-    WRAPPER_CONF="${CORUS_HOME}/config/corus_service_${2}.properties"
+    WRAPPER_CONF="${CORUS_HOME}/config/corus_service_${2}.wrapper.properties"
 fi
 
 # Priority at which to run the wrapper.  See "man nice" for valid priorities.

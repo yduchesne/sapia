@@ -36,6 +36,6 @@ rem echo %LOCALCLASSPATH%
 
 set CLASSPATH=%CLASSPATH%;%LOCALCLASSPATH%
 
-"%JAVA_HOME%/bin/java" -Dcorus.home="%CORUS_HOME%" org.sapia.corus.CorusServer %1 %2 %3 %4 %5 %6 %7 %8 %9
+"%JAVA_HOME%/bin/java" -Dcorus.home="%CORUS_HOME%" org.sapia.corus.core.CorusServer %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 :end
