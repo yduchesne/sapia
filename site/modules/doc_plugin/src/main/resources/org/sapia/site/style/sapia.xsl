@@ -31,7 +31,7 @@
 <xsl:param name="build.currentDate" required="yes" as="xs:string"/>
 <xsl:param name="build.currentTime" required="yes" as="xs:string"/>
 <xsl:param name="build.timestamp" required="yes" as="xs:string"/>
-<xsl:param name="build.username" required="yes" as="xs:string"/-->
+<xsl:param name="build.username" required="yes" as="xs:string"/>
 
 <!-- ========================================= PAGE ========================================= -->
                 
