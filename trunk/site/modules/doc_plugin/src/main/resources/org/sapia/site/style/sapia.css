@@ -100,46 +100,42 @@ hr {
 
 #header {
 	width: 960px;
-	height: 313px;
+	height: 110px;
 	margin: 0 auto;
 }
 
 /* Logo */
 
 #logo {
-	width: 754px;
-	height: 100px;
-	margin: 0 auto;
-	padding: 2px;
+	width:    754px;
+	height:   25px;
+  margin-bottom: 10px;
+  margin-top:    10px;
+	padding:  2px;
 }
 
-#logo h1, #logo h2 {
-	margin: 0;
+#logo-title {
+  margin-right: 50px;
 	padding: 0;
 	text-transform: uppercase;
-}
-
-#logo h1 {
-	padding: 40px 5px 0 20px;
-	font-size: 36px;
+	font-size:   20px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	color: #31363B;
+	color:       #31363B;
 }
 
-#logo h2 {
-	padding: 0px 0 0 25px;
-	font-size: 10px;
-	font-weight: bold;
-	font-family: Arial, Helvetica, sans-serif;
-	color: #808080;
+#logo-subtitle {
+	font-size:     12px;
+	font-weight:   bold;
+	font-family:   Arial, Helvetica, sans-serif;
+	color:         #808080;
 }
 
 #logo p {
-	margin: 0;
-	padding: 0 0 0 20px;
+	margin:      0;
+	padding:     0 0 0 20px;
 	line-height: normal;
-	font-size: 1.2em;
+	font-size:   1.2em;
 	font-weight: bold;
 }
 
@@ -148,31 +144,31 @@ hr {
 }
 
 #splash {
-	width: 754px;
-	height: 148px;
+	width:          754px;
+	height:         47px;
 	padding-bottom: 3px;
-	/*background: url(http://sapia-oss.org/content/images/transluscid_leaf.jpg) no-repeat left top;*/
 }
 
 /* Header */
 
 #header {
-	width: 754px;
+	width:  754px;
+	height: 140;
 	margin: 0 auto;
 }
 
 #menu {
-	height: 60px;
-	width: 754px;
+	height:       50px;
+	width:        754px;
 	padding-left: 20px;
-	background: url(http://sapia-oss.org/content/images/img02-green.jpg) no-repeat left top;
-	font-family: Arial, Helvetica, sans-serif;
+	background:   url(http://sapia-oss.org/content/images/img02-green.jpg) no-repeat left top;
+	font-family:  Arial, Helvetica, sans-serif;
 }
 
 #menu ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+	margin:      0;
+	padding:     0;
+	list-style:  none;
 	line-height: normal;
 }
 
@@ -181,16 +177,16 @@ hr {
 }
 
 #menu a {
-	display: block;
-	float: left;
-	padding: 20px 30px 15px 18px;
+	display:      block;
+	float:        left;
+	padding:      20px 30px 15px 18px;
 	margin-right: 1px;
-	height: 30px;
-	background: url(http://sapia-oss.org/content/images/img03.gif) no-repeat left 35%;
+	height:       30px;
+	background:   url(http://sapia-oss.org/content/images/img03.gif) no-repeat left 35%;
 	text-decoration: none;
-	text-transform: uppercase;
-	font-size: 10px;
-	color: #FFFFFF;
+	text-transform:  uppercase;
+	font-size:       10px;
+	color:           #FFFFFF;
 }
 
 #menu a:hover {
@@ -199,15 +195,15 @@ hr {
 
 #menu .current_page_item a {
 	background: none;
-	color: #FFFFFF;
+	color:      #FFFFFF;
 }
 
 /* Search */
 
 #search {
-	float: right;
-	width: 260px;
-	margin: 0px;
+	float:      right;
+	width:      260px;
+	margin:      0px;
 	margin-top: 10px;
 }
 
@@ -216,24 +212,24 @@ hr {
 }
 
 #search #s {
-	width: 160px;
-	height: 23px;
+	width:      160px;
+	height:     23px;
 	background: #FFDBE1;
-	border: 1px solid #F57F8C;
+	border:     1px solid #F57F8C;
 }
 
 #search #x {
 	width: 40px;
-	background: #F74B61;
-	border-top: #F74B61 solid 1px;
+	background:    #F74B61;
+	border-top:    #F74B61 solid 1px;
 	border-bottom: #F74B61 solid 3px;
-	border-left: #F74B61 solid 1px;
-	border-right: #F74B61 solid 1px;
-	color: #FFDBE1;
+	border-left:   #F74B61 solid 1px;
+	border-right:  #F74B61 solid 1px;
+	color:         #FFDBE1;
 }
 
 #wrapper {
-	width: 754px;
+	width:  754px;
 	margin: 0 auto;
 	background: url(http://sapia-oss.org/content/images/img05.jpg) repeat-x left top;
 }
@@ -241,8 +237,8 @@ hr {
 /* Page */
 
 #page {
-	width: 754px;
-	margin: 0 auto;
+	width:       754px;
+	margin:      0 auto;
 	padding-top: 20px;
 }
 
@@ -257,8 +253,8 @@ hr {
 }
 
 .post .title {
-	margin: 0;
-	padding: 10px 20px 10px 10px;
+	margin:        0;
+	padding:       10px 20px 10px 10px;
 	border-bottom: 1px dotted #D6C9BF;
 }
 

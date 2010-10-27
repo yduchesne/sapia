@@ -7,15 +7,13 @@
       style="src/main/resources/org/sapia/site/style/sapia.xsl">
         <include name="**.xml" />
         <exclude name="**.css"/>
+        <exclude name="img/*.jpg"/>
     </xslt>
 
     <mkdir dir="etc/html/css" />
     <copy file="src/main/resources/org/sapia/site/style/sapia.css" todir="etc/html/css" />
     <copy todir="etc/html">
-      <fileset dir="etc/xml">
-        <exclude name="**.xml" />
-        <include name="**.css"/>
-      </fileset>
+      <fileset dir="${basedir}/etc/xml" includes="**.css,**.jpg" excludes="**.xml"/>
     </copy>
     
 </project>                                                                                                 
