@@ -4,8 +4,18 @@
       basedir="etc/xml"
       destdir="etc/html" 
       extension=".html" 
-      style="src/main/resources/org/sapia/site/style/sapia.xsl"/>
+      style="src/main/resources/org/sapia/site/style/sapia.xsl">
+        <include name="**.xml" />
+        <exclude name="**.css"/>
+    </xslt>
 
     <mkdir dir="etc/html/css" />
     <copy file="src/main/resources/org/sapia/site/style/sapia.css" todir="etc/html/css" />
-</project>
+    <copy todir="etc/html">
+      <fileset dir="etc/xml">
+        <exclude name="**.xml" />
+        <include name="**.css"/>
+      </fileset>
+    </copy>
+    
+</project>                                                                                                 

@@ -2,6 +2,10 @@
   title="Sapia Open Source" 
   xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
+  <head>
+    <link rel="stylesheet" href="my.css" type="text/css"/>
+  </head>
+  
   <sapia:sect1 title="Section 1">
     <sapia:sect-desc>
 
@@ -34,39 +38,44 @@
       </table>
      <p/>
       <sapia:code>
-public static void fileCopy( File in, File out )
-            throws IOException
-    {
-        FileChannel inChannel = new FileInputStream( in ).getChannel();
-        FileChannel outChannel = new FileOutputStream( out ).getChannel();
-        try
-        {
-//          inChannel.transferTo(0, inChannel.size(), outChannel);      // original -- apparently has trouble copying large files on Windows
-
-            // magic number for Windows, 64Mb - 32Kb)
-            int maxCount = (64 * 1024 * 1024) - (32 * 1024);
-            long size = inChannel.size();
-            long position = 0;
-            while ( position &lt; size )
-            {
-               position += inChannel.transferTo( position, maxCount, outChannel );
-            }
-        }
-        finally
-        {
-            if ( inChannel != null )
-            {
-               inChannel.close();
-            }
-            if ( outChannel != null )
-            {
-                outChannel.close();
-            }
-        }
-    }
 
       </sapia:code>
    </sapia:sect-desc>
 
+   	  <sapia:sect2 title="Explore">
+   	  <div>
+        <div class="content-box">
+          <div class="content-box-title">Rationale</div>
+          <span class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus varius feugiat. <br/><a href="more">more...</a></span>
+        </div>
+        
+        <div class="content-box">
+          <div class="content-box-title">Architecture</div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus varius feugiat.</p>
+        </div>
+
+        <div class="content-box">
+          <div class="content-box-title">Gallery</div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus varius feugiat.</p>
+        </div>
+      </div>
+      <div style="clear: both;" />
+   	  <div>
+        <div class="content-box">
+          <div class="content-box-title">Rationale</div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus varius feugiat.</p>
+        </div>
+        
+        <div class="content-box">
+          <div class="content-box-title">Architecture</div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus varius feugiat.</p>
+        </div>
+
+        <div class="content-box">
+          <div class="content-box-title">Gallery</div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus varius feugiat.</p>
+        </div>
+      </div>
+	  </sapia:sect2>
   </sapia:sect1>
 </sapia:page>

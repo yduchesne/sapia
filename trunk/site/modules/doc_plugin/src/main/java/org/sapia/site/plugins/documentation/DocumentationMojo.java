@@ -371,77 +371,29 @@ public class DocumentationMojo extends AbstractMojo{
   private void setXslParams(XSLTProcess transform){
     
     // project general info
-    Param param = transform.createParam();
-    param.setName("project.name");
-    param.setExpression(asString(project.getName()));
-
-    param = transform.createParam();
-    param.setName("project.description");
-    param.setExpression(asString(project.getDescription()));
-
-    param = transform.createParam();
-    param.setName("project.version");
-    param.setExpression(asString(project.getVersion().replace("-SNAPSHOT", "")));
-
-    param = transform.createParam();
-    param.setName("project.artifactId");
-    param.setExpression(asString(project.getArtifactId()));
-
-    param = transform.createParam();
-    param.setName("project.groupId");
-    param.setExpression(asString(project.getGroupId()));
-
-    param = transform.createParam();
-    param.setName("project.inceptionYear");
-    param.setExpression(asString(project.getInceptionYear()));
-
-    param = transform.createParam();
-    param.setName("project.packaging");
-    param.setExpression(asString(project.getPackaging()));
-
-    param = transform.createParam();
-    param.setName("project.url");
-    param.setExpression(asString(project.getUrl()));
-    
-    param = transform.createParam();
-    param.setName("project.organization.name");
-    param.setExpression(asString(project.getOrganization().getName()));
+    createParam("project.name", project.getName(), transform);
+    createParam("project.description", project.getDescription(), transform);
+    createParam("project.version", project.getVersion().replace("-SNAPSHOT", ""), transform);
+    createParam("project.artifactId", project.getArtifactId(), transform);
+    createParam("project.groupId", project.getGroupId(), transform);
+    createParam("project.inceptionYear", project.getInceptionYear(), transform);
+    createParam("project.packaging", project.getPackaging(), transform);
+    createParam("project.url", project.getUrl(), transform);
+    createParam("project.organization.name", project.getOrganization().getName(), transform);
 
     // organization
-    param = transform.createParam();
-    param.setName("project.organization.url");
-    param.setExpression(asString(project.getOrganization().getUrl()));
+    createParam("project.organization.url", project.getOrganization().getUrl(), transform);
 
     // scm
-    param = transform.createParam();
-    param.setName("project.scm.connection");
-    param.setExpression(asString(project.getScm().getConnection()));
-
-    param = transform.createParam();
-    param.setName("project.scm.developerConnection");
-    param.setExpression(asString(project.getScm().getDeveloperConnection()));
-
-    param = transform.createParam();
-    param.setName("project.scm.url");
-    param.setExpression(asString(project.getScm().getUrl()));
-
-    param = transform.createParam();
-    param.setName("project.scm.tag");
-    param.setExpression(asString(project.getScm().getTag()));
+    createParam("project.scm.connection", project.getScm().getConnection(), transform);
+    createParam("project.scm.developerConnection", project.getScm().getDeveloperConnection(), transform);
+    createParam("project.scm.url", project.getScm().getUrl(), transform);
+    createParam("project.scm.tag", project.getScm().getTag(), transform);
 
     // project build info
-    param = transform.createParam();
-    param.setName("project.build.directory");
-    param.setExpression(asString(project.getBuild().getDirectory()));
-
-    param = transform.createParam();
-    param.setName("project.build.outputDirectory");
-    param.setExpression(asString(project.getBuild().getOutputDirectory()));
-
-    param = transform.createParam();
-    param.setName("project.build.finalName");
-    param.setExpression(asString(project.getBuild().getFinalName()));
-
+    createParam("project.build.directory", project.getBuild().getDirectory(), transform);
+    createParam("project.build.outputDirectory", project.getBuild().getOutputDirectory(), transform);
+    createParam("project.build.finalName", project.getBuild().getFinalName(), transform);
     
     // project mailing lists
     List mailingLists = visit(new ProjectVisitor<List>() {
@@ -460,32 +412,25 @@ public class DocumentationMojo extends AbstractMojo{
       createMailingListParams(null, null, transform);
     }
     // Non-Maven
-    param = transform.createParam();
     Calendar cal = Calendar.getInstance();
-    param.setName("build.currentYear");
-    String year = Integer.toString(cal.get(Calendar.YEAR));
-    param.setExpression(year);
-
-    param = transform.createParam();
-    param.setName("build.currentDate");
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    String date = sdf.format(cal.getTime());
-    param.setExpression(date);
-
-    param = transform.createParam();
-    param.setName("build.currentTime");
-    sdf = new SimpleDateFormat("hh:mm:ss");
-    String time = sdf.format(cal.getTime());
-    param.setExpression(time);
-
-    param = transform.createParam();
-    param.setName("build.timestamp");
-    param.setExpression(Long.toString(System.currentTimeMillis()));
-
-    param = transform.createParam();
-    param.setName("build.username");
-    param.setExpression(System.getProperty("user.name"));
     
+    createParam("build.currentYear", Integer.toString(cal.get(Calendar.YEAR)), transform);
+    createParam("build.currentDate", new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime()), transform);
+    createParam("build.currentTime", new SimpleDateFormat("hh:mm:ss").format(cal.getTime()), transform);
+    createParam("build.timestamp", Long.toString(System.currentTimeMillis()), transform);
+    createParam("build.username", System.getProperty("user.name"), transform);
+    
+  }
+  
+  private void createParam(String key, String value, XSLTProcess transform){
+    String aValue = value == null || value.length() == 0 ? "NOT_FOUND" : value;
+    String sysValue = System.getProperty(key);
+    if(sysValue != null){
+      aValue = sysValue;
+    }
+    Param p = transform.createParam();
+    p.setName(key);
+    p.setExpression(aValue);
   }
   
   private void createMailingListParams(MailingList list, String index, XSLTProcess transform){
@@ -497,14 +442,11 @@ public class DocumentationMojo extends AbstractMojo{
   }
   
   private void createMailingListParam(String name, String index, String value, XSLTProcess transform){
-    Param param = transform.createParam();
+    String aName = name;
     if(index != null){
-      param.setName(name+".1");
+      aName = aName+".1";
     }
-    else{
-      param.setName(name);
-    }
-    param.setExpression(asString(value));
+    createParam(aName, value, transform);
   }
   
   private File createTempFile(String name){
@@ -517,11 +459,6 @@ public class DocumentationMojo extends AbstractMojo{
       );
     }
     return tmp;
-  }
-  
-  private String asString(String value){
-    if(value == null || value.length() == 0) return "--- param value not available ---";
-    return value;
   }
   
   private <T> T visit(ProjectVisitor<T> visitor){

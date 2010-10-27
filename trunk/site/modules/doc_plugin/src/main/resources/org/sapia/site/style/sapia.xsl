@@ -31,14 +31,13 @@
 <xsl:param name="build.currentDate" required="yes" as="xs:string"/>
 <xsl:param name="build.currentTime" required="yes" as="xs:string"/>
 <xsl:param name="build.timestamp" required="yes" as="xs:string"/>
-<xsl:param name="build.username" required="yes" as="xs:string"/>
+<xsl:param name="build.username" required="yes" as="xs:string"/-->
 
 <!-- ========================================= PAGE ========================================= -->
                 
 <xsl:template match="/sapia:page">
   <html>
     <head>
-
       <link rel="stylesheet" type="text/css">
         <xsl:choose>
           <xsl:when test="@cssPath">
@@ -49,6 +48,10 @@
           </xsl:otherwise>
         </xsl:choose>
       </link>
+      
+      <xsl:if test="head">
+        <xsl:apply-templates select="head/*" />
+      </xsl:if>
 
       <xsl:choose>
         <xsl:when test="@title">
@@ -118,7 +121,7 @@
         </div>
       </div>
       <div id="footer">
-	      <p class="legal">Copyright (c) 2002-<xsl:value-of select="$build.currentYear"/> Sapia Open Source. All rights reserved.</p>
+	      <p class="legal">Copyright (c) 2002-<xsl:value-of select="build.currentYear"/> Sapia Open Source. All rights reserved.</p>
       </div>
     </body>
   </html>    
@@ -499,9 +502,7 @@
     </xsl:for-each>
     </li>
   </xsl:template>
-  
- <!-- --> 
-  
+    
  <!-- ========================================= LICENSE ========================================= -->  
 
   <xsl:template match="sapia:license">
