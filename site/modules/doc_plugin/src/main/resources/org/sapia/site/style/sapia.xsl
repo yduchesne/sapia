@@ -121,7 +121,7 @@
         </div>
       </div>
       <div id="footer">
-	      <p class="legal">Copyright (c) 2002-<xsl:value-of select="build.currentYear"/> Sapia Open Source. All rights reserved.</p>
+	      <p class="legal">Copyright (c) 2002-<xsl:value-of select="$build.currentYear"/> Sapia Open Source. All rights reserved.</p>
       </div>
     </body>
   </html>    
