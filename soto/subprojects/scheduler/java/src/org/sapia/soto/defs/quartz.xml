@@ -1,5 +1,0 @@
-<soto:defs xmlns:soto="sapia:soto">
-  <soto:namespace prefix="quartz">                  
-    <def class="org.sapia.soto.scheduler.SchedulerService"             name="scheduler" />
-  </soto:namespace>
-</soto:defs>  
