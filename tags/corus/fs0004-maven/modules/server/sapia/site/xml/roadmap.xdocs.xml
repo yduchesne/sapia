@@ -1,0 +1,71 @@
+<sapia:page title="Corus" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:sect1 title="Roadmap">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="corus" href="home.html" />
+      <sapia:path name="roadmap" />
+    </sapia:section>
+    
+    <sapia:sect-desc>
+      <p>
+        We define our roadmap based on what we think is important, but 
+        community input is given the utmost priority. Your comments are welcome. 
+        Send them to us.
+      </p>
+      <p>
+        In the meantime, here's what's on our plate(in no specific order):
+      </p>
+    </sapia:sect-desc>
+    <sapia:sect2 title="Cloud Integration">
+      <p>
+        Since Corus instances currently discover each other
+        using IP multicast, Corus cannot at this point be deployed in a cloud 
+        environment: most cloud providers (if not all) do not support 
+        multicast. 
+      </p>
+      <p>
+        It is therefore part of our plans to integrate alternative group 
+        communication mechanisms. We also want to enrich Corus so that it 
+        makes provisioning JVM-based applications into the cloud a breeze.
+      </p>
+    </sapia:sect2>
+    <sapia:sect2 title="Prepackaged Corus-enabled Servers">
+      <p>
+        Corus is an infrastructure, not a solution per say. We plan on 
+        providing enterprise-scale, Corus-aware versions of Tomcat 7 and/or 
+        Jetty and Apache Tuscany (SCA). 
+      </p>
+    </sapia:sect2>
+    <sapia:sect2 title="Enterprise-grade management console">
+      <p>
+        Currently, the only way to administer application processes controlled 
+        by Corus is to use the Corus CLI (command-line interface). We plan on 
+        offering a robust management console that will allow managing Corus 
+        domains (whether cloud-based or not) from a single web-based user 
+        interface. 
+      </p>
+      <p>
+        The console will also offer administration areas specific to the 
+        Corus-enabled servers that we plan on packaging for Corus.
+      </p>
+    </sapia:sect2>
+    <sapia:sect2 title="Robust Security">
+      <p>
+        Currently, security in Corus is only supported through IP filtering. 
+        This firewall-like, coarse-grained approach works, but is not the 
+        most flexible and robust. We are planning on implementing full-fledge 
+        authentication and authorization.
+      </p>
+    </sapia:sect2>
+    <sapia:sect2 title="Commercial Support">
+      <p>
+        We have not yet concisely defined what type of commercial support 
+        we'll be offering. We envision presenting customers with different 
+        support options, and we see a commercial support offering somewhat in 
+        line with the availability of the enterprise features that we want to 
+        develop.
+      </p>
+    </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>
