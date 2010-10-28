@@ -68,8 +68,8 @@
           <div class="content-box-title">Architecture</div>
           <span class="text">
             Corus provides an infrastructure that allows deploying
-            and monitoring application processes in a centralized
-            manner.
+            and monitoring distributed application processes 
+            reliably, in a centralized manner.
             <br/><a href="architecture.html">more...</a>
           </span>
         </div>
