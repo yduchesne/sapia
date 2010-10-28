@@ -67,10 +67,9 @@
         <div class="content-box">
           <div class="content-box-title">Architecture</div>
           <span class="text">
-            A Corus instance is a Java daemon that executes
-            and monitors application processes. Multiple Corus
-            instances are grouped into a domain or cluster, and
-            can be centrally managed as one.
+            Corus provides an infrastructure that allows deploying
+            and monitoring application processes in a centralized
+            manner.
             <br/><a href="architecture.html">more...</a>
           </span>
         </div>
