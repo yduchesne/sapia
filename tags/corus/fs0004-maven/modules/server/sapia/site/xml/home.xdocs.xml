@@ -41,7 +41,7 @@
 	        Minimize deployment time, and thus downtime, through batch deployment.
 	      </li>
 	      <li>
-	        Integrate Corus cluster-wide process status data into monitoring
+	        Integrate cluster-wide process status data into monitoring
 	        infrastructure.
 	      </li>
 	      <li>
