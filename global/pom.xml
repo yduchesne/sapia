@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_global</artifactId>
-  <version>1.8</version>
+  <version>1.9-SNAPSHOT</version>
 
   <organization>
     <name>Sapia OSS</name>
@@ -76,9 +76,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.8</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.8</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.8</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.1</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.1</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.1</url>
   </scm>
 
   <packaging>pom</packaging>
