@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <name>Sapia Corus Grails Sample</name>
   <groupId>org.sapia</groupId>
   <artifactId>corus_sample_grails_app</artifactId>
   <packaging>war</packaging>
 
   <parent>
     <groupId>org.sapia</groupId>
-    <artifactId>sapia_corus_parent</artifactId>
+    <artifactId>sapia_corus_samples_parent</artifactId>
     <version>2.0-SNAPSHOT</version>
   </parent>
 
@@ -22,6 +23,21 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <artifactId>grails-gorm</artifactId>
       <version>1.3.3</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.grails</groupId>
+      <artifactId>grails-bootstrap</artifactId>
+      <version>1.3.3</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>1.6.9</version>
+      <scope>runtime</scope>
+    </dependency>
+
 
     <!-- Grails defaults to Ehache for the second-level Hibernate cache. -->
 	<!--dependency>
