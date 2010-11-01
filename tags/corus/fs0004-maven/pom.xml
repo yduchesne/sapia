@@ -39,27 +39,22 @@
   <modules>
     <module>modules/client</module>
     <module>modules/server</module>
+    <module>samples</module>
   </modules>
 
-  <build>
-    <plugins>
-      <plugin>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
         <groupId>org.sapia</groupId>
-        <artifactId>sapia_site_doc_plugin</artifactId>
-        <version>1.9-SNAPSHOT</version>
-        <configuration>
-          <deleteDestdir>false</deleteDestdir>
-        </configuration>
+        <artifactId>sapia_corus_client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_corus_server</artifactId>
+        <version>${project.version}</version>
+      </dependency> 
+    </dependencies>
+  </dependencyManagement>
 
-        <executions>
-          <execution>
-            <phase>site</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 </project>
