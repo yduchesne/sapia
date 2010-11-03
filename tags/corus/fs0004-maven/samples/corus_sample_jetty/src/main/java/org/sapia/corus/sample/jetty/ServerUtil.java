@@ -1,4 +1,4 @@
-package org.sapia.sample.jetty;
+package org.sapia.corus.sample.jetty;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,14 +33,15 @@ public class ServerUtil {
     File webAppsRootDir = getWebappsRootDir();
     File[] webAppsDirs = webAppsRootDir.listFiles();
     List<Handler> handlers = new ArrayList<Handler>();
-    for(File webAppFileOrDir: webAppsDirs){
       WebAppContext ctx = new WebAppContext();
-      ctx.setContextPath(webAppFileOrDir.getName());
+      for(File webAppFileOrDir: webAppsDirs){
       if(webAppFileOrDir.getName().endsWith(".war")){
         System.out.println(String.format("Adding WAR: %s", webAppFileOrDir.getAbsolutePath()));
+        ctx.setContextPath(webAppFileOrDir.getName().replace(".war", ""));
         ctx.setWar(webAppFileOrDir.getAbsolutePath());
       }
       else{
+        ctx.setContextPath(webAppFileOrDir.getName());
         ctx.setDescriptor(
             webAppFileOrDir.getAbsolutePath()+
             File.separator+
@@ -49,7 +50,7 @@ public class ServerUtil {
             "web.xml");
         ctx.setResourceBase(webAppFileOrDir.getAbsolutePath());
       }
-      ctx.setParentLoaderPriority(true);
+      ctx.setParentLoaderPriority(false);
       handlers.add(ctx);
     }
     contexts.setHandlers(handlers.toArray(new Handler[handlers.size()]));
