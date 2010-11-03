@@ -1,0 +1,66 @@
+<sapia:page title="Corus Tutorials" cssPath="../css/sapia.css" 
+  xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <head>
+    <link rel="stylesheet" href="../css/corus.css" type="text/css"/>
+  </head>
+  
+
+  <sapia:vmenu>
+    <sapia:vsection name="Corus Home" href="../index.html"/>
+    <sapia:vsection name="Learning" href="../learning.html"/>
+  </sapia:vmenu>
+  
+
+  <sapia:sect1 title="Tutorials">
+    <sapia:section>
+      <sapia:path name="home" href="../../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="corus"     href="../home.html" />
+      <sapia:path name="learning"  href="../learning.html" />
+      <sapia:path name="tutorials" />
+    </sapia:section>
+
+    <sapia:sect-desc>
+    
+      <div class="article-box">
+        <h1><a href="webapp.html">Web App Example</a></h1> 
+        See how a Grails web app is deployed into a Jetty container that is
+        itself deployed into Corus. The tutorials illustrates the full
+        development-to-deployment cycle. At the end of this tutorial you'll
+        have a very good grasp of what Corus is abount.
+      </div>
+      
+      <div class="article-box">
+        <h1><a href="corus-descriptor.html">The Corus Descriptor</a></h1> 
+        What is it exactly? How is it used? The descriptor tells Corus 
+        how to start your applications. It's the only Corus-specific config file
+        you'll need when deploying standalone Java apps into Corus.
+      </div>
+
+      <div class="article-box">
+        <h1><a href="command-line.html">Exploring the CLI</a></h1> 
+        The command-line interface mimicks Linux/Unix commands and is
+        the primary tool through which you interact with Corus.
+        Explore the various features, play around with pattern matching,
+        learn about clustered commands. 
+      </div>
+      
+      <div style="float: right;">
+        <h2>More to come...</h2>
+       
+        We'll add more content to the tutorials as time goes by.
+      </div>
+            
+      <!--div class="article-box">
+        <h1><a href="advanced-tutorial.html">Advanced Tutorial</a></h1> 
+        We take our embedded Jetty server to the next level: start multiple
+        instances in a Corus domain. Indeed, you'll see how a clustered 
+        deployment is performed and how multiple Corus instances can
+        be controlled centrally, as one.
+      </div-->
+      
+    </sapia:sect-desc>
+    
+  </sapia:sect1>
+</sapia:page>

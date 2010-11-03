@@ -1,0 +1,31 @@
+<sapia:page title="Installation" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <head>
+    <link rel="stylesheet" href="css/corus.css" type="text/css"/>
+  </head>
+
+  <sapia:sect1 title="Installation">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="corus" href="home.html" />
+      <sapia:path name="installation" />
+    </sapia:section>
+    
+    <sapia:sect-desc>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+      Etiam blandit pulvinar massa, quis tincidunt quam mattis a. 
+      Quisque purus neque, adipiscing eu mollis non, pellentesque id felis. 
+    </sapia:sect-desc>
+    
+    <sapia:sect2 title="Download">
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Setup">
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Test">
+    </sapia:sect2>
+    
+  </sapia:sect1>
+</sapia:page>

@@ -25,8 +25,8 @@
     <sapia:sect2 title="Highlights">
       <ul style="color: black; font-size: 16px; list-style: square outside none;" >
         <li>
-          Scale JVM-based applications (Java, Scala, Clojure, Jython) as is, 
-          without conforming to a complex programming model.
+          Scale JVM-based applications as is, without conforming to a complex 
+          programming model.
         </li>
         <li>
           Centrally manage distributed JVMs on commodity hardware, using 
@@ -52,10 +52,11 @@
 	  </sapia:sect2>
 	  
 	  <sapia:sect2 title="Explore">
-   	  <div>
+	  
+   	  <div style="margin-left: 15px">
         <div class="content-box">
           <div class="content-box-title">Rationale</div>
-          <span class="text">
+          <span class="text">                                                          
             Corus provides an alternative to the monolithic application
             server model. Develop your app using your lightweight
             framework of choice, and deploy.
@@ -84,16 +85,17 @@
         </div>
         
       </div>
+      
       <div style="clear: both;" />
-   	  <div>
-   	  
+      
+   	  <div style="margin-left: 15px">
         <div class="content-box">
-          <div class="content-box-title">Advanced</div>
+          <div class="content-box-title">Learning</div>
           <span class="text">
             Learn more about the technical details: from development to
             deployment to actually managing your applications. See our 
             tutorials, examples, screenshots.
-            <br/><a href="tutorials.html">more...</a>
+            <br/><a href="learning.html">more...</a>
           </span>
         </div>
         

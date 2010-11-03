@@ -1,4 +1,9 @@
 <sapia:page title="Corus" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:vmenu>
+    <sapia:vsection name="Corus Home" href="index.html"/>
+  </sapia:vmenu>
+
   <sapia:sect1 title="Architecture">
     <sapia:section>
       <sapia:path name="home" href="../../home.html" />
@@ -32,7 +37,7 @@
       </p>
     </sapia:sect2>
 
-    <sapia:sect2 title="The Commmand-Line Interface">    
+    <sapia:sect2 title="The Command-Line Interface">    
       <p>
         To administer either a single Corus instance or a whole domain, one uses 
         the Corus command-line interface (the CLI). The CLI is used to connect 
@@ -72,9 +77,9 @@
       <p>
         Currently, Corus supports the startup of standalone Java applications  
         (that is, it is capable of invoking the execution of Java classes with a 
-        main method). In order to be able to do so, one must include in a 
-        distribution a so-called Corus descriptor, that indicates which 
-        applications can be executed.
+        <sapia:command>main</sapia:command> method). In order to be able to do 
+        so, one must include in a distribution a so-called Corus descriptor, 
+        that indicates which applications can be executed.
       </p>
       <p>
         For the sake of clarity, we are providing such a descriptor below:
@@ -91,10 +96,10 @@
       <p>
         Once a process is started by a Corus daemon (typically following a 
         command initiated by an administrator using the CLI), it maintains a 
-        link with that daemon, though the Corus Interoperability Protocol. 
-        The protocol describes how a Corus instance and the processes that it 
-        starts interact. Among other interactions, the most notable is the 
-        heartbeat that processes must provide: if a Corus instance has not 
+        link with that daemon, as specified by the Corus Interoperability 
+        Protocol. The protocol describes how a Corus instance and the processes 
+        that it starts interact. Among other interactions, the most notable is 
+        the heartbeat that processes must provide: if a Corus instance has not 
         received a heartbeat from a process it manages after a predefined 
         amount of time, Corus automatically attempts restarting it. 
       </p>
@@ -136,8 +141,8 @@
         may be completely oblivious to the fact that it is managed by Corus. 
         Currently, Corus supports deploying and starting stand-alone Java 
         applications, that is: applications that are bootstrapped by a Java 
-        class with a static main method. That's it. From then on, everything is 
-        up to the developer.
+        class with a static <sapia:command>main</sapia:command> method. 
+        That's it. From then on, everything is up to the developer.
       </p>
       <p>
         The only thing that is relevant for applications to be aware of is that 
@@ -149,8 +154,9 @@
       </p>
       <p>
         Furthermore, applications can add in their dependencies a jar file 
-        consisting of a library that allows hooking up to the Corus 
-        Interoperability Protocol. The code snippet below illustrates how 
+        consisting of a library that allows "hooking up" to the Java agent
+        that implements Corus Interoperability Protocol and resides within
+        the application's JVM. The code snippet below illustrates how 
         an application can hook up to Corus via that library and provide 
         status information:
       </p>

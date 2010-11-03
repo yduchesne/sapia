@@ -1,4 +1,9 @@
 <sapia:page title="Corus" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:vmenu>
+    <sapia:vsection name="Corus Home" href="index.html"/>
+  </sapia:vmenu>
+
   <sapia:sect1 title="License">
     <sapia:section>
       <sapia:path name="home" href="../../home.html" />
@@ -16,15 +21,17 @@
         classpath of client applications, allowing these applications to 
         connect to Corus instances and use the Corus server API directly
         (a rarely necessary thing, unless one wants to develop his own tools
-        for interacting with Corus instances).
+        for interacting with Corus).
       </p>
       <p> 
         <b>2)</b> A “server” module, released under the 
         <a href="http://www.gnu.org/licenses/gpl.html">GPL</a>, which strictly 
         consists of the server-side Corus classes, which client applications 
         do NOT need in their classpath. This module depends on the client 
-        module, for it implements some of the interfaces in it. Client 
-        absolutely do not need to depend on the server module in any way.
+        module, for it implements some of the interfaces in it. Applications
+        deployed using Corus absolutely do NOT need to depend on the server 
+        module in any way. The artifact produced by this server is the actual
+        Corus distribution.
       </p>
       <p>
         The above means the following:

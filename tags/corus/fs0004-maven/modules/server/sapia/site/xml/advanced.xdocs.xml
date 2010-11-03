@@ -1,0 +1,33 @@
+<sapia:page title="Corus" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <head>
+    <link rel="stylesheet" href="css/corus.css" type="text/css"/>
+  </head>
+  
+  <sapia:vmenu>
+    <sapia:vsection name="Corus Home" href="index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Advanced">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="corus" href="home.html" />
+      <sapia:path name="learning" href="learning.html"/>
+      <sapia:path name="advanced" />
+
+    </sapia:section>
+    
+    <sapia:sect-desc>
+    
+      <div style="float: right">
+        <h2>Content on the Way...</h2>
+      
+        We plan on adding advanced content in this section as soon as we can. 
+        In the meantime, have a look at the 
+        <a href="CorusManual.pdf">Corus Manual</a>, it's very complete.
+      </div>
+
+    </sapia:sect-desc>
+  </sapia:sect1>
+</sapia:page>
