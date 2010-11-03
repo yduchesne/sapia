@@ -78,7 +78,12 @@ public class Java extends BaseJavaStarter {
     cmd.addArg(javaHome.getAbsolutePath() + File.separator + "bin" + File.separator + _javaCmd);
     
     if (_vmType != null) {
-      cmd.addArg(_vmType);
+      if(!_vmType.startsWith("-")){
+        cmd.addArg("-"+_vmType);        
+      }
+      else{
+        cmd.addArg(_vmType);
+      }
     }
     
     if (_mainClass == null) {
