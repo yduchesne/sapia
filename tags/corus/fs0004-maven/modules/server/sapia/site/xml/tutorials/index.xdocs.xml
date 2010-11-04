@@ -39,10 +39,10 @@
       </div>
 
       <div class="article-box">
-        <h1><a href="command-line.html">Exploring the CLI</a></h1> 
+        <h1><a href="exploring-cli.html">Exploring the CLI</a></h1> 
         The command-line interface mimicks Linux/Unix commands and is
         the primary tool through which you interact with Corus.
-        Explore the various features, play around with pattern matching,
+        Explore the various features, play around with wildcards,
         learn about clustered commands. 
       </div>
       
