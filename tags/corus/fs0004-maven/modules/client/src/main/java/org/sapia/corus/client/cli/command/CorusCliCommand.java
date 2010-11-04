@@ -38,6 +38,8 @@ public abstract class CorusCliCommand implements Command {
       
     } catch (InputException ie) {
       cliCtx.setError(ie);
+      ctx.getConsole().println("Input error executing command " + getName());
+      ie.printStackTrace(ctx.getConsole().out());
       if (cliCtx.isAbordOnError()) {
         throw new AbortException();
       }
@@ -48,11 +50,16 @@ public abstract class CorusCliCommand implements Command {
       
     } catch (RuntimeException re) {
       cliCtx.setError(re);
+      ctx.getConsole().println("System error executing command " + getName());
+      re.printStackTrace(ctx.getConsole().out());
       if (cliCtx.isAbordOnError()) {
         throw new AbortException();
       }
     }
-    
+  }
+  
+  public String getName() {
+    return getClass().getSimpleName().toLowerCase();
   }
 
   protected abstract void doExecute(CliContext ctx)

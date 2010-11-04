@@ -167,7 +167,7 @@ public class CorusCli extends CommandConsole {
       center(cons, "");
       center(cons, "Authorized Users Only");
       center(cons, "");
-      center(cons, "(c)2003-" + year + " sapia-oss.org");
+      center(cons, "(c)2002-" + year + " sapia-oss.org");
       center(cons, "");
       line(cons);
       cons.println("");
