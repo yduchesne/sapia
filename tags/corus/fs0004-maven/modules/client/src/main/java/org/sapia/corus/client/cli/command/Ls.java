@@ -12,6 +12,7 @@ import org.sapia.corus.client.ClusterInfo;
 import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
 import org.sapia.corus.client.cli.CliContext;
+import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.client.services.processor.ExecConfig;
@@ -52,7 +53,7 @@ public class Ls extends CorusCliCommand {
    
   private void doListExecConfigs(CliContext ctx){
     ClusterInfo cluster = getClusterInfo(ctx);
-    try{
+    try {
       Results<List<ExecConfig>> res = ctx.getCorus().getProcessorFacade().getExecConfigs(cluster);
       while (res.hasNext()) {
         Result<List<ExecConfig>> result = res.next();
@@ -61,14 +62,14 @@ public class Ls extends CorusCliCommand {
           displayExecConfig(conf, ctx);
         }
       }
-    }catch(Exception e){
-      ctx.getConsole().println("Problem listing execution configurations");
-      e.printStackTrace(ctx.getConsole().out());
+      
+    } catch (Exception e) {
+      CliError err = ctx.createAndAddErrorFor(this, "Problem listing execution configurations", e);
+      ctx.getConsole().println(err.getSimpleMessage());
     }
   }
   
-  private void doListDistributions(CliContext ctx)
-  throws AbortException, InputException {
+  private void doListDistributions(CliContext ctx) throws AbortException, InputException {
     String  dist    = null;
     String  version = null;
     CmdLine cmd     = ctx.getCommandLine();

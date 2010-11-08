@@ -30,7 +30,7 @@ public class Exec extends CorusCliCommand {
   private void doExecuteConfig(CliContext ctx) throws AbortException, InputException {
     ClusterInfo cluster = getClusterInfo(ctx);
     String configName = ctx.getCommandLine().assertOption(OPT_EXEC_CONFIG, true).getValue();
-    displayProgress(ctx.getCorus().getProcessorFacade().exec(configName, cluster), ctx.getConsole());
+    displayProgress(ctx.getCorus().getProcessorFacade().exec(configName, cluster), ctx);
   } 
   private void doExecuteProcesses(CliContext ctx) throws AbortException, InputException {
     String  dist      = null;
@@ -57,11 +57,16 @@ public class Exec extends CorusCliCommand {
     ClusterInfo cluster = getClusterInfo(ctx);
 
     if (vmName != null) {
-      displayProgress(ctx.getCorus().getProcessorFacade().exec(dist, version, profile, vmName,
-                                           instances, cluster), ctx.getConsole());
+      displayProgress(
+              ctx.getCorus().getProcessorFacade().exec(
+                      dist, version, profile, vmName, instances, cluster),
+              ctx);
     } else {
-      displayProgress(ctx.getCorus().getProcessorFacade().exec(dist, version, profile, instances,
-                                           cluster), ctx.getConsole());
+      displayProgress(
+              ctx.getCorus().getProcessorFacade().exec(
+                      dist, version, profile, instances, cluster),
+              ctx);
     }
   }
+  
 }

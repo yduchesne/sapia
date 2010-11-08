@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.sapia.console.AbortException;
 import org.sapia.console.Command;
-import org.sapia.console.Console;
 import org.sapia.console.Context;
 import org.sapia.console.InputException;
 import org.sapia.corus.client.ClusterInfo;
 import org.sapia.corus.client.cli.CliContext;
+import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.common.ProgressMsg;
 import org.sapia.corus.client.common.ProgressQueue;
 
@@ -34,25 +34,25 @@ public abstract class CorusCliCommand implements Command {
     
     try {
       doExecute(cliCtx);
-      cliCtx.setError(null);
       
     } catch (InputException ie) {
-      cliCtx.setError(ie);
-      ctx.getConsole().println("Input error executing command " + getName());
-      ie.printStackTrace(ctx.getConsole().out());
+      CliError err = cliCtx.createAndAddErrorFor(this, ie);
+      ctx.getConsole().println(err.getSimpleMessage());
       if (cliCtx.isAbordOnError()) {
+        ie.printStackTrace(ctx.getConsole().out());
         throw new AbortException();
       }
       
     } catch (AbortException ae) {
-      cliCtx.setError(ae);
+      CliError err = cliCtx.createAndAddErrorFor(this, ae);
+      ctx.getConsole().println(err.getSimpleMessage());
       throw ae;
       
     } catch (RuntimeException re) {
-      cliCtx.setError(re);
-      ctx.getConsole().println("System error executing command " + getName());
-      re.printStackTrace(ctx.getConsole().out());
+      CliError err = cliCtx.createAndAddErrorFor(this, re);
+      ctx.getConsole().println(err.getSimpleMessage());
       if (cliCtx.isAbordOnError()) {
+        re.printStackTrace(ctx.getConsole().out());
         throw new AbortException();
       }
     }
@@ -65,7 +65,7 @@ public abstract class CorusCliCommand implements Command {
   protected abstract void doExecute(CliContext ctx)
                              throws AbortException, InputException;
 
-  protected static void displayProgress(ProgressQueue queue, Console cons) {
+  protected void displayProgress(ProgressQueue queue, CliContext ctx) {
     ProgressMsg msg;
     List<ProgressMsg>        msgs;
 
@@ -76,12 +76,11 @@ public abstract class CorusCliCommand implements Command {
         msg = (ProgressMsg) msgs.get(i);
 
         if (msg.isThrowable()) {
-          Throwable err = (Throwable)msg.getMessage();
-          cons.println(err.getMessage());
-          cons.println("---------- Stack trace: ----------");
-          err.printStackTrace(cons.out());
+          CliError err = ctx.createAndAddErrorFor(this, (Throwable) msg.getMessage());
+          ctx.getConsole().println(err.getSimpleMessage());
+          
         } else if (msg.getStatus() >= ProgressMsg.INFO) {
-          cons.println(msg.getMessage().toString());
+          ctx.getConsole().println(msg.getMessage().toString());
         }
       }
     }

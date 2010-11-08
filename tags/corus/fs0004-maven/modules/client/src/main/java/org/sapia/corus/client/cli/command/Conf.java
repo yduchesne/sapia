@@ -53,11 +53,11 @@ public class Conf extends CorusCliCommand{
         op = Op.LIST;
       }
       else{
-        ctx.getConsole().println("Unknown argument " + opArg + "; expecting one of: add | del | ls");
+        throw new InputException("Unknown argument " + opArg + "; expecting one of: add | del | ls");
       }
     }
     else{
-      ctx.getConsole().println("Missing argument; expecting one of: add | del | ls");
+      throw new InputException("Missing argument; expecting one of: add | del | ls");
     }
 
     if(op != null){
@@ -70,7 +70,7 @@ public class Conf extends CorusCliCommand{
         handlePropertyOp(op, ctx);
       }
       else{
-        ctx.getConsole().println("Missing options (-t or -p)");
+        throw new InputException("Missing options (-t or -p)");
       }
     }
   }
@@ -106,14 +106,14 @@ public class Conf extends CorusCliCommand{
         scope = PropertyScope.SERVER;
       }
       else{
-        ctx.getConsole().println("Scope (-s) not valid, expecting s[vr] or p[roc]");
+        throw new InputException("Scope (-s) not valid, expecting s[vr] or p[roc]");
       }
     }
     if(op == Op.ADD){
       String pair = ctx.getCommandLine().assertOption(OPT_PROPERTY, true).getValue();
       String[] nameValue = pair.split("=");
       if(nameValue.length != 2){
-        ctx.getConsole().println("Invalid property format; expected: <name>=<value>");
+        throw new InputException("Invalid property format; expected: <name>=<value>");
       }
       else{
         ctx.getCorus().getConfigFacade().addProperty(scope, nameValue[0], nameValue[1], getClusterInfo(ctx));

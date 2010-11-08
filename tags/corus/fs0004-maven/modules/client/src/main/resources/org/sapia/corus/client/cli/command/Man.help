@@ -33,9 +33,11 @@
     <p/>
     <p>Misc:</p>
     <p/>
-    <p>- host</p>    
+    <p>- host</p>
     <p>- hosts</p>
+    <p>- err</p>
     <p>- exit</p>
+    <p>- quit</p>
     <p>- ver</p>
   </section>
 </help>

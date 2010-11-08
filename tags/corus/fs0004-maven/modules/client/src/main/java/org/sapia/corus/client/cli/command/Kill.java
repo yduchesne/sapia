@@ -136,7 +136,7 @@ public class Kill extends CorusCliCommand {
     if (processToKill != null) {
       killProcess(ctx, processToKill);
     } else {
-      ctx.getConsole().println("Could not kill process, no active process found for the process id " + vmId);
+      throw new InputException("Could not kill process, no active process found for the process id " + vmId);
     }
   }
   
@@ -159,8 +159,7 @@ public class Kill extends CorusCliCommand {
       killProcess(ctx, processToKill);
       return processToKill.getProcessID();
     } else {
-      ctx.getConsole().println("Could not kill process, no active process found for OS pid " + osPid);
-      return null;
+      throw new InputException("Could not kill process, no active process found for OS pid " + osPid);
     }
   }
   

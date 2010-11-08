@@ -7,7 +7,9 @@ import org.sapia.console.Arg;
 import org.sapia.console.CmdElement;
 import org.sapia.console.InputException;
 import org.sapia.corus.client.cli.CliContext;
+import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.exceptions.deployer.ConcurrentDeploymentException;
+import org.sapia.corus.client.exceptions.deployer.DeploymentException;
 
 
 /**
@@ -18,8 +20,7 @@ public class Deploy extends CorusCliCommand {
   public static final String OPT_EXEC_CONF = "e";
 
   @Override
-  protected void doExecute(CliContext ctx)
-  throws AbortException, InputException {
+  protected void doExecute(CliContext ctx) throws AbortException, InputException {
     
     if(ctx.getCommandLine().isNextArg()){
       while(ctx.getCommandLine().hasNext()){
@@ -37,21 +38,25 @@ public class Deploy extends CorusCliCommand {
     }
   }
   
-  private void deployDistribution(CliContext ctx, String fileName)
-  throws AbortException, InputException {
-    if(fileName.endsWith("xml")){
+  private void deployDistribution(CliContext ctx, String fileName) throws AbortException, InputException {
+    if (fileName.endsWith("xml")) {
       deployExec(ctx, fileName);
     }
-    else{
+    else {
       try {
-        displayProgress(ctx.getCorus().getDeployerFacade().deploy(fileName,
-          getClusterInfo(ctx)),
-          ctx.getConsole());
+        displayProgress(
+                ctx.getCorus().getDeployerFacade().deploy(
+                        fileName,
+                        getClusterInfo(ctx)),
+                        ctx);
+        
       } catch (ConcurrentDeploymentException e) {
-        ctx.getConsole().println("Distribution file already being deployed");
+        CliError err = ctx.createAndAddErrorFor(this, "Distribution file already being deployed", e);
+        ctx.getConsole().println(err.getSimpleMessage());
+
       } catch (Exception e) {
-        ctx.getConsole().println("Problem deploying distribution");
-        e.printStackTrace(ctx.getConsole().out());
+        CliError err = ctx.createAndAddErrorFor(this, "Problem deploying distribution", e);
+        ctx.getConsole().println(err.getSimpleMessage());
       }
     }
   }
@@ -59,19 +64,22 @@ public class Deploy extends CorusCliCommand {
   private void deployExec(CliContext ctx, String fileName) 
   throws AbortException, InputException {
     File file = new File(fileName);
-    if(!file.exists()){
-      ctx.getConsole().println("File not found: " + fileName);
-    }
-    else if(file.isDirectory()){
-      ctx.getConsole().println("Resource is a directory: " + fileName);
-    }
-    else{
-      try{
+    if (!file.exists()) {
+      CliError err = ctx.createAndAddErrorFor(this, new DeploymentException("File not found: " + fileName));
+      ctx.getConsole().println(err.getSimpleMessage());
+      
+    } else if (file.isDirectory()) {
+      CliError err = ctx.createAndAddErrorFor(this, new DeploymentException("Resource is a directory: " + fileName));
+      ctx.getConsole().println(err.getSimpleMessage());
+      
+    } else {
+      try {
         ctx.getCorus().getProcessorFacade().deployExecConfig(fileName, getClusterInfo(ctx));
-      }catch(Exception e){
-        ctx.getConsole().println("Could not deploy execution configuration");
-        e.printStackTrace(ctx.getConsole().out());
+      } catch (Exception e) {
+        CliError err = ctx.createAndAddErrorFor(this, "Could not deploy execution configuration", e);
+        ctx.getConsole().println(err.getSimpleMessage());
       }
     }
   }
+  
 }

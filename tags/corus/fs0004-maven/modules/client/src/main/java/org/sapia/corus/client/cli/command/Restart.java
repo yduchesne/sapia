@@ -75,7 +75,7 @@ public class Restart extends CorusCliCommand {
     if (processToRestart != null) {
       restartProcess(ctx, processToRestart);
     } else {
-      ctx.getConsole().println("Could not restart process, no active process found for the process ID " + pid);
+      throw new InputException("Could not restart process, no active process found for the process ID " + pid);
     }
   }
   
@@ -96,7 +96,7 @@ public class Restart extends CorusCliCommand {
     if (processToRestart != null) {
       restartProcess(ctx, processToRestart);
     } else {
-      ctx.getConsole().println("Could not restart process, no active process found for OS pid " + osPid);
+      throw new InputException("Could not restart process, no active process found for OS pid " + osPid);
     }
   }
   

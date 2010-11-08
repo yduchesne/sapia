@@ -2,6 +2,7 @@ package org.sapia.corus.client.cli;
 
 import java.net.UnknownHostException;
 import java.util.Calendar;
+import java.util.List;
 
 import org.sapia.console.CmdLine;
 import org.sapia.console.CommandConsole;
@@ -27,12 +28,16 @@ public class CorusCli extends CommandConsole {
   public static final int    DEFAULT_PORT = 33000;
   public static final String HOST_OPT = "h";
   public static final String PORT_OPT = "p";
+  public static final int    MAX_ERROR_HISTORY = 20;
+  
   protected CorusConnector _corus;
+  private List<CliError> _errors;
 
   public CorusCli(CorusConnector corus) {
     super(new CorusCommandFactory());
     super.setCommandListener(new CliConsoleListener());
     _corus = corus;
+    _errors = new AutoFlushedBoundedList<CliError>(MAX_ERROR_HISTORY);
     
     // Change the prompt
     StringBuffer prompt = new StringBuffer().append("[");
@@ -108,7 +113,7 @@ public class CorusCli extends CommandConsole {
    * @see org.sapia.console.CommandConsole#newContext()
    */
   protected Context newContext() {
-    return new CliContextImpl(_corus);
+    return new CliContextImpl(_corus, _errors);
   }
 
   private static void help() {

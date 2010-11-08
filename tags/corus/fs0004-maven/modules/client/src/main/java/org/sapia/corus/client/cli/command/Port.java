@@ -10,6 +10,7 @@ import org.sapia.console.table.Table;
 import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
 import org.sapia.corus.client.cli.CliContext;
+import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.exceptions.port.PortActiveException;
 import org.sapia.corus.client.exceptions.port.PortRangeConflictException;
 import org.sapia.corus.client.exceptions.port.PortRangeInvalidException;
@@ -59,25 +60,33 @@ public class Port extends CorusCliCommand{
     String name = cmd.assertOption(OPT_NAME, true).getValue();
     int min = cmd.assertOption(OPT_MIN, true).asInt();
     int max = cmd.assertOption(OPT_MAX, true).asInt();
-    try{
+    
+    try {
       ctx.getCorus().getPortManagementFacade().addPortRange(name, min, max, getClusterInfo(ctx));
-    }catch(PortRangeConflictException e){
-      ctx.getConsole().println(e.getMessage());
-    }catch(PortRangeInvalidException e){
-      ctx.getConsole().println(e.getMessage());
+      
+    } catch (PortRangeConflictException e) {
+      CliError err = ctx.createAndAddErrorFor(this, "unable to add a port range", e);
+      ctx.getConsole().println(err.getSimpleMessage());
+      
+    } catch (PortRangeInvalidException e) {
+      CliError err = ctx.createAndAddErrorFor(this, "unable to add a port range", e);
+      ctx.getConsole().println(err.getSimpleMessage());
     }
   }
   
   void doDelete(CliContext ctx, CmdLine cmd) throws InputException{
     String name = cmd.assertOption(OPT_NAME, true).getValue();
     boolean force = false;
-    if(cmd.containsOption(OPT_FORCE, false)){
+    if (cmd.containsOption(OPT_FORCE, false)) {
       force = true;
     }
-    try{
+    
+    try {
       ctx.getCorus().getPortManagementFacade().removePortRange(name, force, getClusterInfo(ctx));
-    }catch(PortActiveException e){    
-      ctx.getConsole().println(e.getMessage());
+      
+    } catch (PortActiveException e) {    
+      CliError err = ctx.createAndAddErrorFor(this, "unable to delete a port range", e);
+      ctx.getConsole().println(err.getSimpleMessage());
     }
   }  
   

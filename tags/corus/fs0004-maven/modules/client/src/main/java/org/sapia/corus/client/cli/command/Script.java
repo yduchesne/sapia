@@ -12,6 +12,7 @@ import org.sapia.console.CommandNotFoundException;
 import org.sapia.console.InputException;
 import org.sapia.corus.client.cli.ChildCliContext;
 import org.sapia.corus.client.cli.CliContext;
+import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.cli.CorusCommandFactory;
 
 public class Script extends CorusCliCommand{
@@ -21,19 +22,17 @@ public class Script extends CorusCliCommand{
   private static CorusCommandFactory commands = new CorusCommandFactory();
   
   @Override
-  protected void doExecute(CliContext ctx) throws AbortException,
-      InputException {
+  protected void doExecute(CliContext ctx) throws AbortException, InputException {
      
-    if(!ctx.getCommandLine().hasNext()){
-      ctx.getConsole().println("Path to script file expected");
-      return;
+    if (!ctx.getCommandLine().hasNext()) {
+      throw new InputException("Path to script file expected");
     }
     
     File f = new File(ctx.getCommandLine().next().getName());
     
-    if(f.exists()){
+    if (f.exists()) {
       BufferedReader reader = null;
-      try{
+      try {
         reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
         String line;
         while((line = reader.readLine()) != null){
@@ -48,11 +47,16 @@ public class Script extends CorusCliCommand{
             }
           }
         }
-      }catch(IOException e){
-        e.printStackTrace();
-      }catch(CommandNotFoundException e){
-        throw new InputException(e.getMessage());
-      }finally{
+        
+      } catch (IOException e) {
+        CliError err = ctx.createAndAddErrorFor(this, "Unable to execute script", e);
+        ctx.getConsole().println(err.getSimpleMessage());
+        
+      } catch (CommandNotFoundException e) {
+        CliError err = ctx.createAndAddErrorFor(this, "Unable to execute script", e);
+        ctx.getConsole().println(err.getSimpleMessage());
+        
+      } finally {
         try {
           if(reader != null) reader.close();
         } catch (Exception e2) {
@@ -60,9 +64,8 @@ public class Script extends CorusCliCommand{
         }
       }
       
-    }
-    else{
-      ctx.getConsole().println("File not found: " + f.getAbsolutePath());
+    } else {
+      throw new InputException("File not found: " + f.getAbsolutePath());
     }
   }
   

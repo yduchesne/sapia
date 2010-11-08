@@ -4,6 +4,7 @@ import org.sapia.console.AbortException;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.client.cli.CliContext;
+import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.exceptions.deployer.RunningProcessesException;
 
 
@@ -42,9 +43,10 @@ public class Undeploy extends CorusCliCommand {
 
       super.displayProgress(ctx.getCorus().getDeployerFacade().undeploy(dist, version,
                                                     getClusterInfo(ctx)),
-                            ctx.getConsole());
-    } catch (RunningProcessesException e){
-      throw new InputException(e.getMessage());
+                            ctx);
+    } catch (RunningProcessesException e) {
+      CliError err = ctx.createAndAddErrorFor(this, e);
+      ctx.getConsole().println(err.getSimpleMessage());
     } 
   }
 }

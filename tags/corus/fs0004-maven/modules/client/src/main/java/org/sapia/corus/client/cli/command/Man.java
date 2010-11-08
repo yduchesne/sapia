@@ -8,6 +8,7 @@ import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.client.cli.CliContext;
+import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.cli.help.Help;
 import org.sapia.corus.client.cli.help.NoHelpException;
 
@@ -22,6 +23,7 @@ public class Man extends CorusCliCommand{
     _commands.put("conf", Conf.class);
     _commands.put("cron", Cron.class);
     _commands.put("deploy", Deploy.class);
+    _commands.put("err", Err.class);
     _commands.put("exec", Exec.class);
     _commands.put("exit", Exit.class);
     _commands.put("host", Host.class);
@@ -29,6 +31,7 @@ public class Man extends CorusCliCommand{
     _commands.put("kill", Kill.class);
     _commands.put("ls", Ls.class);
     _commands.put("ps", Ps.class);
+    _commands.put("quit", Quit.class);
     _commands.put("restart", Restart.class);
     _commands.put("resume", Resume.class);
     _commands.put("suspend", Suspend.class);
@@ -45,7 +48,7 @@ public class Man extends CorusCliCommand{
     if(cmd.hasNext() && cmd.isNextArg()){
       Arg toDisplayHelp = cmd.assertNextArg();
       Class<?> cmdClass = (Class<?>)_commands.get(toDisplayHelp.getName());
-      if(cmdClass == null){
+      if (cmdClass == null) {
         ctx.getConsole().out().println("No help available for: " + toDisplayHelp.getName());
         ctx.getConsole().out().println();
         displayHelp(ctx, Man.class);
@@ -56,16 +59,20 @@ public class Man extends CorusCliCommand{
       displayHelp(ctx, Man.class);
     }
   }
+  
   private void displayHelp(CliContext ctx, Class<?> clazz){
     Help h;
-    try{
+    try {
       h = Help.newHelpFor(clazz);
       h.display(ctx.getConsole().out());
-    }catch(NoHelpException e){
+      
+    } catch (NoHelpException e) {
       ctx.getConsole().out().println("No help available.");
-    }catch(Exception e){
-      ctx.getConsole().out().println("Could not display help");
-      e.printStackTrace(ctx.getConsole().out());
+      
+    } catch (Exception e) {
+      CliError err = ctx.createAndAddErrorFor(this, "Could not display help", e);
+      ctx.getConsole().println(err.getSimpleMessage());
     }
   }
+  
 }

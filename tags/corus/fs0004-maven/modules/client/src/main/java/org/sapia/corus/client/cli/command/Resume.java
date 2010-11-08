@@ -14,6 +14,6 @@ public class Resume extends CorusCliCommand {
   protected void doExecute(CliContext ctx)
                     throws AbortException, InputException {
     displayProgress(ctx.getCorus().getProcessorFacade().restart(getClusterInfo(ctx)),
-                    ctx.getConsole());
+                    ctx);
   }
 }
