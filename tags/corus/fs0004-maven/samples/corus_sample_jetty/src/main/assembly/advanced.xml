@@ -1,0 +1,36 @@
+<assembly>
+  <id>advanced</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    
+    <!-- lib -->
+    <fileSet>
+       <directory>lib</directory>
+       <includes>
+          <include>**/*</include>
+       </includes>
+    </fileSet>
+    
+    <!-- webapps -->
+    <fileSet>
+       <directory>webapps</directory>
+       <includes>
+          <include>**/*</include>
+       </includes>
+    </fileSet>
+    
+    <!-- corus.xml -->    
+    <fileSet>
+       <outputDirectory>/META-INF</outputDirectory>
+       <directory>dist/basic/META-INF</directory>
+       <includes>
+          <include>corus.xml</include>
+       </includes>
+    </fileSet>
+
+  </fileSets>
+  
+</assembly>
