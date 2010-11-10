@@ -1,0 +1,29 @@
+<sapia:page title="Advanced Management" 
+  cssPath="../css/sapia.css" 
+  xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <head>
+    <link rel="stylesheet" href="../css/corus.css" type="text/css"/>
+  </head>
+
+  <sapia:vmenu>
+    <sapia:vsection name="Corus Home" href="../index.html"/>
+    <sapia:vsection name="Tutorials" href="index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Advanced Management">
+    <sapia:section>
+      <sapia:path name="home" href="../../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="corus" href="../home.html" />
+      <sapia:path name="learning" href="../learning.html" />
+      <sapia:path name="tutorials" href="index.html"/>
+      <sapia:path name="advanced management" />
+    </sapia:section>
+
+    <sapia:sect-desc>
+    </sapia:sect-desc>
+
+    
+  </sapia:sect1>
+</sapia:page>
