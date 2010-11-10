@@ -1,6 +1,5 @@
 package org.sapia.corus.client.cli.command;
 
-import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +7,8 @@ import org.sapia.console.AbortException;
 import org.sapia.console.Arg;
 import org.sapia.console.InputException;
 import org.sapia.console.Option;
+import org.sapia.console.table.Row;
+import org.sapia.console.table.Table;
 import org.sapia.corus.client.cli.CliContext;
 import org.sapia.corus.client.cli.CliError;
 
@@ -22,6 +23,11 @@ public class Err extends CorusCliCommand {
   public static final String OPTION_ERROR_LIST = "l";
   public static final String OPTION_ERROR_ID = "i";
   public static final String OPTION_ERROR_CLEAR = "c";
+
+  private static final int COL_ERROR_ID = 0;
+  private static final int COL_DATE = 1;
+  private static final int COL_COMMAND_LINE = 2;
+  private static final int COL_MESSAGE = 1;
 
   /* (non-Javadoc)
    * @see org.sapia.corus.client.cli.command.CorusCliCommand#doExecute(org.sapia.corus.client.cli.CliContext)
@@ -88,19 +94,31 @@ public class Err extends CorusCliCommand {
    * @param aMaxCount The maximum number of errors to show.
    */
   private void doShowErrorList(CliContext aContext, int aMaxCount) {
-    aContext.getConsole().println("=============================================================================");
-    aContext.getConsole().println("  ID  |    ERROR");
-    aContext.getConsole().println("-----------------------------------------------------------------------------");
+    Table table = new Table(aContext.getConsole().out(), 2, 40);
+    table.getTableMetaData().getColumnMetaDataAt(COL_ERROR_ID).setWidth(4);
+    table.getTableMetaData().getColumnMetaDataAt(COL_MESSAGE).setWidth(80);
+
+    table.drawLine('=');
+    
+    Row headers = table.newRow();
+    headers.getCellAt(COL_ERROR_ID).append("Id");
+    headers.getCellAt(COL_MESSAGE).append("Error");
+    headers.flush();
+
+    table.drawLine('-');
 
     int count = 0;
     for (Iterator<CliError> it = aContext.getErrors().iterator(); it.hasNext() && count++ < aMaxCount; ) {
       CliError error = it.next();
       
-      aContext.getConsole().print(error.getId()+"\t\t");
-      aContext.getConsole().println(error.getSimpleMessage());
+      Row data = table.newRow();
+      data.getCellAt(COL_ERROR_ID).append(String.valueOf(error.getId()));
+      data.getCellAt(COL_MESSAGE).append(error.getSimpleMessage());
+      data.flush();
     }
     
-    aContext.getConsole().println("=============================================================================");
+    table.drawLine('=');
+    aContext.getConsole().println();
   }
 
   /**
@@ -145,48 +163,41 @@ public class Err extends CorusCliCommand {
   }
 
   private void displayErrorDetailsInTable(CliContext aContext, CliError anError) {
-    aContext.getConsole().println("=============================================================================");
-    aContext.getConsole().println(" ID\t    DATE    \t COMMAND LINE");
-    aContext.getConsole().println("=============================================================================");
+    Table table = new Table(aContext.getConsole().out(), 3, 25);
+    table.getTableMetaData().getColumnMetaDataAt(COL_ERROR_ID).setWidth(6);
+    table.getTableMetaData().getColumnMetaDataAt(COL_DATE).setWidth(12);
+    table.getTableMetaData().getColumnMetaDataAt(COL_COMMAND_LINE).setWidth(60);
 
-    aContext.getConsole().print("  " + anError.getId()+"\t");
-    aContext.getConsole().print(new Timestamp(anError.getTimestamp())+"\t");
-    aContext.getConsole().println(anError.getCommand().getName() + " " + anError.getCommandLine().toString());
+    table.drawLine('=');
+    
+    Row headers = table.newRow();
+    headers.getCellAt(COL_ERROR_ID).append("Id");
+    headers.getCellAt(COL_DATE).append("Date");
+    headers.getCellAt(COL_COMMAND_LINE).append("Command Line");
+    headers.flush();
+
+    Row data = table.newRow();
+    data.getCellAt(COL_ERROR_ID).append(String.valueOf(anError.getId()));
+    data.getCellAt(COL_DATE).append(anError.getErrorDate());
+    data.getCellAt(COL_COMMAND_LINE).append(anError.getCommand().getName() + " " + anError.getCommandLine().toString());
+    data.flush();
+
+    data = table.newRow();
+    data.getCellAt(COL_ERROR_ID).append("");
+    data.getCellAt(COL_DATE).append(anError.getErrorTime());
+    data.getCellAt(COL_COMMAND_LINE).append("");
+    data.flush();
+
+    table.drawLine('-');
     aContext.getConsole().println(anError.getSimpleMessage());
+    
     if (anError.getCause() != null) {
+      table.drawLine('-');
       anError.getCause().printStackTrace(aContext.getConsole().out());
     }
     
-    aContext.getConsole().println("=============================================================================");
-    
+    table.drawLine('=');
+    aContext.getConsole().println();
   }
   
-//  private void displayHeader(CliContext ctx) {
-//    Table         hostTable;
-//    Table         distTable;
-//    Row           row;
-//    Row           headers;
-//
-//    hostTable = new Table(ctx.getConsole().out(), 1, 78);
-//    hostTable.drawLine('=');
-//    row = hostTable.newRow();
-//    row.getCellAt(0).append("Host: ").append(addr.toString());
-//    row.flush();
-//
-//    hostTable.drawLine(' ');
-//
-//    distTable = new Table(ctx.getConsole().out(), 4, 20);
-//    distTable.getTableMetaData().getColumnMetaDataAt(COL_DIST).setWidth(18);
-//    distTable.getTableMetaData().getColumnMetaDataAt(COL_VERSION).setWidth(8);
-//    distTable.getTableMetaData().getColumnMetaDataAt(COL_VMS).setWidth(23);
-//    distTable.getTableMetaData().getColumnMetaDataAt(COL_PROFILES).setWidth(23);
-//
-//    headers = distTable.newRow();
-//
-//    headers.getCellAt(COL_DIST).append("Distribution");
-//    headers.getCellAt(COL_VERSION).append("Version");
-//    headers.getCellAt(COL_VMS).append("Process Configs");
-//    headers.getCellAt(COL_PROFILES).append("Profiles");
-//    headers.flush();
-//  }
 }

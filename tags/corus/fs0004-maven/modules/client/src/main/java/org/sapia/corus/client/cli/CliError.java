@@ -1,5 +1,8 @@
 package org.sapia.corus.client.cli;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.client.cli.command.CorusCliCommand;
@@ -55,6 +58,26 @@ public class CliError {
     return _timestamp;
   }
 
+  /**
+   * Returns the date of this error as a string.
+   * 
+   * @return The date of this error as a string.
+   */
+  public String getErrorDate() {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd");
+    return formatter.format(new Date(_timestamp));
+  }
+
+  /**
+   * Returns the time of this error as a string.
+   * 
+   * @return The time of this error as a string.
+   */
+  public String getErrorTime() {
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+    return formatter.format(new Date(_timestamp));
+  }
+  
   /**
    * Returns the description attribute.
    *
