@@ -24,6 +24,8 @@ public class Kill extends CorusCliCommand {
 
   public static final String WAIT_COMPLETION_OPT = "w";
   
+  private static final long DEFAULT_WAIT_COMPLETION_TIMEOUT = 60000;
+  
   protected Kill(boolean suspend) {
     _suspend = suspend;
   }
@@ -183,7 +185,7 @@ public class Kill extends CorusCliCommand {
   
   private void waitForKillCompletion(CliContext ctx, KillCompletionHook hook) throws InputException{
     boolean waitForCompletion = ctx.getCommandLine().containsOption(WAIT_COMPLETION_OPT, false);
-    long timeout = 0;
+    long timeout = DEFAULT_WAIT_COMPLETION_TIMEOUT;
     if(waitForCompletion){
       Option opt = ctx.getCommandLine().assertOption(WAIT_COMPLETION_OPT, false);
       ctx.getConsole().println("(Waiting for process termination, please stand by)");
