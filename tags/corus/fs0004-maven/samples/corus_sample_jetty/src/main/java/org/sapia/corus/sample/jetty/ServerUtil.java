@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 public class ServerUtil {
@@ -29,6 +30,10 @@ public class ServerUtil {
   }
   
   public static Handler loadWebapps(){
+    return loadWebapps(null);
+  }
+  
+  public static Handler loadWebapps(SessionHandler sessionHandler){
     ContextHandlerCollection contexts = new ContextHandlerCollection();
     File webAppsRootDir = getWebappsRootDir();
     File[] webAppsDirs = webAppsRootDir.listFiles();
@@ -50,6 +55,10 @@ public class ServerUtil {
             "web.xml");
         ctx.setResourceBase(webAppFileOrDir.getAbsolutePath());
       }
+      if(sessionHandler != null){
+        ctx.setSessionHandler(sessionHandler);
+      }
+        
       ctx.setParentLoaderPriority(false);
       handlers.add(ctx);
     }
