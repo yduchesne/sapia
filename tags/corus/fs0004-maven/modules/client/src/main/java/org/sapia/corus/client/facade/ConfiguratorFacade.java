@@ -65,7 +65,7 @@ public interface ConfiguratorFacade {
    * 
    * @return a {@link Results} holding tags.
    */
-  public Results<List<String>> getTags(ClusterInfo cluster);
+  public Results<Set<String>> getTags(ClusterInfo cluster);
 
 
 }

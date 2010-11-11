@@ -23,14 +23,14 @@ public class ConfiguratorFacadeImpl
   public Results<List<NameValuePair>> getProperties(PropertyScope scope,
       ClusterInfo cluster) {
     Results<List<NameValuePair>>  results = new Results<List<NameValuePair>>();
-    proxy.getProperties(scope);
+    proxy.getPropertiesAsNameValuePairs(scope);
     invoker.invokeLenient(results, cluster);
     return results;   
   }
   
   @Override
-  public Results<List<String>> getTags(ClusterInfo cluster) {
-    Results<List<String>>  results = new Results<List<String>>();
+  public Results<Set<String>> getTags(ClusterInfo cluster) {
+    Results<Set<String>>  results = new Results<Set<String>>();
     proxy.getTags();
     invoker.invokeLenient(results, cluster);
     return results;   

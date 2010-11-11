@@ -24,9 +24,10 @@ public class Err extends CorusCliCommand {
   public static final String OPTION_ERROR_ID = "i";
   public static final String OPTION_ERROR_CLEAR = "c";
 
+  private static final int COL_FIELD_NAME = 0;
+  private static final int COL_FIELD_VALUE = 1;
+
   private static final int COL_ERROR_ID = 0;
-  private static final int COL_DATE = 1;
-  private static final int COL_COMMAND_LINE = 2;
   private static final int COL_MESSAGE = 1;
 
   /* (non-Javadoc)
@@ -99,6 +100,8 @@ public class Err extends CorusCliCommand {
     table.getTableMetaData().getColumnMetaDataAt(COL_MESSAGE).setWidth(80);
 
     table.drawLine('=');
+    aContext.getConsole().println(" ERROR LIST");
+    table.drawLine('=');
     
     Row headers = table.newRow();
     headers.getCellAt(COL_ERROR_ID).append("Id");
@@ -163,36 +166,43 @@ public class Err extends CorusCliCommand {
   }
 
   private void displayErrorDetailsInTable(CliContext aContext, CliError anError) {
-    Table table = new Table(aContext.getConsole().out(), 3, 25);
-    table.getTableMetaData().getColumnMetaDataAt(COL_ERROR_ID).setWidth(6);
-    table.getTableMetaData().getColumnMetaDataAt(COL_DATE).setWidth(12);
-    table.getTableMetaData().getColumnMetaDataAt(COL_COMMAND_LINE).setWidth(60);
+    Table table = new Table(aContext.getConsole().out(), 2, 40);
+    table.getTableMetaData().getColumnMetaDataAt(COL_FIELD_NAME).setWidth(10);
+    table.getTableMetaData().getColumnMetaDataAt(COL_FIELD_VALUE).setWidth(75);
 
     table.drawLine('=');
+    aContext.getConsole().println(" ERROR DETAILS");
+    table.drawLine('=');
     
-    Row headers = table.newRow();
-    headers.getCellAt(COL_ERROR_ID).append("Id");
-    headers.getCellAt(COL_DATE).append("Date");
-    headers.getCellAt(COL_COMMAND_LINE).append("Command Line");
-    headers.flush();
-
+    // Error id
     Row data = table.newRow();
-    data.getCellAt(COL_ERROR_ID).append(String.valueOf(anError.getId()));
-    data.getCellAt(COL_DATE).append(anError.getErrorDate());
-    data.getCellAt(COL_COMMAND_LINE).append(anError.getCommand().getName() + " " + anError.getCommandLine().toString());
+    data.getCellAt(COL_FIELD_NAME).append("ID       :");
+    data.getCellAt(COL_FIELD_VALUE).append(String.valueOf(anError.getId()));
     data.flush();
 
+    // Error date and time
     data = table.newRow();
-    data.getCellAt(COL_ERROR_ID).append("");
-    data.getCellAt(COL_DATE).append(anError.getErrorTime());
-    data.getCellAt(COL_COMMAND_LINE).append("");
+    data.getCellAt(COL_FIELD_NAME).append("DATE     :");
+    data.getCellAt(COL_FIELD_VALUE).append(anError.getErrorDate() + " " + anError.getErrorTime());
     data.flush();
 
-    table.drawLine('-');
-    aContext.getConsole().println(anError.getSimpleMessage());
+    // Command line
+    data = table.newRow();
+    data.getCellAt(COL_FIELD_NAME).append("COMMAND  :");
+    data.getCellAt(COL_FIELD_VALUE).append(anError.getCommand().getName() + " " + anError.getCommandLine().toString());
+    data.flush();
+
+    // Error message
+    data = table.newRow();
+    data.getCellAt(COL_FIELD_NAME).append("MESSAGE  :");
+    data.getCellAt(COL_FIELD_VALUE).append(anError.getSimpleMessage());
+    data.flush();
     
     if (anError.getCause() != null) {
+      // Exception
       table.drawLine('-');
+      aContext.getConsole().print(" CAUSED BY:  ");
+      aContext.getConsole().out().flush();
       anError.getCause().printStackTrace(aContext.getConsole().out());
     }
     

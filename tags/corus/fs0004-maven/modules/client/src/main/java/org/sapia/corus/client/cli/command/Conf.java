@@ -65,7 +65,6 @@ public class Conf extends CorusCliCommand{
         handleTag(op, ctx);
       }
       else if(ctx.getCommandLine().containsOption(OPT_PROPERTY, false) || 
-              ctx.getCommandLine().containsOption(OPT_SCOPE_PROC, true) ||
               ctx.getCommandLine().containsOption(OPT_SCOPE_PROC, true)){
         handlePropertyOp(op, ctx);
       }
@@ -130,9 +129,9 @@ public class Conf extends CorusCliCommand{
     
   }
   
-  private void displayTagResults(Results<List<String>> res, CliContext ctx) {
+  private void displayTagResults(Results<Set<String>> res, CliContext ctx) {
     while (res.hasNext()) {
-      Result<List<String>> result = res.next();
+      Result<Set<String>> result = res.next();
       displayTagsHeader(result.getOrigin(), ctx);
       for(String tag:result.getData()){
         displayTag(tag, ctx);
