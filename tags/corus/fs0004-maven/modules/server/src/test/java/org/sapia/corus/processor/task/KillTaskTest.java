@@ -3,10 +3,8 @@ package org.sapia.corus.processor.task;
 import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.client.services.processor.DistributionInfo;
 import org.sapia.corus.client.services.processor.Process;
-import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.ProcessorConfigurationImpl;
-import org.sapia.corus.processor.TestProcessor;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
@@ -94,8 +92,7 @@ public class KillTaskTest extends BaseTaskTest{
     Process          proc = new Process(dist);
     db.getActiveProcesses().addProcess(proc);
     
-    TestProcessor processor = (TestProcessor)ctx.lookup(Processor.class);
-    ProcessorConfigurationImpl processorConf = (ProcessorConfigurationImpl)processor.getConfiguration();
+    ProcessorConfigurationImpl processorConf = (ProcessorConfigurationImpl) ctx.getProc().getConfiguration();
     processorConf.setRestartInterval(1);
 
     Thread.sleep(1500);
