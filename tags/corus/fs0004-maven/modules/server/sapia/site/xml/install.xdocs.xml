@@ -13,18 +13,104 @@
     </sapia:section>
     
     <sapia:sect-desc>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-      Etiam blandit pulvinar massa, quis tincidunt quam mattis a. 
-      Quisque purus neque, adipiscing eu mollis non, pellentesque id felis. 
+      <p>Corus is designed with simplicity in mind: to come up with a simple solution to a complex (and non-trivial)
+      problematic. The installation of Corus is no exception. We provide distributions for different operating
+      systems to suits your needs. Regardless of the OS you are using, we take care to provided a seemless integration
+      to optimize the various functionnalities offered by each platform.
+      </p>
     </sapia:sect-desc>
     
+    <sapia:sect2 title="Supported Operating Systems">
+      <p>Technically speaking, Corus should run on any platform that supports Java. However, manually starting java
+      programs using custom scripts is kind of cumbersome. That is why we provide specialized scripts for each OS to
+      manage the Corus runtime. We also provide an integration with operating services to automatically start Corus
+      on startup (when available by the OS) and to monitor the Corus process in case of abnormal process termination.
+      </p>
+      <p>Here's the list of what we support at the moment:
+      </p>
+      
+      <sapia:sect3 title="Windows">
+        <p><ul>
+        <li>Ability to register Corus as a Windows service to run at startup and to manage execution lifecycle (stop, start, restart)</li>
+        <li>Various .bat files to manually execute the corus server runtime and other tools provided (CLI, monitor, ...)</li>
+        <li>Only 32 bits version is available for native intergation</li>
+        <li>Tested on Windows XP and Windows Vista. Windows 7 yet to come...</li>
+        </ul></p>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Mac OS">
+        <p><ul>
+        <li>Integration with Mac <tt>launchd</tt> manager to run Corus as a LaunchDaemon or a LaunchAgent (based on your specific needs)</li>
+        <li>Various shell scripts to manually execute the corus server runtime and other tools provided (CLI, monitor, ...)</li>
+        <li>32 bits version available for OS X 10.5 (leopard) and above</li>
+        <li>64 bits version available for OS X 10.6 (snow leopard)</li>
+        <li>Tested on both Leopard (OS X 10.5) and Snow Leopard (OS X 10.6)</li>
+        </ul></p>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Linux">
+        <p><ul>
+        <li>init.d like script to integrate Corus to the Linux run levels (using special features like chkconfig when available)</li>
+        <li>Various shell scripts to manually execute the corus server runtime and other tools provided (CLI, monitor, ...)</li>
+        <li>32 bits and 64 bits versions available</li>
+        <li>Tested on many flavours of Linux: CentOS, Ubuntu, Fedora, Mandriva, OpenSUSE</li>
+        </ul></p>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Solaris">
+        <p><ul>
+        <li>Integration with the Service Management Facility (SMF) to manage Corus as a system service within Solaris</li>
+        <li>Various shell scripts to manually execute the corus server runtime and other tools provided (CLI, monitor, ...)</li>
+        <li>Support for both Sparc (32 and 64 bits) and x86 platform (32 bits only)</li>
+        <li>Tested with openSolaris 2009.06 on a x86 platform</li>
+        </ul></p>
+      </sapia:sect3>
+
+      <p><b>Your operating system is not in that list?</b><br/>
+      Contact us [TODO: insert email|ggroup link] so we can support you in the integration of your platform.
+      Your contribution will benefit to the whole community.
+      </p>
+       
+    </sapia:sect2>
+    
     <sapia:sect2 title="Download">
+      <p>The various Corus distributions can be found here [TODO: insert link to gcode download page]. Make sure to select
+      the appropriate version based on your operating system and your hardware architecture.
+      </p>
     </sapia:sect2>
     
     <sapia:sect2 title="Setup">
+      <p>Because the configuration differs from one operating system to another, we will only  provide an overview of the setup
+      process. We provide an installation section in our wiki [TODO: insert link] where step-by-step instructions are given
+      to install an configure Corus on the system of your choice.  
+      </p>
+
+      <p><b>1. Preparing the environment</b><br/>
+      Define pre-requisites like user and groups, directory structure, ...
+      </p>      
+
+      <p><b>2. Extract the corus distribution</b><br/>
+      ...
+      </p>      
+
+      <p><b>3. Define environment variables</b><br/>
+      Define JAVA_HOME and CORUS_HOME environment variables....
+      </p>      
+
+      <p><b>4. OS integration</b><br/>
+      Registration/integration with OS specifiy facility to automatically manage Corus runtime lifecycle....
+      </p>      
+      
     </sapia:sect2>
     
     <sapia:sect2 title="Test">
+      <p>You want to see Corus in action? Like the people in the midwest you are saying: "Show me!!!". We provide sample
+      applications ready to be deployed in the server. You can look for the files in the /samples directory [TODO: validate directory name] of the distribution or
+      you can jump to the tutorial section [TODO: insert link to tutorial] were you will find more explanation on what the samples are and how to
+      deploy them.   
+      </p>
+      <p>In any case, have fun and enjoy!
+      </p>
     </sapia:sect2>
     
   </sapia:sect1>
