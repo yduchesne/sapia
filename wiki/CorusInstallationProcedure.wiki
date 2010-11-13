@@ -3,12 +3,17 @@
 
 = Introduction =
 
-Add your content here.
+Corus is designed with simplicity in mind: to come up with a simple solution to a complex (and non-trivial) problematic. The installation of Corus is no exception. We provide distributions for different operating systems to suits your needs. Regardless of the OS you are using, we take care to provided a seemless integration to optimize the various functionnalities offered by each platform.
 
 
-= Details =
+= Supported Operating Systems =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Technically speaking, Corus should run on any platform that supports Java. However, manually starting java programs using custom scripts is kind of cumbersome. That is why we provide specialized scripts for each OS to manage the Corus runtime. We also provide an integration with operating services to automatically start Corus on startup (when available by the OS) and to monitor the Corus process in case of abnormal process termination.
+
+We want to provide you with the maximum information to successfully and easily install Corus: it needs to be a positive experience! Look in the links below for the one that is the most suitable for you according to you operating system.
+
+|| *Windows* <br /><p><ul><li>Installation instructions for Windows XP</li><li>Installation instructions for Windows Vista</li><li>Installation instructions for Windows 7 (to come)</li></ul></p><br />|| *Mac* <br /><p><ul><li>Installation instructions for OS X 10.5 (Leopard)</li><li>Installation instructions for OS X 10.6 (Snow Leopard)</li></ul></p><br /><br />||
+|| *Linux*<br /><p><ul><li>Installation instructions for Ubuntu</li><li>Installation instructions for Fedora</li><li>Installation instructions for Mandriva</li><li>Installation instructions for OpenSUSE</li><li>Installation instructions for CentOS</li></ul></p><br />|| *Solaris* <br /><p><ul><li>Installation instructions for openSolaris</li></ul></p><br /><br /><br /><br /><br />||
+
+
+If your operating system is not found in that list please contact us to support you in the installation of Corus on your system. This installation page must be a living document to help the community!
