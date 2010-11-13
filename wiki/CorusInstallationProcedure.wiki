@@ -1,4 +1,4 @@
-#summary One-Corus Installation Procedure
+#summary Corus Installation Procedure
 #labels Phase-Deploy,Featured
 
 = Introduction =
