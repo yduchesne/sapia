@@ -462,7 +462,7 @@ hr {
 /* Note */
 
 .note{
-  padding: 10px;
+  padding: 20px;
   color: black;
   background: #efefef;
 }
@@ -470,12 +470,11 @@ hr {
 /* Snippet */
 
 .snippet{
-  padding: 10px;
   font-family: courier, courier new;
   color: black;
   background: #efefef;
-  overflow: scroll;
-  padding: 25px;
+  overflow: auto;
+  padding: 20px;
 }
 
 /* Product */
@@ -492,8 +491,6 @@ hr {
   border-color: black;
   border-bottom: 1px;
   border-bottom-style: dotted;
-
-
 }
 
 .rich_table td{
