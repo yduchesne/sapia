@@ -110,7 +110,7 @@
       <plugin>
         <groupId>org.sapia</groupId>
         <artifactId>sapia_site_doc_plugin</artifactId>
-        <version>1.9</version>
+        <version>1.10</version>
         <configuration>
           <deleteDestdir>false</deleteDestdir>
         </configuration>
