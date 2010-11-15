@@ -386,85 +386,85 @@
 
   <xsl:template match="sapia:param">
     <xsl:choose>
-      <xsl:when test="@value = 'project.name'">
+      <xsl:when test="@value = 'project.name' or @name = 'project.name'">
         <xsl:value-of select="$project.name"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.description'">
+      <xsl:when test="@value = 'project.description' or @name = 'project.description'">
         <xsl:value-of select="$project.description"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.version'">
+      <xsl:when test="@value = 'project.version' or @name = 'project.version'">
         <xsl:value-of select="$project.version"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.groupId'">
+      <xsl:when test="@value = 'project.groupId' or @name = 'project.groupId'">
         <xsl:value-of select="$project.groupId"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.artifactId'">
+      <xsl:when test="@value = 'project.artifactId' or @name = 'project.artifactId'">
         <xsl:value-of select="$project.artifactId"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.inceptionYear'">
+      <xsl:when test="@value = 'project.inceptionYear' or @name = 'project.inceptionYear'">
         <xsl:value-of select="$project.inceptionYear"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.packaging'">
+      <xsl:when test="@value = 'project.packaging' or @name = 'project.packaging'">
         <xsl:value-of select="$project.packaging"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.url'">
+      <xsl:when test="@value = 'project.url' or @name = 'project.url'">
         <xsl:value-of select="$project.url"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.mailinglist.name'">
+      <xsl:when test="@value = 'project.mailinglist.name' or @name = 'project.mailinglist.name'">
         <xsl:value-of select="$project.mailinglist.name"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.mailinglist.subscribe'">
+      <xsl:when test="@value = 'project.mailinglist.subscribe' or @name = 'project.mailinglist.subscribe'">
         <xsl:value-of select="$project.mailinglist.subscribe"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.mailinglist.unsubscribe'">
+      <xsl:when test="@value = 'project.mailinglist.unsubscribe' or @name = 'project.mailinglist.unsubscribe'">
         <xsl:value-of select="$project.mailinglist.unsubscribe"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.mailinglist.archive'">
+      <xsl:when test="@value = 'project.mailinglist.archive' or @name = 'project.mailinglist.archive'">
         <xsl:value-of select="$project.mailinglist.archive"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.mailinglist.post'">
+      <xsl:when test="@value = 'project.mailinglist.post' or @name = 'project.mailinglist.post'">
         <xsl:value-of select="$project.mailinglist.post"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.organization.name'">
+      <xsl:when test="@value = 'project.organization.name' or @name = 'project.organization.name'">
         <xsl:value-of select="$project.organization.name"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.organization.url'">
+      <xsl:when test="@value = 'project.organization.url' or @name = 'project.organization.url'">
         <xsl:value-of select="$project.organization.url"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.scm.connection'">
+      <xsl:when test="@value = 'project.scm.connection' or @name = 'project.scm.connection'">
         <xsl:value-of select="$project.scm.connection"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.scm.developerConnection'">
+      <xsl:when test="@value = 'project.scm.developerConnection' or @name = 'project.scm.developerConnection'">
         <xsl:value-of select="$project.scm.developerConnection"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.scm.url'">
+      <xsl:when test="@value = 'project.scm.url' or @name = 'project.scm.url'">
         <xsl:value-of select="$project.scm.url"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.scm.tag'">
+      <xsl:when test="@value = 'project.scm.tag' or @name = 'project.scm.tag'">
         <xsl:value-of select="$project.scm.tag"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.build.directory'">
+      <xsl:when test="@value = 'project.build.directory' or @name = 'project.build.directory'">
         <xsl:value-of select="$project.build.directory"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.build.outputDirectory'">
+      <xsl:when test="@value = 'project.build.outputDirectory ' or @name = 'project.build.outputDirectory'">
         <xsl:value-of select="$project.build.outputDirectory"/>
       </xsl:when>
-      <xsl:when test="@value = 'project.build.finalName'">
+      <xsl:when test="@value = 'project.build.finalName' or @name = 'project.build.finalName'">
         <xsl:value-of select="$project.build.finalName"/>
       </xsl:when>
-      <xsl:when test="@value = 'build.currentYear'">
+      <xsl:when test="@value = 'build.currentYear' or @name = 'build.currentYear'">
         <xsl:value-of select="$build.currentYear"/>
       </xsl:when>
-      <xsl:when test="@value = 'build.currentDate'">
+      <xsl:when test="@value = 'build.currentDate' or @name = 'build.currentDate'">
         <xsl:value-of select="$build.currentDate"/>
       </xsl:when>
-      <xsl:when test="@value = 'build.currentTime'">
+      <xsl:when test="@value = 'build.currentTime' or @name = 'build.currentTime'">
         <xsl:value-of select="$build.currentTime"/>
       </xsl:when>
-      <xsl:when test="@value = 'build.timestamp'">
+      <xsl:when test="@value = 'build.timestamp' or @name = 'build.timestamp'">
         <xsl:value-of select="$build.timestamp"/>
       </xsl:when>
-      <xsl:when test="@value = 'build.username'">
+      <xsl:when test="@value = 'build.username' or @name = 'build.timestamp'">
         <xsl:value-of select="$build.username"/>
       </xsl:when>
       <xsl:otherwise>
@@ -545,28 +545,29 @@
 
   <xsl:template name="do_tag">
     <xsl:param name="name" />
-    <xsl:element name="{$name}">
-      <xsl:apply-templates select="sapia:attr"/>
-      <xsl:apply-templates select="text/*"/>
-      <xsl:value-of select="text()"/>
-    </xsl:element>
+    <xsl:element name="{$name}"><xsl:apply-templates select="sapia:attr"/><xsl:apply-templates/></xsl:element>
   </xsl:template>
 
   <xsl:template match="sapia:attr">
+    <xsl:variable name="attribute_value"><xsl:apply-templates /></xsl:variable>
     <xsl:call-template name="do_attribute">
       <xsl:with-param name="name" select="@name" />
-      <xsl:with-param name="value" select="value" />
+      <xsl:with-param name="value" select="$attribute_value" />
     </xsl:call-template>
   </xsl:template>
 
   <xsl:template name="do_attribute">
     <xsl:param name="name" />
     <xsl:param name="value" />
-    <xsl:attribute name="{$name}">
-      <xsl:value-of select="$value" />
-    </xsl:attribute>
+    <xsl:attribute name="{$name}"><xsl:call-template name="trim"><xsl:with-param name="s" select="$value" /></xsl:call-template></xsl:attribute>
   </xsl:template>
-	       
+
+<!-- =========================================     TEXT     ========================================= -->
+
+  <xsl:template match="sapia:text">
+    <xsl:apply-templates />
+  </xsl:template>
+
 <!-- ========================================= VERTICAL MENU ========================================= -->
 
   <xsl:template match="sapia:vmenu">
