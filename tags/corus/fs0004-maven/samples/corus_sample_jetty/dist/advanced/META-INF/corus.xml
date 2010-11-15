@@ -1,0 +1,18 @@
+<distribution name="advanced-sample-jetty" version="1.0">
+  <process  name="server" 
+            maxKillRetry="3" 
+            shutdownTimeout="30000" 
+            invoke="true">
+    <port name="jetty-server" />        
+    <java mainClass="org.sapia.corus.sample.jetty.AdvancedJettyServer"
+          profile="dev">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="16M" />
+    </java>
+    <java mainClass="org.sapia.corus.sample.jetty.AdvancedJettyServer"
+          profile="prod">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="128M" />
+    </java>
+  </process> 
+</distribution>
