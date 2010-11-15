@@ -30,6 +30,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_corus_client</artifactId>
+    </dependency>    
+    <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-servlet</artifactId>
         <version>7.1.6.v20100715</version>
@@ -121,6 +125,18 @@
             <configuration>
               <descriptors>
                 <descriptor>src/main/assembly/advanced.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-scalable-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/scalable.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
