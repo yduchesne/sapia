@@ -423,6 +423,8 @@ public class DocumentationMojo extends AbstractMojo{
   }
   
   private void createParam(String key, String value, XSLTProcess transform){
+    
+    
     String aValue = value == null || value.length() == 0 ? "NOT_FOUND" : value;
     String sysValue = System.getProperty(key);
     if(sysValue != null){
@@ -431,6 +433,7 @@ public class DocumentationMojo extends AbstractMojo{
     Param p = transform.createParam();
     p.setName(key);
     p.setExpression(aValue);
+   
   }
   
   private void createMailingListParams(MailingList list, String index, XSLTProcess transform){

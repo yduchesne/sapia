@@ -12,6 +12,13 @@
         <li>Streamline deployments, minimize downtime</li>
         <li>Avoid prohibitive license costs</li>
       </ul>
+     <sapia:param name="project.version" />
+
+      <sapia:tag name="a">  
+        <sapia:attr name="href">
+          <sapia:text>http://localhost:8080/someapp-</sapia:text><sapia:param value="project.name" />
+        </sapia:attr><sapia:text>http://localhost:8080/someapp-</sapia:text><sapia:param value="project.name" />
+      </sapia:tag>
 
       <table class="rich_table gradient">
         <thead><th>What is it ?</th><th>How is it used ?</th><th>Roadmap</th></thead>
