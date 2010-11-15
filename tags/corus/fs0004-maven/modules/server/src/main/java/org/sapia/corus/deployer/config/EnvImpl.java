@@ -1,5 +1,8 @@
 package org.sapia.corus.deployer.config;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
 import org.sapia.corus.client.common.Env;
 import org.sapia.corus.client.common.PathFilter;
 import org.sapia.corus.client.services.deployer.dist.Property;
@@ -10,6 +13,7 @@ import org.sapia.corus.client.services.deployer.dist.Property;
  * @author Yanick Duchesne
  */
 public class EnvImpl implements Env{
+  private String     _corusHome;
   private String     _distDir;
   private String     _commonDir;
   private String     _processDir;
@@ -26,8 +30,9 @@ public class EnvImpl implements Env{
    * @param props a <code>Property[]</code> instance that corresponds to the properties that will
    * be dynamically passed to the started process.
    */
-  public EnvImpl(String profile, String distDir, String commonDir, String processDir,
+  public EnvImpl(String corusHome, String profile, String distDir, String commonDir, String processDir,
              Property[] props) {
+    _corusHome  = corusHome;
     _distDir    = distDir;
     _processDir = processDir;
     _props      = props;
@@ -71,7 +76,64 @@ public class EnvImpl implements Env{
   }
   
   @Override
+  public String getLibDir() {
+    return _corusHome + File.separator + "lib";
+  }
+  
+  @Override
+  public String getServerLibDir() {
+    return getLibDir() + File.separator + "server";
+  }
+
+  @Override
+  public String getVmBootLibDir() {
+    return getLibDir() + File.separator + "vm-boot";
+  }
+  
+  @Override
+  public String getJavaLibDir() {
+    return getLibDir() + File.separator + "java";
+  }
+  
+  @Override
+  public String getMagnetLibDir() {
+    return getLibDir() + File.separator + "magnet";
+  }
+  
+  @Override
+  public String getCorusIopLibPath() {
+    return findLibPath(getServerLibDir(), "sapia_corus_iop-");
+  }
+  
+  @Override
+  public String getJavaStarterLibPath() {
+    return findLibPath(getServerLibDir(), "sapia_corus-starter");
+  }
+  
+  @Override
   public PathFilter createPathFilter(String basedir) {
     return new PathFilterImpl(basedir);
   }
+  
+  protected String findLibPath(String basedirName, final String libName){
+    File basedir = new File(basedirName);
+    File[] matching = basedir.listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        return name.startsWith(libName);
+      }
+    });
+    if(matching.length == 0){ 
+      throw new IllegalStateException(
+          String.format("Could not find lib " + libName + " under " + basedirName)
+      );
+    }
+    if(matching.length > 1){ 
+      throw new IllegalStateException(
+          String.format("More than one match for lib " + libName + " under " + basedirName)
+      );
+    }   
+    return matching[0].getAbsolutePath();
+  }
+
 }

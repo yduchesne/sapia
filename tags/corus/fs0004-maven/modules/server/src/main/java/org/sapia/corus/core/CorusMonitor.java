@@ -21,7 +21,8 @@ import org.sapia.ubik.util.Localhost;
  * @author Yanick Duchesne
  */
 public class CorusMonitor {
-  public static final String HOST = "help";
+  public static final String HOST = "h";
+  public static final String HELP = "help";
   
   public static void main(String[] args) {
     int     port = CorusServer.DEFAULT_PORT;
@@ -29,7 +30,11 @@ public class CorusMonitor {
     
     CmdLine cmd = CmdLine.parse(args);
     
-    if(cmd.containsOption(HOST, false)){
+    if(cmd.containsOption(HELP, false)){
+      help();
+      return;
+    }
+    else if(cmd.containsOption(HOST, false)){
       try {
         host = cmd.assertOption(HOST, true).getValue();
       } catch (InputException e) {
@@ -40,23 +45,9 @@ public class CorusMonitor {
       }
     }
     else{
-      try{
-        host = Localhost.getLocalAddress().getHostAddress();
-      }catch(UnknownHostException e){
-        e.printStackTrace();
-        return;
-      }
+      host = "localhost";
     }
-    
-    CmdLine argsCmd = cmd.filterArgs();
-    
-    if (argsCmd.hasNext() &&
-      ((Arg) argsCmd.next()).getName().equals(CorusServer.HELP)) {
-      help();
-      
-      return;
-    }
-    
+        
     int level = ProgressMsg.DEBUG;
     
     try {
