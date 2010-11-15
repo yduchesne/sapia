@@ -30,4 +30,4 @@ TESTED ON openSolaris 2009.06
 7. Validate status
     --> scvs -x corus
     --> ps -fea | grep corus
-    --> coruscli.sh
+    --> coruscli
