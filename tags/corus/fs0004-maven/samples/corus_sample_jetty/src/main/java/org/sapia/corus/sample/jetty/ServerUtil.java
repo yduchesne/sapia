@@ -38,15 +38,18 @@ public class ServerUtil {
     File webAppsRootDir = getWebappsRootDir();
     File[] webAppsDirs = webAppsRootDir.listFiles();
     List<Handler> handlers = new ArrayList<Handler>();
+    for(File webAppFileOrDir: webAppsDirs){
       WebAppContext ctx = new WebAppContext();
-      for(File webAppFileOrDir: webAppsDirs){
       if(webAppFileOrDir.getName().endsWith(".war")){
-        System.out.println(String.format("Adding WAR: %s", webAppFileOrDir.getAbsolutePath()));
-        ctx.setContextPath(webAppFileOrDir.getName().replace(".war", ""));
+        String contextPath = "/"+webAppFileOrDir.getName().replace(".war", ""); 
+        System.out.println(String.format("Adding WAR: %s; context path: %s", webAppFileOrDir.getAbsolutePath(), contextPath));
+        ctx.setContextPath(contextPath);
         ctx.setWar(webAppFileOrDir.getAbsolutePath());
       }
       else{
-        ctx.setContextPath(webAppFileOrDir.getName());
+        String contextPath = "/"+webAppFileOrDir.getName(); 
+        System.out.println(String.format("Adding webapp: %s", contextPath));
+        ctx.setContextPath(contextPath);
         ctx.setDescriptor(
             webAppFileOrDir.getAbsolutePath()+
             File.separator+

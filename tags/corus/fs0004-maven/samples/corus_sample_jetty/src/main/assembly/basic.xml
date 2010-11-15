@@ -8,14 +8,24 @@
     
     <!-- lib -->
     <fileSet>
-       <directory>lib</directory>
+       <outputDirectory>lib</outputDirectory>
+       <directory>${basedir}/lib</directory>
        <includes>
           <include>**/*</include>
        </includes>
     </fileSet>
+  
+    <fileSet>
+       <outputDirectory>lib</outputDirectory>    
+       <directory>${basedir}/target</directory>
+       <includes>
+          <include>corus_sample_jetty*.jar</include>
+       </includes>
+    </fileSet>  
     
     <!-- webapps -->
     <fileSet>
+       <outputDirectory>webapps</outputDirectory>
        <directory>webapps</directory>
        <includes>
           <include>**/*</include>

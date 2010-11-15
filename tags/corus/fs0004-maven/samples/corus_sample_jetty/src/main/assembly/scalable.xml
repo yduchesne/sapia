@@ -35,7 +35,7 @@
     <!-- corus.xml -->    
     <fileSet>
        <outputDirectory>/META-INF</outputDirectory>
-       <directory>dist/basic/META-INF</directory>
+       <directory>dist/scalable/META-INF</directory>
        <includes>
           <include>corus.xml</include>
        </includes>

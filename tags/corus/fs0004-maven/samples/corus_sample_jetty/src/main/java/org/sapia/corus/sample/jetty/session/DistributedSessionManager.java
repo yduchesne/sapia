@@ -1,57 +1,28 @@
 package org.sapia.corus.sample.jetty.session;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.eclipse.jetty.server.session.AbstractSessionManager;
 
 public class DistributedSessionManager extends AbstractSessionManager{
   
-  private CacheManager caches;
-  private Cache sessions;
+  private SessionCache sessions;
   
-  public DistributedSessionManager(File configFile) throws FileNotFoundException, IOException, CacheException{
-    InputStream config = new FileInputStream(configFile);
-    try{
-      
-      caches = CacheManager.create(config);
-      sessions = caches.getCache("sessions");
-    }finally{
-      config.close();
-    }
-      
+  public DistributedSessionManager(SessionCache sessions){ 
+    this.sessions = sessions;
   }
   
   @Override
-  protected void addSession(Session aSession) {
-    Element sessionElement = new Element(aSession.getId(), aSession);
-    sessions.put(sessionElement);
+  protected void addSession(Session aSession) {    
+    sessions.put(aSession);
   }
   
   @Override
   public Session getSession(String id) {
-    try{
-      Element sessionElement = sessions.get(id);
-      if(sessionElement == null){
-        return null;
-      }
-      DistributedSession session = (DistributedSession)sessionElement.getValue();
-      return session;
-    }catch(CacheException e){
-      return null;
-    }
+    return sessions.get(id);
   }
   
   @Override
