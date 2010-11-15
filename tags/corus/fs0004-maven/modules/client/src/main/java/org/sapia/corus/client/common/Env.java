@@ -42,4 +42,34 @@ public interface Env {
    * @return a new {@link PathFilter}
    */
   public PathFilter createPathFilter(String basedir);
+
+  /**
+   * @return the path to the directory corresponding to ${corus.home}/lib
+   */
+  public String getLibDir();
+  
+  
+  /**
+   * @return the path to the directory corresponding to ${corus.home}/lib/server
+   */
+  public String getServerLibDir();
+  
+  /**
+   * @return the path to the directory corresponding to ${corus.home}/lib/magnet
+   */
+  public String getMagnetLibDir();
+  
+  /**
+   * @return the path to the directory corresponding to ${corus.home}/lib/vm-boot
+   */
+  public String getVmBootLibDir();
+  
+  /**
+   * @return the path to the directory corresponding to ${corus.home}/lib/java
+   */
+  public String getJavaLibDir();
+  
+  public String getCorusIopLibPath();
+  
+  public String getJavaStarterLibPath();
 }

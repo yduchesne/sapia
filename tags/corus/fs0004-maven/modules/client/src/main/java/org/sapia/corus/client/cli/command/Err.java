@@ -30,10 +30,8 @@ public class Err extends CorusCliCommand {
   private static final int COL_ERROR_ID = 0;
   private static final int COL_MESSAGE = 1;
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.client.cli.command.CorusCliCommand#doExecute(org.sapia.corus.client.cli.CliContext)
-   */
-  protected void doExecute(CliContext aContext) throws AbortException, InputException {
+
+  public void doExecute(CliContext aContext) throws AbortException, InputException {
     
     // 1. Command has no option/argument
     if (!aContext.getCommandLine().hasNext()) {

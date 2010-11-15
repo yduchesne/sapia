@@ -1,5 +1,7 @@
 package org.sapia.corus.client.services.deployer.dist;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,4 +125,5 @@ public abstract class BaseJavaStarter implements Starter, Serializable {
   public List<Dependency> getDependencies() {
     return new ArrayList<Dependency>(_dependencies);
   }
+  
 }
