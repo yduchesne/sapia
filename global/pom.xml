@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_global</artifactId>
-  <version>1.10</version>
+  <version>1.10-SNAPSHOT</version>
 
   <organization>
     <name>Sapia OSS</name>
@@ -110,7 +110,7 @@
       <plugin>
         <groupId>org.sapia</groupId>
         <artifactId>sapia_site_doc_plugin</artifactId>
-        <version>1.10</version>
+        <version>1.11</version>
         <configuration>
           <deleteDestdir>false</deleteDestdir>
         </configuration>
