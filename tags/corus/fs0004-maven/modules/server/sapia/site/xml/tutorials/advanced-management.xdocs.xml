@@ -24,6 +24,256 @@
     <sapia:sect-desc>
     </sapia:sect-desc>
 
+    <sapia:sect2 title="Process Dependencies">
+      <p>
+        In the world of distributed applications, interdependencies are common.
+        Let's say application A depends on application B, and that both of these
+        applications run into their own processes. What if at the startup
+        of A, B is not available ? In an ideal world, application A would 
+        implement a provision with regards to that issue (using JINI-like
+        dynamic discovery of services, for example). But it's not always 
+        possible, either for lack of resources, time, or development expertise.
+      </p>
+      <p>
+        As a workaround, Corus has built-in support for handling process 
+        dependencies. The mechanism is as follows:
+      </p>
+      
+      <ol>
+        <li>
+          In the Corus descriptor, declare which processes depend on which
+          other processes.
+        </li>
+        <li>
+          At the start up of a given process, Corus checks on which other 
+          processes it depends. If there are indeed such dependencies, the
+          corresponding processes are started first - that logic is followed
+          recursively.
+        </li>
+      </ol>
+      
+      <sapia:note>
+        The above means that if your start a dependent process, you do not
+        need to start the ones on which that process depends, since Corus does
+        it automatically.
+      </sapia:note>
+      
+      <p>
+        Let's see a concrete example: building on a 
+        <a href="corus-domain.html">previous tutorial</a>, we're introducing a 
+        Jetty container to which we plug a custom 
+        <sapia:class>SessionManager</sapia:class> implementation that depends
+        on a remote session cache to provide distributed session management.
+      </p>
+      <p>
+        More precisely, the distributed session caches (built on EHCache) are 
+        deployed in their own processes, an replicate session data to one 
+        another in order to provide failover. This way, if a Jetty server 
+        crashes, requests can be load-balanced to another server instance, 
+        which will retrieve the corresponding session data from one of the
+        distributed caches. In the same manner, since the caches are redundant,
+        session data can be retrieved from an alternate node in case of failure
+        at one instance.
+      </p>
+      
+      <p>
+        The diagram below illustrates the above:
+      </p>
+      
+      <sapia:code>TBD</sapia:code>
+      
+      <sapia:note>
+        The implementation is somewhat naive, but that's not the point. The goal
+        is only to demonstrate a concrete scenario where process dependencies
+        make sense.
+      </sapia:note>
+      
+      <p>
+        It is clear from the above that the Jetty servers depend on the session
+        caches. This is materialized in the Corus descriptor:
+      </p>
+      
+      <sapia:code>TBD</sapia:code>
+      
+      <p>
+        As you can see, we're declaring a 
+        <sapia:command>dependency</sapia:command> element for the 
+        <sapia:class>ScalableJettyServer</sapia:class> application - 
+        the element has been introduced at this level to allow changing 
+        dependencies on a per-profile basis.
+      </p>
+      
+      <p>
+        The <sapia:command>dependency</sapia:command> element takes the 
+        following attributes:
+      </p>
+
+      <ul>
+        <li>distribution (optional): the distribution of the process on which 
+        the application depends. Defaults to the same distribution as 
+        the application.</li>
+        
+        <li>version (optional): the distribution version of the process on 
+        which the application depends. Defaults to the same version as the 
+        application</li>
+        
+        <li>process (mandatory): the name of the process on 
+        which the application depends.</li>
+      </ul>
+      
+      <p>
+        Let's try it out. Start a Corus instance, and (using the CLI) deploy 
+        the ****************** distribution from the samples module:
+      </p>
+      
+      <sapia:code>TBD</sapia:code>
+      
+      <p>
+        And now start the Jetty server:
+      </p>
+      
+      <sapia:code>TBD</sapia:code>
     
+      <p>
+        Look carefully at the console in which Corus runs: you should see the 
+        output from the Corus server indicating that it indeed starts the 
+        process corresponding to the session first, as in the
+        sample below:
+      </p>
+      
+      <p>*************** TBD</p>
+      
+      <p>
+        There's a delay between startups (which can be configured). After
+        a certain amount of time, you should see that all processes are running
+        by typing <sapia:command>ps</sapia:command>.
+      </p>
+      
+      <p>
+        Now kill all processes 
+        (<sapia:command>kill -d * -v * -n *</sapia:command>) and jump to
+        the next item in this tutorial.
+      </p>
+
+    </sapia:sect2>
+    
+    
+    <sapia:sect2 title="Execution Configurations">
+      <p>
+        Let's say that even using dependencies, you end up with multiple
+        completely independent processes that you have to start manually. You
+        could declare fake dependencies amongst independent processes, in order
+        to be able to start only the first one in the chain. But that would not
+        be ideal.          
+      </p>
+      
+      <p>
+        There's a more elegant solution to this problem: 
+        execution configurations. An execution configuration is just an XML file
+        containing predefined markup that indicates to Corus which processes
+        should be started. Such a configuration has a unique name within a 
+        Corus instance, and you use the <sapia:command>exec</sapia:command>
+        command in conjunction with the name of an execution configuration to
+        trigger the startup of its related processes.
+      </p>
+      
+      <p>
+        Building on the previous example, we've defined the following 
+        execution configuration:
+      </p>
+      
+<sapia:code>TBD</sapia:code>
+
+      <p>
+        As you can see, the <sapia:command>exec</sapia:command> is the root,
+        and has two attributes:
+      </p>
+      
+      <ul>
+        <li>name: indicates the name of the configuration</li>
+        <li>startOnBoot: indicates if the processes corresponding to each
+        <sapia:command>process</sapia:command> element in the configuration
+        should be started upon startup of the Corus instance itself.</li>
+      </ul>
+      
+      <sapia:note>
+        Using <sapia:command>startOnBoot</sapia:command> is a safeguard against
+        the processes becoming unavailable after a machine reboot.
+      </sapia:note>
+        
+      <p>So now let's deploy the execution configuration into Corus:</p>
+      
+      <sapia:code>TBD***********</sapia:code>
+      
+      
+      <p>Make sure all currently running processes are killed (
+      <sapia:command>kill -d * -v * -n *</sapia:command> ) and type the
+      following:</p>
+      
+      <sapia:code>********TBD</sapia:code>
+      
+      <p>
+        Check the Corus console: you should see in the logging output what is 
+        happening: the process that's indicated is eventually started (the
+        dependency startup chain is respected even in that case). After
+        a certain amount of time, all processes should be up (do a 
+        <sapia:command>ps</sapia:command> to confirm it).
+      </p>
+      
+      <p>
+        After you've confirmed that everything works, kill all the processes
+        (<sapia:command>kill -d * -v * -n * -w</sapia:command>). After their
+        termination, shutdown Corus. 
+      </p>
+      
+      <p>
+        You will now see that the processes will be automatically restarted,
+        because of the <sapia:command>startOnBoot</sapia:command> flag: restart
+        Corus and watch the output. After a while, you will see that the 
+        processes are gradually restarted.
+      </p>
+      
+      <p>
+        In order to  prepare for the last item in this tutorial, leave 
+        everything as is, for we're going to demonstrate the ultimate 
+        productivity feature: Corus scripts.
+      </p>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Scripts">
+      <p>
+        You now should have the <sapia:class>ScalableJettyServer</sapia:class>
+        distribution running in Corus - since we've not undeployed it. Let's 
+        imagine now that we want to do a full redeploy of the distribution 
+        (because we've fixed a bug, for example).
+      </p>
+      <p>
+        In theory we have to kill the currently running processes, undeploy 
+        the distribution, redeploy the new one... When you have multiple 
+        environments to maintain (Dev, QA, Beta, Prod...), these steps have
+        to be performed repetitively, and can consume quite a lot of your time.
+      </p>
+      <p>
+        To work around this hassle, Corus provides a 
+        <sapia:command>script</sapia:command> command. The command takes a file
+        that itself contains the list of commands that you want to perform, as
+        if you'd time them sequentially in the CLI. In our case, here's the
+        script we're going to use: 
+      </p>
+      
+      <sapia:code>TBD</sapia:code>
+      
+      <p>
+        To launch the script, type the following in the CLI:
+      </p>
+      
+      <sapia:code>TBD</sapia:code>
+      
+      <p>
+        And watch the output in the Corus server console: all commands are 
+        processed one by one, in a single batch, with only one interaction on
+        your end.
+      </p>
+    </sapia:sect2>
   </sapia:sect1>
 </sapia:page>

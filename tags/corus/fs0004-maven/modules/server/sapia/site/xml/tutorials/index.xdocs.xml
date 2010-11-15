@@ -60,14 +60,6 @@
         ease the pain of maintenance operations. In this tutorial, we're 
         exploring these hassle-saving features. 
       </div>
-            
-      <!--div class="article-box">
-        <h1><a href="advanced-tutorial.html">Advanced Tutorial</a></h1> 
-        We take our embedded Jetty server to the next level: start multiple
-        instances in a Corus domain. Indeed, you'll see how a clustered 
-        deployment is performed and how multiple Corus instances can
-        be controlled centrally, as one.
-      </div-->
       
     </sapia:sect-desc>
     
