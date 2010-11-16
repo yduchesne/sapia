@@ -15,7 +15,6 @@ import org.sapia.corus.client.exceptions.misc.MissingDataException;
  */
 public class Magnet extends BaseJavaStarter implements java.io.Serializable {
   
-  
   static final long serialVersionUID = 1L;
   
   private static final String APP_STARTER_CLASS_NAME = "org.sapia.util.ApplicationStarter";
@@ -94,7 +93,7 @@ public class Magnet extends BaseJavaStarter implements java.io.Serializable {
   }
 
   private String getAsCp(Env env) {
-    String           basedir = _corusHome + File.separator + "lib" + File.separator + "magnet";
+    String           basedir = env.getMagnetLibDir();
     PathFilter filter = env.createPathFilter(basedir);
     filter.setIncludes(new String[] { "**/*.jar", "**/*.zip" });
     
@@ -113,7 +112,7 @@ public class Magnet extends BaseJavaStarter implements java.io.Serializable {
   }
 
   private String getMainCp(Env env) {
-    String           basedir = _corusHome + File.separator + "lib" + File.separator + "vm-boot";
+    String           basedir = env.getVmBootLibDir();
     PathFilter filter = env.createPathFilter(basedir);
     filter.setIncludes(new String[] { "**/*.jar" });
     
