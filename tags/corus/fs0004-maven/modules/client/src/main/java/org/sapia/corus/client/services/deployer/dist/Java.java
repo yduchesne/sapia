@@ -119,11 +119,11 @@ public class Java extends BaseJavaStarter {
       cmdLineVars.put(p.getName(), value);
       cmd.addElement(p.convert());
     }
+    
     Property prop = new Property();
     prop.setName(CORUS_JAVAPROC_MAIN_CLASS);
     prop.setValue(_mainClass);
     cmd.addElement(prop.convert());
-    
     
     Map<String, String>  envVars    = new HashMap<String, String>();
     
@@ -163,7 +163,7 @@ public class Java extends BaseJavaStarter {
   }
   
   private String getMainCp(Env env) {
-    String           basedir = (_corusHome == null ? System.getProperty("user.dir") : _corusHome) + File.separator + "lib" + File.separator + "vm-boot";
+    String           basedir = env.getVmBootLibDir();
     PathFilter filter = env.createPathFilter(basedir);
     filter.setIncludes(new String[] { "**/*.jar" });
     String[] jars = filter.filter();
