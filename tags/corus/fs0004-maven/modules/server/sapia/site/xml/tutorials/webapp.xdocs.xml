@@ -9,7 +9,6 @@
     <script type="text/javascript">
     Shadowbox.init();
     </script>
-
   </head>
 
   <sapia:vmenu>
@@ -297,7 +296,7 @@ public class BasicJettyServer {
     
     <sapia:sect2 title="Starting the server">
       <p>
-        The natural thing to do now is to start an instance of the server. Once
+        The natural thing to do now is to start an instance of the server. One
         uses the <sapia:command>exec</sapia:command> to that end:
       </p>
       <sapia:code>exec -d basic-sample-jetty -v 1.0 -n server -p dev</sapia:code>
