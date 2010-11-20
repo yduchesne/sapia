@@ -13,3 +13,5 @@ This section links to the project-related pages.
 * [StructuringYourPOMs How to structure your project POMs]
 
 * [ProjectDocumentation How to set up your project's documentation]
+
+* [CorusInstallationProcedure Corus Installation Procedure]
