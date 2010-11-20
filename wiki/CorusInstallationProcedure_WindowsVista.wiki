@@ -1,4 +1,4 @@
-#summary Corus Installation Procedure for Windows Vista
+s#summary Corus Installation Procedure for Windows Vista
 
 = Introduction =
 
@@ -40,6 +40,11 @@ INSERT PICTURE 2 HERE!!!!
 
 INSERT PICTURE 3 HERE!!!!
 
+At this point you should be able to start Corus by manually invoking the `bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a Windows service.
 
 
 = 4. Window service integration = 
+With the installation of Corus as a Windows service, you will be able to automatically start Corus on startup of your machine. Windows provides a simple service management user interface to stop, start and restart services.
+
+To register Corus as a service, you need to:
+ * Define the Corus configuration file 
