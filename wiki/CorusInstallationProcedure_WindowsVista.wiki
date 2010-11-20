@@ -2,12 +2,44 @@
 
 = Introduction =
 
-Add your content here.
+This page will guide you through the necessary steps to install Corus on Windows Vista.
 
 
-= Details =
+= 1. Preparing the environment =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== i) Java ==
+ * Before installing Corus you need to have Java installed on your machine. Corus requires at least Java 5.
+ * Corus requires the presence of the  JAVA_HOME environment variable that points to the Java runtime you want to use (JRE or JDK)
+
+== ii) Installation directory ==
+ * You need to create a directory on your system in which you will install Corus
+ * For the purpose of this demonstration, we create the `C:\opt\sapia-corus` directory
+
+
+= 2. Extract the corus distribution =
+ * Extract the Corus distribution zip file into the Corus installation directory created above.
+ * Rename the created root directory of the archive if you need.
+ * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus-2.0`
+
+INSERT PICTURE 1 HERE!!!!
+
+= 3. Configure environment =
+ * To run properly, Corus requires the presence of another environment variable: CORUS_HOME
+ * The variable must point to the home directory of the Corus installation, which in our case is the `C:\opt\sapia-corus\sapia_corus-2.0` directory
+ * To define an environment variable on Windows Vista, follow these simple steps:
+  # Go in Control Panel -> System and Maintenance -> System -> Advanced system settings
+  # In the System Properties window, select the Advanced tab and click on the Environment Variables... button
+  # Add a new system variable by clicking on the New... button in the bottom section (System Variables)
+  # Define the CORUS_HOME variable with the appropriate value
+
+INSERT PICTURE 2 HERE!!!!
+
+ * You can also modify the *`Path`* environment variable to have an easy access to the various commands of the Corus distribution
+ * To do so, select the *`Path`* variable in the System Properties windows, and click on Edit...
+ * Append the following text to the parameter value field: "`;%CORUS_HOME%\bin`"
+
+INSERT PICTURE 3 HERE!!!!
+
+
+
+= 4. Window service integration = 
