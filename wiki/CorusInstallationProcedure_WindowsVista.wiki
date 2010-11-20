@@ -47,4 +47,15 @@ At this point you should be able to start Corus by manually invoking the `bin\co
 With the installation of Corus as a Windows service, you will be able to automatically start Corus on startup of your machine. Windows provides a simple service management user interface to stop, start and restart services.
 
 To register Corus as a service, you need to:
- * Define the Corus configuration file 
+== i) Define a Corus configuration file ==
+ * you need to define a Corus configuration file that will be used when the service starts.
+ * We provide a default configuration file to help you: it is located under `config\corus_service_33000.wrapper.properties`. You can have a look at the configuration section to know how to customize Corus.
+
+== ii) Prepare installation script ==
+ * A script is available to register Corus as a Windows Service: it located under `bin\win32\InstallCorusService.bat`
+ * Edit the script (or copy it under a different name) and set the configuration file name to the variable _WRAPPER_CONF.
+ * By default, the `InstallCorusService.bat` is configured to use the `config\corus_service_33000.wrapper.properties` file (so can have a try right now).
+
+
+== iii) Execute the installation script ==
+ * ...
