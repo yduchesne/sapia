@@ -21,12 +21,12 @@ This page will guide you through the necessary steps to install Corus on Windows
  * Rename the created root directory of the archive if you need.
  * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus-2.0`.
 
-<table align="center" boder="1" cellpadding="0">
+<table boder="1" cellpadding="0">
 <tr><td>
      <a href="http://sapia.googlecode.com/svn/wiki/ScreenShot_WindowsVista_1_CorusExtract.jpg">
      <img width="60%" alt="Click for full image resolution" src="http://sapia.googlecode.com/svn/wiki/ScreenShot_WindowsVista_1_CorusExtract.jpg" /></a>
 </td></tr>
-<tr><td>     _Click on the image for full size resolution_</td></tr>
+<tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
 
 = 3. Configure environment =
