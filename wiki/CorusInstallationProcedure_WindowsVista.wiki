@@ -24,7 +24,7 @@ This page will guide you through the necessary steps to install Corus on Windows
 <table boder="1" cellpadding="0">
 <tr><td>
      <a href="http://sapia.googlecode.com/svn/wiki/ScreenShot_WindowsVista_1_CorusExtract.jpg">
-     <img width="60%" alt="Click for full image resolution" src="http://sapia.googlecode.com/svn/wiki/ScreenShot_WindowsVista_1_CorusExtract.jpg" /></a>
+     <img src="http://sapia.googlecode.com/svn/wiki/ScreenShot_WindowsVista_1_CorusExtract.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
