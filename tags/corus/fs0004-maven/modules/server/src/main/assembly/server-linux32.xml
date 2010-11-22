@@ -1,5 +1,5 @@
 <assembly>
-  <id>linux64</id>
+  <id>linux32</id>
   <formats>
     <format>tar.gz</format>
   </formats>
@@ -19,7 +19,7 @@
        <lineEnding>unix</lineEnding>
     </fileSet>
     <fileSet>
-       <directory>bin/linux64</directory>
+       <directory>bin/linux32</directory>
        <outputDirectory>bin</outputDirectory>
        <includes>
           <include>wrapper</include>
@@ -62,7 +62,7 @@
        </includes>
     </fileSet>
     <fileSet>
-       <directory>bin/linux64</directory>
+       <directory>bin/linux32</directory>
        <outputDirectory>lib/wrapper</outputDirectory>
        <includes>
           <include>libwrapper.so</include>

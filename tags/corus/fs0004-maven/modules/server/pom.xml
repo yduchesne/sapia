@@ -357,6 +357,18 @@
                 </configuration>
           </execution>
           <execution>
+            <id>make-server-windows32-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/server-windows32.xml</descriptor>
+                  </descriptors>
+                </configuration>
+          </execution>
+          <execution>
 	          <id>make-demo-dist</id>
 	          <phase>package</phase>
 	          <goals>

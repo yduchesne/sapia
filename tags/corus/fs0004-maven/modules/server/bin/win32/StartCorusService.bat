@@ -10,12 +10,11 @@ set _APP_HOME=%CORUS_HOME%\bin\win32
 set _WRAPPER_CONF=%CORUS_HOME%\config\corus_service_33000.wrapper.properties
 
 :exec
-rem Uninstall Corus as an NT service for configuration %_WRAPPER_CONF%
-"%_APP_HOME%\Wrapper.exe" -r %_WRAPPER_CONF%
+rem Install Corus as an NT service with configuration %_WRAPPER_CONF%
+"%_APP_HOME%\Wrapper.exe" -t "%_WRAPPER_CONF%"
 if not errorlevel 1 goto end
 pause
 
 :end
 set _APP_HOME=
 set _WRAPPER_CONF=
-

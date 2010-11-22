@@ -1,7 +1,7 @@
 <assembly>
-  <id>linux64</id>
+  <id>win32</id>
   <formats>
-    <format>tar.gz</format>
+    <format>zip</format>
   </formats>
   <includeBaseDirectory>true</includeBaseDirectory>
   <fileSets>
@@ -10,19 +10,25 @@
     <fileSet>
        <directory>bin</directory>
        <includes>
-          <include>*</include>
+          <include>*.bat</include>
        </includes>
-       <excludes>
-          <exclude>*.bat</exclude>
-       </excludes>
        <fileMode>0777</fileMode>
-       <lineEnding>unix</lineEnding>
+       <lineEnding>dos</lineEnding>
     </fileSet>
     <fileSet>
-       <directory>bin/linux64</directory>
-       <outputDirectory>bin</outputDirectory>
+       <directory>bin/win32</directory>
+       <outputDirectory>bin/win32</outputDirectory>
        <includes>
-          <include>wrapper</include>
+          <include>*.bat</include>
+       </includes>
+       <fileMode>0777</fileMode>
+       <lineEnding>dos</lineEnding>
+    </fileSet>
+    <fileSet>
+       <directory>bin/win32</directory>
+       <outputDirectory>bin/win32</outputDirectory>
+       <includes>
+          <include>*.exe</include>
        </includes>
        <fileMode>0777</fileMode>
     </fileSet>
@@ -33,7 +39,7 @@
        <includes>
           <include>*.*</include>
        </includes>
-       <lineEnding>unix</lineEnding>
+       <lineEnding>dos</lineEnding>
     </fileSet>
 
     <!-- doc -->
@@ -62,10 +68,10 @@
        </includes>
     </fileSet>
     <fileSet>
-       <directory>bin/linux64</directory>
+       <directory>bin/win32</directory>
        <outputDirectory>lib/wrapper</outputDirectory>
        <includes>
-          <include>libwrapper.so</include>
+          <include>wrapper*.dll</include>
        </includes>
        <fileMode>0777</fileMode>
     </fileSet>
