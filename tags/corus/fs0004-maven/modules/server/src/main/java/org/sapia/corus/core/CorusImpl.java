@@ -11,6 +11,7 @@ import org.sapia.corus.client.CorusVersion;
 import org.sapia.corus.client.common.CompositeStrLookup;
 import org.sapia.corus.client.common.PropertiesStrLookup;
 import org.sapia.corus.client.exceptions.core.ServiceNotFoundException;
+import org.sapia.corus.client.services.cluster.ServerHost;
 import org.sapia.corus.client.services.naming.JndiModule;
 import org.sapia.corus.core.PropertyContainer;
 import org.sapia.corus.util.IOUtils;
@@ -30,6 +31,7 @@ import org.springframework.context.support.GenericApplicationContext;
  * @author Yanick Duchesne
  */
 public class CorusImpl implements Corus, RemoteContextProvider {
+  
   private ModuleLifeCycleManager      _lifeCycle;
   private String                      _domain;
 
@@ -51,6 +53,18 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     return _domain;
   }
   
+  public RemoteContext getRemoteContext() throws RemoteException{
+    JndiModule module = (JndiModule)lookup(JndiModule.ROLE);
+    return module.getRemoteContext();
+  }
+
+  /* (non-Javadoc)
+   * @see org.sapia.corus.client.Corus#getHostInfo()
+   */
+  public ServerHost getHostInfo() {
+    return _lifeCycle.getHostInfo();
+  }
+
   public ServerContext getServerContext(){
     return _lifeCycle;
   }
@@ -135,10 +149,5 @@ public class CorusImpl implements Corus, RemoteContextProvider {
       throw new ServiceNotFoundException(String.format("No module found for: %s", module));
     }
     return toReturn;
-  }
-  
-  public RemoteContext getRemoteContext() throws RemoteException{
-    JndiModule module = (JndiModule)lookup(JndiModule.ROLE);
-    return module.getRemoteContext();
   }
 }

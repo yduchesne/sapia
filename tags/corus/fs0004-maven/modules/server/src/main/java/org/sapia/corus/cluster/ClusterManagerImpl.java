@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.cluster.ClusterManager;
+import org.sapia.corus.client.services.cluster.ServerHost;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.ubik.mcast.AsyncEventListener;
 import org.sapia.ubik.mcast.EventChannel;
@@ -29,6 +30,7 @@ public class ClusterManagerImpl extends ModuleHelper
   private int _multicastPort       = Consts.DEFAULT_MCAST_PORT;
   private EventChannel      _channel;
   private Set<ServerAddress>   _hostsAddresses = Collections.synchronizedSet(new HashSet<ServerAddress>());
+  private Set<ServerHost>   _hostsInfos = Collections.synchronizedSet(new HashSet<ServerHost>());
   private ServerSideClusterInterceptor _interceptor;
   
   /**
@@ -51,7 +53,7 @@ public class ClusterManagerImpl extends ModuleHelper
   public void init() throws Exception {
     instance = this;
     _channel = new EventChannel(
-        _serverContext.getDomain(), 
+        serverContext().getDomain(), 
         _multicastAddress,
         _multicastPort);
     _channel.registerAsyncListener(CorusPubEvent.class.getName(), this);
@@ -59,7 +61,7 @@ public class ClusterManagerImpl extends ModuleHelper
     _channel.setBufsize(4000);    
     _logger.info("Signaling presence to cluster on: " + _multicastAddress + ":" + _multicastPort);
     _channel.dispatch(CorusPubEvent.class.getName(),
-            new CorusPubEvent(true, serverContext().getServerAddress()));
+            new CorusPubEvent(true, serverContext().getServerAddress(), serverContext().getHostInfo()));
   }
   
   @Override
@@ -99,6 +101,13 @@ public class ClusterManagerImpl extends ModuleHelper
     return new HashSet<ServerAddress>(_hostsAddresses);
   }
 
+  /* (non-Javadoc)
+   * @see org.sapia.corus.client.services.cluster.ClusterManager#getHosts()
+   */
+  public synchronized Set<ServerHost> getHosts() {
+    return new HashSet<ServerHost>(_hostsInfos);
+  }
+
   /**
    * @see ClusterManager#getEventChannel()
    */
@@ -124,13 +133,14 @@ public class ClusterManagerImpl extends ModuleHelper
       CorusPubEvent evt  = (CorusPubEvent) event;
       ServerAddress  addr = evt.getOrigin();
       _hostsAddresses.add(evt.getOrigin());
+      _hostsInfos.add(evt.getHostInfo());
 
       if (evt.isNew()) {
         _logger.debug("New corus discovered: " + addr);
 
         try {
           _channel.dispatch(CorusPubEvent.class.getName(),
-                  new CorusPubEvent(false, serverContext().getTransport().getServerAddress()));
+                  new CorusPubEvent(false, serverContext().getTransport().getServerAddress(), serverContext().getHostInfo()));
         } catch (IOException e) {
           _logger.debug("Event channel could not dispatch event", e);
         }
@@ -139,4 +149,5 @@ public class ClusterManagerImpl extends ModuleHelper
       }
     } 
   }
+  
 }

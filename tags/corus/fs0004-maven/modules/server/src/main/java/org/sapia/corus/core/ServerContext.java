@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.sapia.corus.client.Corus;
+import org.sapia.corus.client.services.cluster.ServerHost;
 import org.sapia.ubik.net.TCPAddress;
 
 public interface ServerContext {
@@ -55,6 +56,8 @@ public interface ServerContext {
    * instance.
    */
   public TCPAddress getServerAddress();
+  
+  public ServerHost getHostInfo();
   
   /**
    * @return the {@link CorusTransport}.

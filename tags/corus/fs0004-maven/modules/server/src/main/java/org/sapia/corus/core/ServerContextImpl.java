@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 import org.sapia.corus.client.Corus;
+import org.sapia.corus.client.services.cluster.ServerHost;
 import org.sapia.ubik.net.TCPAddress;
 
 /**
@@ -18,11 +19,28 @@ import org.sapia.ubik.net.TCPAddress;
 public class ServerContextImpl implements ServerContext {
 
   static final String CORUS_PROCESS_FILE = "corus_process";
+  
+  private static final String _OS_INFO;
+  private static final String _JAVA_VM_INFO;
+  static {
+    _OS_INFO = new StringBuilder().
+            append(System.getProperty("os.name")).
+            append(" ").
+            append(System.getProperty("os.version")).
+            toString();
+
+    _JAVA_VM_INFO = new StringBuilder().
+            append(System.getProperty("java.version")).
+            append(" ").
+            append(System.getProperty("java.vm.name")).
+            toString();
+  }
 
   private Corus corus;
   private String serverName = UUID.randomUUID().toString().substring(0, 8);
   private String domain;
   private TCPAddress serverAddress;
+  private ServerHost hostInfo;
   private CorusTransport transport;
   private InternalServiceContext services;
   private String homeDir;
@@ -40,21 +58,8 @@ public class ServerContextImpl implements ServerContext {
     this.domain = domain;
     this.homeDir = homeDir;
     this.services = services;
+    this.hostInfo = ServerHost.createNew(addr, _OS_INFO, _JAVA_VM_INFO);
   }
-
-  /*
-  public ServerContextImpl(
-      Corus corus,
-      CorusTransport transport,
-      String domain, 
-      String homeDir, 
-      InternalServiceContext services){
-    this.corus = corus;
-    this.transport = transport;
-    this.domain = domain;
-    this.homeDir = homeDir;
-    this.services = services;
-  }*/
   
   @Override
   public Corus getCorus() {
@@ -88,6 +93,13 @@ public class ServerContextImpl implements ServerContext {
   @Override  
   public TCPAddress getServerAddress() {
     return serverAddress;
+  }
+  
+  /* (non-Javadoc)
+   * @see org.sapia.corus.core.ServerContext#getHostInfo()
+   */
+  public ServerHost getHostInfo() {
+    return hostInfo;
   }
   
   @Override
