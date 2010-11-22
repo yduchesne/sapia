@@ -14,6 +14,7 @@ import org.sapia.ubik.net.ServerAddress;
  * @author Yanick Duchesne
  */
 public interface ClusterManager extends java.rmi.Remote, Module {
+  
   public static String ROLE = ClusterManager.class.getName();
 
   /**
@@ -24,6 +25,14 @@ public interface ClusterManager extends java.rmi.Remote, Module {
    * @see org.sapia.ubik.net.ServerAddress
    */
   public Set<ServerAddress> getHostAddresses();
+
+  /**
+   * Returns information of the other Corus servers in the cluster/domain.
+   *
+   * @return a <code>Set</code> of {@link ServerHost} instances.
+   * @see org.sapia.ubik.net.ServerAddress
+   */
+  public Set<ServerHost> getHosts();
 
   /**
    * Returns the event channel used to dispatch events to

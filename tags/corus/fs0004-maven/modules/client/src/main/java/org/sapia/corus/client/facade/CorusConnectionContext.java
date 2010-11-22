@@ -23,6 +23,7 @@ import org.sapia.corus.client.exceptions.CorusException;
 import org.sapia.corus.client.exceptions.cli.ConnectionException;
 import org.sapia.corus.client.facade.impl.ClientSideClusterInterceptor;
 import org.sapia.corus.client.services.cluster.ClusterManager;
+import org.sapia.corus.client.services.cluster.ServerHost;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.server.Hub;
@@ -41,10 +42,11 @@ public class CorusConnectionContext {
   static final long RECONNECT_INTERVAL = 15000;
   private long _lastReconnect = System.currentTimeMillis();
   private Corus _corus;
-  private ServerAddress _addr;
+  private ServerAddress _connectAddress;
+  private ServerHost _serverHost;
   private String _domain;
   private Map<Class<?>, Object> _modules = Collections.synchronizedMap(new HashMap<Class<?>, Object>());
-  private Set<ServerAddress> _otherHosts = Collections.synchronizedSet(new HashSet<ServerAddress>());
+  private Set<ServerHost> _otherHosts = Collections.synchronizedSet(new HashSet<ServerHost>());
   private Map<ServerAddress, Corus> _cachedStubs = Collections.synchronizedMap(new HashMap<ServerAddress, Corus>());
   private ExecutorService _executor;
   private ClientSideClusterInterceptor _interceptor;
@@ -89,11 +91,16 @@ public class CorusConnectionContext {
    * @return the {@link ServerAddress} of the other Corus instances in the
    *         cluster.
    */
-  public Collection<ServerAddress> getOtherAddresses() {
+//  public Collection<ServerAddress> getOtherAddresses() {
+//    refresh();
+//    return Collections.unmodifiableCollection(_otherHosts);
+//  }
+
+  public Collection<ServerHost> getOtherHosts() {
     refresh();
     return Collections.unmodifiableCollection(_otherHosts);
   }
-
+  
   /**
    * @return the remote {@link Corus} instance, corresponding to the server's
    *         interface.
@@ -103,14 +110,22 @@ public class CorusConnectionContext {
     return _corus;
   }
 
+  public ServerHost getServerHost() {
+    return _serverHost;
+  }
+  
   /**
    * @return the {@link ServerAddress} of the Corus server to which this
    *         instance is connected.
    */
   public ServerAddress getAddress() {
-    return _addr;
+    if (_serverHost != null) {
+      return _serverHost.getServerAddress();
+    } else {
+      return _connectAddress;
+    }
   }
-
+  
   /**
    * Reconnects to the corus server at the given host/port.
    * 
@@ -121,7 +136,7 @@ public class CorusConnectionContext {
    * @throws CorusException
    */
   public synchronized void reconnect(String host, int port) {
-    _addr = new TCPAddress(host, port);
+    _connectAddress = new TCPAddress(host, port);
     reconnect();
   }
 
@@ -132,15 +147,16 @@ public class CorusConnectionContext {
    */
   public synchronized void reconnect() {
     try {
-      _corus = (Corus) Hub.connect(((TCPAddress) _addr).getHost(),
-          ((TCPAddress) _addr).getPort());
+      _corus = (Corus) Hub.connect(((TCPAddress) _connectAddress).getHost(),
+          ((TCPAddress) _connectAddress).getPort());
       _domain = _corus.getDomain();
+      _serverHost = _corus.getHostInfo();
       _otherHosts.clear();
       _cachedStubs.clear();
       _modules.clear();
 
       ClusterManager mgr = (ClusterManager) _corus.lookup(ClusterManager.ROLE);
-      _otherHosts.addAll(mgr.getHostAddresses());
+      _otherHosts.addAll(mgr.getHosts());
     } catch (RemoteException e) {
       throw new ConnectionException("Could not reconnect to Corus server", e);
     }
@@ -163,7 +179,7 @@ public class CorusConnectionContext {
       else{
         Object returnValue = method.invoke(lookup(moduleInterface), params);
         results.incrementInvocationCount();
-        results.addResult(new Result(_addr, returnValue));
+        results.addResult(new Result(_connectAddress, returnValue));
       }
     } catch (InvocationTargetException e) {
       
@@ -202,17 +218,22 @@ public class CorusConnectionContext {
     List<ServerAddress> hostList = new ArrayList<ServerAddress>();
 
     if (cluster.getTargets() != null) {
-      Set<ServerAddress> selected = new HashSet<ServerAddress>(_otherHosts);
-      
-      selected.retainAll(cluster.getTargets());
-      if(cluster.getTargets().contains(_addr)){
-        selected.add(_addr);
+      if (cluster.getTargets().contains(_connectAddress)) {
+        hostList.add(_connectAddress);
       }
-      hostList.addAll(selected);
+      for (ServerHost otherHost: _otherHosts) {
+        if (cluster.getTargets().contains(otherHost.getServerAddress())) {
+          hostList.add(otherHost.getServerAddress());
+        }
+      }
+      
     } else {
-      hostList.add(_addr);
-      hostList.addAll(_otherHosts);
+      hostList.add(_connectAddress);
+      for (ServerHost otherHost: _otherHosts) {
+        hostList.add(otherHost.getServerAddress());
+      }
     }
+    
     Iterator<ServerAddress> itr = hostList.iterator();
     List<Runnable> invokers = new ArrayList<Runnable>(hostList.size());
     while (itr.hasNext()) {
