@@ -188,16 +188,20 @@ public class Kill extends CorusCliCommand {
     long timeout = DEFAULT_WAIT_COMPLETION_TIMEOUT;
     if(waitForCompletion){
       Option opt = ctx.getCommandLine().assertOption(WAIT_COMPLETION_OPT, false);
-      ctx.getConsole().println("(Waiting for process termination, please stand by)");
+      ctx.getConsole().println("Waiting for process termination, please stand by...");
       if(opt.getValue() != null){
         try{
           timeout = Long.parseLong(opt.getValue()) * 1000;
         }catch(NumberFormatException e){}
       }
     }
+    else{
+      return;
+    }
     long total = 0;
     while(waitForCompletion){
       if(hook.isCompleted(ctx)){
+        ctx.getConsole().println("Process(es) terminated.");
         break;
       }
       try{
@@ -205,7 +209,7 @@ public class Kill extends CorusCliCommand {
         Thread.sleep(2000);
         total += (System.currentTimeMillis() - start);
         if(timeout > 0 && total > timeout){
-          throw new InputException("Process(es) not killed within specified timeout. Aborting.");
+          throw new InputException("Process(es) not killed within specified timeout; waiting aborted.");
         }
       }catch(InterruptedException e){
         break;
@@ -253,11 +257,8 @@ public class Kill extends CorusCliCommand {
     public boolean isCompleted(CliContext ctx) {
       ClusterInfo cluster = getClusterInfo(ctx);
       boolean completed = true;
-      if(process != null && profile != null){
+      if(process != null){
         completed = isCompleted(ctx.getCorus().getProcessorFacade().getProcesses(dist, version, profile, process, cluster));
-      }
-      else if(process != null){
-        completed = isCompleted(ctx.getCorus().getProcessorFacade().getProcesses(dist, version, process, cluster));
       }
       else{
         completed = isCompleted(ctx.getCorus().getProcessorFacade().getProcesses(dist, version, cluster));
