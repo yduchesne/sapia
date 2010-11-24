@@ -66,7 +66,7 @@ public class PortManagerImpl extends ModuleHelper implements Service, PortManage
     PortRange range = (PortRange)_store.readRange(name);
     int port = range.acquire();
     _store.writeRange(range);
-    logger().debug("Releasing port: " + name + "/" + port);    
+    logger().debug("Releasing port: " + name + ":" + port);    
     return port;
   }
   
@@ -79,7 +79,7 @@ public class PortManagerImpl extends ModuleHelper implements Service, PortManage
       range.release(port);
       _store.writeRange(range);
     }
-    logger().debug("Releasing port: " + name + "/" + port);
+    logger().debug("Releasing port: " + name + ":" + port);
   }  
   
   public synchronized void addPortRange(String name, int min, int max) 

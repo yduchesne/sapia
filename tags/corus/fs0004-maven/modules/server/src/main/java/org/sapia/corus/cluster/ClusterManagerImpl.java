@@ -101,9 +101,6 @@ public class ClusterManagerImpl extends ModuleHelper
     return new HashSet<ServerAddress>(_hostsAddresses);
   }
 
-  /* (non-Javadoc)
-   * @see org.sapia.corus.client.services.cluster.ClusterManager#getHosts()
-   */
   public synchronized Set<ServerHost> getHosts() {
     return new HashSet<ServerHost>(_hostsInfos);
   }

@@ -18,7 +18,7 @@ public class PortRangeStoreTest {
   }
 
   @Test
-  public void testGetPortRanges() throws Exception{
+  public void testWritePortRanges() throws Exception{
     PortRange r1 = new PortRange("test", 10, 20);
     PortRange r2 = new PortRange("test", 15, 25);
     store.writeRange(r1);
@@ -37,6 +37,14 @@ public class PortRangeStoreTest {
   @Test
   public void testReadRange() throws Exception{
     PortRange r = new PortRange("test", 10, 20);
+    store.writeRange(r);
+    r = store.readRange("test");
+    assertTrue("No port range found", r != null);
+  }
+  
+  @Test
+  public void testReadWriteRangeSinglePort() throws Exception{
+    PortRange r = new PortRange("test", 10, 10);
     store.writeRange(r);
     r = store.readRange("test");
     assertTrue("No port range found", r != null);
