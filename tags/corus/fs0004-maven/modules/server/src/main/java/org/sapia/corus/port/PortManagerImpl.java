@@ -25,6 +25,7 @@ import org.sapia.corus.client.services.db.DbModule;
 import org.sapia.corus.client.services.port.PortManager;
 import org.sapia.corus.client.services.port.PortRange;
 import org.sapia.corus.core.ModuleHelper;
+import org.sapia.ubik.rmi.Remote;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author yduchesne
  */
 @Bind(moduleInterface=PortManager.class)
+@Remote(interfaces=PortManager.class)
 public class PortManagerImpl extends ModuleHelper implements Service, PortManager {
   
   @Autowired

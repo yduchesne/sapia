@@ -19,9 +19,11 @@ import org.sapia.corus.client.services.db.DbModule;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.PropertyContainer;
 import org.sapia.corus.core.PropertyProvider;
+import org.sapia.ubik.rmi.Remote;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Bind(moduleInterface=Configurator.class)
+@Remote(interfaces=Configurator.class)
 public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   
   public static final String PROP_SERVER_NAME = "corus.server.name";

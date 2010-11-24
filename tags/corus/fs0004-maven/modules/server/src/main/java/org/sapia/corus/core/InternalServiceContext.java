@@ -1,13 +1,8 @@
 package org.sapia.corus.core;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.rmi.Remote;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.processor.Processor;
@@ -132,14 +127,6 @@ public class InternalServiceContext {
    * @param service an {@link Object} corresponding to the service to bind.
    */
   public void bind(Class<?> serviceInterface, Object service) {
-    // Wrapping remote services in a proxy to avoid exporting unwanted interfaces to clients
-    if (Remote.class.isAssignableFrom(serviceInterface)) {
-      service = Proxy.newProxyInstance(
-              Thread.currentThread().getContextClassLoader(),
-              new Class[] {serviceInterface},
-              new RemoteServiceProxyHandler(service));
-    }
-    
     bind(serviceInterface.getName(), service);
   }
   
@@ -148,27 +135,5 @@ public class InternalServiceContext {
       throw new IllegalStateException("Internal service already found for: " + interfaceName);
     }
     services.put(interfaceName, service);
-  }
-
-  public static class RemoteServiceProxyHandler implements InvocationHandler {
-
-    private Object _service;
-    
-    /**
-     * Creates a new {@link RemoteServiceProxyHandler} instance.
-     *
-     * @param aService
-     */
-    public RemoteServiceProxyHandler(Object aService) {
-      _service = aService;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-     */
-    public Object invoke(Object anObject, Method aMethod, Object[] someArguments) throws Throwable {
-      return aMethod.invoke(_service, someArguments);
-    }
-    
   }
 }

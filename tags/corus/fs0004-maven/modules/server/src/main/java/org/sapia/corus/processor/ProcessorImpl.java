@@ -45,6 +45,7 @@ import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
+import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Yanick Duchesne
  */
 @Bind(moduleInterface=Processor.class)
+@Remote(interfaces=Processor.class)
 public class ProcessorImpl extends ModuleHelper implements Processor {
     
   @Autowired

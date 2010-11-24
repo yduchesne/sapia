@@ -17,6 +17,7 @@ import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.db.DbModule;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.core.ModuleHelper;
+import org.sapia.ubik.rmi.Remote;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.dyade.jdring.AlarmEntry;
@@ -30,6 +31,7 @@ import fr.dyade.jdring.PastDateException;
  * @author yduchesne
  */
 @Bind(moduleInterface=CronModule.class)
+@Remote(interfaces={CronModule.class})
 public class CronModuleImpl extends ModuleHelper implements CronModule {
   
   static CronModuleImpl instance;

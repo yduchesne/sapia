@@ -1,6 +1,5 @@
 package org.sapia.corus.taskmanager;
 
-import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.common.ProgressMsg;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
@@ -12,7 +11,6 @@ import org.sapia.corus.taskmanager.core.TaskManager;
  * @author yduchesne
  *
  */
-@Bind(moduleInterface=CorusTaskManager.class)
 public interface CorusTaskManager extends TaskManager{
 
   public static final String ROLE = CorusTaskManager.class.getName();

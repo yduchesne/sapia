@@ -10,6 +10,7 @@ import org.sapia.corus.client.services.naming.JndiModule;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.ubik.mcast.EventChannel;
+import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.naming.remote.ClientListener;
 import org.sapia.ubik.rmi.naming.remote.JNDIServerHelper;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author yduchesne
  */
 @Bind(moduleInterface=JndiModule.class)
+@Remote(interfaces=JndiModule.class)
 public class JndiModuleImpl extends ModuleHelper implements JndiModule, Interceptor{
 
   @Autowired

@@ -41,6 +41,7 @@ import org.sapia.corus.taskmanager.core.TaskConfig;
 import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.ubik.net.ServerAddress;
+import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.replication.ReplicationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Yanick Duchesne
  */
 @Bind(moduleInterface=Deployer.class)
+@Remote(interfaces=Deployer.class)
 public class DeployerImpl extends ModuleHelper implements Deployer,
   DeploymentConnector, Interceptor {
   /**

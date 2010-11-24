@@ -1,11 +1,9 @@
 package org.sapia.corus.core;
 
 import java.lang.reflect.UndeclaredThrowableException;
-import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.List;
 
-import org.sapia.console.Arg;
 import org.sapia.console.CmdLine;
 import org.sapia.console.InputException;
 import org.sapia.corus.client.Corus;
@@ -14,7 +12,6 @@ import org.sapia.corus.client.common.ProgressMsg;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.taskmanager.CorusTaskManager;
 import org.sapia.ubik.rmi.server.Hub;
-import org.sapia.ubik.util.Localhost;
 
 
 /**
