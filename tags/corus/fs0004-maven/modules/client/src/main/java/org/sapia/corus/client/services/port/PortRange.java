@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.sapia.corus.client.annotations.Transient;
 import org.sapia.corus.client.exceptions.port.PortRangeInvalidException;
+import org.sapia.corus.client.exceptions.port.PortUnavailableException;
 import org.sapia.corus.client.services.db.persistence.AbstractPersistent;
 
 
@@ -46,7 +47,7 @@ public class PortRange extends AbstractPersistent<String, PortRange> implements 
       throw new PortRangeInvalidException("Min port must be greater than 0");
     if(max <= 0)
       throw new PortRangeInvalidException("Max port must be greater than 0");    
-    if(min >= max)
+    if(min > max)
       throw new PortRangeInvalidException("Min port must be lower than max port");    
     
     _name = name;
@@ -63,11 +64,11 @@ public class PortRange extends AbstractPersistent<String, PortRange> implements 
   }
   
   public List<Integer> getAvailable(){
-    return Collections.unmodifiableList(_available);
+    return _available;
   }
   
   public List<Integer> getActive(){
-    return Collections.unmodifiableList(_active);
+    return _active;
   }  
   
   /**
@@ -98,9 +99,9 @@ public class PortRange extends AbstractPersistent<String, PortRange> implements 
   /**
    * acquires an available port from this instance.
    */
-  public synchronized int acquire(){
+  public synchronized int acquire() throws PortUnavailableException{
     if(_available.size() == 0){
-      throw new IllegalStateException("No port available for range: " + _name);
+      throw new PortUnavailableException("No port available for range: " + _name);
     }
     Integer portObj = (Integer)_available.remove(0);
     _active.add(portObj);

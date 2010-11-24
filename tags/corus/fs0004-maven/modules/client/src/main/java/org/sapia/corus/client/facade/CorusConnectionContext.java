@@ -191,9 +191,7 @@ public class CorusConnectionContext {
   public <T,M> T invoke(Class<T> returnType, Class<M> moduleInterface, Method method, Object[] params, ClusterInfo info) throws Throwable{
     try{
       
-      if(info.isClustered()){
-        ClientSideClusterInterceptor.clusterCurrentThread(info);
-      }
+      ClientSideClusterInterceptor.clusterCurrentThread(info);
       
       Object toReturn = method.invoke(lookup(moduleInterface), params);
       if(toReturn != null){

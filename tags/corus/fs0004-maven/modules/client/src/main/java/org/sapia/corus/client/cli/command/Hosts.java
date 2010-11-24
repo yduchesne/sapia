@@ -8,7 +8,6 @@ import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
 import org.sapia.corus.client.cli.CliContext;
 import org.sapia.corus.client.services.cluster.ServerHost;
-import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 
 
@@ -34,10 +33,10 @@ public class Hosts extends CorusCliCommand {
     Row        row;
     TCPAddress addr;
 
-    distTable.getTableMetaData().getColumnMetaDataAt(COL_HOST).setWidth(20);
+    distTable.getTableMetaData().getColumnMetaDataAt(COL_HOST).setWidth(14);
     distTable.getTableMetaData().getColumnMetaDataAt(COL_PORT).setWidth(8);
     distTable.getTableMetaData().getColumnMetaDataAt(COL_OS_INFO).setWidth(20);
-    distTable.getTableMetaData().getColumnMetaDataAt(COL_JAVA_INFO).setWidth(50);
+    distTable.getTableMetaData().getColumnMetaDataAt(COL_JAVA_INFO).setWidth(30);
 
     distTable.drawLine('=');
 
@@ -65,7 +64,7 @@ public class Hosts extends CorusCliCommand {
     Row   headers;
 
     distTable = new Table(ctx.getConsole().out(), 4, 20);
-    distTable.getTableMetaData().getColumnMetaDataAt(COL_HOST).setWidth(20);
+    distTable.getTableMetaData().getColumnMetaDataAt(COL_HOST).setWidth(14);
     distTable.getTableMetaData().getColumnMetaDataAt(COL_PORT).setWidth(8);
     distTable.getTableMetaData().getColumnMetaDataAt(COL_OS_INFO).setWidth(20);
     distTable.getTableMetaData().getColumnMetaDataAt(COL_JAVA_INFO).setWidth(30);
