@@ -3,7 +3,13 @@
   xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
   <head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
     <link rel="stylesheet" href="../css/corus.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../shadowbox-3.0.3/shadowbox.css" />
+    <script type="text/javascript" src="../shadowbox-3.0.3/shadowbox.js"></script>
+    <script type="text/javascript">
+    Shadowbox.init();
+    </script>
   </head>
 
   <sapia:vmenu>
@@ -53,7 +59,7 @@
     <sapia:sect2 title="Setting Up">
       <p>
         For the purpose of this tutorial, you are going to start two Corus 
-        instances on your workstation. Since the Corus daemon listen on port
+        instances on your workstation. Since the Corus daemon listens on port
         33000 by default, you'll have to start an instance on another port - 
         let's say 33001. You pass in the <sapia:command>d</sapia:command>
         option to the Corus executable that starts a daemon process, in order 
@@ -62,8 +68,8 @@
         the purpose of this tutorial:
       </p>
       
-<sapia:code>corus -d mydomain
-corus -d mydomain -p 33001</sapia:code>
+<sapia:code>corus -d samples
+corus -d samples -p 33001</sapia:code>
 
       <p/>
       <sapia:note>
@@ -95,7 +101,8 @@ corus -d mydomain -p 33001</sapia:code>
       <sapia:code>hosts</sapia:code>
       
       <p>
-        You should see a list of hosts corresponding to our two instances.
+        You should see a  <a href="img/hosts-domain.png" title="Listing the Corus instances in the domain" rel="shadowbox">list of hosts</a> 
+        corresponding to our two instances.
       </p>
       
     </sapia:sect2>
@@ -135,18 +142,38 @@ corus -d mydomain -p 33001</sapia:code>
       </p>
       <sapia:sect3 title="Defining a Port Range">
         <p>
-          Using the CLI define a port range, using the following command:
+          Using the CLI, define a port range on each Corus instance. Since
+          both instances are running on the same host, we're making sure that
+          the range on both instances do not overlap. So on the first host 
+          (listening on the default 33000 port), type the following:
         </p>
-        <sapia:code>TBD </sapia:code>
+        <sapia:code>port add -n jetty-server -min 8080 -max 8080</sapia:code>
+        
         <p>
-          A port range consists of a lowerbound port and upperbound port, 
-          both of them inclusive. As we've mentioned, it is also identified 
-          with a name (in the above case, 
+          And now type the following in the CLI to connect to the second host
+          and create on it the other port range:
+        </p>
+        <sapia:code>
+connect -p 33001
+port add -n jetty-server -min 8081 -max 8081
+        </sapia:code>
+        <p>  
+          In the above, the ranges on both Corus instances do not have the 
+          same port, a necessary thing since the instances are on the same host. 
+          Note also that we've allocated slots for only one port (the lowerbound 
+          and upperbound are identical, for both ranges), since we're going to 
+          start a single Jetty server per Corus instance.
+        </p>
+
+        <p>
+          As you can see, a port range consists of a lowerbound and upperbound 
+          ports, both of them inclusive. As we've mentioned, it is also 
+          identified with a name (in the above case, 
           <sapia:command>jetty-server</sapia:command>).
         </p>
         <p>
           That name is important, since it is referred to in the Corus
-          descriptor.  
+          descriptor, as shown next.  
         </p>
       </sapia:sect3>
       
@@ -188,8 +215,8 @@ corus -d mydomain -p 33001</sapia:code>
         
         <sapia:note>
           Here's how port leasing works: upon starting a process for which
-          a port is configured, Corus leases a port from the range that is 
-          configured. The port thus becomes unavailable to other processes, 
+          a port is configured, Corus leases a port from the corresponding 
+          range. The port thus becomes unavailable to other processes, 
           until that process is terminated. When this happens, the port becomes 
           available for another lease.
         </sapia:note>
@@ -247,7 +274,7 @@ corus -d mydomain -p 33001</sapia:code>
         And now let's deploy:
       </p>
 
-      <sapia:code>deploy ************** -cluster</sapia:code>
+      <sapia:code>deploy target/corus_sample_jetty*advanced.zip -cluster</sapia:code>
       
       <p>
         The above command just deployed the distribution to both our Corus
@@ -258,8 +285,9 @@ corus -d mydomain -p 33001</sapia:code>
       
       <p>
         As you can see, the CLI displays results on a per-Corus instance basis. 
-        If all went well, you should see the distribution listed under both 
-        Corus instances.
+        If all went well, you should see the 
+        <a href="img/ls-cluster.png" title="Listing the distributions in the domain" rel="shadowbox">distribution listed under both 
+        Corus instances</a>.
       </p>
     </sapia:sect2>
     
@@ -270,7 +298,7 @@ corus -d mydomain -p 33001</sapia:code>
         Type the following in the CLI:
       </p>
       
-      <sapia:code>exec -d corus_jetty_sample -v * -n server -p dev -cluster</sapia:code>
+      <sapia:code>exec -d advanced* -v * -n server -p dev -cluster</sapia:code>
       
       <p>
         After a certain delay, both Jetty servers should be running, each on
@@ -278,9 +306,34 @@ corus -d mydomain -p 33001</sapia:code>
         the following URLs in a browser:
       </p>
       
-      <sapia:code>
-      TBD
-      </sapia:code>
+      <p>
+      <sapia:tag name="a">  
+        <sapia:attr name="href">
+          <sapia:text>http://localhost:8080/corus_sample_grails_app-</sapia:text><sapia:param name="project.version" />
+        </sapia:attr><sapia:text>http://localhost:8080/corus_sample_grails_app-</sapia:text><sapia:param name="project.version" />
+      </sapia:tag>
+      </p>
+      
+      
+      <p>
+      <sapia:tag name="a">  
+        <sapia:attr name="href">
+          <sapia:text>http://localhost:8081/corus_sample_grails_app-</sapia:text><sapia:param name="project.version" />
+        </sapia:attr><sapia:text>http://localhost:8081/corus_sample_grails_app-</sapia:text><sapia:param name="project.version" />
+      </sapia:tag>
+      </p>
+      
+      <p>
+        You can also see the <a href="img/ls-active-ports.png" title="Listing active ports" rel="shadowbox">list of "active" ports</a>
+        on each Corus instance in the domain by typing the following:
+      </p>
+      
+      <sapia:code>port ls -cluster</sapia:code>
+      
+      <p>
+        The listing indicates that there are no more available ports - and shows
+        that the "active" ports are indeed the ones that we've configured.
+      </p>
   
     </sapia:sect2>
     
@@ -295,15 +348,28 @@ corus -d mydomain -p 33001</sapia:code>
       <p>
         The <sapia:command>w</sapia:command> option above stands for "wait":
         the CLI will wait, for a predefined amount of time 
-        (******** by default), that all processes corresponding to the kill 
+        (60 seconds by default), that all processes corresponding to the kill 
         command have been killed before returning control.
       </p>
       <p>
         When control returns, type the following to make sure that indeed
-        no matching process runs:
+        no matching process runs (no process should be listed):
       </p>
       
       <sapia:code>ps -cluster</sapia:code>
+      
+      <p>
+        As we've explained above, when ports are leased to processes, they are
+        reclaimed when these processes are terminated. Type the following to
+        check it out:
+      </p>
+      
+      <sapia:code>port ls -cluster</sapia:code>
+      
+      <p>
+        No port should appear in the "active" column, and the ports
+        that were leased should now be displayed in the "available" one. 
+      </p>
       
       <p>
         And now, let's undeploy the distribution from both Corus instances:
@@ -319,7 +385,7 @@ corus -d mydomain -p 33001</sapia:code>
 
       <p>
         Again for the sake of sanity checking, type 
-        <sapia:command>ps -cluster</sapia:command>. No distribution should be
+        <sapia:command>ls -cluster</sapia:command>. No distribution should be
         listed.
       </p>
     </sapia:sect2>

@@ -107,7 +107,7 @@
         Now deploy the distribution:
       </p>
       
-      <sapia:code>TBD</sapia:code>
+      <sapia:code>deploy target/corus_sample_jetty-<sapia:param value="project.version"/>-basic.zip</sapia:code>
       
       <p>
         As you've seen previously, you can use <sapia:command>ls</sapia:command>
@@ -129,22 +129,22 @@
       <sapia:code>ls -d foo</sapia:code>
       
       <p>
-        Nothing is displayed, confirming that the filtering works... Now type:
+        No distribution is listed, confirming that the filtering works... Now type:
       </p>
 
-      <sapia:code>ls -d corus_jetty_sample -v 5.0</sapia:code>
+      <sapia:code>ls -d basic-sample-jetty -v 5.0</sapia:code>
 
       <p>
-        Nothing is displayed, again: no 
-        <sapia:command>corus_sample_jetty</sapia:command> version matches 
+        Nothing again: no 
+        <sapia:command>basic-sample-jetty</sapia:command> version matches 
         the one specified.
       </p>
       
       <p>
-        Now try this:
+        Now this:
       </p>
 
-      <sapia:code>ls -d corus_jetty_sample -v 1.0</sapia:code>
+      <sapia:code>ls -d basic-sample-jetty -v 1.0</sapia:code>
       
       <p>
         Our distribution appears.
@@ -156,12 +156,12 @@
         For example:
       </p>
       
-      <sapia:code>exec -d corus_jetty_sample -v 1.0 -n server -p dev</sapia:code>
+      <sapia:code>exec -d basic-sample-jetty -v 1.0 -v 1.0 -n server -p dev</sapia:code>
       
       <p>
         The above starts the process corresponding to the given options, 
         that is: the "server" process (or, the process with the "server" 
-        <sapia:command>n</sapia:command>ame) of the "corus_jetty_sample" 
+        <sapia:command>n</sapia:command>ame) of the "basic-sample-jetty" 
         distribution version "1.0", under the "dev" profile.
       </p>
       
@@ -169,13 +169,13 @@
         The same can be said of the <sapia:command>kill</sapia:command> command:
       </p>
       
-      <sapia:code>kill -d corus_jetty_sample -v 1.0 -n server -p dev</sapia:code>
+      <sapia:code>kill -d basic-sample-jetty -v 1.0 -n server -p dev</sapia:code>
 
       <p>
         And similarly for the undeploy command: 
       </p>
 
-      <sapia:code>undeploy -d corus_jetty_sample -v 1.0</sapia:code>
+      <sapia:code>undeploy -d basic-sample-jetty -v 1.0</sapia:code>
       
       <p>
         The above commands are convenient, but can prove counter-productive when
@@ -191,11 +191,11 @@
         wildcard matching. A concrete example will demonstrate this:
       </p>
       
-      <sapia:code>exec -d corus* -v * -n * -p dev</sapia:code>
+      <sapia:code>exec -d basic* -v * -n * -p dev</sapia:code>
       
       <p>
         The above would target processes with any name, of distributions whose
-        name starts with "corus", of any version, under profile "dev" (note
+        name starts with "basic", of any version, under profile "dev" (note
         that the profile option does not support wildcards).
       </p>
       
@@ -208,9 +208,9 @@
         scenario:
       </p>
       
-<sapia:code>kill -d * -v * -n *
+<sapia:code>kill -d * -v * -n * -w
 undeploy -d * -v *
-deploy new-distribution-2.0.car</sapia:code>
+deploy target/corus_sample_jetty*.zip</sapia:code>
       
       <p>
         Consult the CLI's online help for more details about how each command
