@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import org.sapia.corus.client.Corus;
+import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.rmi.replication.ReplicatedInvoker;
 
 /**
@@ -65,11 +66,10 @@ public class ClusteredInvoker implements ReplicatedInvoker{
   	_cluster    = cluster;
   }
   
-  /* (non-Javadoc)
-   * @see org.sapia.ubik.rmi.replication.ReplicatedInvoker#getSiblings()
-   */
-  public Set<ServerHost> getSiblings() {
-    return _cluster.getHosts();
+
+  public Set<ServerAddress> getSiblings() {
+    return _cluster.getHostAddresses();
   }
 
+  
 }
