@@ -7,7 +7,7 @@ import org.sapia.corus.client.Module;
 /**
  * @author Yanick Duchesne
  */
-public interface SecurityModule extends Module, Remote{
+public interface SecurityModule extends Module{
 
   /** Defines the role name of this module. */  
   public static final String ROLE = SecurityModule.class.getName();
