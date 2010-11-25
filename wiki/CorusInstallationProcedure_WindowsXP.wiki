@@ -91,10 +91,10 @@ To register Corus as a service, you need to:
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
 
-As you can see, upon installation the Corus service is not running. You nee to click on Start to perform the initial execution. However, the Corus service will be automatically started on the next restart of Windows.
+As you can see, upon installation the Corus service is not running. You need to click on Start to perform the initial execution. However, the Corus service will be automatically started on the next restart of Windows.
 
 Once you start the Corus service, you can validate the proper execution of the Corus service by:
-1. looking at the Corus log files that resides in the `%CORUS_HOME%\logs` directory
+1. looking at the Corus log files that resides under the `%CORUS_HOME%\logs` directory
 
 <table boder="0" width="50%">
 <tr><td>
@@ -103,7 +103,7 @@ Once you start the Corus service, you can validate the proper execution of the C
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
 
-2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is `coruscli.bat` and resides in the `%CORUS_HOME%\bin` directory. If you previously added the `%CORUS_HOME%\bin` directory in the `Path` environment variable, you can simply invoke the file. Otherwise you will have to get to the bin directory and invoke the command.
+2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is called `coruscli.bat` and resides under the `%CORUS_HOME%\bin` directory. If you previously added the `%CORUS_HOME%\bin` directory in the `Path` environment variable, you can simply invoke the file. Otherwise you will have to get to the bin directory and invoke the command.
 
 <table boder="0" width="50%">
 <tr><td>
