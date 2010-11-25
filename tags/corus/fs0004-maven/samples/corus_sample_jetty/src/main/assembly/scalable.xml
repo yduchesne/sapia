@@ -23,6 +23,14 @@
        </includes>
     </fileSet>  
     
+    <fileSet>
+       <outputDirectory>etc</outputDirectory>
+       <directory>${basedir}/etc</directory>
+       <includes>
+          <include>**/ehcache.xml</include>
+       </includes>
+    </fileSet>
+    
     <!-- webapps -->
     <fileSet>
        <outputDirectory>webapps</outputDirectory>
