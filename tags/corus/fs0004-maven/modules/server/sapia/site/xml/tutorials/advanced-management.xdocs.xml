@@ -321,8 +321,9 @@ Scheduling execution of process: [dist=scalable-sample-jetty, version=1.0, proce
         <sapia:command>script</sapia:command> command. The command takes a file
         that itself contains the list of commands that you want to perform, as
         if you'd time them sequentially in the CLI. In our case, here's the
-        script we're going to use (you can find it under the etc directory,
-        in the script.txt file): 
+        script we're going to use (you can find it under the 
+        <sapia:command>etc</sapia:command> directory,
+        in the <sapia:command>script.txt</sapia:command> file): 
       </p>
       
       <sapia:code>
