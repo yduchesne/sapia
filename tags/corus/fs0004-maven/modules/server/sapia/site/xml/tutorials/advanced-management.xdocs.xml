@@ -32,7 +32,9 @@
         of A, B is not available ? In an ideal world, application A would 
         implement a provision with regards to that issue (using JINI-like
         dynamic discovery of services, for example). But it's not always 
-        possible, either for lack of resources, time, or development expertise.
+        possible, either for lack of resources, time, development expertise, or
+        simply because of legacy code that does not support dynamic discovery 
+        in the first place.
       </p>
       <p>
         As a workaround, Corus has built-in support for handling process 
@@ -80,7 +82,7 @@
         The diagram below illustrates the above:
       </p>
       
-      <sapia:code>TBD</sapia:code>
+      <img src="img/session-manager.png" />
       
       <sapia:note>
         The implementation is somewhat naive, but that's not the point. The goal
@@ -93,7 +95,44 @@
         caches. This is materialized in the Corus descriptor:
       </p>
       
-      <sapia:code>TBD</sapia:code>
+      <sapia:code><![CDATA[<distribution name="scalable-sample-jetty" version="1.0">
+
+  <process  name="server" 
+            maxKillRetry="3" 
+            shutdownTimeout="30000" 
+            invoke="true">
+    <port name="jetty-server" />        
+    <java mainClass="org.sapia.corus.sample.jetty.ScalableJettyServer"
+          profile="dev">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="16M" />
+      <dependency distribution="scalable-sample-jetty" process="sessions" />
+    </java>
+    <java mainClass="org.sapia.corus.sample.jetty.ScalableJettyServer"
+          profile="prod">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="128M" />
+      <dependency distribution="scalable-sample-jetty" version="1.0" process="sessions" />
+    </java>
+  </process> 
+  
+  <process  name="sessions" 
+            maxKillRetry="3" 
+            shutdownTimeout="30000" 
+            invoke="true">
+    <java mainClass="org.sapia.corus.sample.jetty.session.SessionServer"
+          profile="dev">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="16M" />
+    </java>
+    <java mainClass="org.sapia.corus.sample.jetty.session.SessionServer"
+          profile="prod">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="128M" />
+    </java>
+  </process> 
+</distribution>]]>
+</sapia:code>
       
       <p>
         As you can see, we're declaring a 
@@ -122,27 +161,33 @@
       </ul>
       
       <p>
+        We're seeing in the descriptor that the Jetty server has a dependency
+        on the "sessions" process, which incidentally corresponds to our
+        <sapia:class>SessionServer</sapia:class> application.
         Let's try it out. Start a Corus instance, and (using the CLI) deploy 
-        the ****************** distribution from the samples module:
+        the distribution:
       </p>
       
-      <sapia:code>TBD</sapia:code>
+      <sapia:code>deploy target/*-scalable.zip</sapia:code>
       
       <p>
         And now start the Jetty server:
       </p>
       
-      <sapia:code>TBD</sapia:code>
+      <sapia:code>exec -d * -v * -n server -p dev</sapia:code>
     
       <p>
-        Look carefully at the console in which Corus runs: you should see the 
+        You can look at the terminal in which Corus runs: you should see the 
         output from the Corus server indicating that it indeed starts the 
-        process corresponding to the session first, as in the
-        sample below:
+        process corresponding to the session server first. The CLI's output also
+        indicates the startup order:
       </p>
       
-      <p>*************** TBD</p>
-      
+      <sapia:code>
+Scheduling execution of process: [dist=scalable-sample-jetty, version=1.0, process=sessions]
+Scheduling execution of process: [dist=scalable-sample-jetty, version=1.0, process=server]
+      </sapia:code>
+
       <p>
         There's a delay between startups (which can be configured). After
         a certain amount of time, you should see that all processes are running
@@ -179,13 +224,18 @@
       
       <p>
         Building on the previous example, we've defined the following 
-        execution configuration:
+        execution configuration (see the exec.xml file under the 
+        corus_sample_jetty module):
       </p>
       
-<sapia:code>TBD</sapia:code>
+      <sapia:code><![CDATA[
+<exec name="jetty-server" startOnBoot="true">
+  <process dist="scalable-sample-jetty" version="1.0" name="server" profile="dev" />
+</exec>]]>
+      </sapia:code>
 
       <p>
-        As you can see, the <sapia:command>exec</sapia:command> is the root,
+        As you can see, the <sapia:command>exec</sapia:command> element is the root,
         and has two attributes:
       </p>
       
@@ -200,17 +250,30 @@
         Using <sapia:command>startOnBoot</sapia:command> is a safeguard against
         the processes becoming unavailable after a machine reboot.
       </sapia:note>
+      
+      <p>Nested within the <sapia:command>exec</sapia:command> element are
+      potentially many <sapia:command>process</sapia:command> elements,
+      each referring to a process that should be started.</p>
         
-      <p>So now let's deploy the execution configuration into Corus:</p>
+      <p>
+        Let's see how the whole thing works: deploy the execution configuration 
+        into Corus:
+      </p>
       
-      <sapia:code>TBD***********</sapia:code>
+      <sapia:code>deploy etc/exec.xml</sapia:code>
       
+      <p>
+        To view the currently deployed execution configurations, type
+        the following:
+      </p>
+      
+      <sapia:code>ls -e</sapia:code>
       
       <p>Make sure all currently running processes are killed (
-      <sapia:command>kill -d * -v * -n *</sapia:command> ) and type the
+      <sapia:command>kill -d * -v *</sapia:command> ) and type the
       following:</p>
       
-      <sapia:code>********TBD</sapia:code>
+      <sapia:code>exec -e jetty-server</sapia:code>
       
       <p>
         Check the Corus console: you should see in the logging output what is 
@@ -221,16 +284,16 @@
       </p>
       
       <p>
-        After you've confirmed that everything works, kill all the processes
-        (<sapia:command>kill -d * -v * -n * -w</sapia:command>). After their
-        termination, shutdown Corus. 
+        Now we'll test the "start on boot" feature: first kill all the processes
+        (<sapia:command>kill -d * -v * -w</sapia:command>). After their
+        termination, shutdown Corus, and start it again.
       </p>
       
       <p>
         You will now see that the processes will be automatically restarted,
         because of the <sapia:command>startOnBoot</sapia:command> flag: restart
-        Corus and watch the output. After a while, you will see that the 
-        processes are gradually restarted.
+        Corus and watch the output. After a while (it takes about 45 seconds), 
+        you will see that the processes are gradually restarted.
       </p>
       
       <p>
@@ -258,21 +321,43 @@
         <sapia:command>script</sapia:command> command. The command takes a file
         that itself contains the list of commands that you want to perform, as
         if you'd time them sequentially in the CLI. In our case, here's the
-        script we're going to use: 
+        script we're going to use (you can find it under the etc directory,
+        in the script.txt file): 
       </p>
       
-      <sapia:code>TBD</sapia:code>
+      <sapia:code>
+kill -d * -v * -w
+undeploy -d * -v *
+deploy target/*-scalable.zip
+deploy etc/exec.xml
+exec -e jetty-server
+      </sapia:code>
       
       <p>
         To launch the script, type the following in the CLI:
       </p>
       
-      <sapia:code>TBD</sapia:code>
+      <sapia:code>script etc/script.txt</sapia:code>
       
       <p>
-        And watch the output in the Corus server console: all commands are 
-        processed one by one, in a single batch, with only one interaction on
-        your end.
+        Watch the output in the CLI: all commands are processed one by one, in 
+        a single batch, with only one interaction on your end.
+      </p>
+      
+      <sapia:note>
+        Note that the commands in script files can also be clustered using
+        the <sapia:command>-cluster</sapia:command> switch, as usual. Imagine
+        what this means: being able to execute multiple commands in one shot
+        across a whole domain.
+      </sapia:note>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Conclusion">
+      <p>
+        In this tutorial, you've seen productivity features that, when used in 
+        conjunction, allow performing application deployments in just a few 
+        steps. The features greatly help making deployments a breeze and 
+        minimizing downtime.
       </p>
     </sapia:sect2>
   </sapia:sect1>
