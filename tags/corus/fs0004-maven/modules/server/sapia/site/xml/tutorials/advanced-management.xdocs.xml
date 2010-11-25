@@ -357,7 +357,7 @@ exec -e jetty-server
         In this tutorial, you've seen productivity features that, when used in 
         conjunction, allow performing application deployments in just a few 
         steps. The features greatly help making deployments a breeze and 
-        minimizing downtime.
+        minimize downtime.
       </p>
     </sapia:sect2>
   </sapia:sect1>
