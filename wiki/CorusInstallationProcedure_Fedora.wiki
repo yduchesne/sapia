@@ -73,56 +73,51 @@ This page will guide you through the necessary steps to install Corus on Fedora 
 At this point you should be able to start Corus by manually invoking the `$CORUS_HOME\bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
 
 
-= 4. Linux service integration = 
-With the installation of Corus as a Windows service, you will be able to automatically start Corus on startup of your machine. Windows provides a simple service management user interface to stop, start and restart services.
+= 4. Linux system service integration = 
+With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus on startup of your machine. Fedora provides the `chkconfig` command that help configuring Linux's run levels. Once properly registered you can easily stop, start and restart Corus service using the `service` command.
 
-To register Corus as a service, you need to:
+To register Corus as a system service, you need to:
 == i) Define a Corus configuration file ==
  * you need to define a Corus configuration file that will be used when the service starts.
- * We provide a default configuration file to help you: it is located under `config\corus_service_33000.wrapper.properties`. You can have a look at the configuration section to know how to customize Corus.
+ * We provide a default configuration file to help you: it is located under `$CORUS_HOME/config/corus_service_33000.wrapper.properties`. You can have a look at the configuration section to know how to customize Corus.
 
-== ii) Prepare installation script ==
- * A script is available to register Corus as a Windows Service: it located under `%CORUS_HOME%\bin\win32\InstallCorusService.bat`
- * Edit the script (or copy it under a different name) and set the configuration file name to the variable WRAPPER_CONF.
- * By default, the `InstallCorusService.bat` is configured to use the `config\corus_service_33000.wrapper.properties` file (so can have a try right now).
+== ii) Prepare init.d script ==
+ * A script is available to register Corus as a system service: it located under `$CORUS_HOME/bin/corus.init.d`
+ * Copy it under the directory `/etc/init.d` and name it `corus` (make sure you are using root user)
+ ||` [root@cygnus-fedora sapia-corus]# cp $CORUS_HOME/current/bin/corus.init.d /etc/init.d/corus `<br />` [root@cygnus-fedora sapia-corus]#`||
 
-== iii) Execute the installation script ==
- * Once you are ready, you simply have to execute the `InstallCorusService.bat` script (Open option if you right click on the file)
+ * Once copied, you need to edit the file and set the proper values for the $CORUS_HOME variable
+ * By default, the file is configured to use the `config\corus_service_33000.wrapper.properties` file (so you can have a try right now).
+
+== iii) Register with the run levels ==
+ * Once you are ready, you simply have to execute the `chkconfig` command (as root):
+
+ || ` [root@cygnus-fedora init.d]# chkconfig --add /etc/init.d/corus `<br />` [root@cygnus-fedora init.d]#` ||
+
+ * You can validate the run level registration like that:
+
+ ||` [root@cygnus-fedora init.d]# chkconfig --list | grep corus `<br />` corus          	0:off	1:off	2:on	3:on	4:on	5:on	6:off  `<br />` [root@cygnus-fedora init.d]#  ` ||
 
 <table boder="0" width="50%">
 <tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_4_InstallService.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_4_InstallService.jpg" /></a>
+<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_4_InstallService.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_4_InstallService.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
 
- * To validate the installation, look at the Services management window to see that a new service called "Sapia Corus Server" is installed.
- * Go to the Administrative Tools of the Control Panel and select Services
+ * As you can see upon installation, the Corus service is not running. You can start it using the `service` command like that:
 
-<table boder="0" width="50%">
-<tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_5_CorusService.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_5_CorusService.jpg" /></a>
-</td></tr>
-<tr align="center"><td>_Click on the image for full size resolution_</td></tr>
-</table>
+ || `[root@cygnus-fedora init.d]# service corus start ` <br /> `Starting Sapia Corus Server [33000]...` <br /> `[root@cygnus-fedora init.d]# ` ||
 
-As you can see, upon installation the Corus service is not running. You need to click on Start to perform the initial execution. However, the Corus service will be automatically started on the next restart of Windows.
 
 Once you start the Corus service, you can validate the proper execution of the Corus service by:
-1. looking at the Corus log files that resides under the `%CORUS_HOME%\logs` directory
+1. looking at the Corus log files that resides under the `$CORUS_HOME%\logs` directory
+
+2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is called `coruscli` and resides under the `$CORUS_HOME/bin` directory. If you previously added the `$CORUS_HOME/bin` directory in the `$PATH` environment variable, you can simply invoke the file. Otherwise you will have to get to the bin directory and invoke the command.
 
 <table boder="0" width="50%">
 <tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_6_CorusLogs.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_6_CorusLogs.jpg" /></a>
-</td></tr>
-<tr align="center"><td>_Click on the image for full size resolution_</td></tr>
-</table>
-
-2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is called `coruscli.bat` and resides under the `%CORUS_HOME%\bin` directory. If you previously added the `%CORUS_HOME%\bin` directory in the `Path` environment variable, you can simply invoke the file. Otherwise you will have to get to the bin directory and invoke the command.
-
-<table boder="0" width="50%">
-<tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_7_CorusCLI.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_7_CorusCLI.jpg" /></a>
+<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_7_CorusCLI.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_7_CorusCLI.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
