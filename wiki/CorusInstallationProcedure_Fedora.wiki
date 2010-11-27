@@ -2,7 +2,7 @@
 
 = Introduction =
 
-This page will guide you through the necessary steps to install Corus on Fedora Core 13.
+This page will guide you through the necessary steps to install Corus on Fedora Core 13 64 bits.
 
 
 = 1. Preparing the environment =
@@ -20,53 +20,60 @@ This page will guide you through the necessary steps to install Corus on Fedora 
 == iii) Installation directory ==
  * You need to create a directory on your system in which you will install Corus.
  * For the purpose of this demonstration, we create the `/opt/sapia-corus` directory.
-
  ||` [root@cygnus-fedora ~]# mkdir /opt/sapia-corus`<br />` [root@cygnus-fedora ~]#`||
 
 
 = 2. Extract the corus distribution =
- * Extract the Corus distribution zip file into the Corus installation directory created above.
+ * Extract the Corus distribution file into the Corus installation directory created above.
+ ||` [root@cygnus-fedora sapia-corus]# tar -xvf ../datastore/sapia_corus_server-2.0-linux64.tar.gz `<br />` [root@cygnus-fedora sapia-corus]#`||
+
  * Rename the created root directory of the archive if you need.
- * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus-2.0`.
+ * For example, we extracted the tar and the files reside under the directory `/opt/sapia-corus/sapia_corus-2.0`
+ * Make sure that the files of the distribution are own by the corus user. Here's an example using the `chown` command:
+ ||` [root@cygnus-fedora sapia-corus]# chown -R corus:corus sapia_corus-2.0/ `<br />` [root@cygnus-fedora sapia-corus]#`||
+
 
 <table boder="0" width="50%">
 <tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_1_CorusExtract.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_1_CorusExtract.jpg" /></a>
+<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_1_CorusExtract.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_1_CorusExtract.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
 
 = 3. Configure environment =
  * To run properly, Corus requires the presence of another environment variable: CORUS_HOME
- * The variable must point to the home directory of the Corus installation, which in our case is the `C:\opt\sapia-corus\sapia_corus-2.0` directory
- * To define an environment variable on Windows XP, follow these simple steps:
-  # Go in Control Panel -> System
-  # In the System Properties window, select the Advanced tab and click on the Environment Variables button (at the bottom)
-  # Add a new system variable by clicking on the New button in the bottom section (System variables)
-  # Define the CORUS_HOME variable with the appropriate value
+ * The variable must point to the home directory of the Corus installation, which in our case is the `/opt/sapia-corus/sapia_corus-2.0` directory
+ * However, we suggest the usage of a `current` symbolic link under `/opt/sapia-corus` to facilitate the future upgrades of Corus. That we if you ever extract another distribution of Corus you will simply have to change the sybolic link and upon restart the new distribution will start.
+ * Here an example of how to create a symbolic link using the `ln` command (make sure you are in the install direcotry):
+
+ || `[root@cygnus-fedora sapia-corus]# pwd`<br />`/opt/sapia-corus`<br /><br />`[root@cygnus-fedora sapia-corus]# ln -s sapia_corus-2.0/ current`<br /><br />`[root@cygnus-fedora sapia-corus]# ls -latr`<br />`total 12`<br />`drwxr-xr-x. 5 root   root      4096 Nov 24 22:29 ..`<br />`drwxr-xr-x. 6 corus corus 4096 Nov 26 06:15 sapia_corus-2.0`<br />`lrwxrwxrwx. 1 root   root        16 Nov 26 06:54 current -> sapia_corus-2.0/`<br />`drwxr-xr-x. 3 root   root      4096 Nov 26 06:54 .`<br />`[root@cygnus-fedora sapia-corus]#` ||
+
+ * To define an environment variable on Fedora Core, we suggest to modify the file `/etc/profile` which contains the global environment variables setup for every user.
+ * Using `vi` (or the file editor of your choice) add the following lines to the file:
+ ||` CORUS_HOME=/opt/sapia-corus/current `<br />` export CORUS_HOME `||
 
 <table boder="0" width="50%">
 <tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_2_CorusHomeEnvVariable.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_2_CorusHomeEnvVariable.jpg" /></a>
+<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_2_CorusHomeEnvVariable.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_2_CorusHomeEnvVariable.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
 
- * You can also modify the `Path` environment variable to have an easy access to the various commands of the Corus distribution
- * To do so, select the `Path` variable in the Environment Variables window, and click on Edit
- * Append the following text to the parameter value field: "`;%CORUS_HOME%\bin`"
+ * You can also modify the `$PATH` environment variable to have an easy access to the various commands of the Corus distribution
+ * To do so, edit the `/etc/profile` file again and add the following lines to it:
+ || ` PATH=$PATH:$CORUS_HOME/bin`<br />` export PATH ` ||
 
 <table boder="0" width="50%">
 <tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_3_PathEnvVariable.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsXP_3_PathEnvVariable.jpg" /></a>
+<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_3_PathEnvVariable.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_3_PathEnvVariable.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
 
-At this point you should be able to start Corus by manually invoking the `%CORUS_HOME%\bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a Windows service.
+At this point you should be able to start Corus by manually invoking the `$CORUS_HOME\bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
 
 
-= 4. Window service integration = 
+= 4. Linux service integration = 
 With the installation of Corus as a Windows service, you will be able to automatically start Corus on startup of your machine. Windows provides a simple service management user interface to stop, start and restart services.
 
 To register Corus as a service, you need to:
