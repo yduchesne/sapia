@@ -98,13 +98,12 @@ Once you start the Corus service, you can validate the proper execution of the C
 And that is pretty much it for the installation. You can now envoy Corus. 
 
 == iv) Manage Corus system service ==
- * Using the `service` command, you start, stop and restart the Corus service
+ * Using the `service` command you can start, stop and restart the Corus service
 
 || `[root@cygnus-fedora init.d]# service corus restart` <br /> `Stopping Sapia Corus Server [33000]...` <br />  `Stopped Sapia Corus Server [33000].` <br /> `Starting Sapia Corus Server [33000]...` <br /> `[root@cygnus-fedora init.d]# ` <br /><br /> `[root@cygnus-fedora init.d]# service corus stop` <br /> `Stopping Sapia Corus Server [33000]...` <br /> `Stopped Sapia Corus Server [33000].` <br /> `[root@cygnus-fedora init.d]# ` ||
 
  * If you ever need to remove the Corus system service, you can use the `chkconfig` config command
  
-|| ` [root@cygnus-fedora init.d]# chkconfig --add /etc/init.d/corus `<br />` [root@cygnus-fedora init.d]#` ||
+|| ` [root@cygnus-fedora init.d]# chkconfig --del corus `<br />` [root@cygnus-fedora init.d]#` ||
 
-there is another script provided in the `%CORUS_HOME%\bin\win32` directory: it is called `UninstallCorusService.bat`. You can use this script the same way you previously installed the Corus service
  
