@@ -52,8 +52,8 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
 At this point you should be able to start Corus by manually invoking the `$CORUS_HOME\bin\corus` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
 
 
-= 4. Linux system service integration = 
-With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus on startup of your machine. Fedora provides the `chkconfig` command that help configuring Linux's run levels. Once properly registered you can easily stop, start and restart Corus service using the `service` command.
+= 4. Linux system service integration with Upstart = 
+With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus on startup of your machine. Ubuntu provides the `chkconfig` command that help configuring Linux's run levels. Once properly registered you can easily stop, start and restart Corus service using the `service` command.
 
 To register Corus as a system service, you need to:
 == i) Define a Corus configuration file ==
