@@ -90,7 +90,7 @@ Once you start the Corus service, you can validate the proper execution of the C
 
 <table boder="0" width="50%">
 <tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_7_CorusCLI.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_CorusCLI.jpg" /></a>
+<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_CorusCLI.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_CorusCLI.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
