@@ -2,7 +2,7 @@
 
 = Introduction =
 
-This page will guide you through the necessary steps to install Corus on Fedora Core 13 64 bits.
+This page will guide you through the necessary steps to install Corus on Fedora Core 13 (64 bits).
 
 
 = 1. Preparing the environment =
