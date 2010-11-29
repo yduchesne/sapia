@@ -33,13 +33,6 @@ This page will guide you through the necessary steps to install Corus on Fedora 
  ||` [root@cygnus-fedora sapia-corus]# chown -R corus:corus sapia_corus-2.0/ `<br />` [root@cygnus-fedora sapia-corus]#`||
 
 
-<table boder="0" width="50%">
-<tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_1_CorusExtract.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_1_CorusExtract.jpg" /></a>
-</td></tr>
-<tr align="center"><td>_Click on the image for full size resolution_</td></tr>
-</table>
-
 = 3. Configure environment =
  * To run properly, Corus requires the presence of another environment variable: CORUS_HOME
  * The variable must point to the home directory of the Corus installation, which in our case is the `/opt/sapia-corus/sapia_corus-2.0` directory
@@ -52,23 +45,9 @@ This page will guide you through the necessary steps to install Corus on Fedora 
  * Using `vi` (or the file editor of your choice) add the following lines to the file:
  ||` CORUS_HOME=/opt/sapia-corus/current `<br />` export CORUS_HOME `||
 
-<table boder="0" width="50%">
-<tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_2_CorusHomeEnvVariable.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_2_CorusHomeEnvVariable.jpg" /></a>
-</td></tr>
-<tr align="center"><td>_Click on the image for full size resolution_</td></tr>
-</table>
-
  * You can also modify the `$PATH` environment variable to have an easy access to the various commands of the Corus distribution
  * To do so, edit the `/etc/profile` file again and add the following lines to it:
  || ` PATH=$PATH:$CORUS_HOME/bin`<br />` export PATH ` ||
-
-<table boder="0" width="50%">
-<tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_3_PathEnvVariable.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_3_PathEnvVariable.jpg" /></a>
-</td></tr>
-<tr align="center"><td>_Click on the image for full size resolution_</td></tr>
-</table>
 
 At this point you should be able to start Corus by manually invoking the `$CORUS_HOME\bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
 
@@ -86,8 +65,8 @@ To register Corus as a system service, you need to:
  * Copy it under the directory `/etc/init.d` and name it `corus` (make sure you are using root user)
  ||` [root@cygnus-fedora sapia-corus]# cp $CORUS_HOME/current/bin/corus.init.d /etc/init.d/corus `<br />` [root@cygnus-fedora sapia-corus]#`||
 
- * Once copied, you need to edit the file and set the proper values for the $CORUS_HOME variable
- * By default, the file is configured to use the `config\corus_service_33000.wrapper.properties` file (so you can have a try right now).
+ * Once copied, you need to edit the file and set the proper value for the $CORUS_HOME variable and set the proper corus configuration file.
+ * By default, the file is configured to use the `$CORUS_HOME/config/corus_service_33000.wrapper.properties` file (so you can have a try right now).
 
 == iii) Register with the run levels ==
  * Once you are ready, you simply have to execute the `chkconfig` command (as root):
@@ -98,22 +77,16 @@ To register Corus as a system service, you need to:
 
  ||` [root@cygnus-fedora init.d]# chkconfig --list | grep corus `<br />` corus          	0:off	1:off	2:on	3:on	4:on	5:on	6:off  `<br />` [root@cygnus-fedora init.d]#  ` ||
 
-<table boder="0" width="50%">
-<tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_4_InstallService.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_4_InstallService.jpg" /></a>
-</td></tr>
-<tr align="center"><td>_Click on the image for full size resolution_</td></tr>
-</table>
-
  * As you can see upon installation, the Corus service is not running. You can start it using the `service` command like that:
 
  || `[root@cygnus-fedora init.d]# service corus start ` <br /> `Starting Sapia Corus Server [33000]...` <br /> `[root@cygnus-fedora init.d]# ` ||
 
 
-Once you start the Corus service, you can validate the proper execution of the Corus service by:
-1. looking at the Corus log files that resides under the `$CORUS_HOME%\logs` directory
+Once you start the Corus service, you can validate the proper execution of the Corus service by: 
 
-2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is called `coruscli` and resides under the `$CORUS_HOME/bin` directory. If you previously added the `$CORUS_HOME/bin` directory in the `$PATH` environment variable, you can simply invoke the file. Otherwise you will have to get to the bin directory and invoke the command.
+1. looking at the Corus log files that resides under the `$CORUS_HOME/logs` directory
+
+2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is called `coruscli` and resides under the `$CORUS_HOME/bin` directory. If you previously added the `$CORUS_HOME/bin` directory in the `$PATH` environment variable, you can simply invoke the script. Otherwise you will have to get to the bin directory and invoke the command.
 
 <table boder="0" width="50%">
 <tr><td>
@@ -124,7 +97,14 @@ Once you start the Corus service, you can validate the proper execution of the C
 
 And that is pretty much it for the installation. You can now envoy Corus. 
 
-== iv) Manage Corus service ==
- * From the Services management window you can start, stop and restart the Corus service
- * If you ever need to remove the Corus service, there is another script provided in the `%CORUS_HOME%\bin\win32` directory: it is called `UninstallCorusService.bat`. You can use this script the same way you previously installed the Corus service
+== iv) Manage Corus system service ==
+ * Using the `service` command, you start, stop and restart the Corus service
+
+|| `[root@cygnus-fedora init.d]# service corus restart` <br /> `Stopping Sapia Corus Server [33000]...` <br />  `Stopped Sapia Corus Server [33000].` <br /> `Starting Sapia Corus Server [33000]...` <br /> `[root@cygnus-fedora init.d]# ` <br /><br /> `[root@cygnus-fedora init.d]# service corus stop` <br /> `Stopping Sapia Corus Server [33000]...` <br /> `Stopped Sapia Corus Server [33000].` <br /> `[root@cygnus-fedora init.d]# ` ||
+
+ * If you ever need to remove the Corus system service, you can use the `chkconfig` config command
+ 
+|| ` [root@cygnus-fedora init.d]# chkconfig --add /etc/init.d/corus `<br />` [root@cygnus-fedora init.d]#` ||
+
+there is another script provided in the `%CORUS_HOME%\bin\win32` directory: it is called `UninstallCorusService.bat`. You can use this script the same way you previously installed the Corus service
  
