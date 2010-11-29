@@ -9,13 +9,13 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
 
 == i) Java ==
  * Before installing Corus you need to have Java installed on your machine. Corus requires at least Java 5.
- * Corus requires the presence of the  `$JAVA_HOME` environment variable that points to the Java runtime you want to use (JRE or JDK).
+ * Corus requires the presence of the `$JAVA_HOME` environment variable that points to the Java runtime you want to use (JRE or JDK).
 
 == ii) Corus user ==
  * Since Corus is mainly a background process, we strongly suggest that the Corus server is installed and executed with privileges of a restricted user.
  * Using the command `useradd`, created a new system user named "corus". Here's a quick example of it:
 
- ||` [root@cygnus-fedora ~]# useradd --home-dir /home/corus --create-home --system --shell /bin/bash corus `<br />` [root@cygnus-fedora ~]#`||
+ ||` [root@cygnus-fedora ~]# useradd --home /home/corus --create-home --system --shell /bin/bash corus `<br />` [root@cygnus-fedora ~]#`||
 
 == iii) Installation directory ==
  * You need to create a directory on your system in which you will install Corus.
@@ -36,20 +36,20 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
 = 3. Configure environment =
  * To run properly, Corus requires the presence of another environment variable: CORUS_HOME
  * The variable must point to the home directory of the Corus installation, which in our case is the `/opt/sapia-corus/sapia_corus-2.0` directory
- * However, we suggest the usage of a `current` symbolic link under `/opt/sapia-corus` to facilitate the future upgrades of Corus. That we if you ever extract another distribution of Corus you will simply have to change the sybolic link and upon restart the new distribution will start.
+ * However, we suggest the usage of a `current` symbolic link under `/opt/sapia-corus` to facilitate the future upgrades of Corus. That we if you ever extract another distribution of Corus you will simply have to change the symbolic link and upon restart the new distribution will start.
  * Here an example of how to create a symbolic link using the `ln` command (make sure you are in the install direcotry):
 
  || `[root@cygnus-fedora sapia-corus]# pwd`<br />`/opt/sapia-corus`<br /><br />`[root@cygnus-fedora sapia-corus]# ln -s sapia_corus-2.0/ current`<br /><br />`[root@cygnus-fedora sapia-corus]# ls -latr`<br />`total 12`<br />`drwxr-xr-x. 5 root   root      4096 Nov 24 22:29 ..`<br />`drwxr-xr-x. 6 corus corus 4096 Nov 26 06:15 sapia_corus-2.0`<br />`lrwxrwxrwx. 1 root   root        16 Nov 26 06:54 current -> sapia_corus-2.0/`<br />`drwxr-xr-x. 3 root   root      4096 Nov 26 06:54 .`<br />`[root@cygnus-fedora sapia-corus]#` ||
 
- * To define an environment variable on Fedora Core, we suggest to modify the file `/etc/profile` which contains the global environment variables setup for every user.
- * Using `vi` (or the file editor of your choice) add the following lines to the file:
- ||` CORUS_HOME=/opt/sapia-corus/current `<br />` export CORUS_HOME `||
+ * To define an environment variable on Ubuntu, we suggest to modify the file `/etc/environment` which contains the global environment variables for the system.
+ * Using `vi` (or the file editor of your choice) add the following line to the file:
+ ||` export CORUS_HOME=/opt/sapia-corus/current `<br />||
 
  * You can also modify the `$PATH` environment variable to have an easy access to the various commands of the Corus distribution
- * To do so, edit the `/etc/profile` file again and add the following lines to it:
- || ` PATH=$PATH:$CORUS_HOME/bin`<br />` export PATH ` ||
+ * To do so, edit the `/etc/environment` file again and add the following line to it:
+ || ` export PATH=$PATH:$CORUS_HOME/bin`<br /> ||
 
-At this point you should be able to start Corus by manually invoking the `$CORUS_HOME\bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
+At this point you should be able to start Corus by manually invoking the `$CORUS_HOME\bin\corus` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
 
 
 = 4. Linux system service integration = 
