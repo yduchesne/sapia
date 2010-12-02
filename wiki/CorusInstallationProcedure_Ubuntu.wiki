@@ -53,34 +53,27 @@ At this point you should be able to start Corus by manually invoking the `$CORUS
 
 
 = 4. Linux system service integration with Upstart = 
-With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus on startup of your machine. Ubuntu provides the `chkconfig` command that help configuring Linux's run levels. Once properly registered you can easily stop, start and restart Corus service using the `service` command.
+With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus on startup of your machine. Ubuntu integrate the upstart daemon tool that provides an easy integration to start services and tasks. Once properly registered configured, upstart takes care of starting Corus when your system starts. You can also stop, start and restart the Corus service using the `initctl` command.
 
 To register Corus as a system service, you need to:
 == i) Define a Corus configuration file ==
- * you need to define a Corus configuration file that will be used when the service starts.
+ * you need to define a Corus configuration file that will be used when the Corus service starts.
  * We provide a default configuration file to help you: it is located under `$CORUS_HOME/config/corus_service_33000.wrapper.properties`. You can have a look at the configuration section to know how to customize Corus.
 
-== ii) Prepare init.d script ==
- * A script is available to register Corus as a system service: it located under `$CORUS_HOME/bin/corus.init.d`
- * Copy it under the directory `/etc/init.d` and name it `corus` (make sure you are using root user)
- ||` [root@cygnus-fedora sapia-corus]# cp $CORUS_HOME/current/bin/corus.init.d /etc/init.d/corus `<br />` [root@cygnus-fedora sapia-corus]#`||
+== ii) Prepare upstart configuration file ==
+ * A file is available to configure Corus with upstart: it located under `$CORUS_HOME/bin/corus.upstart.conf`
+ * Copy it under the directory `/etc/init/` and name it `corus.conf` (make sure you are using the root user)
+ ||` root@ubuntu:/opt/sapia-corus# cp $CORUS_HOME/current/bin/corus.upstart.conf /etc/init/corus.conf `<br />` root@ubuntu:/opt/sapia-corus# `||
 
- * Once copied, you need to edit the file and set the proper value for the $CORUS_HOME variable and set the proper corus configuration file.
- * By default, the file is configured to use the `$CORUS_HOME/config/corus_service_33000.wrapper.properties` file (so you can have a try right now).
+ * Once copied, you need to edit the file and set the proper value for the CORUS_HOME environment variable.
+ * By default, the file is configured to start Corus using the `$CORUS_HOME/config/corus_service_33000.wrapper.properties` configuration file (so you can have a try right now).
 
-== iii) Register with the run levels ==
- * Once you are ready, you simply have to execute the `chkconfig` command (as root):
+== iii) Register with upstart ==
+ * Well, at this point it is already done: upstart monitors the files of the `/etc/init/` directory and automatically registers any valid configuration file... it is that easy!!!
 
- || ` [root@cygnus-fedora init.d]# chkconfig --add /etc/init.d/corus `<br />` [root@cygnus-fedora init.d]#` ||
+ * However upstart do not start Corus once registered (only on the next reboot). To manually start Corus you can use the `initctl` command like that:
 
- * You can validate the run level registration like that:
-
- ||` [root@cygnus-fedora init.d]# chkconfig --list | grep corus `<br />` corus          	0:off	1:off	2:on	3:on	4:on	5:on	6:off  `<br />` [root@cygnus-fedora init.d]#  ` ||
-
- * As you can see upon installation, the Corus service is not running. You can start it using the `service` command like that:
-
- || `[root@cygnus-fedora init.d]# service corus start ` <br /> `Starting Sapia Corus Server [33000]...` <br /> `[root@cygnus-fedora init.d]# ` ||
-
+ || `root@ubuntu:~# initctl start corus ` <br /> `corus start/running` <br /> `root@ubuntu:~# ` ||
 
 Once you start the Corus service, you can validate the proper execution of the Corus service by: 
 
@@ -90,7 +83,7 @@ Once you start the Corus service, you can validate the proper execution of the C
 
 <table boder="0" width="50%">
 <tr><td>
-<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_7_CorusCLI.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxFedora_7_CorusCLI.jpg" /></a>
+<a href="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxUbuntu_CorusCLI.jpg"><img width="100%" src="http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_LinuxUbuntu_CorusCLI.jpg" /></a>
 </td></tr>
 <tr align="center"><td>_Click on the image for full size resolution_</td></tr>
 </table>
@@ -98,13 +91,10 @@ Once you start the Corus service, you can validate the proper execution of the C
 And that is pretty much it for the installation. You can now envoy Corus. 
 
 == iv) Manage Corus system service ==
- * Using the `service` command, you start, stop and restart the Corus service
+ * You can use the `initctl` command (which interacts with upstart) to manually manage the corus service
 
-|| `[root@cygnus-fedora init.d]# service corus restart` <br /> `Stopping Sapia Corus Server [33000]...` <br />  `Stopped Sapia Corus Server [33000].` <br /> `Starting Sapia Corus Server [33000]...` <br /> `[root@cygnus-fedora init.d]# ` <br /><br /> `[root@cygnus-fedora init.d]# service corus stop` <br /> `Stopping Sapia Corus Server [33000]...` <br /> `Stopped Sapia Corus Server [33000].` <br /> `[root@cygnus-fedora init.d]# ` ||
+ || `root@ubuntu:~# initctl start corus ` <br /> `corus start/running` <br /> `root@ubuntu:~# ` <br /><br /> `root@ubuntu:~# initctl restart corus` <br /> `corus start/running` <br /> `root@ubuntu:~# ` <br /><br /> `root@ubuntu:~# initctl stop corus` <br /> `corus stop/waiting` <br /> `root@ubuntu:~#  ` ||
 
- * If you ever need to remove the Corus system service, you can use the `chkconfig` config command
+ * If you ever need to remove the Corus system service, you simply have to remove the `corus.conf` configuration file from `/etc/init/` directory and upstart will take care of the rest (make sure you stop corus first)
  
-|| ` [root@cygnus-fedora init.d]# chkconfig --add /etc/init.d/corus `<br />` [root@cygnus-fedora init.d]#` ||
-
-there is another script provided in the `%CORUS_HOME%\bin\win32` directory: it is called `UninstallCorusService.bat`. You can use this script the same way you previously installed the Corus service
- 
+ || `root@ubuntu:~# initctl stop corus ` <br /> `corus stop/waiting` <br /><br /> `root@ubuntu:~# rm /etc/init/corus.conf` <br /><br /> `root@ubuntu:~# initctl status corus` <br /> `initctl: Unknown job: corus` ||
