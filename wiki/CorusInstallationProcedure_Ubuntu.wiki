@@ -39,7 +39,7 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
  * However, we suggest the usage of a `current` symbolic link under `/opt/sapia-corus` to facilitate the future upgrades of Corus. That we if you ever extract another distribution of Corus you will simply have to change the symbolic link and upon restart the new distribution will start.
  * Here an example of how to create a symbolic link using the `ln` command (make sure you are in the install direcotry):
 
- || `root@ubuntu:/opt/sapia-corus# pwd`<br />`/opt/sapia-corus`<br /><br />root@ubuntu:/opt/sapia-corus# ln -s sapia_corus-2.0/ current`<br /><br />`root@ubuntu:/opt/sapia-corus# ls -latr`<br />`total 12`<br />`drwxr-xr-x. 5 root   root      4096 Nov 24 22:29 ..`<br />`drwxr-xr-x. 6 corus corus 4096 Nov 26 06:15 sapia_corus-2.0`<br />`lrwxrwxrwx. 1 root   root        16 Nov 26 06:54 current -> sapia_corus-2.0/`<br />`drwxr-xr-x. 3 root   root      4096 Nov 26 06:54 .`<br />`root@ubuntu:/opt/sapia-corus# ` ||
+ || `root@ubuntu:/opt/sapia-corus# pwd`<br />`/opt/sapia-corus`<br /><br /> `root@ubuntu:/opt/sapia-corus# ln -s sapia_corus-2.0/ current`<br /><br />`root@ubuntu:/opt/sapia-corus# ls -latr`<br />`total 12`<br />`drwxr-xr-x. 5 root   root      4096 Nov 24 22:29 ..`<br />`drwxr-xr-x. 6 corus corus 4096 Nov 26 06:15 sapia_corus-2.0`<br />`lrwxrwxrwx. 1 root   root        16 Nov 26 06:54 current -> sapia_corus-2.0/`<br />`drwxr-xr-x. 3 root   root      4096 Nov 26 06:54 .`<br />`root@ubuntu:/opt/sapia-corus# ` ||
 
  * To define an environment variable on Ubuntu, we suggest to modify the file `/etc/environment` which contains the global environment variables for the system.
  * Using `vi` (or the file editor of your choice) add the following line to the file:
