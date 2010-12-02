@@ -100,7 +100,7 @@ And that is pretty much it for the installation. You can now envoy Corus.
 == iv) Manage Corus system service ==
  * Using the `service` command you can start, stop and restart the Corus service
 
-|| `linux-yykm:~ # service corus restart` <br /> `Stopping Sapia Corus Server [33000]...` <br />  `Stopped Sapia Corus Server [33000].` <br /> `Starting Sapia Corus Server [33000]...` <br /> `[linux-yykm:~ # ` <br /><br /> `linux-yykm:~ # service corus stop` <br /> `Stopping Sapia Corus Server [33000]...` <br /> `Stopped Sapia Corus Server [33000].` <br /> `linux-yykm:~ # ` ||
+|| `linux-yykm:~ # service corus restart` <br /> `Stopping Sapia Corus Server [33000]...` <br />  `Stopped Sapia Corus Server [33000].` <br /> `Starting Sapia Corus Server [33000]...` <br /> `linux-yykm:~ # ` <br /><br /> `linux-yykm:~ # service corus stop` <br /> `Stopping Sapia Corus Server [33000]...` <br /> `Stopped Sapia Corus Server [33000].` <br /> `linux-yykm:~ # ` ||
 
  * If you ever need to remove the Corus system service, you can use the `chkconfig` config command
  
