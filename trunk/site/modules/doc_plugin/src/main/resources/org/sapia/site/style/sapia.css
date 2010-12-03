@@ -539,6 +539,20 @@ HOLD SAPIA STUFF
 	font-size: 10px
 }
 
+.sapiaTable th{
+	color: white;
+	padding: 3px;
+	background-color: #757575;
+  font-size: 12px;
+}
+
+.sapiaTable td{
+  color: black;
+  padding: 3px;
+  background-color: white;
+  font-size: 12px;
+}
+
 /*
 
 a:active {

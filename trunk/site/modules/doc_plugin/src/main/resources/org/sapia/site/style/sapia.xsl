@@ -315,24 +315,6 @@
     </span>
   </xsl:template>          
 
-<!-- ======================================        ANCHOR      ====================================== -->
-
-  <xsl:template match="a">
-    <a>
-      <xsl:apply-templates select="@*"/>
-      <xsl:choose>
-        <xsl:when test="@href">
-          <b>
-            <xsl:value-of select="."/>
-          </b>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="."/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </a>
-  </xsl:template>
-  
 <!-- ======================================        POP UP      ====================================== -->
 
   <xsl:template match="sapia:popup">
