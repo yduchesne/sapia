@@ -76,9 +76,7 @@ To register Corus as a system service, you need to:
  || `root@cygnus-opensolaris:~# scvadm enable svc:/application/sapia/corus ` <br /> ||
 
  * Corus should now be running and you can monitor it's state with the `svcs` command:
- || `root@cygnus-opensolaris:~# svcs -x corus ` <br /> ` svc:/application/sapia/corus:default (Sapia Corus Server)
- State: online since Tue Dec 07 22:11:58 2010 ` <br /> `  See: http://www.sapia-oss.org/projects/corus/
-   See: /var/svc/log/application-sapia-corus:default.log ` <br /> ` Impact: None. ` <br /> ` root@cygnus-opensolaris:~# ` ||
+ || `root@cygnus-opensolaris:~# svcs -x corus ` <br /> ` svc:/application/sapia/corus:default (Sapia Corus Server) ` <br /> ` State: online since Tue Dec 07 22:11:58 2010 ` <br /> `  See: http://www.sapia-oss.org/projects/corus/ ` <br />` See: /var/svc/log/application-sapia-corus:default.log ` <br /> ` Impact: None. ` <br /> ` root@cygnus-opensolaris:~# ` ||
 
 
 Once you start the Corus service, you can validate the proper execution of the Corus service by: 
@@ -97,10 +95,10 @@ Once you start the Corus service, you can validate the proper execution of the C
 And that is pretty much it for the installation. You can now envoy Corus. 
 
 == iv) Manage Corus system service ==
- * You can use the `svcadm` command to stop, start or restart Corus
+ * You can use the `svcadm` command to stop, start or restart Corus:
 
- || `root@cygnus-opensolaris:~# initctl start corus ` <br /> `corus start/running` <br /> `root@cygnus-opensolaris:~# ` <br /><br /> `root@cygnus-opensolaris:~# initctl restart corus` <br /> `corus start/running` <br /> `root@cygnus-opensolaris:~# ` <br /><br /> `root@cygnus-opensolaris:~# initctl stop corus` <br /> `corus stop/waiting` <br /> `root@cygnus-opensolaris:~#  ` ||
+ || `root@cygnus-opensolaris:~# svcadm disable corus ` <br /> `root@cygnus-opensolaris:~# ` <br /><br /> `root@cygnus-opensolaris:~# svcadm enable corus` <br /> `root@cygnus-opensolaris:~# ` <br /><br /> `root@cygnus-opensolaris:~# svcadm restart corus` <br /> `root@cygnus-opensolaris:~#  ` ||
 
- * If you ever need to remove the Corus system service, you simply have to remove the `corus.conf` configuration file from `/etc/init/` directory and upstart will take care of the rest (make sure you stop corus first)
+ * If you ever need to remove the Corus system service, you simply have to use the `svccfg` command to delete the Corus manifest from SMF (make sure you stop corus first with `svcadm disable`)
  
- || `root@cygnus-opensolaris:~# initctl stop corus ` <br /> `corus stop/waiting` <br /><br /> `root@cygnus-opensolaris:~# rm /etc/init/corus.conf` <br /><br /> `root@cygnus-opensolaris:~# initctl status corus` <br /> `initctl: Unknown job: corus` ||
+ || `root@cygnus-opensolaris:~# svccfg delete corus ` <br /> `root@cygnus-opensolaris:~# ` ||
