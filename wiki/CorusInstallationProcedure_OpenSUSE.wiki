@@ -8,7 +8,7 @@ This page will guide you through the necessary steps to install Corus on OpenSUS
 = 1. Preparing the environment =
 
 == i) Java ==
- * Before installing Corus you need to have Java installed on your machine. Corus requires at least Java 5.
+ * Before installing Corus you need to have Java installed on your machine. Corus requires at least Java 6.
  * Corus requires the presence of the  `$JAVA_HOME` environment variable that points to the Java runtime you want to use (JRE or JDK).
 
 == ii) Corus user ==
