@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>sapia_utils</artifactId>
+  <version>1.11</version>
 
 
   <dependencies>
@@ -67,4 +68,10 @@
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_utils_parent-2.0</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_utils_parent-2.0</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_utils_parent-2.0</url>
+  </scm>
 </project>
