@@ -4,7 +4,6 @@
             maxKillRetry="3" 
             shutdownTimeout="30000" 
             invoke="true">
-    <port name="jetty-server" />        
     <java mainClass="org.sapia.corus.sample.jetty.ScalableJettyServer"
           profile="dev">
       <vmType>server</vmType>
