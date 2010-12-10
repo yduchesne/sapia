@@ -12,7 +12,7 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
  * Corus requires the presence of the `$JAVA_HOME` environment variable that points to the Java runtime you want to use (JRE or JDK).
 
 == ii) Corus user ==
- * Since Corus is mainly a background process, we strongly suggest that the Corus server is installed and executed with privileges of a restricted user.
+ * Since Corus is mainly a background process, we strongly suggest that the Corus server be installed and executed with the privileges of a restricted user.
  * Using the command `useradd`, created a new system user named "corus". Here's a quick example of it:
 
  ||`root@ubuntu:~# useradd --home /home/corus --create-home --system --shell /bin/bash corus `<br />` root@ubuntu:~# `||
@@ -23,7 +23,7 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
  ||` root@ubuntu:~#  mkdir /opt/sapia-corus`<br />` root@ubuntu:~# `||
 
 
-= 2. Extract the corus distribution =
+= 2. Extract the Corus Distribution =
  * Extract the Corus distribution file into the Corus installation directory created above.
  ||` root@ubuntu:/opt/sapia-corus# tar -xvf ../datastore/sapia_corus_server-2.0-linux64.tar.gz `<br />` root@ubuntu:/opt/sapia-corus# `||
 
@@ -33,11 +33,11 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
  ||` root@ubuntu:/opt/sapia-corus# chown -R corus:corus sapia_corus-2.0/ `<br />` root@ubuntu:/opt/sapia-corus# `||
 
 
-= 3. Configure environment =
+= 3. Configure the Environment =
  * To run properly, Corus requires the presence of another environment variable: CORUS_HOME
  * The variable must point to the home directory of the Corus installation, which in our case is the `/opt/sapia-corus/sapia_corus-2.0` directory
- * However, we suggest the usage of a `current` symbolic link under `/opt/sapia-corus` to facilitate the future upgrades of Corus. That we if you ever extract another distribution of Corus you will simply have to change the symbolic link and upon restart the new distribution will start.
- * Here an example of how to create a symbolic link using the `ln` command (make sure you are in the install direcotry):
+ * However, we suggest the usage of a `current` symbolic link under `/opt/sapia-corus` to facilitate the future upgrades of Corus. That way if you ever extract another distribution of Corus you will simply have to change the symbolic link and upon restart the new distribution will be taken into account.
+ * Here is an example of how to create a symbolic link using the `ln` command (make sure you are in the install direcotry):
 
  || `root@ubuntu:/opt/sapia-corus# pwd`<br />`/opt/sapia-corus`<br /><br /> `root@ubuntu:/opt/sapia-corus# ln -s sapia_corus-2.0/ current`<br /><br />`root@ubuntu:/opt/sapia-corus# ls -latr`<br />`total 12`<br />`drwxr-xr-x. 5 root   root      4096 Nov 24 22:29 ..`<br />`drwxr-xr-x. 6 corus corus 4096 Nov 26 06:15 sapia_corus-2.0`<br />`lrwxrwxrwx. 1 root   root        16 Nov 26 06:54 current -> sapia_corus-2.0/`<br />`drwxr-xr-x. 3 root   root      4096 Nov 26 06:54 .`<br />`root@ubuntu:/opt/sapia-corus# ` ||
 
@@ -52,8 +52,8 @@ This page will guide you through the necessary steps to install Corus on Ubuntu 
 At this point you should be able to start Corus by manually invoking the `$CORUS_HOME/bin/corus` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
 
 
-= 4. Linux system service integration with Upstart = 
-With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus on startup of your machine. Ubuntu integrate the upstart daemon tool that provides an easy integration to start services and tasks. Once properly registered configured, upstart takes care of starting Corus when your system starts. You can also stop, start and restart the Corus service using the `initctl` command.
+= 4. Linux System Service Integration with Upstart = 
+With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus at the startup of your machine. Ubuntu integrates the Upstart daemon tool that provides an easy way to start services and tasks. Once properly configured, upstart takes care of starting Corus when your system starts. You can also stop, start and restart the Corus service using the `initctl` command.
 
 To register Corus as a system service, you need to:
 == i) Define a Corus configuration file ==
@@ -90,7 +90,7 @@ Once you start the Corus service, you can validate the proper execution of the C
 
 And that is pretty much it for the installation. You can now envoy Corus. 
 
-== iv) Manage Corus system service ==
+== iv) Manage the Corus System Service ==
  * You can use the `initctl` command (which interacts with upstart) to manually manage the corus service
 
  || `root@ubuntu:~# initctl start corus ` <br /> `corus start/running` <br /> `root@ubuntu:~# ` <br /><br /> `root@ubuntu:~# initctl restart corus` <br /> `corus start/running` <br /> `root@ubuntu:~# ` <br /><br /> `root@ubuntu:~# initctl stop corus` <br /> `corus stop/waiting` <br /> `root@ubuntu:~#  ` ||
