@@ -3,17 +3,15 @@
 
 = Introduction =
 
-Corus is designed with simplicity in mind: to come up with a simple solution to a complex (and non-trivial) problematic. The installation of Corus is no exception. We provide distributions for different operating systems to suits your needs. Regardless of the OS you are using, we take care to provided a seemless integration to optimize the various functionnalities offered by each platform.
-
+This wiki section provides detailed information on how to install Corus, on all the
+major OSes (Linux, Solaris, Mac, Windows).
 
 = Supported Operating Systems =
 
-Technically speaking, Corus should run on any platform that supports Java. However, manually starting java programs using custom scripts is kind of cumbersome. That is why we provide specialized scripts for each OS to manage the Corus runtime. We also provide an integration with operating services to automatically start Corus on startup (when available by the OS) and to monitor the Corus process in case of abnormal process termination.
-
-We want to provide you with the maximum information to successfully and easily install Corus: it needs to be a positive experience! Look in the links below for the one that is the most suitable for you according to you operating system.
+Corus should run on any platform that supports Java. That being said, a native hook is required to be able to run Corus as an OS process or service (so that it starts automatically at OS boot time), and native scripts are required to start the various tools (the command-line interface, etc.).
 
 || *Windows* <br /><p><ul><li>[CorusInstallationProcedure_WindowsXP Installation instructions for Windows XP]</li><li>[CorusInstallationProcedure_WindowsVista Installation instructions for Windows Vista]</li><li> Installation instructions for Windows 7 (to come)</li></ul></p><br />|| *Mac* <br /><p><ul><li>Installation instructions for OS X 10.5 (Leopard)</li><li>Installation instructions for OS X 10.6 (Snow Leopard)</li></ul></p><br /><br />||
 || *Linux*<br /><p><ul><li>[CorusInstallationProcedure_Ubuntu Installation instructions for Ubuntu] (_with `upstart` integration_)  </li><li>[CorusInstallationProcedure_Fedora Installation instructions for Fedora]  (_with `init.d` integration_) </li><li>[CorusInstallationProcedure_Mandriva Installation instructions for Mandriva] (_with `init.d` integration_) </li><li>[CorusInstallationProcedure_OpenSUSE Installation instructions for OpenSUSE]  (_with `init.d` integration_) </li><li>Installation instructions for CentOS  (_with `init.d` integration_) </li></ul></p><br />|| *Solaris* <br /><p><ul><li>[CorusInstallationProcedure_openSolaris Installation instructions for openSolaris] (_with SMF integration_)</li></ul></p><br /><br /><br /><br /><br />||
 
 
-If your operating system is not found in that list please contact us to support you in the installation of Corus on your system. This installation page must be a living document to help the community!
+Contact us if your OS is not supported, we'll do the best we can.
