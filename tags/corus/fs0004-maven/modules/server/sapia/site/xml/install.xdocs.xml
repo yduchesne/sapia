@@ -118,7 +118,7 @@
       to run Corus, make sure that the files are owned by that user.
       </p>      
       <sapia:note>
-        We strongly recommend that your create a symbolic (conveniently named "current") pointing to the directory where you
+        We strongly recommend that you create a symbolic (conveniently named "current") pointing to the directory where you
         extracted the Corus distribution files.
       </sapia:note>
 
@@ -145,7 +145,7 @@
       </p>
       
       <p>
-      Now that you've done testing, exit the CLI by typing <sapia:command>exit</sapia:command> or <sapia:command>quit</sapia:command>. In
+      Now that you're done testing, exit the CLI by typing <sapia:command>exit</sapia:command> or <sapia:command>quit</sapia:command>. In
       the server's terminal, type CTRL-C.
       </p>
       
