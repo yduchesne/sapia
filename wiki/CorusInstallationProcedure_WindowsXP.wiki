@@ -12,7 +12,7 @@ This page will guide you through the necessary steps to install Corus on Windows
  * Corus requires the presence of the  JAVA_HOME environment variable that points to the Java runtime you want to use (JRE or JDK).
 
 == ii) Installation directory ==
- * You need to create a directory on your system in which you will install Corus.
+ * You need to create a directory on your system in which you will install Corus (that directory must contain NO SPACE in its path).
  * For the purpose of this demonstration, we create the `C:\opt\sapia-corus` directory.
 
 
