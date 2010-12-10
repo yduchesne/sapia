@@ -114,7 +114,7 @@ Once you start the Corus service, you can validate the proper execution of the C
 
 And that is pretty much it for the installation. You can now envoy Corus. 
 
-== iv) Manage Corus Service ==
+== iv) Manage the Corus Service ==
  * From the Services management window you can start, stop and restart the Corus service
  * If you ever need to remove the Corus service, there is another script provided in the `%CORUS_HOME%\bin\win32` directory: it is called `UninstallCorusService.bat`. You can use this script the same way you previously installed the Corus service
  
