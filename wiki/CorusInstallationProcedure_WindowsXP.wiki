@@ -11,7 +11,7 @@ This page will guide you through the necessary steps to install Corus on Windows
  * Before installing Corus you need to have Java installed on your machine. Corus requires at least Java 6.
  * Corus requires the presence of the  JAVA_HOME environment variable that points to the Java runtime you want to use (JRE or JDK).
 
-== ii) Installation directory ==
+== ii) Installation Directory ==
  * You need to create a directory on your system in which you will install Corus (that directory must contain NO SPACE in its path).
  * For the purpose of this demonstration, we create the `C:\opt\sapia-corus` directory.
 
@@ -58,7 +58,7 @@ This page will guide you through the necessary steps to install Corus on Windows
 At this point you should be able to start Corus by manually invoking the `%CORUS_HOME%\bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a Windows service.
 
 
-= 4. Window service integration = 
+= 4. Window Service Integration = 
 With the installation of Corus as a Windows service, you will be able to automatically start Corus at the startup of your machine. Windows provides a simple service management user interface to stop, start and restart services.
 
 To register Corus as a service, you need to:
@@ -66,12 +66,12 @@ To register Corus as a service, you need to:
  * you need to define a Corus configuration file that will be used when the service starts.
  * We provide a default configuration file to help you: it is located under `%CORUS_HOME%\config\corus_service_33000.wrapper.properties`. You can have a look at the configuration section to know how to customize Corus.
 
-== ii) Prepare installation script ==
+== ii) Prepare the Installation Script ==
  * A script is available to register Corus as a Windows Service: it located under `%CORUS_HOME%\bin\win32\InstallCorusService.bat`
  * Edit the script (or copy it under a different name) and set the configuration file name to the variable WRAPPER_CONF.
  * By default, the `InstallCorusService.bat` is configured to use the `%CORUS_HOME%\config\corus_service_33000.wrapper.properties` file (so can have a try right now).
 
-== iii) Execute the installation script ==
+== iii) Execute the Installation Script ==
  * Once you are ready, you simply have to execute the `InstallCorusService.bat` script (Open option if you right click on the file)
 
 <table boder="0" width="50%">
@@ -114,7 +114,7 @@ Once you start the Corus service, you can validate the proper execution of the C
 
 And that is pretty much it for the installation. You can now envoy Corus. 
 
-== iv) Manage Corus service ==
+== iv) Manage Corus Service ==
  * From the Services management window you can start, stop and restart the Corus service
  * If you ever need to remove the Corus service, there is another script provided in the `%CORUS_HOME%\bin\win32` directory: it is called `UninstallCorusService.bat`. You can use this script the same way you previously installed the Corus service
  
