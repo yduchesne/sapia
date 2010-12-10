@@ -130,6 +130,35 @@
           for more info about the directory/symbolic link).</li>
         </ol>
       </p>      
+      
+      <p>
+      At this point, you have can start the corus server and try connecting to it with the CLI (command-line interface). To start Corus, 
+      open a new shell and type the following command in it: <sapia:command>corus</sapia:command>. This starts Corus on the default port (33000)
+      and domain (which, incidentally, is named "default"). You will see the server's logging output in the terminal window (you can type CTRL-C
+      at any time to stop the server).
+      </p>
+      
+      <p>
+      To connect to Corus, type <sapia:command>coruscli</sapia:command> in another terminal (the CLI connects on localhost:33000 by default).
+      You should see a welcome screen and then a prompt appearing. Type <sapia:command>host</sapia:command> in the CLI. You should get a reply
+      from the server and see the corresponding output in the terminal.
+      </p>
+      
+      <p>
+      Now that you've done testing, exit the CLI by typing <sapia:command>exit</sapia:command> or <sapia:command>quit</sapia:command>. In
+      the server's terminal, type CTRL-C.
+      </p>
+      
+      <p>
+      When working in development with Corus on your machine, starting it manually each time might be good enough. In such a case, the installation
+      would be over.
+      </p>
+      
+      <p>
+      But for production use, we suggest starting Corus as a native OS service, which we explain in the next section.
+      </p>
+      
+      
 
       <p><b>4. OS integration</b><p/>
         This last step is OS-specific: it consists of configuring your OS to tell it
