@@ -60,7 +60,7 @@ To register Corus as a system service, you need to:
  * you need to define a Corus configuration file that will be used when the Corus service starts.
  * We provide a default configuration file to help you: it is located under `$CORUS_HOME/config/corus_service_33000.wrapper.properties`. You can have a look at the configuration section to know how to customize Corus.
 
-== ii) Prepare upstart configuration file ==
+== ii) Prepare the upstart configuration file ==
  * A file is available to configure Corus with upstart: it located under `$CORUS_HOME/bin/corus.upstart.conf`
  * Copy it under the directory `/etc/init/` and name it `corus.conf` (make sure you are using the root user)
  ||` root@ubuntu:/opt/sapia-corus# cp $CORUS_HOME/current/bin/corus.upstart.conf /etc/init/corus.conf `<br />` root@ubuntu:/opt/sapia-corus# `||
