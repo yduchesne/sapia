@@ -11,6 +11,7 @@ import org.sapia.corus.client.cli.CliContext;
 import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.common.ProgressMsg;
 import org.sapia.corus.client.common.ProgressQueue;
+import org.sapia.corus.client.exceptions.cli.SystemExitException;
 
 
 /**
@@ -44,8 +45,10 @@ public abstract class CorusCliCommand implements Command {
       }
       
     } catch (AbortException ae) {
-      CliError err = cliCtx.createAndAddErrorFor(this, ae);
-      ctx.getConsole().println(err.getSimpleMessage());
+      if (!(ae instanceof SystemExitException)) {
+        CliError err = cliCtx.createAndAddErrorFor(this, ae);
+        ctx.getConsole().println(err.getSimpleMessage());
+      }
       throw ae;
       
     } catch (RuntimeException re) {
