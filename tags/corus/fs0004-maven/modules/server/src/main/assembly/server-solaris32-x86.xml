@@ -1,5 +1,5 @@
 <assembly>
-  <id>linux64</id>
+  <id>solaris32-x86</id>
   <formats>
     <format>tar.gz</format>
   </formats>
@@ -23,10 +23,11 @@
        <lineEnding>unix</lineEnding>
     </fileSet>
     <fileSet>
-       <directory>bin/linux64</directory>
+       <directory>bin/solaris32-x86</directory>
        <outputDirectory>bin</outputDirectory>
        <includes>
           <include>wrapper</include>
+          <include>*.sh</include>
        </includes>
        <fileMode>0777</fileMode>
     </fileSet>
@@ -34,6 +35,14 @@
     <!-- config -->
     <fileSet>
        <directory>config</directory>
+       <includes>
+          <include>*.*</include>
+       </includes>
+       <lineEnding>unix</lineEnding>
+    </fileSet>
+    <fileSet>
+       <directory>config/solaris32</directory>
+       <outputDirectory>config</outputDirectory>
        <includes>
           <include>*.*</include>
        </includes>
@@ -66,7 +75,7 @@
        </includes>
     </fileSet>
     <fileSet>
-       <directory>bin/linux64</directory>
+       <directory>bin/solaris32-x86</directory>
        <outputDirectory>lib/wrapper</outputDirectory>
        <includes>
           <include>libwrapper.so</include>

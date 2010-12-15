@@ -333,6 +333,18 @@
 		        </configuration>
           </execution>
           <execution>
+            <id>make-server-linux32-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/server-linux32.xml</descriptor>
+                  </descriptors>
+                </configuration>
+          </execution>
+          <execution>
             <id>make-server-linux64-dist</id>
             <phase>package</phase>
             <goals>
@@ -341,6 +353,54 @@
                 <configuration>
                   <descriptors>
                     <descriptor>src/main/assembly/server-linux64.xml</descriptor>
+                  </descriptors>
+                </configuration>
+          </execution>
+          <execution>
+            <id>make-server-osx32-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/server-osx32.xml</descriptor>
+                  </descriptors>
+                </configuration>
+          </execution>
+          <execution>
+            <id>make-server-osx64-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/server-osx64.xml</descriptor>
+                  </descriptors>
+                </configuration>
+          </execution>
+          <execution>
+            <id>make-server-solarisx86-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/server-solaris32-x86.xml</descriptor>
+                  </descriptors>
+                </configuration>
+          </execution>
+          <execution>
+            <id>make-server-solarissparc-dist</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/server-solaris32-sparc.xml</descriptor>
                   </descriptors>
                 </configuration>
           </execution>

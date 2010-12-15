@@ -8,6 +8,17 @@
 # chkconfig: 2345 25 75
 # description: Sapia Corus is a server that manages Java Virtual Machines.
 #
+### BEGIN INIT INFO
+# Provides:                     corus
+# Required-Start:               $local_fs $network
+# Should-Start:                 
+# Required-Stop:                $local_fs $network
+# Should-Stop:                  
+# Default-Start:                2 3 4 5
+# Default-Stop:                 0 1 6
+# Short-Description:            Sapia Corus Server
+# Description:                  Start Sapia Corus Server
+### END INIT INFO
 #
 # INSTALLATION PROCEDURE (must be root)
 # -------------------------------------
@@ -45,13 +56,10 @@ fi
 
 # Look for CORUS HOME environment and define it if not present
 if [ -z "${CORUS_HOME}" ] ; then
-    CORUS_HOME=/opt/corus/current
+    CORUS_HOME=/opt/sapia-corus/current
     export CORUS_HOME
 fi
 
 
 # Calling the corus script as the corus user (using the default server port)
-su - corus -c "${CORUS_HOME}/bin/corus_service.sh $*"
-
-# Use this command instead to specify an alternate server port
-#su - corus -c "${CORUS_HOME}/bin/corus_service.sh $1 33001"
+su - corus -c "${CORUS_HOME}/bin/corus_service.sh $* 33000"

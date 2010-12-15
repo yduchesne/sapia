@@ -22,7 +22,7 @@ TESTED ON openSolaris 2009.06
     export PATH=$PATH:$CORUS_HOME/bin
 
 5. Import SMF manifest in Solaris
-    --> svccfg import /opt/corus/current/config/corus-single.smf.xml
+    --> svccfg import /opt/corus/current/config/corus.smf.xml
 
 6. Enable corus service
     --> svcadm enable svc:/application/sapia/corus
