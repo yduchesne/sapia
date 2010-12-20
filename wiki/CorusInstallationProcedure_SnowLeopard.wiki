@@ -67,8 +67,7 @@ To register Corus as a system service, you need to:
 
  * You can validate the registration like that:
 
- || ` Cygnus:config root# sudo launchctl list org.sapia.corus-33000 `<br />` { `<br />` 	"Label" = "org.sapia.corus-33000"; `<br />` 	"LimitLoadToSessionType" = "System"; `<br />` 	"OnDemand" = true; `<br />` 	"LastExitStatus" = 0; `<br />` 	"PID" = 54; `<br />` 	"TimeOut" = 30; `<br />` 	"StandardOutPath" = "/opt/sapia-corus/current/bin/logs/corus-launchd.log"; `<br />` 	 "StandardErrorPath" = "/opt/sapia-corus/current/bin/logs/corus-launchd.log"; `<br />` 	"ProgramArguments" = ( `<br />` 		"/opt/sapia-corus/current/bin/corus_service.sh"; `<br />` 		"start"; `<br />` 
-		"33000"; `<br />` 	); `<br />` }; `<br /><br />` Cygnus:config root# ` ||
+ || ` Cygnus:config root# sudo launchctl list org.sapia.corus-33000 `<br />` { `<br />` 	"Label" = "org.sapia.corus-33000"; `<br />` 	"LimitLoadToSessionType" = "System"; `<br />` 	"OnDemand" = true; `<br />` 	"LastExitStatus" = 0; `<br />` 	"PID" = 54; `<br />` 	"TimeOut" = 30; `<br />` 	"StandardOutPath" = "/opt/sapia-corus/current/bin/logs/corus-launchd.log"; `<br />` 	 "StandardErrorPath" = "/opt/sapia-corus/current/bin/logs/corus-launchd.log"; `<br />` 	"ProgramArguments" = ( `<br />` 		"/opt/sapia-corus/current/bin/corus_service.sh"; `<br />` 		"start"; `<br />` 		"33000"; `<br />` 	); `<br />` }; `<br /><br />` Cygnus:config root# ` ||
 
 
  * As you can see upon registration, `launchd` automatically starts the Corus service.
