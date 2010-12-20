@@ -84,8 +84,24 @@
       <p>
         For the sake of clarity, we are providing such a descriptor below:
       </p>
-      <sapia:code>
-      TBD: CORUS DESCRIPTOR
+      <sapia:code><![CDATA[
+<distribution name="basic-sample-jetty" version="1.0">
+  <process  name="server" 
+            maxKillRetry="3" 
+            shutdownTimeout="30000" 
+            invoke="true">
+    <java mainClass="org.sapia.corus.sample.jetty.JettyServer"
+          profile="dev">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="16M" />
+    </java>
+    <java mainClass="org.sapia.corus.sample.jetty.JettyServer"
+          profile="prod">
+      <vmType>server</vmType>
+      <xoption  name="ms" value="128M" />
+    </java>
+  </process> 
+</distribution>]]>
       </sapia:code>
       <p>
         As can be seen, a distribution has a name, a version, and specifies one 
@@ -158,10 +174,44 @@
         that implements Corus Interoperability Protocol and resides within
         the application's JVM. The code snippet below illustrates how 
         an application can hook up to Corus via that library and provide 
-        status information:
+        status information (see the <a href="advanced.html#applicationStatus">advanced</a> section
+        for more details):
       </p>
       <sapia:code>
-      TBD: PROVIDE SNIPPET
+import org.sapia.corus.interop.Context;
+import org.sapia.corus.interop.Param;
+import org.sapia.corus.interop.Status;
+import org.sapia.corus.interop.api.InteropLink;
+import org.sapia.corus.interop.api.StatusRequestListener;
+...      
+
+InteropLink.getImpl().addStatusRequestListener(new StatusRequestListener() {
+  
+  @Override
+  public void onStatus(Status status) {
+    Context context = new Context("org.sapia.corus.sample.jetty");
+    context.addParam(createParam("dispatched", stats.getDispatched()));        
+    context.addParam(createParam("dispatchedActive", stats.getDispatchedActive()));
+    context.addParam(createParam("dispatchedActiveMax", stats.getDispatchedActiveMax()));        
+    context.addParam(createParam("dispatchedTimeMax", stats.getDispatchedTimeMax()));
+    context.addParam(createParam("dispatchedTimeTotal", stats.getDispatchedTimeTotal()));
+    context.addParam(createParam("dispatchedTimeMean", stats.getDispatchedTimeMean()));
+    context.addParam(createParam("requests", stats.getRequests()));        
+    context.addParam(createParam("requestsActive", stats.getRequestsActive()));        
+    context.addParam(createParam("requestsActiveMax", stats.getRequestsActiveMax()));        
+    context.addParam(createParam("requestsTimeMax", stats.getRequestTimeMax()));        
+    context.addParam(createParam("requestsTimeMean", stats.getRequestTimeMean()));
+    context.addParam(createParam("requestsTimeTotal", stats.getRequestTimeTotal()));
+    context.addParam(createParam("suspends", stats.getSuspends()));        
+    context.addParam(createParam("suspendsActive", stats.getSuspendsActive()));        
+    context.addParam(createParam("suspendsActiveMax", stats.getSuspendsActiveMax()));        
+  }
+  
+  
+  private Param createParam(String name, Object value){
+    return new Param(name, value.toString());
+  }
+});
       </sapia:code>
       <p>
         If the JVM has not been started by Corus, the code above will NOT cause 
