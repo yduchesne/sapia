@@ -45,7 +45,7 @@ At this point you should be able to start Corus by manually invoking the `$CORUS
 
 
 = 4. Launchd Integration = 
-With the installation of Corus as a system service (with `launchd`), you will be able to automatically start Corus on startup of your machine. OS X provides the `launchctl` command that help configuring the launch daemon process. Once properly registered you can easily stop and start the Corus service using the `launchctl` command.
+With the installation of Corus as a launch daemon (using `launchd`), you will be able to automatically start Corus on startup of your machine. OS X provides the `launchctl` command that help configuring the launch daemon process. Once properly registered you can easily stop and start the Corus service using the `launchctl` command.
 
 To register Corus as a system service, you need to:
 == i) Define a Corus configuration file ==
@@ -89,12 +89,12 @@ You can validate the proper execution of the Corus service by:
 
 And that is pretty much it for the installation. You can now envoy Corus. 
 
-== iv) Manage the Corus System Service ==
+== iv) Manage the Corus Launch Daemon ==
  * Using the `launchctl` command you can stop and start the Corus service
 
 || `Cygnus:~ root# sudo launchctl stop org.sapia.corus-33000` <br /> `Cygnus:~ root#  ` <br /><br /> `Cygnus:~ root# sudo launchctl start org.sapia.corus-33000` <br /> `Cygnus:~ root#  ` ||
 
- * If you ever need to remove the Corus system service, you can use the `launchctl remove` command
+ * If you ever need to remove the Corus launch daemon, you can use the `launchctl remove` command
  
 || ` Cygnus:~ root# sudo launchctl remove org.sapia.corus-33000` <br /> `Cygnus:~ root#` ||
 
