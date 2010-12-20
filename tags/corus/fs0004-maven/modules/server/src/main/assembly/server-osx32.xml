@@ -39,6 +39,13 @@
        </includes>
        <lineEnding>unix</lineEnding>
     </fileSet>
+    <fileSet>
+       <directory>config/osx</directory>
+       <outputDirectory>config</outputDirectory>
+       <includes>
+          <include>*.*</include>
+       </includes>
+    </fileSet>
 
     <!-- doc -->
     <fileSet>

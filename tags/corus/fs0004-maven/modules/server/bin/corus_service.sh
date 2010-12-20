@@ -47,6 +47,14 @@ PRIORITY=
 # Location of the pid file.
 PIDDIR="$CORUS_HOME/logs"
 
+
+WRAPPER_DAEMONIZE="TRUE"
+if [ -n "${CORUS_SERVICE_DAEMONIZE}" ]
+then
+    # Set dameonize value
+    WRAPPER_DAEMONIZE="$CORUS_SERVICE_DAEMONIZE"
+fi
+
 # If uncommented, causes the Wrapper to be shutdown using an anchor file.
 #  When launched with the 'start' command, it will also ignore all INT and
 #  TERM signals.
@@ -211,16 +219,16 @@ start() {
         then
             if [ "X$RUN_AS_USER" = "X" ]
             then
-                exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.daemonize=TRUE
+                exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.daemonize=$WRAPPER_DAEMONIZE
             else
-                su -m $RUN_AS_USER -c "exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.daemonize=TRUE"
+                su -m $RUN_AS_USER -c "exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.daemonize=$WRAPPER_DAEMONIZE"
             fi
         else
             if [ "X$RUN_AS_USER" = "X" ]
             then
-                exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.anchorfile=$ANCHORFILE wrapper.ignore_signals=TRUE wrapper.daemonize=TRUE
+                exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.anchorfile=$ANCHORFILE wrapper.ignore_signals=TRUE wrapper.daemonize=$WRAPPER_DAEMONIZE
             else
-                su -m $RUN_AS_USER -c "exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.anchorfile=$ANCHORFILE wrapper.ignore_signals=TRUE wrapper.daemonize=TRUE"
+                su -m $RUN_AS_USER -c "exec $CMDNICE $WRAPPER_CMD $WRAPPER_CONF wrapper.pidfile=$PIDFILE wrapper.anchorfile=$ANCHORFILE wrapper.ignore_signals=TRUE wrapper.daemonize=$WRAPPER_DAEMONIZE"
             fi
         fi
     else
