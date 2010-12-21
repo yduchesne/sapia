@@ -147,9 +147,14 @@
      
     </ol>
     
+    <p>
+      The above also applies to the <sapia:command>deploy</sapia:command>
+      command.
+    </p>
+    
     <sapia:note>
       The above means that each Corus instance replicates to only one other 
-      Corus instance (if any is left to replicated to).
+      Corus instance (if any is left to replicate to).
     </sapia:note>
   </sapia:sect2>
   

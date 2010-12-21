@@ -414,10 +414,10 @@ exec -e jetty-server
         <sapia:command>ps</sapia:command>, <sapia:command>status</sapia:command>. 
       </p>
       <p>
-        One neat thing about the processor extension is that its <a href="img/corus_home.png" title="Corus process status" rel="shadowbox">output</a>
+        One neat thing about the processor extension is that its <a href="img/processor_status.png" title="Corus process status" rel="shadowbox">output</a>
         can be integrated as part of a monitoring infrastructure. Indeed, through the 
         status command, application data can be recuperated and analyzed. For
-        example, type the following:
+        example, open the following in your browser:
         <a href="http://localhost:33000/processor/status?cluster=true" target="corus_deployer">http://localhost:33000/processor/status?cluster=true</a>.
       </p>
     </sapia:sect2>
