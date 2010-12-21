@@ -2,8 +2,15 @@
   cssPath="../css/sapia.css" 
   xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
+
   <head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
     <link rel="stylesheet" href="../css/corus.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../shadowbox-3.0.3/shadowbox.css" />
+    <script type="text/javascript" src="../shadowbox-3.0.3/shadowbox.js"></script>
+    <script type="text/javascript">
+    Shadowbox.init();
+    </script>
   </head>
 
   <sapia:vmenu>
@@ -22,6 +29,8 @@
     </sapia:section>
 
     <sapia:sect-desc>
+      <p>The goal of this section is to given more in-depth tips about how to use
+      Corus more efficiently.</p>
     </sapia:sect-desc>
 
     <sapia:sect2 title="Process Dependencies">
@@ -353,12 +362,75 @@ exec -e jetty-server
       </sapia:note>
     </sapia:sect2>
     
+    <sapia:sect2 title="HTTP Extensions" alias="httpExtensions">
+      <p>
+        Corus makes available bits of functionality "under" HTTP. These 
+        are grouped by categories that have been named 
+        "extensions". These extensions allow accessing information using a
+        web browser (rather than using the CLI). Typically, extensions
+        make data available through XML.
+      </p>
+      
+      <p>
+        Too see the list of available extensions, just type a URL of the form: 
+        <sapia:command>http://&lt;corus_host&gt;:&lt;corus_port&gt;/</sapia:command>. To try
+        it out, start the corus server under the "samples" domain (as you've 
+        been doing in the context of the tutorials):
+      </p>
+      <sapia:code>corus -d samples</sapia:code>
+      
+      <p>
+        And now, open your web browser to the following URL:
+        <a href="http://localhost:33000/" target="corus_home_page">http://localhost:33000/</a>.
+        This URL corresponds to the Corus server  <a href="img/corus_home.png" title="Corus server home page" rel="shadowbox">home page</a>, 
+        where you can see the list of available extensions.
+      </p>
+      
+      <p>
+        To view the list of available distributions, type the following:
+        <a href="http://localhost:33000/deployer/ls" target="corus_deployer">http://localhost:33000/deployer/ls</a>.
+        The above URL corresponds to the "deployer" extension. Each extension in Corus
+        is published under the Corus server root URL. The deployer extension corresponds
+        to the server's internal Deployer module, which handles the distributions. 
+        It's the same module that's called when using the <sapia:command>ls</sapia:command> 
+        and <sapia:command>deploy</sapia:command>/<sapia:command>undeploy</sapia:command>
+        command in the CLI.
+      </p>
+      <p>
+        In fact, as you can see, the last segment in the URL is indeed <sapia:command>ls</sapia:command>.
+        The whole URL therefore maps one-to-one to the CLI's <sapia:command>ls</sapia:command>
+        command. It also takes the same options (<sapia:command>d</sapia:command>, 
+        <sapia:command>v</sapia:command>, <sapia:command>cluster</sapia:command>...). 
+        For security reasons, only the Deployer's <sapia:command>ls</sapia:command>
+        command has been made available as an HTTP extension.
+      </p>
+      <p>
+        Command options are passed with HTTP parameters. Thus, the following would
+        be valid: <a href="http://localhost:33000/deployer/ls?d=*&amp;v=*" target="corus_deployer">http://localhost:33000/deployer/ls?d=*&amp;v=*</a>.
+      </p>      
+      <p>
+        For its part, the "processor" extension provides information about currently
+        running processes, making the following commands available through HTTP:
+        <sapia:command>ps</sapia:command>, <sapia:command>status</sapia:command>. 
+      </p>
+      <p>
+        One neat thing about the processor extension is that its <a href="img/corus_home.png" title="Corus process status" rel="shadowbox">output</a>
+        can be integrated as part of a monitoring infrastructure. Indeed, through the 
+        status command, application data can be recuperated and analyzed. For
+        example, type the following:
+        <a href="http://localhost:33000/processor/status?cluster=true" target="corus_deployer">http://localhost:33000/processor/status?cluster=true</a>.
+      </p>
+    </sapia:sect2>
+    
     <sapia:sect2 title="Conclusion">
       <p>
         In this tutorial, you've seen productivity features that, when used in 
         conjunction, allow performing application deployments in just a few 
         steps. The features greatly help making deployments a breeze and 
-        minimize downtime.
+        minimize downtime. You've also seen Corus' so-called "HTTP extensions",
+        which are typically intended for publishing runtime status data using XML.
+        That data can conveniently be integrated as part of a monitoring
+        infrastructure, for example.
       </p>
     </sapia:sect2>
   </sapia:sect1>
