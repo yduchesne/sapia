@@ -39,7 +39,7 @@ public class Template<T> {
   }
 
   /**
-   * @param record an {@link Object} to match.
+   * @param o an {@link Object} to match.
    * @return <code>true</code> if this instance's state matches the given object.
    */
   public boolean matches(Object o){

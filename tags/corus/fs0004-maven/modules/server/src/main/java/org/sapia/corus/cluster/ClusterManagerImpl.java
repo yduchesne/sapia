@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.sapia.corus.client.annotations.Bind;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.cluster.ServerHost;
 import org.sapia.corus.core.ModuleHelper;
@@ -48,7 +49,7 @@ public class ClusterManagerImpl extends ModuleHelper
   }
 
   /**
-   * @see org.sapia.corus.client.services.soto.Service#init()
+   * @see Service#init()
    */
   public void init() throws Exception {
     instance = this;
@@ -73,7 +74,7 @@ public class ClusterManagerImpl extends ModuleHelper
   }
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#dispose()
+   * @see Service#dispose()
    */
   public void dispose() {
     _channel.close();

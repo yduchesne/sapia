@@ -41,22 +41,31 @@ public class CronJob extends AbstractPersistent<String, CronJob> implements java
     _serverContext = ctx;
   }
   
+  /**
+   * @return this instance's {@link ServerContext}
+   */
   @Transient
   ServerContext getServerContext() {
     return _serverContext;
   }
   
+  /**
+   * @return this instance's {@link CronModuleImpl}
+   */
   @Transient
   public CronModuleImpl getOwner() {
     return _owner;
   }
 
+  /**
+   * @return this instance's {@link CronJobInfo}
+   */
   CronJobInfo getInfo() {
     return _info;
   }
 
   /**
-   * @see com.jalios.jdring.AlarmListener#handleAlarm(AlarmEntry)
+   * @see AlarmListener#handleAlarm(AlarmEntry)
    */
   public void handleAlarm(AlarmEntry entry) {
     try {

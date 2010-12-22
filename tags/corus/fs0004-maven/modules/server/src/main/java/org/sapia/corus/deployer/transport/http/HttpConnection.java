@@ -32,7 +32,7 @@ public class HttpConnection implements Connection{
   }
   
   /**
-   * @see org.sapia.corus.deployer.transport.Client#getInputStream()
+   * @see Connection#getInputStream()
    */
   public InputStream getInputStream() throws IOException {
     try{
@@ -43,7 +43,7 @@ public class HttpConnection implements Connection{
   }
 
   /**
-   * @see org.sapia.corus.deployer.transport.Client#getOutputStream()
+   * @see Connection#getOutputStream()
    */
   public OutputStream getOutputStream() throws IOException {
     try{
@@ -55,7 +55,7 @@ public class HttpConnection implements Connection{
   }
   
   /**
-   * @see org.sapia.corus.client.services.deployer.transport.Connection#close()
+   * @see Connection#close()
    */
   public void close() {
   }

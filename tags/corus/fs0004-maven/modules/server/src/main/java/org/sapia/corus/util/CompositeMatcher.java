@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * This class implements a composite {@link Matcher}.
+ * 
  * @author yduchesne
  *
  */
@@ -24,7 +25,8 @@ public class CompositeMatcher<T> implements Matcher<T>{
   /**
    * This method goes through this instance's internal {@link Matcher}s. If all match,
    * this method returns <code>true</code>, otherwise it returns <code>false</code>
-   * @ see {@link #matches(Object)}
+   * 
+   * @see Matcher#matches(Object)
    */
   public boolean matches(T object) {
     for(Matcher<T> m:matchers){

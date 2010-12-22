@@ -85,7 +85,6 @@ public class HttpExtensionManager implements ProtocolHandler{
    * 
    * <pre>&lt;http&gt;://&lt;corus_host&gt;:&lt;corus_port&gt;/corus/ext/&lt;contextPath&gt;</pre>
    * 
-   * @param contextPath a context path.
    * @param ext a <code>HttpExtension</code>.
    */
   public void addHttpExtension(HttpExtension ext){

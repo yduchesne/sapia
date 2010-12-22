@@ -29,7 +29,7 @@ public interface ProcessDatabase {
   public abstract void removeProcesses(Arg name, Arg version);
 
   /**
-   * @return the <code>List</code> of <code>Process</code>es held by
+   * @return the {@link List} of {@link Process}es held by
    * this instance.
    */
   public abstract List<Process> getProcesses();
@@ -39,7 +39,7 @@ public interface ProcessDatabase {
    * whose name is given.
    * 
    * @param name a distribution name.
-   * @return a <code>List</code> of processes.
+   * @return a {@link List} of processes.
    */
   public abstract List<Process> getProcesses(Arg name);
 
@@ -49,14 +49,16 @@ public interface ProcessDatabase {
    * 
    * @param name a distribution name.
    * @param version a distribution version. 
-   * @return a <code>List</code> of processes.
+   * @return a {@link List} of {@link Process}es.
    */
   public abstract List<Process> getProcesses(Arg name, Arg version);
 
   /**
    * @param name a distribution name
    * @param version a distribution version.
-   * @return
+   * @param processName a process name.
+   * @param profile a profile.
+   * @return a {@link List} of {@link Process}es.
    */
   public abstract List<Process> getProcesses(String name, String version,
       String processName, String profile);
@@ -65,10 +67,10 @@ public interface ProcessDatabase {
    * Returns the list of processes corresponding to the distribution
    * whose name, version and profile are given.
    * 
-   * @param name a distribution name.
-   * @param version a distribution version. 
-   * @param profile a distribution . 
-   * @return a <code>List</code> of processes.
+   * @param name an {@link Arg} corresponding to a distribution name.
+   * @param version an {@link Arg} corresponding to distribution version. 
+   * @param profile a profile name. 
+   * @return a {@link List} of {@link Process}es.
    */
   public abstract List<Process> getProcesses(Arg name,
       Arg version, String profile);
@@ -77,11 +79,12 @@ public interface ProcessDatabase {
    * Returns the list of processes corresponding to the distribution
    * whose name, version, profile and process config name are given.
    * 
-   * @param name a distribution name.
-   * @param version a distribution version. 
-   * @param profile a distribution . 
-   * @param processName a process config name.
-   * @return a <code>List</code> of processes.
+   * @param name an {@link Arg} corresponding to a distribution name.
+   * @param version an {@link Arg} corresponding to distribution version. 
+   * @param profile a profile name.
+   * @param processName an {@link Arg} corresponding to a process name. 
+   * @return a {@link List} of {@link Process}es.
+
    */
   public abstract List<Process> getProcesses(Arg name,
       Arg version, String profile, Arg processName);

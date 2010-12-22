@@ -46,7 +46,7 @@ public abstract class Task {
   
   /**
    * @param maxExecution the maximum number of times that this task
-   * should be executed.
+   * should be executed. 
    * 
    * @see #isMaxExecutionReached()
    */
@@ -118,7 +118,7 @@ public abstract class Task {
    * 
    * @param ctx the {@link TaskExecutionContext}
    * @throws Throwable
-   * @see {@link #setMaxExecution(int)}
+   * @see #setMaxExecution(int)
    */
   protected void onMaxExecutionReached(TaskExecutionContext ctx) throws Throwable{}
 

@@ -7,7 +7,6 @@ import org.apache.log.Logger;
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.event.EventDispatcher;
-import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.sapia.ubik.rmi.interceptor.MultiDispatcher;
 
@@ -30,17 +29,17 @@ public class EventDispatcherImpl extends MultiDispatcher implements EventDispatc
   }
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#init()
+   * @see Service#init()
    */
   public void init() throws Exception {}
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#start()
+   * @see Service#start()
    */
   public void start() throws Exception {}
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#dispose()
+   * @see Service#dispose()
    */
   public void dispose() {}
   

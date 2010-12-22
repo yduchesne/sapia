@@ -48,7 +48,7 @@ public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAccept
 	///////// DeploymentConnector methods /////////  
   
   /**
-   * @see org.sapia.corus.deployer.transport.DeploymentAcceptor#registerConnector(DeploymentConnector)
+   * @see DeploymentAcceptor#registerConnector(DeploymentConnector)
    */
   public void registerConnector(DeploymentConnector conn) {
   	_deployConn = conn;
@@ -57,7 +57,7 @@ public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAccept
   ///////// Life-cycle methods /////////
   
 	/**
-	 * @see org.sapia.corus.deployer.transport.DeploymentConnector#init()
+	 * @see DeploymentAcceptor#init()
 	 */
 	public void init() throws Exception {
 		_logger.debug("Creating mplex socket connector to accept deployment connections");
@@ -65,7 +65,7 @@ public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAccept
 	}  
   
   /**
-   * @see org.sapia.corus.deployer.transport.DeploymentConnector#start()
+   * @see DeploymentAcceptor#start()
    */
   public void start() throws Exception{
 		_logger.debug("Starting mplex deployment acceptor thread");  	
@@ -76,7 +76,7 @@ public class MplexDeploymentAcceptor implements StreamSelector, DeploymentAccept
   }
   
   /**
-   * @see org.sapia.corus.deployer.transport.DeploymentConnector#stops()
+   * @see DeploymentAcceptor#stop()
    */
   public void stop() throws Exception {
     _connector.close();

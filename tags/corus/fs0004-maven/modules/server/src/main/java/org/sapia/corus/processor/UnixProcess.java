@@ -25,7 +25,7 @@ import org.sapia.corus.util.IOUtils;
 public class UnixProcess implements NativeProcess {
   
   /**
-   * @see org.sapia.corus.processor.NativeProcess#exec(java.io.File, org.sapia.console.CmdLine, Process)
+   * @see NativeProcess#exec(TaskExecutionContext, File, CmdLine)
    */
   public String exec(TaskExecutionContext ctx, File baseDir, CmdLine cmd) throws IOException {
     // Generate the call to the javastart.sh script
@@ -76,7 +76,7 @@ public class UnixProcess implements NativeProcess {
   }
   
   /**
-   * @see org.sapia.corus.processor.NativeProcess#kill(java.lang.String)
+   * @see NativeProcess#kill(TaskExecutionContext, String)
    */
   public void kill(TaskExecutionContext ctx, String pid) throws IOException {
     // Generate the kill command

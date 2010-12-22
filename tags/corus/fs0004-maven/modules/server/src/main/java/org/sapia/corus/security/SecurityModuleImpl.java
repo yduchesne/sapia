@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.sapia.corus.client.annotations.Bind;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.security.CorusSecurityException;
 import org.sapia.corus.client.services.security.SecurityModule;
 import org.sapia.corus.core.ModuleHelper;
@@ -97,7 +98,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#init()
+   * @see Service#init()
    */
   public void init() throws Exception {
     logger().info("Initializing the security module");
@@ -105,7 +106,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.corus.core.ModuleHelper#start()
+   * @see Service#start()
    */
   public void start() throws Exception {
     logger().info("Starting the security module");
@@ -113,7 +114,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   }
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#dispose()
+   * @see Service#dispose()
    */
   public void dispose() {
     logger().info("Stopping the security module");
@@ -122,7 +123,7 @@ public class SecurityModuleImpl extends ModuleHelper implements SecurityModule, 
   
   /**
    * 
-   * @param evt
+   * @param evt a {@link ServerPreInvokeEvent}
    */
   public void onServerPreInvokeEvent(ServerPreInvokeEvent evt) {
     if (!_isRunning) {

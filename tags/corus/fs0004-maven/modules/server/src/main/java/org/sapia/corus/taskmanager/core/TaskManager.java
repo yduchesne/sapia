@@ -21,7 +21,7 @@ public interface TaskManager {
    * Executes the given task sequentially returning a {@link FutureResult} 
    * which can be blocked upon.
    * 
-   * @param task the task to execute
+   * @param task the {@link Task} to execute
    * @return a {@link FutureResult} on which the calling thread can block.
    */
   public FutureResult executeAndWait(Task task);
@@ -30,14 +30,15 @@ public interface TaskManager {
    * This method takes a task log that will be used by the given
    * task to log its activity, upon execution.
    * 
-   * @param a {@link TaskConfig}
+   * @param task a {@link Task}
+   * @param conf a {@link TaskConfig}
    * @see #executeAndWait(Task)
    */
   public FutureResult executeAndWait(Task task, TaskConfig conf);
  
   /**
    * Executes the given task in the background, indefinitely.
-   * @param task the task to execute.
+   * @param task the {@link Task} to execute.
    * @param config a {@link BackgroundTaskConfig}.
    */
   public void executeBackground(Task task, BackgroundTaskConfig config);

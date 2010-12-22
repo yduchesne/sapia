@@ -1,6 +1,7 @@
 package org.sapia.corus.http;
 
 import org.sapia.corus.client.annotations.Bind;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpModule;
 import org.sapia.corus.core.ModuleHelper;
@@ -35,7 +36,7 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
   }
 
   /**
-   * @see org.sapia.corus.client.services.soto.Service#init()
+   * @see Service#init()
    */
   public void init() throws Exception {
     // Create the interop and http extension transports
@@ -50,6 +51,9 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
     _httpExt.init();      
   }
   
+  /**
+   * @see Service#start()
+   */
   public void start() throws Exception {
     
     //////////// adding default extensions ///////////
@@ -62,10 +66,18 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
     _httpExt.start();
   }  
   
+  /**
+   * @see Service#dispose()
+   */
   public void dispose() {
     _httpExt.dispose();    
   }
  
+  /**
+   * Adds a {@link HttpExtension} to this instance.
+   * 
+   * @param ext a {@link HttpExtension}
+   */
   public void addHttpExtension(HttpExtension ext) {
     _httpExt.addHttpExtension(ext);
   }

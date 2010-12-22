@@ -4,6 +4,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.sapia.corus.client.annotations.Bind;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.naming.JndiModule;
@@ -37,7 +38,7 @@ public class JndiModuleImpl extends ModuleHelper implements JndiModule, Intercep
   private ClientListener _listener;
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#init()
+   * @see Service#init()
    */
   public void init() throws Exception {
     EventChannel ec = _cluster.getEventChannel();
@@ -46,7 +47,7 @@ public class JndiModuleImpl extends ModuleHelper implements JndiModule, Intercep
   }
   
   /**
-   * @see org.sapia.corus.client.services.soto.Service#dispose()
+   * @see Service#dispose()
    */
   public void dispose() {
     try{

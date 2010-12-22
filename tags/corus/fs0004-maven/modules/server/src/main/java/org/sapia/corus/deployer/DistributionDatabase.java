@@ -12,7 +12,7 @@ public interface DistributionDatabase {
   /**
    * Adds a distribution to this instance.
    * 
-   * @param dist a <code>Distribution</code>.
+   * @param dist a {@link Distribution}.
    * @throws DuplicateDistributionException
    */
   public abstract void addDistribution(Distribution dist)
@@ -23,9 +23,9 @@ public interface DistributionDatabase {
    * 
    * @see Distribution
    * 
-   * @param name the name of a distribution.
-   * @param version the version of a distribution.
-   * @return <code>true</code> if this instance contains the distribution correponding
+   * @param name an {@link Arg} corresponding to the name of a distribution.
+   * @param version an {@link Arg} corresponding to the version of a distribution.
+   * @return <code>true</code> if this instance contains the distribution corresponding
    * to the given name and version.
    */
   public abstract boolean containsDistribution(Arg name,
@@ -34,7 +34,8 @@ public interface DistributionDatabase {
   /**
    * @param name a distribution name.
    * @param version a distribution version.
-   * @return
+   * @return <code>true</code> if this instance contains a distribution with the
+   * given name and version.
    */
   public abstract boolean containsDistribution(String name, String version);
 
@@ -43,17 +44,15 @@ public interface DistributionDatabase {
    * 
    * @see Distribution
    * 
-   * @param name the name of a distribution.
-   * @param version the version of a distribution.
-   * @return <code>true</code> if this instance contains the distribution correponding
-   * to the given name and version.
+   * @param name an {@link Arg} corresponding to the name of a distribution.
+   * @param version an {@link Arg} corresponding to the version of a distribution.
    */
   public abstract void removeDistribution(Arg name, Arg version);
 
   /**
    * Returns a list of distributions.
    * 
-   * @return a <code>List</code> of <code>Distribution</code>s.
+   * @return a {@link List} of {@link Distribution}s.
    */
   public abstract List<Distribution> getDistributions();
 
@@ -61,8 +60,8 @@ public interface DistributionDatabase {
    * Returns a list of distributions that match the given distribution
    * name.
    * 
-   * @param name the name of the distribution.
-   * @return a <code>List</code> of <code>Distribution</code>s.
+   * @param name an {@link Arg} corresponding to the name of the distribution.
+   * @return a {@link List} of {@link Distribution}s.
    */
   public abstract List<Distribution> getDistributions(Arg name);
 
@@ -70,9 +69,9 @@ public interface DistributionDatabase {
    * Returns a list of distributions that match the given distribution
    * name and version.
    * 
-   * @param name the name of the distribution.
-   * @param version the version of the distribution.
-   * @return a <code>List</code> of <code>Distribution</code>s.
+   * @param name an {@link Arg} corresponding to the name of the distribution.
+   * @param version an {@link Arg} corresponding to the version of the distribution.
+   * @return a {@link List} of {@link Distribution}s.
    */
   public abstract List<Distribution> getDistributions(Arg name,
       Arg version);
@@ -81,10 +80,10 @@ public interface DistributionDatabase {
    * Returns the distribution that matches the given distribution
    * name and version.
    * 
-   * @param name the name of the distribution.
-   * @param version the version of the distribution.
+   * @param name an {@link Arg} corresponding to the name of the distribution.
+   * @param version an {@link Arg} corresponding to the version of the distribution.
    * 
-   * @return a <code>Distribution</code>.
+   * @return a {@link Distribution}.
    */
   public abstract Distribution getDistribution(Arg name,
       Arg version) throws DistributionNotFoundException;

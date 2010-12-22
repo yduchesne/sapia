@@ -30,7 +30,7 @@ public interface DeploymentAcceptor {
 	public void stop() throws Exception;
 	
 	/**
-	 * @param acceptor a <code>DeploymentConnector</code>.
+	 * @param connector a <code>DeploymentConnector</code>.
 	 */
 	public void registerConnector(DeploymentConnector connector);	
   

@@ -64,7 +64,7 @@ public class PatternRecordMatcher<V> implements RecordMatcher<V>{
 
   /**
    * @param fieldName a field name.
-   * @param matcher the pattern to use against the corresponding field's value.
+   * @param pattern the pattern to use against the corresponding field's value.
    * @return this instance.
    */
   public PatternRecordMatcher<V> addPattern(String fieldName, String pattern){

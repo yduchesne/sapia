@@ -11,6 +11,7 @@ import org.sapia.corus.client.exceptions.CorusException;
 import org.sapia.corus.client.exceptions.cron.DuplicateScheduleException;
 import org.sapia.corus.client.exceptions.cron.InvalidTimeException;
 import org.sapia.corus.client.exceptions.processor.ProcessConfigurationNotFoundException;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.cron.CronJobInfo;
 import org.sapia.corus.client.services.cron.CronModule;
 import org.sapia.corus.client.services.db.DbMap;
@@ -46,7 +47,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   private AlarmManager  _alarms = new AlarmManager();
 
   /**
-   * @see org.sapia.corus.client.services.soto.Service#init()
+   * @see Service#init()
    */
   public void init() throws Exception {
     instance = this;
@@ -55,7 +56,7 @@ public class CronModuleImpl extends ModuleHelper implements CronModule {
   }
 
   /**
-   * @see org.sapia.corus.client.services.soto.Service#dispose()
+   * @see Service#dispose()
    */
   public void dispose() {
     try{

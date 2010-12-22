@@ -23,7 +23,8 @@ public class UriPattern {
   }
 
   /**
-   * @see org.sapia.soto.util.matcher.Pattern#matches(java.lang.String)
+   * @param str a {@link String} to match.
+   * @return <code>true</code> if this instance matches the given string.
    */
   public boolean matches(String str) {
     return matchResult(str).matched;

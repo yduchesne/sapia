@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.sapia.corus.client.annotations.Bind;
@@ -14,9 +12,9 @@ import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.IDGenerator;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.client.common.ProgressQueueImpl;
-import org.sapia.corus.client.exceptions.deployer.ConcurrentDeploymentException;
 import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.client.exceptions.deployer.RunningProcessesException;
+import org.sapia.corus.client.services.Service;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.deployer.DeployerConfiguration;
@@ -32,7 +30,6 @@ import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.corus.deployer.task.BuildDistTask;
-import org.sapia.corus.deployer.task.DeployTask;
 import org.sapia.corus.deployer.task.UndeployTask;
 import org.sapia.corus.deployer.transport.Deployment;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
@@ -76,16 +73,22 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   @Autowired
   private DeployerConfiguration _configuration;
   
-  private Map<String, FileLock> _deployLocks = new HashMap<String, FileLock>();
+  //private Map<String, FileLock> _deployLocks = new HashMap<String, FileLock>();
   private DeploymentProcessor _processor;
   private DistributionDatabase   _store;
 
   
+  /**
+   * Returns this instance's {@link DeployerConfiguration}
+   */
   public DeployerConfiguration getConfiguration() {
     return _configuration;
   }
   
 
+  /**
+   * @see Service#init()
+   */
   @Override
   public void init() throws Exception {
     
@@ -155,7 +158,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   }
 
   /**
-   * @see org.sapia.corus.client.services.soto.Service#dispose()
+   * @see Service#dispose()
    */
   public void dispose() {
     if (_processor != null) {
@@ -224,7 +227,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   }
 
   /**
-   * @see org.sapia.corus.deployer.transport.DeploymentConnector#connect(org.sapia.corus.deployer.transport.Deployment)
+   * @see DeploymentConnector#connect(Deployment)
    */
   public void connect(Deployment deployment) {
     String             fileName;
@@ -377,6 +380,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     logger().info("Deployment upload completed for: " + fileName);
   }
 
+  /*
   synchronized ProgressQueue unlockDeployFile(String fileName) {
     _logger.info("Finished uploading " + fileName);
     releaseFileLock(_deployLocks, fileName);
@@ -395,8 +399,9 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
       progress.error(e);
     }
     return progress;
-  }
+  }/
 
+  /**
   private synchronized FileLock acquireFileLock(Map<String, FileLock> locks, String fileName)
     throws ConcurrentDeploymentException, InterruptedException {
     FileLock fLock = (FileLock) locks.get(fileName);
@@ -417,7 +422,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     if (fLock != null) {
       fLock.release();
     }
-  }
+  }*/
 
   private void assertFile(File f) {
     f.mkdirs();
