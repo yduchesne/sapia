@@ -1,4 +1,4 @@
-<sapia:page title="Corus" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+<sapia:page title="Licensing" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
   <sapia:vmenu>
     <sapia:vsection name="Corus Home" href="index.html"/>
