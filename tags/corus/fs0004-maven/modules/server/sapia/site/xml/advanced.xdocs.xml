@@ -185,10 +185,16 @@ import org.sapia.corus.interop.Param;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.interop.api.InteropLink;
 import org.sapia.corus.interop.api.StatusRequestListener;
+
 ...
 
-InteropLink.getImpl().addStatusRequestListener(new StatusRequestListener() {
-  
+  public void init(){
+    
+    ...
+    
+    InteropLink.getImpl().addStatusRequestListener(this);
+  }
+
   @Override
   public void onStatus(Status status) {
     Context context = new Context("org.sapia.corus.sample.jetty");
@@ -213,7 +219,8 @@ InteropLink.getImpl().addStatusRequestListener(new StatusRequestListener() {
   private Param createParam(String name, Object value){
     return new Param(name, value.toString());
   }
-});
+  
+ ...
     </sapia:code>    
     
     <p>
