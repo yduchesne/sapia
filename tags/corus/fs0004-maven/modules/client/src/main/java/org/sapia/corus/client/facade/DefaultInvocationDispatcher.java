@@ -1,6 +1,7 @@
 package org.sapia.corus.client.facade;
 
 import java.lang.reflect.Method;
+import java.rmi.NoSuchObjectException;
 
 import org.sapia.corus.client.ClusterInfo;
 import org.sapia.corus.client.Results;
@@ -23,13 +24,23 @@ public class DefaultInvocationDispatcher implements InvocationDispatcher{
   @Override
   public <T, M> T invoke(Class<T> returnType, Class<M> moduleInterface,
       Method method, Object[] params, ClusterInfo info) throws Throwable {
-    return context.invoke(returnType, moduleInterface, method, params, info);
+    try{
+      return context.invoke(returnType, moduleInterface, method, params, info);
+    }catch(NoSuchObjectException e){
+      context.reconnect();
+      return context.invoke(returnType, moduleInterface, method, params, info);      
+    }
   }
   
   @Override
   public <T, M> void invoke(Results<T> results, Class<M> moduleInterface,
       Method method, Object[] params, ClusterInfo cluster) throws Throwable {
-    context.invoke(results, moduleInterface, method, params, cluster);
+    try{
+      context.invoke(results, moduleInterface, method, params, cluster);
+    }catch(NoSuchObjectException e){
+      context.reconnect();
+      context.invoke(results, moduleInterface, method, params, cluster);
+    }
   }
 
 }

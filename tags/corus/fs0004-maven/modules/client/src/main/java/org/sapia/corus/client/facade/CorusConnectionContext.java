@@ -147,8 +147,7 @@ public class CorusConnectionContext {
    */
   public synchronized void reconnect() {
     try {
-      _corus = (Corus) Hub.connect(((TCPAddress) _connectAddress).getHost(),
-          ((TCPAddress) _connectAddress).getPort());
+      _corus = (Corus) Hub.connect(_connectAddress);
       _domain = _corus.getDomain();
       _serverHost = _corus.getHostInfo();
       _otherHosts.clear();
@@ -185,7 +184,7 @@ public class CorusConnectionContext {
       
       //results.addResult(new Result(_addr, e.getTargetException()));
       throw e.getTargetException();
-    }
+    } 
   }
   
   public <T,M> T invoke(Class<T> returnType, Class<M> moduleInterface, Method method, Object[] params, ClusterInfo info) throws Throwable{
