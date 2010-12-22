@@ -1,4 +1,4 @@
-<sapia:page title="Corus" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+<sapia:page title="Rationale" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
   <sapia:vmenu>
     <sapia:vsection name="Corus Home" href="index.html"/>
@@ -27,6 +27,26 @@
       agile: from methodology to team management to development tools to 
       deployment infrastructure. 
       </p>
+      
+      <p>
+      Let's <a href="http://www.bbc.co.uk/news/business-11944966">hear it</a> 
+      from WebSpere's initiator himself:
+      </p>
+      
+      <sapia:note>
+        <i>
+        When I was at IBM, I started a product called Websphere. Because I had 
+        come from working on big mission-critical systems, I thought it needs 
+        to be scalable, reliable, have a single point of control... I tried to 
+        build something like a mainframe, a system that was capable of doing 
+        anything, that would be able to do what might be needed in five years.
+        <p/>
+        I call it the endgame fallacy. It was too complex for people to master. 
+        I overdesigned it.Because we were IBM, we survived it, but if we'd been 
+        a start-up, we'd have gone to the wall.
+        </i>
+      </sapia:note>
+      
       <p>
       After shedding thousands of bucks on per-CPU license fees and overblown
       complexity, it's time to dump your app server.
@@ -41,6 +61,23 @@
       For server-side applications developed in these languages, JEE simply does 
       not cut it. 
       </p>
+      
+      <p>Let's <a href="http://www.infoq.com/interviews/josh-bloch-java-prog">hear</a> 
+      Josuah Bloch, Chief Java Architect at Google, on this topic:
+      </p>
+      
+      <sapia:note>
+        <i>
+        An immense investment has been made in the 
+        JVM over the years by many companies, whether it’s IBM or Sun, Apache, 
+        whatever. There are a bunch of VMs out there and you might as well 
+        leverage that investment. I’m also thrilled that it enables all of the 
+        language research that’s going on now. I think everyone realizes that 
+        we’re going to need some new languages before too long and I think it 
+        lowers the bar to be able to do experimentation in that area.
+        </i>
+      </sapia:note>
+      
       <p>
       Deploy and scale applications in any language under the JVM.
       </p>

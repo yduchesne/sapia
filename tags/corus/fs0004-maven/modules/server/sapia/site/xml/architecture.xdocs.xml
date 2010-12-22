@@ -1,4 +1,4 @@
-<sapia:page title="Corus" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+<sapia:page title="Architecture" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
   <sapia:vmenu>
     <sapia:vsection name="Corus Home" href="index.html"/>
@@ -35,6 +35,9 @@
         hosts. Indeed, all Corus instances that are part of the same domain 
         “know” each other, and can be administered collectively, as one.
       </p>
+      <center>
+        <img src="img/architecture.png" />
+      </center>
     </sapia:sect2>
 
     <sapia:sect2 title="The Command-Line Interface">    
@@ -85,7 +88,7 @@
         For the sake of clarity, we are providing such a descriptor below:
       </p>
       <sapia:code><![CDATA[
-<distribution name="basic-sample-jetty" version="1.0">
+<distribution name="jetty" version="1.0">
   <process  name="server" 
             maxKillRetry="3" 
             shutdownTimeout="30000" 
