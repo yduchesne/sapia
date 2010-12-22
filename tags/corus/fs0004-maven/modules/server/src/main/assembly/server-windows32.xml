@@ -46,7 +46,7 @@
     <fileSet>
        <directory>doc/text</directory>
        <includes>
-          <include>corus.pdf</include>
+          <include>*.pdf</include>
        </includes>
     </fileSet>
     
