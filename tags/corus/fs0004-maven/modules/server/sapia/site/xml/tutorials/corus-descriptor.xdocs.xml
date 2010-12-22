@@ -31,13 +31,9 @@
         In the <a href="webapp.html">introductory tutorial</a>, you've
         seen that a so-called Corus descriptor must be packaged as part
         of a distribution that is meant for deployment into Corus. That
-        descriptor provide the information necessary for a Corus daemon
+        descriptor provides the information necessary for a Corus daemon
         to start applications that are part of the distribution. The descriptor
         also contains runtime JVM parameters.
-      </p>
-      <p>
-        The goal of this tutorial is to provided you with more detailed
-        information about the Corus descriptor.
       </p>
     </sapia:sect-desc>
     
@@ -45,7 +41,7 @@
       <p>
         When Corus receives a distribution archive, it first checks if it 
         contains a descriptor - if not, the deployment is denied. If the 
-        distribution passes that checked, it unzipped under a specific directory
+        distribution passes that check, it is unzipped under a specific directory
         - where all distributions are unzipped. 
       </p>
       <p>
@@ -98,8 +94,8 @@
       </sapia:code>
       
       <p>
-        At the root, the <sapia:command>distribution</sapia:command> element.
-        That element has two attributes:
+        At the root, the <sapia:command>distribution</sapia:command> element,
+        which has two attributes:
         <ul>
           <li>
             <b>Name</b>: the distribution's arbitrarily chosen name.
