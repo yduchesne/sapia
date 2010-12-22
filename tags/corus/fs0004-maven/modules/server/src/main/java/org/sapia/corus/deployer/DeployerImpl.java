@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sapia.corus.client.annotations.Bind;
@@ -30,6 +32,7 @@ import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.corus.deployer.task.BuildDistTask;
+import org.sapia.corus.deployer.task.DeployTask;
 import org.sapia.corus.deployer.task.UndeployTask;
 import org.sapia.corus.deployer.transport.Deployment;
 import org.sapia.corus.deployer.transport.DeploymentConnector;
@@ -73,7 +76,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   @Autowired
   private DeployerConfiguration _configuration;
   
-  //private Map<String, FileLock> _deployLocks = new HashMap<String, FileLock>();
+  private Map<String, FileLock> _deployLocks = new HashMap<String, FileLock>();
   private DeploymentProcessor _processor;
   private DistributionDatabase   _store;
 
@@ -380,7 +383,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     logger().info("Deployment upload completed for: " + fileName);
   }
 
-  /*
+
   synchronized ProgressQueue unlockDeployFile(String fileName) {
     _logger.info("Finished uploading " + fileName);
     releaseFileLock(_deployLocks, fileName);
@@ -399,7 +402,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
       progress.error(e);
     }
     return progress;
-  }/
+  }
 
   /**
   private synchronized FileLock acquireFileLock(Map<String, FileLock> locks, String fileName)
@@ -414,7 +417,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     fLock.acquire();
 
     return fLock;
-  }
+  }*/
 
   private synchronized void releaseFileLock(Map<String, FileLock> locks, String fileName) {
     FileLock fLock = (FileLock) locks.get(fileName);
@@ -422,7 +425,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     if (fLock != null) {
       fLock.release();
     }
-  }*/
+  }
 
   private void assertFile(File f) {
     f.mkdirs();
