@@ -6,6 +6,8 @@ This section links to the project-related pages.
 
 * [Ubik Ubik Home]
 
+* [Corus Corus Home]
+
 = Misc =
 
 * [MavenSetup How to set up your Maven installation to work with Maven projects]
