@@ -27,7 +27,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * new process(es).
    * @param profile the name of the profile under which the new process(es)
    * should be started.
-   * @param the number of process(es) to start.
+   * @param instances the number of process(es) to start.
    *
    * @return a {@link ProgressQueue}
    */
@@ -70,7 +70,7 @@ public interface Processor extends java.rmi.Remote, Module {
   /**
    * Shuts down and restarts the process with the given ID.
    *
-   * @param a corus pid..
+   * @param pid a Corus pid.
    */
   public void restartByAdmin(String pid) throws ProcessNotFoundException;
   
@@ -88,8 +88,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * @param version the version of the distribution for which to kill
    * running processes.
    * @param profile the name of the profile for which to kill the running process(es).
-   *
-   * @return a {@link ProgressQueue}.
+   * @param suspend if <code>true</code>, indicates that the process should be suspended.
    */
   public void kill(Arg distName, Arg version, String profile,
                    boolean suspend);
@@ -103,8 +102,7 @@ public interface Processor extends java.rmi.Remote, Module {
    * running processes.
    * @param profile the name of the profile for which to kill the running process(es).
    * @param processName the name of the process configuration for which to kill the running process(es).
-   *
-   * @return a {@link ProgressQueue}.
+   * @param suspend if <code>true</code>, indicates that the process should be suspended.
    */
   public void kill(Arg distName, Arg version, String profile,
                    Arg processName, boolean suspend);
@@ -112,7 +110,8 @@ public interface Processor extends java.rmi.Remote, Module {
   /**
    * Kills the process with the given identifier.
    *
-   * @param a process identifier.
+   * @param corusPid a process identifier.
+   * @param suspend if <code>true</code>, indicates that the process should be suspended.
    */
   public void kill(String corusPid, boolean suspend) throws ProcessNotFoundException;
 

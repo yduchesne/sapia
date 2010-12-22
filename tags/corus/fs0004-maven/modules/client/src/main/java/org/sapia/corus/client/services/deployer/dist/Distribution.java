@@ -110,7 +110,7 @@ public class Distribution implements java.io.Serializable, ObjectCreationCallbac
   /**
    * Adds a process configuration to this distribution.
    *
-   * @param a {@link Process} instance, representing a process configuration.
+   * @param conf a {@link ProcessConfig} instance, representing a process configuration.
    */
   public void addProcess(ProcessConfig conf) {
     _processConfigs.add(conf);
@@ -217,7 +217,7 @@ public class Distribution implements java.io.Serializable, ObjectCreationCallbac
    * 
    * @param name an {@link Arg} to test against this instance's name.
    * @param version an {@link Arg} to test against this instance's version.
-   * @return
+   * @return <code>true</code> if this instance matches the given name and version.
    */
   public boolean matches(Arg name, Arg version){
     if(name.matches(_name)){

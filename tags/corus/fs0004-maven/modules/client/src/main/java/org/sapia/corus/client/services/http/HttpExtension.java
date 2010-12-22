@@ -5,9 +5,8 @@ import java.io.FileNotFoundException;
 
 /**
  * Specifies the behavior of a so-called HTTP extension, that
- * can be plugged into the HTTP Module.
+ * can be plugged into the {@link HttpModule}.
  * 
- * @
  * @author yduchesne
  *
  */

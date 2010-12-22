@@ -87,8 +87,8 @@ public interface DbMap<K, V> {
 
   /**
    * 
-   * @param matcher return
-   * @return
+   * @param matcher the {@link RecordMatcher} to use to filter the values that will be returned.
+   * @return the {@link Collection} of values that were deemed a match.
    */
   public Collection<V> values(RecordMatcher<V> matcher);
 }

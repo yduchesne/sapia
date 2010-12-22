@@ -228,7 +228,7 @@ public class Process extends AbstractPersistent<String, Process> implements java
   }
 
   /**
-   * @param an <code>ActivePort</code>.
+   * @param port an <code>ActivePort</code>.
    */
   public void addActivePort(ActivePort port){
     _activePorts.add(port);
@@ -257,7 +257,7 @@ public class Process extends AbstractPersistent<String, Process> implements java
   /**
    * Sets this instance's shutdown timeout.
    *
-   * @param a timeout in seconds.
+   * @param timeout a timeout in seconds.
    */
   public void setShutdownTimeout(int timeout) {
     _shutdownTimeout = timeout;
@@ -435,13 +435,7 @@ public class Process extends AbstractPersistent<String, Process> implements java
   }
 
   /**
-   * Returns this instance's status.
-   * @see #ACTIVE 
-   * @see #KILL_CONFIRMED
-   * @see #KILL_REQUESTED
-   * @see #RESTARTING
-   * @see #SUSPENDED
-   * @return a status corresponding to one of the status constants of this class.
+   * @return this instance's {@link LifeCycleStatus}.
    */
   public LifeCycleStatus getStatus() {
     return _status;
@@ -449,12 +443,7 @@ public class Process extends AbstractPersistent<String, Process> implements java
   
   /**
    * Sets this process' status.
-   * @see #ACTIVE 
-   * @see #KILL_CONFIRMED
-   * @see #KILL_REQUESTED
-   * @see #RESTARTING
-   * @see #SUSPENDED
-   * @param status a status constant value.
+   * @param status a {@link LifeCycleStatus}
    */
   public void setStatus(LifeCycleStatus status){
     _status = status;

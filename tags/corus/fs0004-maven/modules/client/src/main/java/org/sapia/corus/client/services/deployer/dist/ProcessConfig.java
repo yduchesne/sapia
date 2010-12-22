@@ -24,15 +24,15 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF{
 
   public static final int DEFAULT_POLL_INTERVAL   = 10;
   public static final int DEFAULT_STATUS_INTERVAL = 30;
-  private boolean         _invoke;
-  private List<Starter>     _starters             = new ArrayList<Starter>();
-  private List<Port>        _ports                = new ArrayList<Port>();
-  private int             _maxKillRetry           = -1;
-  private int             _shutDownTimeout        = -1;
-  private String          _name;
-  private int             _statusInterval         = DEFAULT_STATUS_INTERVAL;
-  private int             _pollInterval           = DEFAULT_POLL_INTERVAL;
-  private boolean         _deleteOnKill           = false;
+  private boolean           _invoke                 = true;
+  private List<Starter>     _starters               = new ArrayList<Starter>();
+  private List<Port>        _ports                  = new ArrayList<Port>();
+  private int               _maxKillRetry           = -1;
+  private int               _shutDownTimeout        = -1;
+  private String            _name;
+  private int               _statusInterval         = DEFAULT_STATUS_INTERVAL;
+  private int               _pollInterval           = DEFAULT_POLL_INTERVAL;
+  private boolean           _deleteOnKill           = false;
   private String[]          _tags;
   
   public ProcessConfig() {
@@ -45,7 +45,7 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF{
   /**
    * Sets this process config's name.
    *
-   * @param a name.
+   * @param name a name.
    */
   public void setName(String name) {
     _name = name;
@@ -182,10 +182,10 @@ public class ProcessConfig implements java.io.Serializable, ObjectHandlerIF{
   /**
    * Sets if a process corresponding to this instance should be instantiated only if it has been invoked
    * explicitly by its name (in such a case, this method's param must
-   * be <code>true</code>
+   * be <code>true</code>).
    *
-   * @param <code>true</code> if a process corresponding to this param should
-   * be invoked explicitly by its name.
+   * @param invoke <code>true</code> if a process corresponding to this param should
+   * be invoked explicitly by its name (defaults to <code>true</code>).
    */
   public void setInvoke(boolean invoke) {
     _invoke = invoke;

@@ -57,7 +57,7 @@ public class DeploymentMetadata implements java.io.Serializable{
 	 * If no targets were specified AND the deployment is clustered, all Corus
 	 * servers will be targeted.
 	 * 
-	 * @return a <code>Set</code> of <code>ServerAddress</code>, or
+	 * @return a {@link Set} of {@link ServerAddress}es, or
 	 * <code>null</code> if no targets were specified.
 	 */
 	public Set<ServerAddress> getTargets(){
@@ -67,15 +67,14 @@ public class DeploymentMetadata implements java.io.Serializable{
 	/**
 	 * Returns the addresses of the servers to which the deployment has been successfully uploaded.
 	 *  
-	 * @return a <code>Set</code> of <code>ServerAddress</code> instances.
+	 * @return a {@link Set} of {@link ServerAddress} instances.
 	 */
 	public Set<ServerAddress> getVisited(){
 		return _visited;
 	}
 	
 	/**
-	 * @return the <code>VmId</code> of the server from which this instance originates. 
-	 * @return
+	 * @return the {@link VmId} of the server from which this instance originates. 
 	 */
 	public VmId getOrigin(){
 	  return _origin;	

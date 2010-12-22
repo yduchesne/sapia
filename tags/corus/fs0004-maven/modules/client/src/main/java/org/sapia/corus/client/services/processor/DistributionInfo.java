@@ -23,7 +23,7 @@ public class DistributionInfo implements Serializable, Comparable<DistributionIn
    * @param name the distribution's name.
    * @param version the distribution's version.
    * @param profile the distribution's profile.
-   * @param vmName the distribution's process configuration name.
+   * @param processName the distribution's process configuration name.
    */
   public DistributionInfo(String name, String version, String profile,
                           String processName) {

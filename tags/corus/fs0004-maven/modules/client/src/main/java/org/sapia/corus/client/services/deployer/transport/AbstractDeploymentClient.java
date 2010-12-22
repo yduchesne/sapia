@@ -18,23 +18,21 @@ public abstract class AbstractDeploymentClient implements DeploymentClient{
 	final static int BUFSZ = 2048;
 	
 	private DeployOutputStream _client; 	
-	private OutputStream _os;
-	private InputStream  _is; 
 	
   /**
-   * @see org.sapia.corus.client.services.deployer.transport.DeploymentClient#close()
+   * @see DeploymentClient#close()
    */
   public abstract void close();
   
   /**
-   * @see org.sapia.corus.client.services.deployer.transport.DeploymentClient#connect(org.sapia.ubik.net.ServerAddress)
+   * @see DeploymentClient#connect(ServerAddress)
    */
   public abstract void connect(ServerAddress addr) throws IOException;
   
   /**
    * Returns a stream that is used for deploying to the server to which this instance is connected.
-   * @param meta a <code>DeploymentMetadata</code> instance.
-   * @return a <code>DeploymentOutputStream</code>
+   * @param meta a {@link DeploymentMetadata} instance.
+   * @return a {@link DeployOutputStream}
    * @throws IOException
    */
   public DeployOutputStream getDeployOutputStream(DeploymentMetadata meta) throws IOException{
@@ -42,7 +40,7 @@ public abstract class AbstractDeploymentClient implements DeploymentClient{
   }
   
   /**
-   * @see org.sapia.corus.deployer.transport.DeploymentClient#deploy(DeploymentMetadata, InputStream))
+   * @see DeploymentClient#deploy(DeploymentMetadata, InputStream)
    */
   public ProgressQueue deploy(
     DeploymentMetadata meta,
@@ -65,7 +63,7 @@ public abstract class AbstractDeploymentClient implements DeploymentClient{
   /**
    * This method returns a stream that will be used to upload deployment data.
    * 
-   * @return an <code>OutputStream</code>.
+   * @return an {@link OutputStream}.
    * @throws IOException if a problem occurs acquiring the given stream.
    */
   protected abstract OutputStream getOutputStream() throws IOException;
@@ -73,7 +71,7 @@ public abstract class AbstractDeploymentClient implements DeploymentClient{
 	/**
 	 * This method returns a stream that will be used to acquire the deployment result.
 	 * 
-	 * @return an <code>InputStream</code>.
+	 * @return an {@link InputStream}.
 	 * @throws IOException if a problem occurs acquiring the given stream.
 	 */
   protected abstract InputStream getInputStream() throws IOException;

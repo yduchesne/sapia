@@ -33,33 +33,33 @@ public interface Deployer extends java.rmi.Remote, Module {
    * Running VMs could have locks on files in the distribution's directory,
    * preventing the cleanup procedure from completing successfully.
    *
-   * @param distName the name of the distribution to undeploy.
-   * @param version  the name of the version to undeploy.
-   * @return a <code>ProgressQueue</code>.
+   * @param distName an {@link Arg} corresponding to the name of the distribution to undeploy.
+   * @param version  an {@link Arg} corresponding to the version of the distribution to undeploy.
+   * @return a {@link ProgressQueue}.
    */
   public ProgressQueue undeploy(Arg distName, Arg version) throws RunningProcessesException;
 
   /**
    * Returns the list of distributions that this instance contains.
    *
-   * @return a <code>List</code> of <code>Distribution</code> instances.
+   * @return a {@link List} of {@link Distribution} instances.
    */
   public List<Distribution> getDistributions();
 
   /**
    * Returns the list of distributions with the given name.
    *
-   * @param name a distribution name.
-   * @return a <code>List</code> of <code>Distribution</code> instances.
+   * @param name an {@link Arg} corresponding to a distribution name.
+   * @return a {@link List} of {@link Distribution} instances.
    */
   public List<Distribution> getDistributions(Arg name);
   
   /**
    * Returns the list of distributions with the given name.
    *
-   * @param name a distribution name.
-   * @param version a distribution version.
-   * @return a <code>List</code> of <code>Distribution</code> instances.
+   * @param name an {@link Arg} corresponding to a distribution name.
+   * @param version an {@link Arg} corresponding to a distribution version.
+   * @return a {@link List} of {@link Distribution} instances.
    */
   public List<Distribution> getDistributions(Arg name, Arg version);  
   
@@ -67,9 +67,9 @@ public interface Deployer extends java.rmi.Remote, Module {
   /**
    * Returns the distribution with the given name and version.
    *
-   * @param name a distribution name.
-   * @param name a distribution version.
-   * @return a <code>Distribution</code> instance.
+   * @param name an {@link Arg} corresponding to a distribution name.
+   * @param version an {@link Arg} corresponding to a distribution version.
+   * @return a {@link Distribution} instance.
    * @throws LogicException if no corresponding distribution could be found.
    */
   public Distribution getDistribution(Arg name, Arg version)

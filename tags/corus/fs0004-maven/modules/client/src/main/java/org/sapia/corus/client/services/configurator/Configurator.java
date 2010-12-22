@@ -40,7 +40,8 @@ public interface Configurator extends java.rmi.Remote, Module {
    * Returns a property value.
    * 
    * @param name
-   * @return
+   * @return the value corresponding to the given property name, or <code>null</code> if
+   * no such value exists.
    */
   public String getProperty(String name);
   

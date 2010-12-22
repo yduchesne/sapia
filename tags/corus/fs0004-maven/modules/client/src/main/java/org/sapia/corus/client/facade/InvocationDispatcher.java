@@ -52,7 +52,7 @@ public interface InvocationDispatcher {
       Class<M> moduleInterface, 
       Method method, 
       Object[] params, 
-      ClusterInfo info) throws Throwable;
+      ClusterInfo cluster) throws Throwable;
 
 
 }

@@ -73,7 +73,7 @@ public interface DeployerFacade {
    * Returns the distribution(s) with the given name and version.
    *
    * @param name a distribution name.
-   * @param name a distribution version.
+   * @param version a distribution version.
    * @param cluster a {@link ClusterInfo} instance.
    * @return a {@link Results} containing {@link Distribution} instance.
    */

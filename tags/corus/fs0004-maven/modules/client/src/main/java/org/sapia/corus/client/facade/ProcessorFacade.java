@@ -124,7 +124,7 @@ public interface ProcessorFacade {
    * new process(es).
    * @param profile the name of the profile under which the new process(es)
    * should be started.
-   * @param the number of process(es) to start.
+   * @param instances the number of process(es) to start.
    * @param cluster a {@link ClusterInfo} instance.
    * @return the {@link ProgressQueue} holding progress data.
    */
@@ -142,7 +142,7 @@ public interface ProcessorFacade {
    * should be started.
    * @param processName the name of the VM configuration for which new process(es)
    * should be started.
-   * @param the number of process(es) to start.
+   * @param instances the number of process(es) to start.
    * @param cluster a {@link ClusterInfo} instance.
    * @return the {@link ProgressQueue} holding progress data.
    */
@@ -193,7 +193,7 @@ public interface ProcessorFacade {
   /**
    * Kills the process with the given identifier.
    *
-   * @param a process identifier.
+   * @param pid a process identifier.
    */
   public void kill(String pid) throws ProcessNotFoundException;
 

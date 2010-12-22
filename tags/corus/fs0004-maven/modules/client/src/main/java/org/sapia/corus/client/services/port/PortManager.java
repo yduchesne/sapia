@@ -56,13 +56,13 @@ public interface PortManager extends java.rmi.Remote, Module{
   public List<PortRange> getPortRanges(); 
   
   /**
-   * @param the name of a port range.
+   * @param name the name of a port range.
    * @return a port.
    */
   public int aquirePort(String name) throws PortUnavailableException;
   
   /**
-   * @param the name of a port range.
+   * @param name the name of a port range.
    * @param port a port that was acquired from this instance.
    */ 
   public void releasePort(String name, int port);

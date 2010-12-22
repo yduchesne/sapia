@@ -29,7 +29,7 @@ public interface EventDispatcher extends Module{
    * Dispatches the given event to all interceptors that have
    * registered for the event's class.
    *
-   * @param an <code>Event</code> instance.
+   * @param event an <code>Event</code> instance.
    */
   public void dispatch(Event event);
 
