@@ -4,6 +4,11 @@
     <link rel="stylesheet" href="css/corus.css" type="text/css"/>
   </head>
 
+  <sapia:vmenu>
+    <sapia:vsection name="Corus Home" href="index.html"/>
+    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>
+  </sapia:vmenu>
+  
   <sapia:sect1 title="Installation">
     <sapia:section>
       <sapia:path name="home" href="../../home.html" />

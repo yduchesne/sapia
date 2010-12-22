@@ -1,7 +1,8 @@
 <sapia:page title="Architecture" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
 
   <sapia:vmenu>
-    <sapia:vsection name="Corus Home" href="index.html"/>
+    <sapia:vsection name="Corus Home"  href="index.html"/>
+    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>    
   </sapia:vmenu>
 
   <sapia:sect1 title="Architecture">
@@ -223,8 +224,9 @@ InteropLink.getImpl().addStatusRequestListener(new StatusRequestListener() {
       </p>
       <p>
         We are explaining in further details application programming 
-        considerations in the tutorials (HREF) and in the Corus manual. 
-        But really, there is not much more to it than this.
+        considerations in the <a href="tutorials/index.html">tutorials</a> and 
+        in the <a href="CorusGuide.pdf">Corus manual</a>. But really, there is 
+        not much more to it than this.
       </p>
     </sapia:sect2>
   </sapia:sect1>
