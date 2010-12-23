@@ -9,7 +9,7 @@
   <sapia:vmenu>
     <sapia:vsection name="Corus Home" href="../index.html"/>
     <sapia:vsection name="Tutorials" href="index.html"/>
-    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>
+    <sapia:vsection name="Corus Guide" href="../CorusGuide.pdf"/>
   </sapia:vmenu>
 
   <sapia:sect1 title="Exploring the Corus Command-Line">
@@ -55,6 +55,8 @@
         are processed by Corus.
       </p>
     </sapia:sect2>
+
+    <toc/>    
 
     <sapia:sect2 title="Obtaining On-line Documentation">
       <p>

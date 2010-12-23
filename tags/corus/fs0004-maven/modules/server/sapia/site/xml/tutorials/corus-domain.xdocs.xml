@@ -15,7 +15,7 @@
   <sapia:vmenu>
     <sapia:vsection name="Corus Home" href="../index.html"/>
     <sapia:vsection name="Tutorials" href="index.html"/>
-    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>
+    <sapia:vsection name="Corus Guide" href="../CorusGuide.pdf"/>
   </sapia:vmenu>
 
   <sapia:sect1 title="Running a Corus Domain">
@@ -56,6 +56,8 @@
         time across the whole cluster.
       </p>
     </sapia:sect-desc>
+    
+    <toc/>
 
     <sapia:sect2 title="Setting Up">
       <p>

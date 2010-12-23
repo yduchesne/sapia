@@ -14,7 +14,7 @@
   <sapia:vmenu>
     <sapia:vsection name="Corus Home" href="../index.html"/>
     <sapia:vsection name="Tutorials" href="index.html"/>
-    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>
+    <sapia:vsection name="Corus Guide" href="../CorusGuide.pdf"/>
   </sapia:vmenu>
   
   <sapia:sect1 title="The Corus Descriptor">
@@ -37,6 +37,8 @@
         also contains runtime JVM parameters.
       </p>
     </sapia:sect-desc>
+    
+    <toc/>    
     
     <sapia:sect2 title="How the descriptor is processed">
       <p>

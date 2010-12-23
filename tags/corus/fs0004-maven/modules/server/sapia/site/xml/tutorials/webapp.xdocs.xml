@@ -14,7 +14,7 @@
   <sapia:vmenu>
     <sapia:vsection name="Corus Home" href="../index.html"/>
     <sapia:vsection name="Tutorials" href="index.html"/>
-    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>
+    <sapia:vsection name="Corus Guide" href="../CorusGuide.pdf"/>
   </sapia:vmenu>
   
   <sapia:sect1 title="Web App Example">
@@ -26,8 +26,6 @@
       <sapia:path name="tutorials" href="index.html"/>
       <sapia:path name="web app example" />
     </sapia:section>
-    
-    <toc/>
     
     <sapia:sect-desc>
       <p>
@@ -45,8 +43,11 @@
       </p>
     </sapia:sect-desc>
     
+    <toc/>    
+    
     <sapia:sect2 title="The code">
       <p>
+        An you've seen in the <a href="building.html">previous tutorial</a>
         The source code is built with Maven and separated into two modules:
       </p>
       
@@ -56,26 +57,20 @@
         </li>
         <li>
           The module for the embedded Jetty container distribution that 
-          includes our web app, and is deployed into Corus.
+          includes the above web app, and is deployed into Corus.
         </li>
       </ul>
-      
-      <p>
-        You can obtain the source for these from SVN, by checking out the
-        <sapia:command>samples</sapia:command> submodule (under the Corus source
-        root). You must have Maven installed in order to build the source. Once
-        the checkout is done, cd under the checkout directory and build the 
-        sample modules by typing the following:
-      </p>
-      
-      <sapia:code>mvn install</sapia:code>
-     
-      <p/>
-      
-      <sapia:note>
+
+      <p>      
         We're using Grails' <a target="grails-maven" href="http://grails.org/doc/latest/guide/4.%20The%20Command%20Line.html#4.5%20Ant%20and%20Maven">Maven support</a> 
         in order to build the webapp, which is the one corresponding to the
         <a target="grails-tutorial" href="http://www.grails.org/Quick+Start">Grails tutorial</a>).
+      </p>
+      
+      <sapia:note>
+        In order to follow the manipulations at the command-line that are described
+        in this tutorial, cd under the <sapia:command>corus_sample_jetty</sapia:command>
+        directory of the Corus source tree, as it was described <a href="building.html#samples_structure">here</a>.
       </sapia:note>
       
       <p>
@@ -102,8 +97,8 @@ public class BasicJettyServer {
         correspdonding to <sapia:command>${user.dir}/webapps</sapia:command>,
         where <sapia:command>${user.dir}</sapia:command> corresponds to the
         <a target="user-dir" href="http://www.roseindia.net/java/example/java/io/GetCurrentDir.shtml">matching JVM property</a>. 
-        The bulk of the logic of loading the webapps
-        is isolated within the <sapia:class>ServerUtil</sapia:class> class, 
+        If you dig into the code, you will see that the bulk of the logic of loading the webapps
+        is isolated within a <sapia:class>ServerUtil</sapia:class> class, 
         that loads the war files (or exploded war directories) under 
         <sapia:command>webapps</sapia:command> as web applications into the 
         Jetty container. Therefore, our server expects the war for our Grails 
@@ -130,6 +125,12 @@ public class BasicJettyServer {
       </p>
       
       <center><img src="img/local_layout.png" /></center>
+      <p/>
+      <sapia:note>
+       To build the embedded Jetty server distributions that are used in the
+       context of the tutorials, do a <sapia:command>mvn install</sapia:command> 
+       in the <sapia:command>corus_sample_jetty</sapia:command> directory.
+      </sapia:note>
     
       <p>
         We'll see later on what the <sapia:command>corus.xml</sapia:command> file is
