@@ -239,13 +239,28 @@ public class DocumentationMojo extends AbstractMojo{
       
       copy.execute();
       
-      Resource sapiaCss = new JavaResource();
-      sapiaCss.setName("org/sapia/site/style/sapia.css");
       
+      // copying css resources ///////////////////////////
       File cssDir = new File(destdirFile, "css");
       cssDir.mkdir();
-      this.copyResource(sapiaCss, new File(cssDir, "sapia.css"));
+      
+      // the css stylesheet      
+      copyStyleResource("sapia.css", cssDir);
+      
+      // the various graphic files
+      copyStyleResource("gradient-blue.jpg", cssDir);
+      copyStyleResource("img01.jpg", cssDir);
+      copyStyleResource("img02-green.jpg", cssDir);
+      copyStyleResource("img03.gif", cssDir);
+      copyStyleResource("img05.jpg", cssDir);
+      copyStyleResource("logo-25.png", cssDir);
     }
+  }
+  
+  private void copyStyleResource(String name, File cssDir) throws MojoExecutionException{
+    Resource resource = new JavaResource();
+    resource.setName("org/sapia/site/style/" + name);
+    copyResource(resource, new File(cssDir, name));
   }
 
   

@@ -81,22 +81,6 @@
         <div id="header">
           <div id="logo">
             <span id="logo-title">s a p i a</span>
-            <span id="logo-subtitle">open source software</span>
-          </div>
-          <div id="splash">
-            <xsl:choose>
-              <xsl:when test="@headerImage">
-                <img>
-                  <xsl:attribute name="src">
-                    <xsl:value-of select="@headerImage"/>
-                  </xsl:attribute>
-                </img>
-              </xsl:when>
-              <xsl:otherwise>
-                <img src="http://sapia-oss.org/content/images/header_sunfield.jpg" />
-              </xsl:otherwise>
-            </xsl:choose>
-
           </div>
           <div id="menu">
             <ul>
