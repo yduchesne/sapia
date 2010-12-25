@@ -2,7 +2,8 @@
 
   <sapia:vmenu>
     <sapia:vsection name="Corus Home"  href="index.html"/>
-    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>    
+    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>
+    <sapia:vsection name="Interop Spec" href="CorusInterop.pdf"/>    
   </sapia:vmenu>
 
   <sapia:sect1 title="Architecture">
@@ -146,11 +147,11 @@
         </li>
       </ul>
       <p>
-        The Corus Interoperability Protocol has been implemented has a Java 
-        agent that is transparently activated in JVMs that are started by Corus. 
-        Upon startup, the agent starts polling the Corus server at a predefined 
-        interval to provide its heartbeat, status, and to receive events 
-        (such as “kill”). 
+        The <a href="CorusInterop.pdf">Corus Interoperability Protocol</a> has been 
+        implemented has a Java agent that is transparently activated in JVMs 
+        that are started by Corus. Upon startup, the agent starts polling the 
+        Corus server at a predefined interval to provide its heartbeat, status, 
+        and to receive events (such as “kill”). 
       </p>
 
     </sapia:sect2>
@@ -175,8 +176,8 @@
       <p>
         Furthermore, applications can add in their dependencies a jar file 
         consisting of a library that allows "hooking up" to the Java agent
-        that implements Corus Interoperability Protocol and resides within
-        the application's JVM. The code snippet below illustrates how 
+        that implements the <a href="CorusInterop.pdf">Corus Interoperability Protocol</a> 
+        and resides within the application's JVM. The code snippet below illustrates how 
         an application can hook up to Corus via that library and provide 
         status information (see the <a href="advanced.html#applicationStatus">advanced</a> section
         for more details):
@@ -189,7 +190,9 @@ import org.sapia.corus.interop.api.InteropLink;
 import org.sapia.corus.interop.api.StatusRequestListener;
 ...      
 
-InteropLink.getImpl().addStatusRequestListener(new StatusRequestListener() {
+  InteropLink.getImpl().addStatusRequestListener(this);
+
+  ...
   
   @Override
   public void onStatus(Status status) {
@@ -208,14 +211,16 @@ InteropLink.getImpl().addStatusRequestListener(new StatusRequestListener() {
     context.addParam(createParam("requestsTimeTotal", stats.getRequestTimeTotal()));
     context.addParam(createParam("suspends", stats.getSuspends()));        
     context.addParam(createParam("suspendsActive", stats.getSuspendsActive()));        
-    context.addParam(createParam("suspendsActiveMax", stats.getSuspendsActiveMax()));        
+    context.addParam(createParam("suspendsActiveMax", stats.getSuspendsActiveMax()));  
+    status.add(context);
   }
   
   
   private Param createParam(String name, Object value){
     return new Param(name, value.toString());
   }
-});
+
+...
       </sapia:code>
       <p>
         If the JVM has not been started by Corus, the code above will NOT cause 
