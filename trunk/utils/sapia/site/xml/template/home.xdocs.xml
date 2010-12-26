@@ -9,9 +9,10 @@
 
   <sapia:sect1 title="Template">
     <sapia:section>
-      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="home" href="../../../home.html" />
       <sapia:path name="projects"/>
-      <sapia:path name="utils" href="../home.html"/>      
+      <sapia:path name="utilities" href="../home.html"/>      
+      <sapia:path name="template" />
     </sapia:section>
     
     <toc/>

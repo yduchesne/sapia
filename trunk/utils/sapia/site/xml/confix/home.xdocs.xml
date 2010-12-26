@@ -11,7 +11,9 @@
     <sapia:section>
       <sapia:path name="home" href="../../../home.html" />
       <sapia:path name="projects"/>
-      <sapia:path name="utils" href="../home.html"/>
+      <sapia:path name="utilities" href="../home.html"/>
+      <sapia:path name="confix" />
+
     </sapia:section>
 
     <toc/>
