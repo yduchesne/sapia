@@ -278,7 +278,7 @@
 <!-- =====================================      SECTION PATH     ====================================== -->
 
   <xsl:template match="sapia:section">
-    <span id="breadcrumb">
+    <span id="breadcrumb" style="text-transform:lowercase">
       <xsl:for-each select="sapia:path">
         <xsl:choose>
           <xsl:when test="@href">
