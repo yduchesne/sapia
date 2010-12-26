@@ -16,6 +16,7 @@
     <sapia:section>
       <sapia:path name="home" href="../../home.html" />
       <sapia:path name="projects"/>
+      <sapia:path name="utilities" />
     </sapia:section>
 
     <sapia:sect2 title="Overview">
