@@ -1,9 +1,0 @@
-<soto:app xmlns:soto="sapia:soto">
-
-  <soto:namespace prefix="sample">
-    <def class="org.sapia.soto.TestIncludedService" name="include" />          
-  </soto:namespace>
-
-  <soto:include uri="include/service.xml"/>
-  
-</soto:app>
