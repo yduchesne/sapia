@@ -80,27 +80,45 @@
       </p>
       <p>
       Before building, it is important to note that Corus depends on other 
-      Sapia projects. The artifacts for these projects are hosted in the 
-      Java.net repository. Ideally, you should have that 
-      repository configured in your Maven settings 
-      (<sapia:command>settings.xml</sapia:command>), both for “normal” 
-      dependencies and for plugins. Here's an example:
+      Sapia projects. We initially started using the Java.net repository to 
+      deploy the Sapia artifacts, but have switched to having our own since. In any
+      case, make sure that you have both configured in your Maven settings 
+      (<sapia:command>settings.xml</sapia:command>) - for “normal” 
+      dependencies as well as for plugins. Here's an example:
       </p>
       <sapia:code><![CDATA[
+...
+
 <repositories>
   <repository>
     <id>java.net-m2-repository</id>
     <name>Java.net Repository for Maven</name>
     <url>http://download.java.net/maven/2/</url>
   </repository>    
+  <repository>
+    <id>sapia-m2-repository</id>
+    <name>Sapia Repository for Maven</name>
+    <url>http://www.sapia-oss.org/maven2</url>
+  </repository> 
 </repositories>
+
+...
+
 <pluginRepositories>
   <pluginRepository>
     <id>java.net-m2-repository</id>
     <name>Java.net Repository for Maven</name>
     <url>http://download.java.net/maven/2/</url>
   </pluginRepository>
-</pluginRepositories>]]>
+  <pluginRepository>
+    <id>sapia-m2-repository</id>
+    <name>Sapia Repository for Maven</name>
+    <url>http://www.sapia-oss.org/maven2</url>
+  </pluginRepository>
+</pluginRepositories>
+
+...
+]]>
       </sapia:code>
       
       <p>
