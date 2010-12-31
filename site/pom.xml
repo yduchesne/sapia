@@ -6,7 +6,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>sapia_site_parent</artifactId>
-  <version>1.15</version>
+  <version>1.16-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
@@ -56,9 +56,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_site_parent-1.15</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_site_parent-1.15</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/branches/tags/sapia_site_parent-1.15</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/tags</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/tags</url>
   </scm>
 
   <licenses>
