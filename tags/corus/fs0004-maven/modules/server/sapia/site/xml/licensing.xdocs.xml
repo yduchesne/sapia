@@ -51,8 +51,8 @@
           For the server part, it means that no one can modify and redistribute 
           Corus without providing their entire modifications as source to their 
           customers; it also means that their modifications automatically become 
-          subjected to the GPL. It also means that new software that is linked
-          to the Corus server libraries becomes subjected to the GPL.
+          subjected to the GPL. In addition, new software that is linked
+          to the Corus server libraries automatically becomes subjected to the GPL.
         </li>
       </ol>
       <p>
