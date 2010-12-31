@@ -6,7 +6,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>sapia_archie</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
 
   <parent>
     <groupId>org.sapia</groupId>
@@ -16,9 +16,9 @@
   
 
   <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/tags/sapia_archie-1.1</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_archie-1.1</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_archie-1.1</url>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/trunk/archie</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/trunk/archie</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/trunk/archie</url>
   </scm>
 
   <packaging>jar</packaging>
