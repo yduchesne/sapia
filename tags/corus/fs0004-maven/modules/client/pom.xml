@@ -23,47 +23,36 @@
   <packaging>jar</packaging>
 
   <dependencies>
+
+    <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.7</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_corus_iop_api</artifactId>
-      <version>2.0</version>
-    </dependency>
-
-    <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.3</version>
-    </dependency>
-
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring</artifactId>
-        <version>2.5.6</version>
     </dependency>
 
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_ubik</artifactId>
-      <version>2.5.8</version>
     </dependency>
 
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_console</artifactId>
-      <version>1.5</version>
     </dependency>
 
     <dependency>
       <groupId>org.sapia</groupId>
       <artifactId>sapia_utils</artifactId>
-      <version>2.2</version>
     </dependency>
 
   </dependencies>
