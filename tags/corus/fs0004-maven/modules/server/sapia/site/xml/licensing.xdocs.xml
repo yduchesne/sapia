@@ -26,8 +26,8 @@
       </p>
       <p> 
         <b>2)</b> A “server” module, released under the 
-        <a href="http://www.gnu.org/licenses/gpl.html">GPL</a>, which strictly 
-        consists of the server-side Corus classes, which client applications 
+        <a href="http://www.gnu.org/licenses/gpl-3.0-standalone.html">GPL 3.0</a>, 
+        which strictly consists of the server-side Corus classes, which client applications 
         do NOT need in their classpath. This module depends on the client 
         module, for it implements some of the interfaces in it. Applications
         deployed using Corus absolutely do NOT need to depend on the server 
@@ -51,7 +51,8 @@
           For the server part, it means that no one can modify and redistribute 
           Corus without providing their entire modifications as source to their 
           customers; it also means that their modifications automatically become 
-          subjected to the GPL.
+          subjected to the GPL. It also means that new software that is linked
+          to the Corus server libraries becomes subjected to the GPL.
         </li>
       </ol>
       <p>
@@ -59,6 +60,11 @@
         using Corus: client applications will use the client classes, which 
         fall under the Apache 2.0 license, and are therefore shielded from any 
         viral licensing restrictions or obligations.
+      </p>
+      <p>
+        We recommend that you read the 
+        <a target="gpl_faq" href="http://www.gnu.org/licenses/gpl-faq.html">GPL FAQ</a>
+        if you have more questions.
       </p>
     </sapia:sect-desc>
   </sapia:sect1>
