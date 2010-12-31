@@ -46,8 +46,10 @@
     <id>sapia-m2-repository</id>
     <name>Sapia Repository for Maven</name>
     <url>http://www.sapia-oss.org/maven2</url>
-  </repository>  
+  </repository>
+  
   ...
+  
 </repositories>
 
 <pluginRepositories>
@@ -61,7 +63,9 @@
     <name>Sapia Repository for Maven</name>
     <url>http://www.sapia-oss.org/maven2</url>
   </pluginRepository>
+  
   ...
+  
 </pluginRepositories>
 
 ...
