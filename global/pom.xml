@@ -37,6 +37,16 @@
     </developer>
   </developers>
 
+  <mailingLists>
+    <mailingList>
+      <name>User Group</name>
+      <subscribe>http://groups.google.com/group/sapia-tools-users/subscribe</subscribe>
+      <unsubscribe>http://groups.google.com/group/sapia-tools-users/subscribe</unsubscribe>
+      <post>sapia-tools-users@googlegroups.com</post>
+      <archive>http://groups.google.com/group/sapia-tools-users/topics</archive>
+    </mailingList>
+  </mailingLists>
+
   <repositories>
     <repository>
       <id>central</id>
