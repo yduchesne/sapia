@@ -1,7 +1,0 @@
-<addressBook id="12345">
-    <info owner="Sarkozy">
-    <![CDATA[my address book]]></info>
-    <contact firstName="John" lastName="Smith" />
-    <contact firstName="Foo" lastName="Bar" />
-    <contact firstName="Lee" lastName="Ming" />
-</addressBook>

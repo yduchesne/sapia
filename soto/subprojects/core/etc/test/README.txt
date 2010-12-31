@@ -1,1 +1,0 @@
-The included.xml file in this directory is used to test file includes.
