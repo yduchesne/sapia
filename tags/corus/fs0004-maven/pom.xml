@@ -52,6 +52,12 @@
       </dependency>
 
       <dependency>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+          <version>2.3</version>
+      </dependency>
+
+      <dependency>
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
           <version>1.0.4</version>
@@ -112,6 +118,12 @@
         <version>2.0</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_corus_iop_api</artifactId>
+        <version>2.0</version>
+      </dependency>
+ 
       <dependency>
         <groupId>org.sapia</groupId>
         <artifactId>sapia_as</artifactId>
