@@ -1,0 +1,22 @@
+<sapia:page title="Resource Framework" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+    <sapia:vsection name="Project Home" href="home.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Mailing List" href="list.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+  <sapia:sect1 title="Sapia Resource Framework">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="resource" />
+    </sapia:section>
+    <!-- toc/ -->
+    <sapia:sect2 title="Intro">
+	  <p>Sapia's resource framework can be used to perform resource-inclusion operations as part of your applications.
+	  See the <sapia:class link="maven/api/org/sapia/resource/include/IncludeState.html">javadoc</sapia:class> for 
+	  details.</p>
+	</sapia:sect2>
+  </sapia:sect1>
+</sapia:page>
