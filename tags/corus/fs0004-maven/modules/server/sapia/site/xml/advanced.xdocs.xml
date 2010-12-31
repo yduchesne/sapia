@@ -70,7 +70,7 @@
         Among other interactions, we're finding that a process must poll its 
         Corus daemon at a predefined interval (the <a href="Corus">Corus Guide</a>
         describes in more details how the various runtime parameters are passed
-        by the Corus daemon to the process upon its startup).
+        by the Corus daemon to the process, upon startup).
       </p>
       
       <center><img src="img/high-availability.png" /></center>
@@ -212,7 +212,8 @@ import org.sapia.corus.interop.api.StatusRequestListener;
     context.addParam(createParam("requestsTimeTotal", stats.getRequestTimeTotal()));
     context.addParam(createParam("suspends", stats.getSuspends()));        
     context.addParam(createParam("suspendsActive", stats.getSuspendsActive()));        
-    context.addParam(createParam("suspendsActiveMax", stats.getSuspendsActiveMax()));        
+    context.addParam(createParam("suspendsActiveMax", stats.getSuspendsActiveMax())); 
+    status.addContext(context);
   }
   
   
@@ -238,6 +239,14 @@ import org.sapia.corus.interop.api.StatusRequestListener;
     
   </sapia:sect2>
 
+  <sapia:sect2 title="Conclusion">
+    <p>
+      Corus has advanced features that you'll come to appreciate as you work
+      with them. The <a href="tutorials/index.html">tutorials</a> and the 
+      <a href="CorusGuide.pdf">Corus Guide</a> provide additional information.
+    </p>
+  </sapia:sect2>
+  
   </sapia:sect1>
   
 </sapia:page>
