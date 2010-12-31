@@ -1,9 +1,0 @@
-<registry>
-  <node name="databases">
-    <node name="000">
-      <property name="username" value="jsmith" />
-      <property name="password" value="foo123" />      
-      <property name="url"      value="jdbc://saturn:5432/" />            
-    </node>
-  </node>
-</registry>
