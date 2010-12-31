@@ -1,0 +1,73 @@
+<sapia:page xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <title><sapia:param value="project.name"/> - Download</title>
+ 
+   <sapia:vmenu>
+    <sapia:vsection name="Project Home" href="home.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Mailing List" href="list.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+ 
+  <sapia:sect1 title="Download">
+  
+    <toc />
+
+    <sapia:sect2 title="License">
+    
+      <p>Individual and organizations using this software must abide by the following licence:</p>
+      
+      <sapia:license-apache2/>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Download from Maven Repository">
+      <p>The latest <a href="http://code.google.com/p/sapia/source/browse/#svn/tags">release</a> 
+      jar can be downloaded from the Maven repository:
+      </p>
+      <sapia:dependency />
+
+      <p>
+        We have been using the Java.net repository, and following some issues 
+        with it we decided to set up our own repository under Sapia's web site.
+        In any case, make sure that you configure both repositories in your
+        Maven <tt>settings.xml</tt> as follows:       
+      </p>
+      
+      <sapia:code><![CDATA[
+...
+
+<repositories>
+  <repository>
+    <id>java.net-m2-repository</id>
+    <name>Java.net Repository for Maven</name>
+    <url>http://download.java.net/maven/2</url>
+  </repository>    
+  <repository>
+    <id>sapia-m2-repository</id>
+    <name>Sapia Repository for Maven</name>
+    <url>http://www.sapia-oss.org/maven2</url>
+  </repository>  
+  ...
+</repositories>
+
+<pluginRepositories>
+  <pluginRepository>
+    <id>java.net-m2-repository</id>
+    <name>Java.net Repository for Maven</name>
+    <url>http://download.java.net/maven/2</url>
+  </pluginRepository>
+  <pluginRepository>
+    <id>sapia-m2-repository</id>
+    <name>Sapia Repository for Maven</name>
+    <url>http://download.java.net/maven2</url>
+  </pluginRepository>
+  ...
+</pluginRepositories>
+
+...
+]]>  
+      </sapia:code>
+      
+    </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>
