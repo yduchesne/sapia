@@ -83,18 +83,26 @@
     </plugins>
 
     <extensions>
-      <extension>
+     <!--extension>
         <groupId>org.jvnet.wagon-svn</groupId>
         <artifactId>wagon-svn</artifactId>
         <version>1.9</version>
+      </extension-->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ftp</artifactId>
       </extension>
     </extensions>
   </build>
 
   <distributionManagement>
-    <repository>
+    <!--repository>
       <id>java.net-m2-repository</id>
-      <url>java-net:/maven2-repository/trunk/repository/</url>
+      <url>java-net:/maven2-repository/trunk/repository</url>
+    </repository-->
+    <repository>
+      <id>sapia-m2-repository</id>
+      <url>ftp://sapia-oss.org/public_html/maven2</url>
     </repository>
   </distributionManagement>
 
