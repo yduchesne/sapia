@@ -14,6 +14,7 @@ import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.NameValuePair;
 import org.sapia.corus.client.services.configurator.Configurator;
+import org.sapia.corus.client.services.configurator.InternalConfigurator;
 import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.db.DbModule;
 import org.sapia.corus.core.ModuleHelper;
@@ -24,10 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Bind(moduleInterface=Configurator.class)
 @Remote(interfaces=Configurator.class)
-public class ConfiguratorImpl extends ModuleHelper implements Configurator{
+public class ConfiguratorImpl extends ModuleHelper implements Configurator, InternalConfigurator{
   
   public static final String PROP_SERVER_NAME = "corus.server.name";
 
+  private static final String PASSWORD = "password";
+  private static final String PASSWORD_PLACEHOLDER = "********";
+  
   @Autowired
   private PropertyProvider propertyProvider;
   
@@ -37,6 +41,7 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
   private PropertyStore processProperties, serverProperties, internalProperties;
   private DbMap<String, ConfigProperty> tags;
   
+  @Override
   public String getRoleName() {
     return Configurator.ROLE;
   }
@@ -58,15 +63,30 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
     else{
       serverContext().overrideServerName(serverName);
     }
+    
+    serverContext().getServices().bind(InternalConfigurator.class, this);
   }
   
+  @Override
   public void dispose() {}
 
+  @Override
   public void addProperty(PropertyScope scope, String name, String value) {
     store(scope).addProperty(name, value);
   }
-  
+
+  @Override
   public String getProperty(String name) {
+    String value = serverProperties.getProperty(name);
+    if(value == null){
+      value = processProperties.getProperty(name);
+    }
+    value = replace(name, value);
+    return value;
+  }
+  
+  @Override
+  public String getInternalProperty(String name) {
     String value = serverProperties.getProperty(name);
     if(value == null){
       value = processProperties.getProperty(name);
@@ -74,21 +94,43 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
     return value;
   }
   
+  @Override
   public void removeProperty(PropertyScope scope, Arg name) {
     store(scope).removeProperty(name);
   }
   
+  @Override
   public Properties getProperties(PropertyScope scope) {
+    return replace(store(scope).getProperties());
+  }
+  
+  @Override
+  public Properties getInternalProperties(PropertyScope scope) {
     return store(scope).getProperties();
   }
   
+  @Override
+  public List<NameValuePair> getInternalPropertiesAsNameValuePairs(
+      PropertyScope scope) {
+    return doGetPropertiesAsNameValuePairs(scope, false);
+  }
+  
+  @Override
   public List<NameValuePair> getPropertiesAsNameValuePairs(PropertyScope scope) {
+    return doGetPropertiesAsNameValuePairs(scope, true);
+  }
+  
+  private List<NameValuePair> doGetPropertiesAsNameValuePairs(PropertyScope scope, boolean hide) {
     Properties props = store(scope).getProperties();
     List<NameValuePair> toReturn = new ArrayList<NameValuePair>(props.size());
     Enumeration<?> keys = props.propertyNames();
     while(keys.hasMoreElements()){
       String key = (String)keys.nextElement();
-      NameValuePair pair = new NameValuePair(key, props.getProperty(key));
+      String value = props.getProperty(key);
+      if(hide){
+        value = replace(key, value);
+      }
+      NameValuePair pair = new NameValuePair(key, value);
       toReturn.add(pair);
     }
     Collections.sort(toReturn);
@@ -155,5 +197,25 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator{
       }
       return value;
     }
+  }
+  
+  @SuppressWarnings(value="unchecked")
+  private Properties replace(Properties props){
+   
+    Enumeration<String> names = (Enumeration<String>)props.propertyNames();
+    Properties toReturn = new Properties();
+    while(names.hasMoreElements()){
+      String name = names.nextElement();
+      String value = props.getProperty(name);
+      toReturn.setProperty(name, replace(name, value));
+    }
+    return toReturn;
+  }
+  
+  private String replace(String name, String value){
+    if(name.indexOf(PASSWORD) >= 0){
+      return PASSWORD_PLACEHOLDER;
+    }
+    return value;
   }
 }

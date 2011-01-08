@@ -16,7 +16,7 @@ import org.sapia.corus.client.common.ArgFactory;
 import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.client.exceptions.port.PortUnavailableException;
 import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
-import org.sapia.corus.client.services.configurator.Configurator;
+import org.sapia.corus.client.services.configurator.InternalConfigurator;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.deployer.dist.Distribution;
@@ -181,8 +181,8 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
       Distribution dist, TaskExecutionContext ctx, Properties processProperties)
       throws PortUnavailableException {
 
-    Configurator configurator = ctx.getServerContext().getServices().lookup(
-        Configurator.class);
+    InternalConfigurator configurator = ctx.getServerContext().getServices().lookup(
+        InternalConfigurator.class);
     PortManager portmgr = ctx.getServerContext().getServices().lookup(
         PortManager.class);
 
@@ -215,7 +215,7 @@ public class ProcessorTaskStrategyImpl implements ProcessorTaskStrategy {
     props.add(new Property("user.dir", dist.getCommonDir()));
 
     Properties allProps = new Properties(processProperties);
-    Properties confProps = configurator.getProperties(PropertyScope.PROCESS);
+    Properties confProps = configurator.getInternalProperties(PropertyScope.PROCESS);
 
     Enumeration names = confProps.propertyNames();
 

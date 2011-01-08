@@ -1,6 +1,7 @@
 package org.sapia.corus;
 
 import org.sapia.corus.client.services.configurator.Configurator;
+import org.sapia.corus.client.services.configurator.InternalConfigurator;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.port.PortManager;
@@ -48,6 +49,7 @@ public class TestServerContext extends ServerContextImpl{
     created.getServices().bind(PortManager.class, created._ports);
     created.getServices().bind(TaskManager.class, created._tm);
     created.getServices().bind(Configurator.class, created._tc);
+    created.getServices().bind(InternalConfigurator.class, created._tc);
     created.getServices().bind(ProcessRepository.class, created._proc.getProcessRepository());
     created.getServices().bind(DistributionDatabase.class, created._depl.getDistributionDatabase());
     
