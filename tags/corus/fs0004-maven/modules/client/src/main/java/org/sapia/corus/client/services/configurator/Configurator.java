@@ -1,5 +1,6 @@
 package org.sapia.corus.client.services.configurator;
 
+import java.rmi.Remote;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -9,7 +10,17 @@ import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.NameValuePair;
 
 /**
- * This interface specifies configuration behavior: it supports managing properties
+ * This interface specifies configuration behavior: it supports managing properties.
+ * <p>
+ * This interface extends {@link Remote}, and therefore implementations of it are available
+ * remotely.
+ * <p>
+ * Since implementations of this interface may store passwords as property values, these values
+ * are "hidden" when returned to the callers (a string of asterisks ('*') is returned in place of
+ * such a value). 
+ * <p>
+ * By convention, the "hidden" properties should be determined by detecting the "password" character string
+ * in their name.
  * 
  * @author yduchesne
  *
@@ -82,7 +93,6 @@ public interface Configurator extends java.rmi.Remote, Module {
    * @param tag a {@link String} corresponding to the tag to remove.
    */
   public void removeTag(String tag);
-
   
   /**
    * Removes the tags matching the given argument from this instance.
