@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+  targetNamespace="://www.sapia-oss.org/xsd/corus/corus-descriptor" 
+  xmlns:tns="http://www.sapia-oss.org/corus/corus-descriptor" 
+  elementFormDefault="qualified">
+
+    <complexType name="DistributionType">
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="version" type="string"></attribute>
+    	<attribute name="tags" type="string"></attribute>
+    	<sequence>
+    		<element name="process" type="ProcessType" maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="ProcessType">
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="maxKillRetry" type="integer"></attribute>
+    	<attribute name="shutdownTimeout" type="integer"></attribute>
+    	<attribute name="deleteOnKill" type="boolean"></attribute>
+    	<attribute name="invoke" type="boolean"></attribute>
+      <attribute name="pollInterval" type="integer"></attribute>
+      <attribute name="statusInterval" type="integer"></attribute>
+      <attribute name="tags" type="string"></attribute>
+    </complexType>
+
+    <complexType name="PortType">
+    	<attribute name="name" type="string"></attribute>
+    </complexType>
+
+    <complexType name="MagnetType">
+    	<attribute name="magnetFile" type="string"></attribute>
+    	<attribute name="profile" type="string"></attribute>
+    	<attribute name="javaHome" type="string"></attribute>
+    	<attribute name="javaCmd" type="string"></attribute>
+    	<attribute name="vmType" type="string"></attribute>
+    </complexType>
+
+    <complexType name="JavaType">
+    	<attribute name="mainClass" type="string"></attribute>
+    	<attribute name="profile" type="string"></attribute>
+    	<attribute name="javaHome" type="string"></attribute>
+    	<attribute name="javaCmd" type="string"></attribute>
+    	<attribute name="vmType" type="string"></attribute>
+    </complexType>
+
+    <complexType name="DependencyType">
+    	<attribute name="distribution" type="string"></attribute>
+    	<attribute name="dist" type="string"></attribute>
+    	<attribute name="process" type="string"></attribute>
+    	<attribute name="version" type="string"></attribute>
+    	<attribute name="profile" type="string"></attribute>
+    </complexType>
+
+    <complexType name="OptionType">
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="value" type="string"></attribute>
+    </complexType>
+
+    <complexType name="XOptionType">
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="value" type="string"></attribute>
+    </complexType>
+
+    <complexType name="PropertyType">
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="value" type="string"></attribute>
+    </complexType>
+
+</schema>
