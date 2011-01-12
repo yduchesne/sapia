@@ -4,7 +4,7 @@ import org.sapia.console.CmdElement;
 
 
 /**
- * This class corresponds to the <code>x-option</code> element in the
+ * This class corresponds to the <code>xoption</code> element in the
  * corus.xml file. This element pertains to the special "X" options that
  * can be specified at the "java" command-line.
  *
