@@ -83,13 +83,11 @@
             shutdownTimeout="30000" 
             invoke="true">
     <java mainClass="org.sapia.corus.sample.jetty.BasicJettyServer"
-          profile="dev">
-      <vmType>server</vmType>
+          profile="dev" vmType="server">
       <xoption  name="ms" value="16M" />
     </java>
     <java mainClass="org.sapia.corus.sample.jetty.BasicJettyServer"
-          profile="prod">
-      <vmType>server</vmType>
+          profile="prod" vmType="server">
       <xoption  name="ms" value="128M" />
     </java>
   </process> 
