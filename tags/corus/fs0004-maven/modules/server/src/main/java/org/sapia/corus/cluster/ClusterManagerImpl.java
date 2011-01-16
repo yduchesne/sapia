@@ -145,7 +145,6 @@ public class ClusterManagerImpl extends ModuleHelper
             );
           }
           else{
-            _logger.debug("Unicast dispatch");
             _channel.dispatch(
                 remote.getUnicastAddress(),
                 CorusPubEvent.class.getName(),
