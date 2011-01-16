@@ -133,12 +133,25 @@ public class ClusterManagerImpl extends ModuleHelper
       _hostsAddresses.add(evt.getOrigin());
       _hostsInfos.add(evt.getHostInfo());
 
+      
       if (evt.isNew()) {
         _logger.debug("New corus discovered: " + addr);
 
         try {
-          _channel.dispatch(CorusPubEvent.class.getName(),
-                  new CorusPubEvent(false, serverContext().getTransport().getServerAddress(), serverContext().getHostInfo()));
+          if(remote.getUnicastAddress() == null){
+            _channel.dispatch(
+                CorusPubEvent.class.getName(),
+                new CorusPubEvent(false, serverContext().getTransport().getServerAddress(), serverContext().getHostInfo())
+            );
+          }
+          else{
+            _logger.debug("Unicast dispatch");
+            _channel.dispatch(
+                remote.getUnicastAddress(),
+                CorusPubEvent.class.getName(),
+                new CorusPubEvent(false, serverContext().getTransport().getServerAddress(), serverContext().getHostInfo())
+            );
+          }
         } catch (IOException e) {
           _logger.debug("Event channel could not dispatch event", e);
         }
