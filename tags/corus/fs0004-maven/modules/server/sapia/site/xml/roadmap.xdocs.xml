@@ -40,15 +40,14 @@
       </p>
       <p>
         It is therefore part of our plans to integrate alternative group 
-        communication mechanisms. We also want to enrich Corus so that it 
-        makes provisioning JVM-based applications into the cloud a breeze.
+        communication mechanisms. 
       </p>
     </sapia:sect2>
-    <sapia:sect2 title="Prepackaged Corus-enabled Servers">
+    <sapia:sect2 title="Corus-enabled Web Servers">
       <p>
         Corus is an infrastructure, not a solution per say. We plan on 
         providing enterprise-scale, Corus-aware versions of Tomcat 7 and/or 
-        Jetty and Apache Tuscany (SCA). 
+        Jetty 7. 
       </p>
     </sapia:sect2>
     <sapia:sect2 title="Enterprise-grade management console">
@@ -59,10 +58,6 @@
         domains (whether cloud-based or not) from a single web-based user 
         interface. 
       </p>
-      <p>
-        The console will also offer administration areas specific to the 
-        Corus-enabled servers that we plan on packaging for Corus.
-      </p>
     </sapia:sect2>
     <sapia:sect2 title="Robust Security">
       <p>
@@ -70,15 +65,6 @@
         This firewall-like, coarse-grained approach works, but is not the 
         most flexible and robust. We are planning on implementing full-fledge 
         authentication and authorization.
-      </p>
-    </sapia:sect2>
-    <sapia:sect2 title="Commercial Support">
-      <p>
-        We have not yet concisely defined what type of commercial support 
-        we'll be offering. We envision presenting customers with different 
-        support options, and we see a commercial support offering somewhat in 
-        line with the availability of the enterprise features that we want to 
-        develop.
       </p>
     </sapia:sect2>
   </sapia:sect1>

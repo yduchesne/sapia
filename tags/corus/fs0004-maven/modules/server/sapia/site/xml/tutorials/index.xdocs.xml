@@ -28,6 +28,12 @@
         presented below. We also suggest you read the 
         <a href="../CorusGuide.pdf">Corus Guide</a>.
       </p>
+      
+      <p>
+        In order to go through the tutorials, you'll have to check out Corus
+        and <a href="building.html">build it from source</a> - that is in fact 
+        the subject of the first tutorial.
+      </p>
     
       <div>
         <div class="article-box">
