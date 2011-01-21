@@ -1,8 +1,0 @@
-<soto:defs xmlns:soto="sapia:soto">
-  <soto:namespace prefix="log">
-    <def class="org.sapia.soto.log.Log4jService"                       name="log4j" />
-    <def class="org.sapia.soto.log.LogServiceSingleton"                name="serviceSingleton" />
-    <def class="org.sapia.soto.log.LoggerDef"                          name="loggerDef" />
-    <def class="org.sapia.soto.log.LoggerRef"                          name="loggerRef" />
-  </soto:namespace>
-</soto:defs>      
