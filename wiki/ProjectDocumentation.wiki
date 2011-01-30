@@ -23,3 +23,13 @@ Then, as part of documentation generation, the standard Maven site is also gener
 The xdocs files are tranformed with XSL, and the output is saved under `target/site`. For its part, the Maven site is generated under `target/site/maven`.
 
 It is thus up to the content of the xdocs files to point to the maven site accordingly.
+
+== Generating ==
+
+Do a 
+
+{{{mvn site}}}
+
+Or a
+
+{{{mvn org.sapia:sapia_site_doc_plugin:generate}}}
