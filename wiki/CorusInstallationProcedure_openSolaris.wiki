@@ -72,7 +72,7 @@ To register Corus as a system service, you need to:
 
 == iv) Enable the Corus service  ==
  * Now that Corus is registered, you can use the `svcadm` command to enable the service:
- || `root@cygnus-opensolaris:~# scvadm enable svc:/application/sapia/corus ` <br /> ||
+ || `root@cygnus-opensolaris:~# svcadm enable svc:/application/sapia/corus ` <br /> ||
 
  * Corus should now be running and you can monitor it's state with the `svcs` command:
  || `root@cygnus-opensolaris:~# svcs -x corus ` <br /> ` svc:/application/sapia/corus:default (Sapia Corus Server) ` <br /> ` State: online since Tue Dec 07 22:11:58 2010 ` <br /> `  See: http://www.sapia-oss.org/projects/corus/ ` <br />` See: /var/svc/log/application-sapia-corus:default.log ` <br /> ` Impact: None. ` <br /> ` root@cygnus-opensolaris:~# ` ||
