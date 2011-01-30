@@ -7,13 +7,7 @@
     <sapia:sect-desc>
       <p>
         Sapia aims at providing quality open-source software to the developer community.
-        We are adepts of lightweight and agile; we strive for modularity, reusability, 
-        elegance. We also think that good documentation is a must, and go to great lengths 
-        to make sure that all projects we publish are thoroughly documented.
-      </p>
-      <p>
-        Through the years, we ourselves, as developers of solutions, have benefited from
-        open source software. Sapia is a modest attempt at giving back.
+        We are adepts of lightweight and agile; we strive for modularity, reusability.
       </p>
     </sapia:sect-desc>
   </sapia:sect1>
