@@ -35,10 +35,11 @@
           </td> 
           <td>
             <ul>
-              <li>Corus Community Edition (currently available)</li>
-              <li>Prepackaged Corus-enabled apps and frameworks (Tomcat, Spring, etc.) - planning</li>
-              <li>Robust security (LDAP-based) - planning</li>
-              <li>Cloud readiness - planning</li>
+              <li>Corus 2.0 (currently available)</li>
+              <li>Built-in multi-language deployments (Scala, JRuby, Jython...) - planning</li>
+              <li>Prepackaged Corus-enabled apps (Tomcat 7, etc.) - planning</li>
+              <li>Robust security - planning</li>
+              <li>Cloud integration - planning</li>
             </ul>
           </td>
         </tr></tbody>
