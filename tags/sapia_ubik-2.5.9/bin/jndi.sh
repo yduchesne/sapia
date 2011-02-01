@@ -71,5 +71,7 @@ if $cygwin; then
     JNDI_CLASSPATH=`cygpath --path --windows "${JNDI_CLASSPATH}"`
 fi
 
+echo $JNDI_CLASSPATH
+
 ${JAVACMD} -cp ${JNDI_CLASSPATH} ${MAINCLASS} "$@"
 
