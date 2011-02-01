@@ -44,12 +44,7 @@
     <sapia:sect2 title="Download Library from Maven Repository">
       <p>The latest <a href="http://code.google.com/p/sapia/source/browse/#svn/tags">Ubik release</a> jar can be downloaded from the Java.net repository, as a dependency:
       </p>
-
-<pre><![CDATA[<dependency>
-    <groupId>org.sapia</groupId>
-    <artifactId>sapia_ubik</artifactId>
-    <version>2.5.6</version>
-</dependency>]]></pre>
+      <sapia:dependency/>
     </sapia:sect2>
 
     <sapia:sect2 title="Download Archive from Google Code">
