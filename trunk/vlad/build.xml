@@ -1,0 +1,27 @@
+<project name="vlad" default="build" basedir=".">
+
+  <property name="project.siteDir"            value="${basedir}/sapia/site"/>
+  <property name="project.manDir"             value="${project.siteDir}/man"/>
+  <property name="project.xmlDir"             value="${project.siteDir}/xml"/>
+  <property name="project.xslDir"             value="${project.siteDir}/xsl"/>
+  
+
+  <!-- Builds the web site of this project to the ${project.siteDir} directory -->
+  <target name="build">
+        <mkdir dir="${project.manDir}"/>  
+        <mkdir dir="${project.xmlDir}/man"/>  
+        
+        <xslt basedir="${project.manDir}" 
+              extension=".xdocs.xml"
+              destdir="${project.xmlDir}/man" 
+              includes="**/*.xrule"
+              style="${project.siteDir}/xsl/rule.xsl"/>
+              
+        <xslt basedir="${project.manDir}" 
+              extension=".xdocs.xml"
+              destdir="${project.xmlDir}/man" 
+              includes="index.xml"
+              style="${project.siteDir}/xsl/man.xsl"/>              
+              
+  </target>
+</project>
