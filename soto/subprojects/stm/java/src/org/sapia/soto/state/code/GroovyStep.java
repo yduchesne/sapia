@@ -100,16 +100,17 @@ public class GroovyStep implements Step, ObjectCreationCallback {
     }
 
     String src = _src;
+    
+    String crlf = System.getProperty("line.separator");
 
     synchronized(_groovyLock) {
-      src = _imports.toString() + "class Soto_State_Java_" + getName() + "_"
+      src = _imports.toString() + "public class Soto_State_Java_" + getName() + "_"
           + new JVMRandom().nextLong()
-          + " implements org.sapia.soto.state.Step{"
-          + "  public String getName(){ return \"" + getName() + "\" }"
-          + "  public void execute(" + Result.class.getName() + " result){"
-          + src + "  }" + "}";
+          + " implements org.sapia.soto.state.Step{" + crlf 
+          + "  public String getName(){ "+ crlf + "return \"" + getName() + "\"; " + crlf + "}" + crlf
+          + "  public void execute(" + Result.class.getName() + " result){" + crlf
+          + src + crlf + "  }" + crlf + "}";
 
-      // System.out.println(src);
       ByteArrayInputStream bis = new ByteArrayInputStream(src.getBytes());
       GroovyClassLoader loader = new GroovyClassLoader(Thread.currentThread()
           .getContextClassLoader());
