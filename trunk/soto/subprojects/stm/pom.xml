@@ -66,8 +66,8 @@
         <artifactId>domify</artifactId>
     </dependency>
     <dependency>
-      <groupId>groovy</groupId>
-      <artifactId>groovy-all</artifactId>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
     </dependency>
     <dependency>
         <groupId>jaxen</groupId>

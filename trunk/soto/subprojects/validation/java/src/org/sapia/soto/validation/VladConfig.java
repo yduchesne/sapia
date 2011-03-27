@@ -96,6 +96,7 @@ public class VladConfig implements EnvAware, ObjectCreationCallback{
     try{
       validator.load(_ruleResource.getInputStream());
     }catch(Exception e){
+      e.printStackTrace();
       throw new ConfigurationException("Could not load validation rules: " + _ruleResource.getURI() + " for validator: " + _name, e);
     }
     _lastModified = _ruleResource.lastModified();
