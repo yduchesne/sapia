@@ -6,7 +6,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>sapia_soto_parent</artifactId>
-  <version>3.2</version>
+  <version>3.3-SNAPSHOT</version>
 
   <parent>
     <groupId>org.sapia</groupId>
@@ -15,9 +15,9 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_soto_parent-3.2</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_soto_parent-3.2</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_soto_parent-3.2</url>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/trunk/soto</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/trunk/soto</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/trunk/soto</url>
   </scm>
 
   <licenses>
