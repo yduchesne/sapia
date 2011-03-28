@@ -20,7 +20,7 @@ import org.sapia.soto.Service;
 
 /**
  *
- * @author Jean-Cédric Desrochers
+ * @author Jean-Cedric Desrochers
  */
 public class TestableClusterPeer implements Service, MessageListener, ClusterListener {
 
