@@ -23,7 +23,7 @@ import org.sapia.soto.ubik.monitor.FeedbackMonitorable;
 
 /**
  *
- * @author Jean-Cédric Desrochers
+ * @author Jean-Cedric Desrochers
  */
 public class TopicSubscriberPool implements Service, FeedbackMonitorable {
 

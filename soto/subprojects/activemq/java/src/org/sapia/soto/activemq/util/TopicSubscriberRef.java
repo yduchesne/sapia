@@ -11,7 +11,7 @@ import javax.jms.TopicSubscriber;
 
 /**
  *
- * @author Jean-Cédric Desrochers
+ * @author Jean-Cedric Desrochers
  */
 public class TopicSubscriberRef implements MessageListener {
 
