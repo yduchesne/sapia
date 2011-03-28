@@ -11,7 +11,7 @@ import org.sapia.util.xml.confix.ObjectCreationCallback;
 
 /**
  *
- * @author Jean-Cédric Desrochers
+ * @author Jean-Cedric Desrochers
  */
 public class ActiveClusterRef implements ObjectCreationCallback {
 
