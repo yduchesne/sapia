@@ -1,0 +1,484 @@
+<sapia:page title="Configuration Service" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:refreshMenu page="leftmenu.html" />
+  <sapia:sect1 title="Configuration Service">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../../../site/html/home.html" />
+      <sapia:path name="services" />
+      <sapia:path name="configuration" />      
+    </sapia:section>
+    <toc/>
+    
+    <sapia:sect2 title="Namespace">
+      <ul>
+        <li><b>URI</b>: <sapia:command>soto:configuration</sapia:command></li>
+        <li><b>Prefix</b>: <sapia:command>conf</sapia:command></li>
+      </ul>
+    </sapia:sect2>    
+        
+    <sapia:sect2 title="Overview">
+    
+      <p>The <sapia:class link="../../api/org/sapia/soto/configuration/ConfigurationService.html" target="config_service">ConfigurationService</sapia:class> interface specifies a behavior that is expected
+from classes that manage configuration and allow retrieving configuration properties.</p>
+
+      <p>Currently, there is only one implementation of that interface that is part of Soto, and really, none 
+      other is planned: the current implementation is indeed based on the 
+      <a href="http://www.jconfig.org/GettingStarted.html" target="jconfig">JConfig</a> framework,
+      which should serve most configuration needs.</p>
+
+      <p>The goals behind the integration of such of framework go as follows:</p>
+      <ul>
+        <li>to allow externalizing application configuration in order to minimize the different
+        distributions of an application across heterogeneous environments (dev, prod, QA, etc.).</li>
+        <li>to allow "configuration injection" through Soto's configuration format (i.e.: to let developers
+        assign JConfig-provided properties to their objects using Soto's XML notation).</li>
+      </ul>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Usage">    
+
+      <sapia:sect3 title="The Configuration Service">
+      <p>Using the configuration service is quite simple. You first need to declare a 
+      <sapia:command>conf:jconfig</sapia:command> element as part of your Soto application. This element
+      will evaluate to a <sapia:class link="../../api/org/sapia/soto/configuration/jconfig/ConfigurationServiceImpl.html">
+      ConfigurationServiceImpl</sapia:class> instance at runtime.
+      </p>
+      <sapia:note>The <sapia:class>ConfigurationServiceImpl</sapia:class> wraps JConfig's 
+        <sapia:class>ConfigurationManager</sapia:class> singleton, so there is no point in declaring more
+        than one <sapia:command>conf:jconfig</sapia:command> per VM (or, rather, per classloader).
+      </sapia:note>
+      <p>Then, as children of that element, you declare <sapia:command>configuration</sapia:command> elements
+      that correspond to JConfig <sapia:class>Configuration</sapia:class> instances. The following example, taken
+      from Soto's test suite, provides an illustration:</p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:conf="soto:conf"
+  xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.acme.app.MyPojo" name="pojo" />          
+  </soto:namespace>
+
+  <soto:service>
+    <conf:jconfig>
+      <configuration name="someConfig" uri="etc/jconfig/config.xml" />
+    </conf:jconfig>
+  </soto:service>
+...
+</soto:app>]]>
+</sapia:code>
+
+      <p>The nested <sapia:command>configuration</sapia:command> elements take the following attributes:</p>
+      <ul>
+        <li><sapia:command>name</sapia:command>: the logical name of the configuration.</li>
+        <li><sapia:command>uri</sapia:command>: the URI of the JConfig-compliant XML configuration file. The URI will
+        be resolved using Soto's resource resolving capabilities.</li>
+      </ul>
+      <p>The URI that is provided links to a valid JConfig file. The following, for the purpose of our example,
+      illustrates what such a file consists of:</p>
+
+<sapia:code>
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+  <category name="account">
+    <username>admin</username>
+    <password>secret</password>
+  </category>
+</properties>]]>
+</sapia:code>
+        
+      <p/>
+
+      <sapia:note>
+      Note that, at that point, the file is entirely processed by JConfig. Therefore, for more details, have a look
+      at the JConfig <a href="http://www.jconfig.org/GettingStarted.html" target="jconfig_starting">docs</a>. Note also that the configuration service
+      uses JConfig's nested configuration capabilities.
+      </sapia:note>
+
+     </sapia:sect3>
+
+     <sapia:sect3 title="Property Injection">
+     <p>And now, the interesting part: you inject your Soto services with configuration properties that "come" from JConfig:</p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:conf="soto:conf"
+  xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.acme.app.MyPojo" name="pojo" />          
+  </soto:namespace>
+
+  <soto:service>
+    <conf:jconfig>
+      <configuration name="someConfig" uri="etc/jconfig/config.xml" />
+    </conf:jconfig>
+  </soto:service>
+
+  <soto:service>
+    <sample:pojo>
+      <timeOut>
+        <conf:prop conf="someConfig" cat="caching" name="timeOut" />
+      </timeOut>
+    </sample:pojo>
+  </soto:service>
+...
+</soto:app>]]>
+</sapia:code>
+      <p>As shown above, you inject properties through the <sapia:command>conf:prop</sapia:command>
+      element, which takes the following attributes:</p>
+      <ul>
+        <li><sapia:command>conf</sapia:command>: the name of a predefined configuration (corresponding to
+        a <sapia:command>configuration</sapia:command> element, as shown further above.</li>
+        <li><sapia:command>cat</sapia:command>: the name of the category of which the property to retrieve
+        is part.</li>
+        <li><sapia:command>name</sapia:command>: the name of the property to retrieve.</li>
+      </ul>
+      <p>Alternatively, we could use the following form (less explicit, but also less verbose):</p>
+
+<sapia:code>
+<![CDATA[...
+  <soto:service>
+    <sample:pojo>
+      <timeOut>
+        <conf:prop path="someConfig/caching/timeOut" />
+      </timeOut>
+    </sample:pojo>
+  </soto:service>
+...]]>
+</sapia:code>
+    <p>In this case, the <sapia:command>path</sapia:command> attribute provides the necessary information. The 
+    path must of the form <sapia:command>configName/categoryName/propertyName</sapia:command></p>
+    </sapia:sect3>
+
+    <sapia:sect3 title="JConfig URIs">
+      <p>Upon instantiation, the <sapia:class>ConfigurationServiceImpl</sapia:class> class registers itself
+      as a <sapia:class>ResourceHandler</sapia:class>. It therefore becomes part of Soto's resource resolving
+      scheme. This feature can be used to embed configuration files in JConfig XML files, as CDATA sections. 
+      This is illustrated below:
+      </p>
+
+<sapia:code>
+&lt;properties&gt;
+  &lt;category name="database"&gt;
+    &lt;hibernate&gt;
+    &lt;![CDATA[
+    &lt;hibernate-configuration&gt;
+
+      &lt;session-factory
+        name="java:hibernate/SessionFactory"&gt;
+
+        &lt;property name="connection.datasource"&gt;
+          java:/comp/env/jdbc/MyDB
+        &lt;/property&gt;
+        &lt;property name="dialect"&gt;
+          org.hibernate.dialect.MySQLDialect
+        &lt;/property&gt;
+        &lt;property name="transaction.factory_class"&gt;
+            org.hibernate.transaction.JTATransactionFactory
+        &lt;/property&gt;
+        &lt;property name="jta.UserTransaction"&gt;
+          java:comp/UserTransaction
+        &lt;/property&gt;
+
+        &lt;mapping resource="org/hibernate/auction/Item.hbm.xml"/&gt;
+        &lt;mapping resource="org/hibernate/auction/Bid.hbm.xml"/&gt;
+        &lt;class-cache class="org.hibernate.auction.Item" 
+                        usage="read-write"/&gt;
+        &lt;class-cache class="org.hibernate.auction.Bid" 
+                        usage="read-only"/&gt;
+        &lt;collection-cache class="org.hibernate.auction.Item.bids" 
+                             usage="read-write"/&gt;
+
+      &lt;/session-factory&gt;
+
+    &lt;/hibernate-configuration&gt;
+    ]]&gt;
+    &lt;/hibernate&gt;
+  &lt;/category&gt;
+&lt;/properties&gt;
+</sapia:code>
+      <p>And then you could link to that Hibernate configuration as a resource, through a URI:</p>
+
+<sapia:code>
+<![CDATA[...
+<soto:service>
+  <sample:persistencyService 
+    hibernateConfig="someConfig/database/hibernate" />
+</soto:service>
+...]]>
+</sapia:code> 
+    <p>Note that in order to be treated by the configuration service, the URI must have the form
+    <sapia:command>[jconfig:/]configName/categoryName/propertyName</sapia:command></p>
+    <p>If no scheme is provided as part of the URI (such as in the example), then the file system
+    and the classpath will also be searched (unless a resource corresponding to the given URI
+    can be resolved by the configuration service). Otherwise, if the <sapia:command>jconfig</sapia:command>
+    URI is provided, then the file system and classpath will not be searched (even if a resource corresponding
+    to the URI is not found by the configuration service).</p>
+    </sapia:sect3>
+
+    <sapia:sect3 title="Category Injection">
+        <p>In some circumstances an object or a service requires more than simple property values. One simple case
+        is when the configuration is dynamic and you want to provide, through the configuration, multiple handlers
+        of some sort. In such a scenario the property injection becomes impossible because of the dynamic nature
+        of the requirement.</p>
+        
+        <p>For such flexibility the configuration service provides a mean to inject a category object that contains
+        the configured properties. A category can represent a hierarchy of properties, meaning that a category
+        not only contains properties but also child categories. The category is represented in the configuration
+        service with the interface <sapia:class link="../../api/org/sapia/soto/configuration/ConfigCategory.html"
+        target="config_service">ConfigCategory</sapia:class>. This object allows finer control in order 
+        to meet whatever configuration requirement you might have.</p>
+        
+        <p>The xml element <sapia:command>config:category</sapia:command> gives you the ability to inject in a Soto
+        service or in a POJO a configuration category. The element takes two attributes:
+        <ul>
+            <li><b>conf</b> The name of the configuration where the category resides</li>
+            <li><b>cat</b> The name of the category to retrieve with slash "/" as path separator</li>
+        </ul>
+        </p>
+        
+        <p>Here is an example of the <sapia:command>config:category</sapia:command> element in action :</p>
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:conf="soto:conf"
+  xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.acme.app.MyPojo" name="pojo" />          
+  </soto:namespace>
+
+  <soto:service>
+    <conf:jconfig>
+      <configuration name="someConfig" uri="etc/jconfig/config.xml" />
+    </conf:jconfig>
+  </soto:service>
+
+  <soto:service>
+    <sample:pojo>
+      <timeOut>
+        <conf:prop conf="someConfig" cat="caching" name="timeOut" />
+      </timeOut>
+      <handlerConfig>
+        <conf:category conf="someConfig" cat="caching/handlers" />
+      </handlerConfig>
+    </sample:pojo>
+  </soto:service>
+...
+</soto:app>]]>
+</sapia:code>
+
+    <p>The previous example would retrieve the child category "handlers" of the category "caching" and would assign the
+    <sapia:class link="../../api/org/sapia/soto/configuration/ConfigCategory.html" target="config_service">ConfigCategory</sapia:class>
+    instance to the pojo object using a method <sapia:command>setHandlerConfig(ConfigCategory)</sapia:command>.
+    </p>
+    </sapia:sect3>
+
+    <sapia:sect3 title="Variables">
+      <p>The Soto/JConfig integration allows specifying so-called "configuration variables", either individually
+      or from property files. Such variables are declared as part of a <sapia:command>configuration</sapia:command> element,
+      as illustrated below: </p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:conf="soto:conf"
+  xmlns:sample="soto:sample">
+  
+  <soto:service>
+    <conf:jconfig>
+      <configuration name="credentials" uri="etc/jconfig/config.xml">
+        <var name="role" value="manager" />
+        <vars properties="credentials.properties />
+      </configuration>
+    </conf:jconfig>
+  </soto:service>
+
+  <soto:service>
+    <sample:someConnection>
+      <username><conf:prop path="credentials/account/username" /></username>
+      <password><conf:prop path="credentials/account/password" /></password>
+      <role><conf:prop path="credentials/account/role" /></role>
+    </sample:someConnection>
+  </soto:service>
+
+...
+</soto:app>]]>
+</sapia:code>
+
+      <p>The above <sapia:command>var</sapia:command> and <sapia:command>vars</sapia:command> elements
+     allow defining properties individually or from a property file, respectively. 
+     The <sapia:command>vars</sapia:command> element takes an URI for its <sapia:command>properties</sapia:command>
+     attribute. That URI is resolved according to Soto's resource resolving scheme. Thus, all the different types
+     of URIs can be used. Given the above example, we could have had:</p>
+
+     <ul>
+      <li><sapia:command>file:/some/dir/credentials.properties</sapia:command></li>
+      <li><sapia:command>resource:/credentials.properties</sapia:command></li>
+      <li><sapia:command>http://www.acmeapps.org/credentials.properties</sapia:command></li>
+      <li>etc.</li>
+     </ul>
+
+     <p>The corresponding JConfig configuration would be:</p>
+
+<sapia:code>
+<![CDATA[<properties>
+  <category name="account">
+    <username>${username}</username>
+    <password>${password}</password>
+    <role>${role}</role>
+  </category>
+</properties>]]>
+</sapia:code>
+
+      <p>Although not very relevant, our example demonstrate how JConfig's built-in 
+      support for variables permits us to actually "inject" its configuration
+      with properties that can be assigned on a per-environment basis. This is convenient in contexts
+      where most of the configuration is the same across different environments, but can vary
+      at specific points; rather than having to manage different sets of JConfig files, we rather
+      keep the sames files across environments and pass in the varying parts as variables.</p>
+
+    </sapia:sect3>
+    <sapia:sect3 title="Includes">
+      <p>Through JConfig, Soto allows including files and use JConfig variables for interpolation 
+      (in a manner similar to the <sapia:command>soto:include</sapia:command> element). This is better
+      illustrated by an example; imagine the following Soto service configuration:</p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:sample="soto:sample">
+  
+  <soto:service>
+    <sample:someConnection>
+      <username>${username}</username>
+      <password>${password}</password>
+      <role>${role}</role>
+    </sample:someConnection>
+  </soto:service>
+</soto:app>]]>
+</sapia:code>
+
+      <p>Now, that configuration file could be included in this manner:</p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:conf="soto:conf"
+  xmlns:sample="soto:sample">
+  
+  <soto:service>
+    <conf:jconfig>
+      <configuration name="credentials" uri="etc/jconfig/config.xml">
+        <var name="role" value="manager" />
+        <vars properties="credentials.properties />
+      </configuration>
+    </conf:jconfig>
+  </soto:service>
+
+  <conf:include conf="credentials" uri="connection.xml">
+...
+</soto:app>]]>
+</sapia:code>
+
+      <p>The above illustrates the use of the <sapia:command>conf:include</sapia:command> element,
+      which has the following attributes:</p>
+
+      <ul>
+        <li><sapia:command>conf</sapia:command>: the name (or comma-delimited list of names) of (a) predefined configuration(s) 
+        whose variables should be used for interpolation when parsing the included file.</li>
+        <li><sapia:command>uri</sapia:command>: the URI of the file to include (resolution of this URI follows Soto's 
+        resource-resolving mechanism).</li>
+      </ul>
+
+      <p>In addition, the <sapia:command>conf:include</sapia:command> element takes optional <sapia:command>param</sapia:command>
+      elements that allow specifying additional parameters, as illustrated below:</p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:conf="soto:conf">
+
+  <conf:include name="credentials" uri="connection.xml">
+    <param name="someParam" value="someValue" />
+    ...
+  </conf:include>
+
+</soto:app>]]>
+</sapia:code>
+
+     <p>At runtime, when substituting variables, Soto first looks up the parameters specified as nested <sapia:command>param</sapia:command>
+     elements; then it looks up the JConfig variables, and eventually any variables made available in any parent include (eventually looking up 
+     the JVM's system properties, if necessary). Note that JConfig variables are searched in the order in which their respective
+     configuration names were specified (in the <sapia:command>name</sapia:command> attribute).</p>
+
+    </sapia:sect3>    
+
+    <sapia:sect3 title="Conditional Instantiation">
+      <p>Lastly, but not the least, Soto allows conditionally instantiating objects/services based on JConfig configuration properties,
+      using familiar if/choose constructs (similar to the <sapia:command>soto:if</sapia:command> and <sapia:command>soto:choose</sapia:command>
+      elements).</p>
+
+      <sapia:sect4 title="If">
+        <p>The <sapia:command>conf:if</sapia:command> element works as follows 
+           (the configuration is taken from Soto's unit tests):</p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:conf="soto:conf">
+
+  <soto:service id="configService">
+    <conf:jconfig>
+      <configuration name="default" uri="config-conditional.xml" />
+    </conf:jconfig>
+  </soto:service>
+  
+  <soto:service id="if-test">
+    <conf:if path="default/instance/first">  
+      <sample:instanceA />
+    </conf:if>      
+  </soto:service>
+</soto:app>]]>
+</sapia:code>
+
+        <p>The above <sapia:command>conf:if</sapia:command> element will trigger instantiation of the 
+        object corresponding to the <sapia:command>sample:instanceA</sapia:command> element if the
+        property corresponding to the given path (default/instance/first) is defined. The 
+        <sapia:command>conf:if</sapia:command> element's spec is as follows:</p>
+
+        <ul>
+          <li><sapia:command>path</sapia:command>: a path consisting of: configuration name/category name/property name.</li>
+          <li><sapia:command>value</sapia:command> (optional): the value (as a character string) against which the
+          actual property should be compared.</li>
+        </ul>
+
+        <p>If the <sapia:command>value</sapia:command> attribute is specified, the attribute's value is compared with
+        the specified property value (if that property is defined), and this comparison will evaluate to true if both
+        values are identical. If the attribute is not given, the instantiation will occur if the given property exits 
+        in the JConfig configuration.</p>
+
+      </sapia:sect4>
+
+      <sapia:sect4 title="Choose">
+         <p>TBD</p>
+        <!--p>The <sapia:command>conf:choose</sapia:command> tag is similar to the <sapia:command>conf:if</sapia:command>
+        tag, except that in this case multiple tests can be performed, resulting in an instantiation for the first
+        condition that evaluates true:</p-->
+      </sapia:sect4>
+  
+    </sapia:sect3>
+
+    </sapia:sect2>
+    <sapia:sect2 title="Conclusion">
+      <p>The configuration service comes handy when one has to distribute applications across multiple
+      environments. In addition, it seamlessly integrates with Soto in order to allow injecting objects
+      with "externalized" configuration properties.</p>
+    </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>

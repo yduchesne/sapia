@@ -1,0 +1,35 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="mq">
+    <def class="org.sapia.soto.activemq.BrokerServiceEx" 	           name="broker" />
+    <def class="org.apache.activemq.broker.TransportConnector"         name="transportConnector" />
+    <def class="org.apache.activemq.broker.jmx.ManagementContext"      name="managementContext" />
+    <def class="org.apache.activemq.network.DiscoveryNetworkConnector" name="networkConnector" />
+
+    <def class="org.sapia.soto.activemq.PolicyMapTag"                 name="policyMapDef" />
+    <def class="org.apache.activemq.broker.region.policy.PolicyMap"   name="policyMap" />
+    <def class="org.apache.activemq.broker.region.policy.PolicyEntry" name="policyEntry" />
+    <def class="org.apache.activemq.broker.region.policy.RoundRobinDispatchPolicy" name="roundRobinDispatchPolicy" />
+
+    <def class="org.sapia.soto.activemq.ActiveMQConnectionService" 	  name="connection" />
+    <def class="org.sapia.soto.activemq.ActiveMQTopicTag"      		  name="topic" />
+    <def class="org.sapia.soto.activemq.ActiveMQQueueTag"      		  name="queue" />
+    <def class="org.apache.activemq.ActiveMQConnectionFactory"        name="factory" />
+    <def class="org.sapia.soto.activemq.util.QueueSenderPool"   	  name="queueSenderPool" />
+    <def class="org.sapia.soto.activemq.util.QueueReceiverPool"       name="queueReceiverPool" />
+    <def class="org.sapia.soto.activemq.util.TopicPublisherPool"      name="topicPublisherPool" />
+    <def class="org.sapia.soto.activemq.util.TopicSubscriberPool"     name="topicSubscriberPool" />
+    
+    <def class="org.apache.activemq.transport.discovery.multicast.MulticastDiscoveryAgent" name="multicastDiscovery" />
+    <def class="org.apache.activemq.store.memory.MemoryPersistenceAdapter"                 name="memoryPersistenceAdapter" />    
+    <def class="org.apache.activemq.store.DefaultPersistenceAdapterFactory"                name="journaledJDBC" />        
+    <def class="org.sapia.soto.activemq.KahaPersistenceAdapterTag"                         name="kahaPersistenceAdapter" />
+    <def class="org.apache.activemq.store.JDBCPersistenceAdapter"                          name="jdbcPersistenceAdapter" />        
+    <def class="com.mchange.v2.c3p0.ComboPooledDataSource"                                 name="dataSource" />
+    
+    <def class="org.sapia.soto.activemq.space.ActiveSpaceServiceImpl"   name="spaceFactory" />
+    <def class="org.sapia.soto.activemq.space.SpaceRef"                 name="space" />    
+
+    <def class="org.apache.activecluster.impl.ActiveMQClusterFactory" name="clusterFactory" />
+    <def class="org.sapia.soto.activemq.cluster.ActiveClusterRef"     name="cluster" />
+  </soto:namespace>
+</soto:defs>  

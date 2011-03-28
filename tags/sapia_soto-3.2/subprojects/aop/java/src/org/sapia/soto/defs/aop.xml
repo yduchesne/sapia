@@ -1,0 +1,5 @@
+<soto:defs xmlns:soto="sapia:soto">  
+  <soto:namespace prefix="aop">
+    <def class="org.sapia.soto.aop.AopLayer" name="aspect" />  
+  </soto:namespace>  
+</soto:defs>

@@ -1,0 +1,11 @@
+<soto:app xmlns:soto="sapia:soto">
+
+    <soto:namespace prefix="junit">
+        <def class="org.sapia.soto.me.HelloWorldService" name="helloWorld" />
+    </soto:namespace>
+    
+    <soto:service id="helloWorld">
+        <junit:helloWorld />
+    </soto:service>
+
+</soto:app>
