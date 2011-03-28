@@ -1,0 +1,8 @@
+<soto:app xmlns:soto="http://www.sapia-oss.org/soto/core/2003" >
+  
+  <soto:include uri="resource:/org/sapia/soto/includedParametrizedResource.xml">
+    <param name="msg" value="included" />
+  </soto:include>
+
+
+</soto:app>

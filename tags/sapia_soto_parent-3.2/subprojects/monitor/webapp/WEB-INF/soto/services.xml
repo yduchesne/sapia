@@ -1,0 +1,40 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:freemarker="soto:freemarker"
+          xmlns:ubik="soto:ubik">
+
+  <soto:service id="freemarker">
+    <freemarker:configuration>
+      <updateDelay>0</updateDelay>
+    </freemarker:configuration>
+  </soto:service>
+  
+  <soto:service id="defaultDomain">
+    <ubik:eventChannel domain="${corus.server.domain}"/>
+  </soto:service>  
+  
+  <soto:service id="monitor">
+    <ubik:monitor>
+      <soto:if param="monitor.test" equals="true">
+        <soto:new class="org.sapia.soto.ubik.monitor.mock.MockMonitorAgent">
+          <id>test.agent</id>
+          <className>sapia.soto.test.Agent</className>
+        </soto:new>
+      </soto:if>
+      <soto:if param="monitor.test" equals="true">
+        <soto:new class="org.sapia.soto.ubik.monitor.mock.MockMonitorAgent">
+          <id>test.agent</id>
+          <className>sapia.soto.test.Agent</className>
+          <error>true</error>
+        </soto:new>
+      </soto:if>          
+    
+      <soto:service>
+	      <ubik:domainMonitor>
+	        <eventChannel>
+		        <soto:serviceRef id="defaultDomain" />
+		      </eventChannel>
+	      </ubik:domainMonitor>
+	    </soto:service>
+    </ubik:monitor>
+  </soto:service>
+</soto:app>                                                                                

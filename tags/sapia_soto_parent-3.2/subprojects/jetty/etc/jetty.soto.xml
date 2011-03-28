@@ -1,0 +1,22 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:jetty="soto:jetty">
+  
+  <soto:service>
+    <jetty:server port="8989">
+    
+      <jetty:webApp>
+        <userRealm>
+          <soto:new class="org.mortbay.jetty.security.HashUserRealm">
+            <arg>Sample</arg>
+            <arg>${user.dir}/etc/realm.properties</arg>
+          </soto:new>        
+        </userRealm>
+        <contextPath>/sample</contextPath>
+        <location>${user.dir}/webapp</location>        
+        <param name="someKey" value="test" />        
+      </jetty:webApp>
+
+    </jetty:server>
+  </soto:service>  
+  
+</soto:app>

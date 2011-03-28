@@ -1,0 +1,18 @@
+<sample:dbService 
+      xmlns:soto="sapia:soto"
+      xmlns:regis="soto:regis"
+      xmlns:sample="soto:sample">
+  <username>${username}</username>
+  <password>${user.password}</password>
+  <url>
+    <regis:propertyRef name="url">
+      <node><soto:ref id="db02Node" /></node>
+    </regis:propertyRef>
+  </url>
+  <role>
+  	<regis:propertyRef path="subConfig" name="role" />
+  </role>  
+  <readOnly>
+  	<regis:propertyRef name="subConfig@readOnly" />
+  </readOnly>
+</sample:dbService>
