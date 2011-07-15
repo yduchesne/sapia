@@ -18,50 +18,59 @@ public class StdoutLog implements Log {
   public static final int INFO    = 1;
   public static final int WARNING = 2;
   public static final int FATAL   = 3;
+  public static final String LOG_NAME = "CORUS-INTEROP";
+  
   private int             _lvl = DEBUG;
 
   public void debug(Object o) {
     if (isValid(DEBUG)) {
-      System.out.println("INTEROP [DEBUG] " + o);
+      System.out.println(LOG_NAME+ " [DEBUG] " + o);
+      System.out.flush();
     }
   }
 
   public void info(Object o) {
     if (isValid(INFO)) {
-      System.out.println("INTEROP [INFO] " + o);
+      System.out.println(LOG_NAME+ " [INFO] " + o);
+      System.out.flush();
     }
   }
 
   public void info(Object o, Throwable t) {
     if (isValid(INFO)) {
-      System.out.println("INTEROP [INFO] " + o);
+      System.out.println(LOG_NAME+ " [INFO] " + o);
       t.printStackTrace(System.out);
+      System.out.flush();
     }
   }  
 
   public void warn(Object o, Throwable t) {
     if (isValid(WARNING)) {
-      System.out.println("INTEROP [WARNING] " + o);
+      System.out.println(LOG_NAME+ " [WARNING] " + o);
       t.printStackTrace(System.out);
+      System.out.flush();
     }
   }
 
   public void warn(Object o) {
     if (isValid(WARNING)) {
-      System.out.println("INTEROP [WARNING] " + o);
+      System.out.println(LOG_NAME+ " [WARNING] " + o);
+      System.out.flush();
     }
   }
 
   public void fatal(Object o, Throwable t) {
     if (isValid(FATAL)) {
-      System.out.println("INTEROP [FATAL] " + o);
+      System.out.println(LOG_NAME+ " [FATAL] " + o);
       t.printStackTrace(System.out);
+      System.out.flush();
     }
   }
 
   public void fatal(Object o) {
     if (isValid(FATAL)) {
-      System.out.println("INTEROP [FATAL] " + o);
+      System.out.println(LOG_NAME+ " [FATAL] " + o);
+      System.out.flush();
     }
   }
   
