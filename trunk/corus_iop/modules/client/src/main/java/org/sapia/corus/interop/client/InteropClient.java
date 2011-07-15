@@ -2,22 +2,21 @@ package org.sapia.corus.interop.client;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.Date;
-import org.sapia.corus.interop.api.Consts;
+import java.util.List;
+import java.util.Map;
+
 import org.sapia.corus.interop.Status;
+import org.sapia.corus.interop.api.Consts;
 import org.sapia.corus.interop.api.Implementation;
 import org.sapia.corus.interop.api.InteropLink;
-import org.sapia.corus.interop.soap.FaultException;
-
-import java.io.IOException;
-
-import java.lang.ref.SoftReference;
-
-import java.util.ArrayList;
-import java.util.List;
-import org.sapia.corus.interop.api.StatusRequestListener;
 import org.sapia.corus.interop.api.ShutdownListener;
+import org.sapia.corus.interop.api.StatusRequestListener;
+import org.sapia.corus.interop.soap.FaultException;
 
 
 /**
@@ -94,6 +93,7 @@ public class InteropClient implements Consts, Implementation {
   List<SoftReference<ShutdownListener>>      _shutdownListeners    = new ArrayList<SoftReference<ShutdownListener>>();
   List<SoftReference<StatusRequestListener>> _statusListeners      = new ArrayList<SoftReference<StatusRequestListener>>();
   boolean                 _exitSystemOnShutdown = true;
+  boolean                 _isShutdownInProgress = false;
   InteropClientThread     _thread;
   Log                     _log;
   ClientStatusListener    _listener;
@@ -122,10 +122,19 @@ public class InteropClient implements Consts, Implementation {
     } else {
       _log.warn("No corus process ID found; VM was not started dynamically");
     }
+    
     Runtime.getRuntime().addShutdownHook(new Thread() {
-      public void run() {
-    	  doShutdown();
-      }
+        public void run() {
+            _exitSystemOnShutdown = false;
+            _log.info("System shutdown hook called");
+          
+            if (_isShutdownInProgress) {
+                doLogThreadDumpCallingSystemExit();
+                doConfirmShutdownWithServer();
+            } else {
+                doShutdown();
+            }
+        }
     });
   }
   
@@ -265,35 +274,44 @@ public class InteropClient implements Consts, Implementation {
    * latter can cleanly shut down.
    */
   public synchronized void shutdown() {
-
-    if ((_thread != null) && (Thread.currentThread() == _thread)) {
-      _log.info("corus server initiated a shutdown");
-    }
-
-    if (_thread != null) {
-      _thread.interrupt();
-    }
-
-	 doShutdown();
-
-    if (_proto != null) {
-      try {
-        _proto.confirmShutdown();
-      } catch (Exception e) {
-        _log.warn(e);
+      _isShutdownInProgress = true;
+      
+      if ((_thread != null) && (Thread.currentThread() == _thread)) {
+          _log.info("corus server initiated a shutdown");
       }
-    }
-    
-    _thread = null;
-    _proto = null;
-    _instance = null;
 
-    if (_exitSystemOnShutdown) {
-      System.exit(0);
-    }
+      if (_thread != null) {
+          _thread.interrupt();
+      }
+
+      doShutdown();
+      doConfirmShutdownWithServer();
+    
+      _thread = null;
+      _proto = null;
+      _instance = null;
+      _isShutdownInProgress = false;
+
+      if (_exitSystemOnShutdown) {
+          _log.info("quitting virtual machine");
+          System.exit(0);
+      }
   }
   
-  private void doShutdown(){
+  private void doConfirmShutdownWithServer() {
+      if (_proto != null) {
+          try {
+              _proto.confirmShutdown();
+              _log.info("shutdown confirmed to server");
+              Thread.sleep(1000);    // give time to complete shutdown confirmation
+              
+          } catch (Exception e) {
+              _log.warn("Unable to confirm shutdown with server", e);
+          }
+      }
+  }
+  
+  private void doShutdown() {
     ShutdownListener listener;
 
     for (int i = 0; i < _shutdownListeners.size(); i++) {
@@ -309,6 +327,23 @@ public class InteropClient implements Consts, Implementation {
     }
   }
 
+  private void doLogThreadDumpCallingSystemExit() {
+    Map<Thread, StackTraceElement[]> threadDumps = Thread.getAllStackTraces(); 
+    for (Thread t: threadDumps.keySet()) {
+      StringBuilder builder = new StringBuilder().
+              append("Detecting thread calling System.exit() while performing shutdown...\n").
+              append(t.toString()).append("\n");
+      
+      for (StackTraceElement ste: threadDumps.get(t)) {
+        builder.append("\tat ").append(ste.toString()).append("\n");
+      }
+      
+      if (builder.indexOf("java.lang.System.exit(") >= 0) {
+        _log.warn(builder.toString());
+      }
+    }
+  }
+  
   /**
    * Adds a <code>ShutdownListener</code> to this client. The listener
    * is internally kept in a <code>SoftReference</code>, so client applications
