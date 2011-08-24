@@ -7,9 +7,11 @@ import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.StringArg;
 import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.deployer.DistributionCriteria;
 import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.ProcessCriteria;
 import org.sapia.corus.client.services.processor.ProcessDef;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.processor.ProcessDependencyFilter;
@@ -27,7 +29,7 @@ import org.sapia.corus.taskmanager.core.log.ProgressQueueTaskLog;
  * @author yduchesne
  *
  */
-public class ExecNewProcessesTask extends Task{
+public class ExecNewProcessesTask extends Task<Void, Void>{
   
   private StartupLock lock;
   private Set<ProcessDef> toStart;
@@ -38,7 +40,7 @@ public class ExecNewProcessesTask extends Task{
   }
   
   @Override
-  public Object execute(TaskExecutionContext ctx) throws Throwable {
+  public Void execute(TaskExecutionContext ctx, Void param) throws Throwable {
     
     if(toStart.size() == 0){
       ctx.info("No processes to start, aborting");
@@ -56,14 +58,20 @@ public class ExecNewProcessesTask extends Task{
       Arg version      = new StringArg(pd.getVersion());
       Arg processName  = new StringArg(pd.getName());
       
-      List<Process> activeProcesses = processes.getActiveProcesses().getProcesses(
-          distName, 
-          version,
-          pd.getProfile(),
-          processName);
+      ProcessCriteria criteria = ProcessCriteria.builder()
+        .distribution(distName)
+        .version(version)
+        .profile(pd.getProfile())
+        .build();
+      
+      List<Process> activeProcesses = processes.getActiveProcesses().getProcesses(criteria);
       if(activeProcesses.size() == 0){
         try{
-            dist = deployer.getDistribution(distName, version);
+          DistributionCriteria distCriteria = DistributionCriteria.builder()
+            .name(distName)
+            .version(version)
+            .build();
+          dist = deployer.getDistribution(distCriteria);
         }catch(DistributionNotFoundException e){
           ctx.warn("Could not acquire distribution", e);
           // noop;
@@ -101,6 +109,7 @@ public class ExecNewProcessesTask extends Task{
       MultiExecTask exec = new MultiExecTask(lock, filteredProcesses);
       ctx.getTaskManager().executeBackground(
           exec, 
+          null,
           BackgroundTaskConfig.create()
             .setExecDelay(0)
             .setExecInterval(processor.getConfiguration().getExecIntervalMillis()));

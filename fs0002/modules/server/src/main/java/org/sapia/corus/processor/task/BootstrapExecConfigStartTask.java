@@ -24,9 +24,9 @@ public class BootstrapExecConfigStartTask extends AbstractExecConfigStartTask{
   }
   
   @Override
-  public Object execute(TaskExecutionContext ctx) throws Throwable {
+  public Void execute(TaskExecutionContext ctx, Void param) throws Throwable {
     ctx.info("Checking for bootstrap processes; will start if any is found");
-    return super.execute(ctx);
+    return super.execute(ctx, param);
   }
   
   @Override

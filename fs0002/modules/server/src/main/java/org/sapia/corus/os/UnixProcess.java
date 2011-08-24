@@ -1,4 +1,4 @@
-package org.sapia.corus.processor;
+package org.sapia.corus.os;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import org.sapia.console.CmdLine;
 import org.sapia.console.ExecHandle;
+import org.sapia.corus.client.services.os.OsModule.LogCallback;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.util.IOUtils;
 
@@ -16,18 +17,11 @@ import org.sapia.corus.util.IOUtils;
  * 
  * @author Yanick Duchesne
  *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class UnixProcess implements NativeProcess {
   
-  /**
-   * @see NativeProcess#exec(TaskExecutionContext, File, CmdLine)
-   */
-  public String exec(TaskExecutionContext ctx, File baseDir, CmdLine cmd) throws IOException {
+  @Override
+  public String exec(LogCallback log, File baseDir, CmdLine cmd) throws IOException {
     // Generate the call to the javastart.sh script
     CmdLine javaCmd = new CmdLine();
     String cmdStr = System.getProperty("corus.home") + File.separator + "bin" + File.separator + "javastart.sh";
@@ -55,47 +49,45 @@ public class UnixProcess implements NativeProcess {
     // Extract the output stream of the process
     ByteArrayOutputStream anOutput = new ByteArrayOutputStream(1024);
     IOUtils.extractUntilAvailable(vmHandle.getInputStream(), anOutput, 5000);
-    ctx.debug(anOutput.toString("UTF-8").trim());
+    log.debug(anOutput.toString("UTF-8").trim());
     
     // Extract the process id
     String anOsPid = anOutput.toString().trim();
     StringTokenizer st = new StringTokenizer(anOsPid);
     if(st.hasMoreElements()){
       anOsPid = (String)st.nextElement();
-      ctx.debug("Got PID from process output: " + anOsPid);
+      log.debug("Got PID from process output: " + anOsPid);
     }
     
     // Extract the error stream of the process
     anOutput.reset();
     IOUtils.extractAvailable(vmHandle.getErrStream(), anOutput);
     if (anOutput.size() > 0) {
-      ctx.error("Error starting the process: " + anOutput.toString("UTF-8").trim());
+      log.error("Error starting the process: " + anOutput.toString("UTF-8").trim());
     }
 
     return anOsPid;
   }
   
-  /**
-   * @see NativeProcess#kill(TaskExecutionContext, String)
-   */
-  public void kill(TaskExecutionContext ctx, String pid) throws IOException {
+  @Override
+  public void kill(LogCallback log, String pid) throws IOException {
     // Generate the kill command
     CmdLine aKillCommand = CmdLine.parse("kill -9 " + pid);
     
     // Execute the kill command
-    ctx.debug("--> Executing: " + aKillCommand.toString());
+    log.debug("--> Executing: " + aKillCommand.toString());
     ExecHandle handle = aKillCommand.exec();
     
     // Extract the output stream of the process
     ByteArrayOutputStream anOutput = new ByteArrayOutputStream(1024);
     IOUtils.extractUntilAvailable(handle.getInputStream(), anOutput, 5000);
-    ctx.debug(anOutput.toString("UTF-8").trim());
+    log.debug(anOutput.toString("UTF-8").trim());
 
     // Extract the error stream of the process
     anOutput.reset();
     IOUtils.extractAvailable(handle.getErrStream(), anOutput);
     if (anOutput.size() > 0) {
-      ctx.error("Error killing the process: " + anOutput.toString("UTF-8").trim());
+      log.error("Error killing the process: " + anOutput.toString("UTF-8").trim());
     }
   }
 }

@@ -2,6 +2,7 @@ package org.sapia.corus.processor;
 
 import org.sapia.corus.client.services.deployer.dist.Distribution;
 import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
+import org.sapia.corus.client.services.processor.ProcessCriteria;
 
 public class ProcessRef {
 
@@ -49,6 +50,15 @@ public class ProcessRef {
 
   public ProcessConfig getProcessConfig() {
     return processConf;
+  }
+  
+  public ProcessCriteria getCriteria(){
+    return ProcessCriteria.builder()
+      .distribution(dist.getName())
+      .version(dist.getVersion())
+      .name(processConf.getName())
+      .profile(profile)
+      .build();
   }
 
   public int hashCode() {
