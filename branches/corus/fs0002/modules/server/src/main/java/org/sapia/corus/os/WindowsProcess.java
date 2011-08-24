@@ -1,4 +1,4 @@
-package org.sapia.corus.processor;
+package org.sapia.corus.os;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -8,6 +8,8 @@ import java.util.StringTokenizer;
 import org.sapia.console.CmdLine;
 import org.sapia.console.ExecHandle;
 import org.sapia.console.Option;
+import org.sapia.corus.client.services.os.OsModule;
+import org.sapia.corus.client.services.os.OsModule.LogCallback;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.util.IOUtils;
 
@@ -88,7 +90,7 @@ public class WindowsProcess implements NativeProcess {
    * Returns <code>null</code>
    * 
    */
-  public String exec(TaskExecutionContext ctx, File baseDir, CmdLine cmd) throws IOException {
+  public String exec(OsModule.LogCallback log, File baseDir, CmdLine cmd) throws IOException {
     // Generate the call to the javastart.bat script
     CmdLine javaCmd = new CmdLine();
     String cmdStr = System.getProperty("corus.home") + File.separator + "bin" + File.separator + "javastart.bat";
@@ -108,7 +110,7 @@ public class WindowsProcess implements NativeProcess {
     }
     javaCmd.addArg("\"");
 
-    ctx.debug(javaCmd.toString());
+    log.debug(javaCmd.toString());
     
     if(!baseDir.exists()){
       throw new IOException("Process directory does not exist: " + baseDir.getAbsolutePath());
@@ -119,25 +121,25 @@ public class WindowsProcess implements NativeProcess {
     // Extract the output stream of the process
     ByteArrayOutputStream anOutput = new ByteArrayOutputStream(1024);
     IOUtils.extractUntilAvailable(vmHandle.getInputStream(), anOutput, 1000);
-    ctx.debug(anOutput.toString("UTF-8"));
+    log.debug(anOutput.toString("UTF-8"));
 
     // Extract the error stream of the process
     anOutput.reset();
     IOUtils.extractAvailable(vmHandle.getErrStream(), anOutput);
     if (anOutput.size() > 0) {
-      ctx.error("Error starting the process: " + anOutput.toString("UTF-8"));
+      log.error("Error starting the process: " + anOutput.toString("UTF-8"));
     }
 
     // Retrieve the OS pid using the process viewer tool
     CmdLine aListCommand = createPVCmdLine();
     aListCommand.addArg("--tree").addArg("-l" + extractPattern(cmd));
-    ctx.debug("--> Executing: " + aListCommand.toString());
+    log.debug("--> Executing: " + aListCommand.toString());
     ExecHandle pvHandle = aListCommand.exec(baseDir, null);
 
     // Extract the output stream of the process
     anOutput.reset();
     IOUtils.extractUntilAvailable(pvHandle.getInputStream(), anOutput, 5000);
-    ctx.debug(anOutput.toString("UTF-8"));
+    log.debug(anOutput.toString("UTF-8"));
 
     // Generates a string of the format "\njavaw.exe       (284)\n" 
     String anOsPid = null;
@@ -152,7 +154,7 @@ public class WindowsProcess implements NativeProcess {
       StringTokenizer st = new StringTokenizer(anOsPid);
       if(st.hasMoreElements()){
         anOsPid = (String)st.nextElement();
-        ctx.debug("Got PID from process output: " + anOsPid);
+        log.debug("Got PID from process output: " + anOsPid);
       }    
     }
 
@@ -160,34 +162,33 @@ public class WindowsProcess implements NativeProcess {
     anOutput.reset();
     IOUtils.extractAvailable(pvHandle.getErrStream(), anOutput);
     if (anOutput.size() > 0) {
-      ctx.error("Error getting the process id: " + anOutput.toString("UTF-8"));
+      log.error("Error getting the process id: " + anOutput.toString("UTF-8"));
     }
 
     return anOsPid;
   }
+
   
-  /**
-   * Empty implementation - kill not supported on Windows platforms.
-   */
-  public void kill(TaskExecutionContext ctx, String pid) throws IOException {
+  @Override
+  public void kill(OsModule.LogCallback log, String pid) throws IOException {
     // Generate the kill command
     CmdLine aKillCommand = createPVCmdLine();
     aKillCommand.addOpt("-kill", null).addOpt("-id", pid).addOpt("-force", null);
     
     // Execute the kill command
-    ctx.debug("--> Executing: " + aKillCommand.toString());
+    log.debug("--> Executing: " + aKillCommand.toString());
     ExecHandle pvHandle = aKillCommand.exec();
     
     // Extract the output stream of the process
     ByteArrayOutputStream anOutput = new ByteArrayOutputStream(1024);
     IOUtils.extractUntilAvailable(pvHandle.getInputStream(), anOutput, 5000);
-    ctx.debug(anOutput.toString("UTF-8"));
+    log.debug(anOutput.toString("UTF-8"));
 
     // Extract the error stream of the process
     anOutput.reset();
     IOUtils.extractAvailable(pvHandle.getErrStream(), anOutput);
     if (anOutput.size() > 0) {
-      ctx.error("Error killing the process: " + anOutput.toString("UTF-8"));
+      log.error("Error killing the process: " + anOutput.toString("UTF-8"));
     }
   }
 }

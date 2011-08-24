@@ -17,7 +17,7 @@ public interface TaskListener {
    * if the task returned no result.
    * @see Task#execute(TaskExecutionContext)
    */
-  public void executionSucceeded(Task task, Object result);
+  public void executionSucceeded(Task<?, ?> task, Object result);
  
   /**
    * Call when execution of a given task result in an error .
@@ -25,5 +25,5 @@ public interface TaskListener {
    * @param err the actual error that was thrown.
    * @see Task#execute(TaskExecutionContext)
    */
-  public void executionFailed(Task task, Throwable err);
+  public void executionFailed(Task<?, ?> task, Throwable err);
 }

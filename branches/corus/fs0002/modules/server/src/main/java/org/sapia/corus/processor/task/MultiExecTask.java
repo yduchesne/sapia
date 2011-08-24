@@ -9,8 +9,9 @@ import org.sapia.corus.processor.ProcessRepository;
 import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
+import org.sapia.corus.taskmanager.core.TaskParams;
 
-public class MultiExecTask extends Task{
+public class MultiExecTask extends Task<Void, Void>{
   
   private List<ProcessRef>  _processRefs;
   private StartupLock       _lock;
@@ -25,7 +26,7 @@ public class MultiExecTask extends Task{
   }
   
   @Override
-  public Object execute(TaskExecutionContext ctx) throws Throwable {
+  public Void execute(TaskExecutionContext ctx, Void param) throws Throwable {
     ProcessRepository processes = ctx.getServerContext().getServices().getProcesses();
     Configurator configurator = ctx.getServerContext().getServices().lookup(Configurator.class);
 
@@ -46,7 +47,7 @@ public class MultiExecTask extends Task{
           // not root, we take into account the currently active
           // processes for the given process ref
           else{
-            _startedCount = processes.getProcessCountFor(_current);
+            _startedCount = processes.getActiveProcessCountFor(_current.getCriteria());
           }
         }
         
@@ -79,10 +80,10 @@ public class MultiExecTask extends Task{
                 _current.getDist().getName() + ", " + _current.getDist().getVersion() + 
                 ", " + _current.getProfile());
           
-          ExecTask exec = new ExecTask(_current.getDist(), 
-                                       _current.getProcessConfig(), 
-                                       _current.getProfile());
-          ctx.getTaskManager().executeAndWait(exec);
+          ctx.getTaskManager().executeAndWait(
+              new ExecTask(), 
+              TaskParams.createFor(_current.getDist(), _current.getProcessConfig(), _current.getProfile())
+          );
           
           // incrementing
           _startedCount++;

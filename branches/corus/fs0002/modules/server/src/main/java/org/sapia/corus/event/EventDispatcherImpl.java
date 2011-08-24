@@ -1,8 +1,6 @@
 package org.sapia.corus.event;
 
 import org.apache.log.Hierarchy;
-
-
 import org.apache.log.Logger;
 import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.Service;
