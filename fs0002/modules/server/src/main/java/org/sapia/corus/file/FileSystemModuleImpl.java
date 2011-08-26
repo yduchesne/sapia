@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Expand;
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.common.ZipUtils;
 import org.sapia.corus.client.services.file.FileSystemModule;
 import org.sapia.corus.core.ModuleHelper;
@@ -18,6 +19,7 @@ import org.sapia.corus.core.ModuleHelper;
  * @author yduchesne
  *
  */
+@Bind(moduleInterface=FileSystemModule.class)
 public class FileSystemModuleImpl extends ModuleHelper implements FileSystemModule {
 
   private static final int  ZIP_READ_CAPACITY = 2048;

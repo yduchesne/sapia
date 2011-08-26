@@ -85,7 +85,8 @@ public class ProcessRef {
     return new StringBuilder("[")
     .append("dist=").append(dist.getName()).append(", ")
     .append("version=").append(dist.getVersion()).append(", ")
-    .append("process=").append(processConf.getName())
+    .append("process=").append(processConf.getName()).append(", ")
+    .append("profile=").append(getProfile())
     .append("]")
     .toString();
   }

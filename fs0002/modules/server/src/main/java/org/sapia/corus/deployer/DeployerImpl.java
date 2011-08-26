@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.sapia.corus.client.annotations.Bind;
@@ -79,7 +77,6 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   @Autowired
   private DeployerConfiguration _configuration;
   
-  private Map<String, FileLock> _deployLocks = new HashMap<String, FileLock>();
   private DeploymentProcessor _processor;
   private DistributionDatabase   _store;
 
@@ -392,9 +389,8 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
   }
 
 
-  synchronized ProgressQueue unlockDeployFile(String fileName) {
+  synchronized ProgressQueue completeDeployment(String fileName) {
     _logger.info("Finished uploading " + fileName);
-    releaseFileLock(_deployLocks, fileName);
     ProgressQueue progress = new ProgressQueueImpl();
     try {
       _taskman.executeAndWait(
@@ -410,28 +406,7 @@ public class DeployerImpl extends ModuleHelper implements Deployer,
     return progress;
   }
 
-  /**
-  private synchronized FileLock acquireFileLock(Map<String, FileLock> locks, String fileName)
-    throws ConcurrentDeploymentException, InterruptedException {
-    FileLock fLock = (FileLock) locks.get(fileName);
 
-    if (fLock == null) {
-      fLock = new FileLock(fileName, _configuration.getFileLockTimeout());
-      locks.put(fileName, fLock);
-    }
-
-    fLock.acquire();
-
-    return fLock;
-  }*/
-
-  private synchronized void releaseFileLock(Map<String, FileLock> locks, String fileName) {
-    FileLock fLock = (FileLock) locks.get(fileName);
-
-    if (fLock != null) {
-      fLock.release();
-    }
-  }
 
   private void assertFile(File f) {
     f.mkdirs();

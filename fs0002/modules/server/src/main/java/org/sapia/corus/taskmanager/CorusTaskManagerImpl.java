@@ -22,7 +22,7 @@ import org.sapia.ubik.rmi.Remote;
  * 
  * @author Yanick Duchesne
  */
-@Bind(moduleInterface=CorusTaskManager.class)
+@Bind(moduleInterface={TaskManager.class, CorusTaskManager.class})
 @Remote(interfaces=CorusTaskManager.class)
 public class CorusTaskManagerImpl extends ModuleHelper implements CorusTaskManager{
   

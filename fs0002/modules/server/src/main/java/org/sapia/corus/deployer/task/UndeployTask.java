@@ -42,7 +42,7 @@ public class UndeployTask extends Task<Void,TaskParams<Arg, Arg, Void, Void>> im
     List<Distribution> dists    = db.getDistributions(criteria);
     for(Distribution dist:dists){
       File         distDir = new File(dist.getBaseDir());
-      ctx.info(String.format("Undeploying distribution %s, version %s", params.getParam1(), params.getParam2()));
+      ctx.info(String.format("Undeploying distribution %s", dist.getDislayInfo()));
       fs.deleteDirectory(distDir);
       db.removeDistribution(criteria);
       ctx.info("Undeployment successful");

@@ -47,7 +47,6 @@ import org.sapia.corus.taskmanager.core.TaskLogProgressQueue;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.taskmanager.core.TaskParams;
 import org.sapia.corus.taskmanager.core.ThrottleFactory;
-import org.sapia.corus.taskmanager.core.TimeIntervalThrottle;
 import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +81,6 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   
   private ProcessRepository      _processes;
   private ExecConfigDatabaseImpl _execConfigs;
-  private StartupLock            _startLock;  
   
   public ProcessorConfiguration getConfiguration() {
     return _configuration;
@@ -90,13 +88,11 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
   public void init() throws Exception {
 
-    _startLock = new StartupLock(_configuration.getStartIntervalMillis());
-    
     services().getTaskManager().registerThrottle(
         ProcessorThrottleKeys.PROCESS_EXEC, 
         ThrottleFactory.createTimeIntervalThrottle(
             TimeUnit.MILLISECONDS, 
-            _configuration.getExecIntervalMillis()
+            _configuration.getStartIntervalMillis()
         )
     );    
         
@@ -135,14 +131,14 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     ProcessorExtension ext = new ProcessorExtension(this, serverContext());
     _http.addHttpExtension(ext);
     
-    BootstrapExecConfigStartTask boot = new BootstrapExecConfigStartTask(_startLock);
+    BootstrapExecConfigStartTask boot = new BootstrapExecConfigStartTask();
     
     _taskman.executeBackground(
         boot,
         null,
         BackgroundTaskConfig.create()
           .setExecDelay(_configuration.getBootExecDelayMillis())
-          .setExecInterval(_configuration.getExecIntervalMillis()));
+          .setExecInterval(_configuration.getStartIntervalMillis()));
     
     ProcessCheckTask check = new ProcessCheckTask();
     _taskman.executeBackground(
@@ -175,7 +171,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   
   public ProgressQueue exec(String execConfigName) {
     ProgressQueue progress = new ProgressQueueImpl();
-    EndUserExecConfigStartTask start = new EndUserExecConfigStartTask(execConfigName, _startLock);
+    EndUserExecConfigStartTask start = new EndUserExecConfigStartTask(execConfigName);
     try{
       _taskman.executeAndWait(
           start, 
@@ -247,13 +243,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         toStart.add(copy);
       }
       
-      MultiExecTask  exec = new MultiExecTask(_startLock, toStart);
-      _taskman.executeBackground(
-          exec,
-          null,
-          BackgroundTaskConfig.create()
-            .setExecDelay(0)
-            .setExecInterval(_configuration.getExecIntervalMillis()));
+      _taskman.execute(new MultiExecTask(), toStart);
       
       q.close();
       return q;
