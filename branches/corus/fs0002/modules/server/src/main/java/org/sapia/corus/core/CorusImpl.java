@@ -109,17 +109,16 @@ public class CorusImpl implements Corus, RemoteContextProvider {
         return props.getProperty(name);
       }
     };
-    final ModuleLifeCycleManager manager = new ModuleLifeCycleManager(serverContext, propContainer);
-    BeanFactoryPostProcessor postProcessor = new ConfigurationPostProcessor(serverContext, manager);
+    final ModuleLifeCycleManager manager                   = new ModuleLifeCycleManager(serverContext, propContainer);
+    BeanFactoryPostProcessor configPostProcessor           = new ConfigurationPostProcessor(serverContext, manager);
 
     GenericApplicationContext rootContext = new GenericApplicationContext();
     rootContext.getBeanFactory().registerSingleton("lifecycleManager", manager);
     rootContext.refresh();
     
     // core services context
-    
     ClassPathXmlApplicationContext coreContext = new ClassPathXmlApplicationContext(rootContext);
-    coreContext.addBeanFactoryPostProcessor(postProcessor);
+    coreContext.addBeanFactoryPostProcessor(configPostProcessor);
     coreContext.registerShutdownHook();
     coreContext.setConfigLocation("org/sapia/corus/core.xml");
     coreContext.refresh();
@@ -127,7 +126,7 @@ public class CorusImpl implements Corus, RemoteContextProvider {
     
     // module context
     ClassPathXmlApplicationContext moduleContext = new ClassPathXmlApplicationContext(coreContext);
-    moduleContext.addBeanFactoryPostProcessor(postProcessor);
+    moduleContext.addBeanFactoryPostProcessor(configPostProcessor);
     moduleContext.registerShutdownHook();
     moduleContext.setConfigLocation("org/sapia/corus/modules.xml");
     moduleContext.refresh();

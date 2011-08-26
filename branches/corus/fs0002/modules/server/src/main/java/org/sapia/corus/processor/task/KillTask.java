@@ -66,7 +66,7 @@ public class KillTask extends Task<Void, TaskParams<Process, ProcessTerminationR
     ctx.debug(String.format("Killing %s", proc));
 
     // refreshing - another thread might have updated the process instance
-    // since last execution
+    // since last execution (for example, process might have confirmed kill)
     proc.refresh();
 
     // acquiring lock on process (might already be acquired from

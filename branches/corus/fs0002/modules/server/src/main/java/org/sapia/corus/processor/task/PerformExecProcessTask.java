@@ -47,8 +47,8 @@ public class PerformExecProcessTask extends Task<Boolean, TaskParams<ProcessInfo
     ProcessConfig conf              = info.getConfig();
     Process       process           = info.getProcess();
     Distribution  dist              = info.getDistribution();
-    PortManager   ports             = ctx.getServerContext().getServices().lookup(PortManager.class);
-    OsModule      os                = ctx.getServerContext().getServices().lookup(OsModule.class);
+    PortManager   ports             = ctx.getServerContext().getServices().getPortManager();
+    OsModule      os                = ctx.getServerContext().getServices().getOS();
 
     if (conf.getMaxKillRetry() >= 0) {
       process.setMaxKillRetry(conf.getMaxKillRetry());

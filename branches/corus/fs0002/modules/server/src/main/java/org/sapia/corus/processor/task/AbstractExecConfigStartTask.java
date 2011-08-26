@@ -14,7 +14,6 @@ import org.sapia.corus.client.services.processor.ProcessDef;
 import org.sapia.corus.client.services.processor.ProcessorConfiguration;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
 import org.sapia.corus.processor.ProcessRepository;
-import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.BackgroundTaskListener;
 import org.sapia.corus.taskmanager.core.Task;
@@ -31,11 +30,9 @@ import org.sapia.corus.taskmanager.core.TaskParams;
  */
 public abstract class AbstractExecConfigStartTask extends Task<Void, Void>{
   
-  protected StartupLock lock;
   private boolean stopExistingProcesses;
   
-  public AbstractExecConfigStartTask(StartupLock lock, boolean stopExistingProcesses) {
-    this.lock = lock;
+  public AbstractExecConfigStartTask(boolean stopExistingProcesses) {
     this.stopExistingProcesses = stopExistingProcesses;
   }
   
@@ -124,9 +121,9 @@ public abstract class AbstractExecConfigStartTask extends Task<Void, Void>{
   }
   
   private void execNewProcesses(TaskManager tm, Set<ProcessDef> toStart){
-    ExecNewProcessesTask exec = new ExecNewProcessesTask(lock, toStart);
+    ExecNewProcessesTask exec = new ExecNewProcessesTask(toStart);
     try{
-      tm.executeAndWait(exec, null).get();
+      tm.execute(exec, null);
     }catch(Throwable err){
       err.printStackTrace();
     }

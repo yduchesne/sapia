@@ -131,17 +131,9 @@ class ModuleLifeCycleManager implements ServerContext, PropertyProvider{
   }
   
   void startServices() throws Exception{
-    
     for(ApplicationContext context:contexts){
       for(String name:context.getBeanDefinitionNames()){
         Object bean = context.getBean(name);
-        if(bean != null){
-          if(bean.getClass().isAnnotationPresent(Bind.class)){
-            Bind bind = bean.getClass().getAnnotation(Bind.class);
-            logger.debug(String.format("Binding %s as module %s", bean.getClass().getName(), bind.moduleInterface().getName()));
-            delegate.getServices().bind(bind.moduleInterface(), bean);
-          }
-        }
         if(bean instanceof Service){
           try{
             Service service = (Service)bean;
@@ -152,5 +144,6 @@ class ModuleLifeCycleManager implements ServerContext, PropertyProvider{
         }
       }
     }
+    
   }  
 }

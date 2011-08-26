@@ -9,6 +9,7 @@ import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.file.FileSystemModule;
 import org.sapia.corus.client.services.os.OsModule;
+import org.sapia.corus.client.services.port.PortManager;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.deployer.DistributionDatabase;
 import org.sapia.corus.processor.ExecConfigDatabase;
@@ -84,6 +85,13 @@ public class InternalServiceContext {
    */
   public TaskManager getTaskManager(){
     return lookup(TaskManager.class);
+  }
+  
+  /**
+   * @return the {@link PortManager}
+   */
+  public PortManager getPortManager(){
+    return lookup(PortManager.class);
   }
   
   /**

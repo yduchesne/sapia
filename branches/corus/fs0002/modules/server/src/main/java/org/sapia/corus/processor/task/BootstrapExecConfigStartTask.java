@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.sapia.corus.client.services.processor.ExecConfig;
 import org.sapia.corus.processor.ExecConfigDatabase;
-import org.sapia.corus.processor.StartupLock;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 
 /**
@@ -18,8 +17,8 @@ import org.sapia.corus.taskmanager.core.TaskExecutionContext;
  */
 public class BootstrapExecConfigStartTask extends AbstractExecConfigStartTask{
 
-  public BootstrapExecConfigStartTask(StartupLock lock) {
-    super(lock, true);
+  public BootstrapExecConfigStartTask() {
+    super(true);
     super.setMaxExecution(1);
   }
   

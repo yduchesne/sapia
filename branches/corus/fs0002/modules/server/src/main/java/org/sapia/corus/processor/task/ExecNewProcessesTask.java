@@ -17,8 +17,6 @@ import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.processor.ProcessDependencyFilter;
 import org.sapia.corus.processor.ProcessRef;
 import org.sapia.corus.processor.ProcessRepository;
-import org.sapia.corus.processor.StartupLock;
-import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.log.ProgressQueueTaskLog;
@@ -31,11 +29,9 @@ import org.sapia.corus.taskmanager.core.log.ProgressQueueTaskLog;
  */
 public class ExecNewProcessesTask extends Task<Void, Void>{
   
-  private StartupLock lock;
   private Set<ProcessDef> toStart;
   
-  public ExecNewProcessesTask(StartupLock lock, Set<ProcessDef> toStart) {
-    this.lock = lock;
+  public ExecNewProcessesTask(Set<ProcessDef> toStart) {
     this.toStart = toStart;
   }
   
@@ -106,13 +102,7 @@ public class ExecNewProcessesTask extends Task<Void, Void>{
         ctx.info(ref.toString());
       }
       
-      MultiExecTask exec = new MultiExecTask(lock, filteredProcesses);
-      ctx.getTaskManager().executeBackground(
-          exec, 
-          null,
-          BackgroundTaskConfig.create()
-            .setExecDelay(0)
-            .setExecInterval(processor.getConfiguration().getExecIntervalMillis()));
+      ctx.getTaskManager().execute(new MultiExecTask(), filteredProcesses);
     }
     else{
       ctx.error("No processes found to execute");

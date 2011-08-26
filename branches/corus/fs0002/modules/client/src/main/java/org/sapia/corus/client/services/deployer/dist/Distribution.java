@@ -29,7 +29,6 @@ public class Distribution implements java.io.Serializable, ObjectCreationCallbac
   static final long serialVersionUID = 1L;
 
   private static final String DEPLOYMENT_DESCRIPTOR = "META-INF/corus.xml";
-  private static final int    CAPACITY   = 4096;
   private String              _name;
   private String              _version;
   private String              _baseDir;
@@ -265,6 +264,10 @@ public class Distribution implements java.io.Serializable, ObjectCreationCallbac
       throw new DeploymentException("could not extract entry: " +
                                     DEPLOYMENT_DESCRIPTOR, e);
     }
+  }
+  
+  public String getDislayInfo(){
+    return String.format("[%s-%s]", _name, _version);
   }
 
   public String toString() {
