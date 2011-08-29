@@ -98,7 +98,7 @@ class NodeIntrospector {
       if (node.isRoot()) {
         throw new IllegalStateException("Cannot get class name for root node");
       } else {
-        this.className = CodeGenUtils.toCamelCase(node.getName());
+        this.className = CodeGenUtils.toCamelCase(node.getName(), true);
       }
     }
     if (Character.isDigit(className.charAt(0))) {

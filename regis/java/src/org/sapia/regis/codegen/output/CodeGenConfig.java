@@ -17,6 +17,8 @@ public class CodeGenConfig {
   private File destinationDir;
   
   private String version;
+  
+  private boolean generateGetters;
 
   /**
    * @param dest a {@link File} corresponding to the directory where the generated code will
@@ -73,4 +75,14 @@ public class CodeGenConfig {
     this.version = version;
   }
 
+  /**
+   * @return <code>true</code> if getters should be generated as accessors.
+   */
+  public boolean isGenerateGetters() {
+    return generateGetters;
+  }
+  
+  public void setGenerateGetters(boolean generateGetters) {
+    this.generateGetters = generateGetters;
+  }
 }

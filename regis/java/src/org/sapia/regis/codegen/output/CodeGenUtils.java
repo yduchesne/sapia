@@ -2,12 +2,12 @@ package org.sapia.regis.codegen.output;
 
 class CodeGenUtils {
 
-  static String toCamelCase(String s) {
+  static String toCamelCase(String s, boolean isFirstCapital) {
     StringBuilder sb = new StringBuilder();
     boolean setToCapital = false;
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-      if (i == 0) {
+      if (i == 0 && isFirstCapital) {
         c = Character.toUpperCase(c);
       } else if (!Character.isLetterOrDigit(c)) {
         setToCapital = true;
