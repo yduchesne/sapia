@@ -17,6 +17,7 @@ public class CodeGenTask extends Task{
   
   private File propFile, destDir;
   private String packagePrefix, rootClassName, version;
+  private boolean generateGetters = true;
   
   public void setPackagePrefix(String prefix){
     packagePrefix = prefix;
@@ -36,6 +37,10 @@ public class CodeGenTask extends Task{
   
   public void setVersion(String version){
     this.version = version;
+  }
+  
+  public void setGenerateGetters(boolean generateGetters) {
+    this.generateGetters = generateGetters;
   }
   
   public void execute() throws BuildException {
@@ -74,6 +79,7 @@ public class CodeGenTask extends Task{
     conf.setPackagePrefix(packagePrefix);
     conf.setRootClassName(rootClassName);
     conf.setVersion(version);
+    conf.setGenerateGetters(generateGetters);
     
     CodeGenerator generator = new CodeGenerator(reg, conf);
     try{

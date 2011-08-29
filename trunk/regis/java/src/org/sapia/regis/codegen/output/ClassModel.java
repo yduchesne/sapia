@@ -72,14 +72,21 @@ class ClassModel {
           + NodeCapable.class.getName() +  " {");
       writer.println();
       for (PropertyModel p : getProperties()) {
-        p.toSource(writer, true);
+        p.toSource(writer, true, ctx.getConfig().isGenerateGetters());
       }
       
       for (ClassModelMember member : members) {
         if (member.getModel().ctx.getHints().getParentInterface() == null) {
-          writer.println("  public "
-              + member.getModel().ctx.getFullyQualifiedClassName() + " get"
-              + CodeGenUtils.toCamelCase(member.getName()) + "();");
+          if(ctx.getConfig().isGenerateGetters()){
+            writer.println("  public "
+                + member.getModel().ctx.getFullyQualifiedClassName() + " get"
+                + CodeGenUtils.toCamelCase(member.getName(), true) + "();");
+          }
+          else{
+            writer.println("  public "
+                + member.getModel().ctx.getFullyQualifiedClassName() 
+                + CodeGenUtils.toCamelCase(member.getName(), false) + "();");
+          }
         }
       }      
       
@@ -114,13 +121,20 @@ class ClassModel {
       writer.println("  }");
       writer.println();
       for (PropertyModel p : getProperties()) {
-        p.toSource(writer, false);
+        p.toSource(writer, false, ctx.getConfig().isGenerateGetters());
       }
       for (ClassModelMember member : members) {
         if (member.getModel().ctx.getHints().getParentInterface() == null) {
-          writer.println("  public "
-              + member.getModel().ctx.getFullyQualifiedClassName() + " get"
-              + CodeGenUtils.toCamelCase(member.getName()) + "(){");
+          if(ctx.getConfig().isGenerateGetters()){
+            writer.println("  public "
+                + member.getModel().ctx.getFullyQualifiedClassName() + " get"
+                + CodeGenUtils.toCamelCase(member.getName(), true) + "(){");
+          }
+          else if(ctx.getConfig().isGenerateGetters()){
+            writer.println("  public "
+                + member.getModel().ctx.getFullyQualifiedClassName() 
+                + CodeGenUtils.toCamelCase(member.getName(), false) + "(){");
+          }          
           writer.println("    return getInstanceFor("
               + member.getModel().ctx.getFullyQualifiedClassName()
               + ".class, \"" + member.getName() + "\");");

@@ -6,19 +6,31 @@ import org.sapia.regis.Property;
 
 class PropertyModel implements Comparable<PropertyModel> {
 
-  Property property;
+  private Property property;
 
   PropertyModel(Property prop) {
     this.property = prop;
   }
 
-  void toSource(PrintWriter writer, boolean isInterface) {
+  void toSource(PrintWriter writer, boolean isInterface, boolean generateGetters) {
     if (isInterface) {
-      writer.println("  public " + Property.class.getName() + " get"
-          + CodeGenUtils.toCamelCase(property.getKey()) + "();");
+      if(generateGetters){
+        writer.println("  public " + Property.class.getName() + " get"
+            + CodeGenUtils.toCamelCase(property.getKey(), true) + "();");
+      }
+      else{
+        writer.println("  public " + Property.class.getName() 
+            + CodeGenUtils.toCamelCase(property.getKey(), false) + "();");        
+      }
     } else {
-      writer.println("  public " + Property.class.getName() + " get"
-          + CodeGenUtils.toCamelCase(property.getKey()) + "() {");
+      if(generateGetters){
+        writer.println("  public " + Property.class.getName() + " get"
+            + CodeGenUtils.toCamelCase(property.getKey(), true) + "() {");
+      }
+      else{
+        writer.println("  public " + Property.class.getName()
+            + CodeGenUtils.toCamelCase(property.getKey(), false) + "() {");        
+      }
       writer.println("    return this.node.getProperty(\"" + property.getKey()
           + "\");");
       writer.println("  }");

@@ -33,12 +33,16 @@ public class NodeLookup {
     return lookup;
   }
   
+  @SuppressWarnings(value="unchecked")
+  public <T extends NodeCapable> T getInstanceFor(Class<T> nodeClass){ 
+    return (T)getRawInstanceFor(nodeClass);
+  }
+  
   /**
-   * @param <T> the type of the class whose instance to return.
    * @param nodeClass a {@link Class} object.
    * @return the {@link NodeCapable} instance that was instantiated.
    */
-  public <T extends NodeCapable> T getInstanceFor(Class<T> nodeClass){
+  public Object getRawInstanceFor(Class<?> nodeClass){
     String path = null;
     try{
       path = (String)nodeClass.getField("NODE_PATH").get(null);
@@ -57,6 +61,7 @@ public class NodeLookup {
       throw new IllegalStateException("Could not invoke constructor on class " + nodeClass, e);
     }
   }
+  
   
 }
 
