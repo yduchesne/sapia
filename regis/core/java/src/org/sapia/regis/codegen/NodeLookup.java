@@ -43,6 +43,14 @@ public class NodeLookup {
    * @return the {@link NodeCapable} instance that was instantiated.
    */
   public Object getRawInstanceFor(Class<?> nodeClass){
+    try{
+      return  nodeClass.getConstructor(new Class[]{Node.class}).newInstance(getNodeFor(nodeClass));
+    }catch(Exception e){
+      throw new IllegalStateException("Could not invoke constructor on class " + nodeClass, e);
+    }
+  }
+  
+  public Node getNodeFor(Class<?> nodeClass){
     String path = null;
     try{
       path = (String)nodeClass.getField("NODE_PATH").get(null);
@@ -55,13 +63,11 @@ public class NodeLookup {
       throw new IllegalStateException("Static NODE_PATH field is null on class " + nodeClass);
     }
     Node child = root.getChild(Path.parse(path));
-    try{
-      return  nodeClass.getConstructor(new Class[]{Node.class}).newInstance(child);
-    }catch(Exception e){
-      throw new IllegalStateException("Could not invoke constructor on class " + nodeClass, e);
+    if(child == null){
+      throw new IllegalStateException("No node found for " + path);
     }
+    return child;
   }
-  
   
 }
 

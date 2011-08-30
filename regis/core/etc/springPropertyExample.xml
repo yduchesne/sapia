@@ -1,0 +1,9 @@
+<registry>
+  <node name="user">
+    <property name="username"  value="jsmith" />
+    <property name="age"       value="23" />      
+    <property name="admin"     value="true" />
+    <property name="timestamp" value="0123456789" />            
+    <property name="valid"     value="true" />
+  </node>
+</registry>

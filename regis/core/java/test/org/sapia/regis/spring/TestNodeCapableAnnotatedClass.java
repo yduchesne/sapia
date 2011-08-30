@@ -2,7 +2,7 @@ package org.sapia.regis.spring;
 
 public class TestNodeCapableAnnotatedClass {
 
-  @Regis
+  @Lookup
   private TestNodeCapable nodeCapable;
     
   public TestNodeCapable getNodeCapable() {

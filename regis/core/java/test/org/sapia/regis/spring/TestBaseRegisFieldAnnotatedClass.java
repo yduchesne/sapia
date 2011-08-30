@@ -7,7 +7,7 @@ public class TestBaseRegisFieldAnnotatedClass {
   
   private Registry registry;
   
-  @Regis(node="databases/000")
+  @Lookup(path="databases/000")
   private Node node;
 
   

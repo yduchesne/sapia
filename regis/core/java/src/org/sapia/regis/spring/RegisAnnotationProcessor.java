@@ -9,12 +9,16 @@ import java.util.Properties;
 
 import org.sapia.regis.Node;
 import org.sapia.regis.Path;
+import org.sapia.regis.Property;
 import org.sapia.regis.Registry;
 import org.sapia.regis.RegistryContext;
 import org.sapia.regis.codegen.NodeCapable;
 import org.sapia.regis.codegen.NodeLookup;
+import org.sapia.regis.impl.PropertyImpl;
+import org.sapia.regis.util.Work;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
@@ -26,34 +30,38 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 public class RegisAnnotationProcessor implements BeanPostProcessor, InitializingBean{
   
   private Registry    registry;
-  private String      propertiesPath;  
+  private String      bootstrap;  
   
   void setRegistry(Registry registry) {
     this.registry = registry;
   }
   
-  public void setPropertiesPath(String bootstrapPropertiesPath) {
-    this.propertiesPath = bootstrapPropertiesPath; 
+  public void setBootstrap(String bootstrap) {
+    this.bootstrap = bootstrap; 
   }
   
   @Override
   public void afterPropertiesSet() throws Exception {
     Properties props = new Properties();
-    props.setProperty(RegistryContext.BOOTSTRAP, propertiesPath);
+    props.setProperty(RegistryContext.BOOTSTRAP, bootstrap);
     RegistryContext ctx = new RegistryContext(props);
     registry = ctx.connect();
   }
 
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String name)
+  public Object postProcessBeforeInitialization(final Object bean, String name)
       throws BeansException {
-    NodeLookup lookup = NodeLookup.create(registry);
-    for(Field field : getFields(bean.getClass())){
-      processMutator(new FieldMutator(field), bean, lookup);
-    }
-    for(Method method : getMethods(bean.getClass())){
-      processMutator(new MethodMutator(method), bean, lookup);
-    }
+    Work.with(registry).run(new Runnable(){
+      public void run(){
+        NodeLookup lookup = NodeLookup.create(registry);
+        for(Field field : getFields(bean.getClass())){
+          processMutator(new FieldMutator(field), bean, lookup);
+        }
+        for(Method method : getMethods(bean.getClass())){
+          processMutator(new MethodMutator(method), bean, lookup);
+        }
+      }
+    });
     return bean;
   }
   
@@ -64,6 +72,7 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
   }
   
   private void processMutator(Mutator mutator, Object bean, NodeLookup lookup) throws BeansException{
+    
     if(mutator.getType().equals(Registry.class)){
       mutator.setAccessible(true);        
       try{
@@ -79,10 +88,11 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
         );
       }
     }
-    else if(mutator.getType().equals(Node.class) && mutator.isAnnotationPresent(Regis.class)){
-      Regis anno = mutator.getAnnotation(Regis.class);
+    else if(mutator.getType().equals(Node.class) && mutator.isAnnotationPresent(Lookup.class)){
       
-      if(anno.node() == null || anno.node().equals("")){
+      Lookup anno = mutator.getAnnotation(Lookup.class);
+      
+      if(anno.path().equals("")){
         throw new FatalBeanException(
             String.format(
                 "node() not specified on Regis annotation instance for field or method %s of %s", 
@@ -92,12 +102,12 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
         );
       }
       mutator.setAccessible(true);
-      Node node = registry.getRoot().getChild(Path.parse(anno.node()));
+      Node node = registry.getRoot().getChild(Path.parse(anno.path()));
       if(node == null){
         throw new FatalBeanException(
             String.format(
                 "Node not found at %s for field or method %s of %s", 
-                anno.node(), 
+                anno.path(), 
                 mutator.getName(),
                 bean.getClass()
             )
@@ -117,7 +127,63 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
         );
       }
     }
-    else if(!mutator.getType().equals(Node.class) && mutator.isAnnotationPresent(Regis.class)){
+    else if(bean.getClass().isAnnotationPresent(NodeType.class)){
+      NodeType nodeType = bean.getClass().getAnnotation(NodeType.class);
+      Prop anno = mutator.getAnnotation(Prop.class);
+      Node node = lookup.getNodeFor(nodeType.type());
+      
+      Property prop;
+      if(anno == null && nodeType.auto()){
+        String propName = propertyName(mutator);
+        prop = node.getProperty(propName);
+        if(prop.isNull()){
+          return;
+        }
+      }
+      else if(anno != null){
+        String propName = anno.name().equals("") ? propertyName(mutator) : anno.name();
+        prop = node.getProperty(propName);
+        if(prop.isNull()){
+          if(anno.defaultTo().equals("")){
+            throw new FatalBeanException(
+                String.format("Could not set property %s on field or method %s of %s: " +
+                              "property not found in registry node: %s", 
+                              propName, 
+                              mutator.getName(), 
+                              bean.getClass(), 
+                              node.getAbsolutePath())
+            );
+          }
+          else{
+            prop = new PropertyImpl(propName, anno.defaultTo());
+          }
+        }        
+      }
+      // anno == null && !nodeType.auto()
+      else{
+        return;
+      }
+
+      SimpleTypeConverter converter = new SimpleTypeConverter();
+      Object converted = converter.convertIfNecessary(prop.getValue(), mutator.getType());
+      mutator.setAccessible(true);
+      try{
+        mutator.set(bean, converted);
+      }catch(Exception e){
+        throw new FatalBeanException(
+            String.format(
+                "Could not set property on field or method %s of %s: " +
+                "property value was coerced to %s, field or method type: %s", 
+                mutator.getName(), 
+                bean.getClass(), 
+                converted.getClass(),
+                mutator.getType()
+            ),
+            e
+        );
+      }
+    }
+    else if(!mutator.getType().equals(Node.class) && mutator.isAnnotationPresent(Lookup.class)){
       NodeCapable node = (NodeCapable)lookup.getRawInstanceFor(mutator.getType());
       mutator.setAccessible(true);
       try{
@@ -125,7 +191,7 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
       }catch(Exception e){
         throw new FatalBeanException(
             String.format(
-                "Could not set node %s on field %s of %s" , 
+                "Could not set node %s on field or method %s of %s" , 
                 node.getNode().getAbsolutePath(), 
                 mutator.getName(),
                 bean.getClass()
@@ -256,6 +322,32 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
     
     return methods;
   }  
+  
+  
+  private String propertyName(Mutator mutator){
+    String propName = mutator.getName();
+    if(propName.startsWith("is")){
+      propName = propName.substring(2);
+    }
+    if(propName.startsWith("set")){
+      propName = propName.substring(3);
+    }    
+    return decapitalize(propName);
+    
+  }
+  
+  private String decapitalize(String s){
+    StringBuilder sb = new StringBuilder();
+    for(int i = 0; i < s.length(); i++){
+      if(i == 0){
+        sb.append(Character.toLowerCase(s.charAt(i)));
+      }
+      else{
+        sb.append(s.charAt(i));
+      }
+    }
+    return sb.toString();
+  }
   
   
 }

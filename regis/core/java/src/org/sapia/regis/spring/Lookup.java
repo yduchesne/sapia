@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import org.sapia.regis.Node;
 
 /**
- * This annotation is used to annotate fields or methods that should be injected with
+ * This annotation is used to annotate fields or methods that should be injected with a
  * Registry {@link Node}s at runtime.
  * 
  * @see RegisAnnotationProcessor
@@ -17,12 +17,13 @@ import org.sapia.regis.Node;
  */
 @Target({ElementType.FIELD,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Regis {
+public @interface Lookup {
 
   /**
-   * If specified, indicates the path to a {@link Node}.
+   * If specified, indicates the path to a {@link Lookup}.
    * 
-   * @return the path of a {@link Node}.
+   * @return the path of a {@link Lookup}.
    */
-  String node() default "";
+  String path() default "";
+  
 }
