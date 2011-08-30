@@ -1,0 +1,25 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <name>Sapia Regis Maven Plugin</name>
+  <url>http://www.sapia-oss.org/projects/regis/index.html</url>
+  <groupId>org.sapia.regis.plugin</groupId>
+  <artifactId>sapia_regis_maven_plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_regis_global</artifactId>
+    <version>3.5-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_regis</artifactId>
+    </dependency>
+  </dependencies>
+</project>
