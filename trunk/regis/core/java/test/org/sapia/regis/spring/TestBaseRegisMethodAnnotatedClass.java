@@ -17,7 +17,7 @@ public class TestBaseRegisMethodAnnotatedClass {
     return node;
   }
   
-  @Regis(node="databases/000")
+  @Lookup(path="databases/000")
   public void setNode(Node node) {
     this.node = node;
   }

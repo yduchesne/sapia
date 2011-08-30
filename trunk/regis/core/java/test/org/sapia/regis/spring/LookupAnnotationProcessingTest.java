@@ -13,7 +13,7 @@ import org.sapia.regis.Registry;
 import org.sapia.regis.loader.RegistryConfigLoader;
 import org.sapia.regis.local.LocalRegistryFactory;
 
-public class RegisAnnotationProcessorTest {
+public class LookupAnnotationProcessingTest {
   
   private Registry registry;
 

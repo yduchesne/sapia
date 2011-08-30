@@ -158,7 +158,6 @@ class ClassModel {
       }
 
       for (ClassModel intf : membersByInterface.keySet()) {
-        List<ClassModelMember> members = membersByInterface.get(intf);
         writer.println("  public java.util.Collection<"
             + intf.ctx.getFullyQualifiedClassName() + "> get"
             + intf.ctx.getClassName() + "s(){");
@@ -169,7 +168,7 @@ class ClassModel {
         writer.println("    "+Iterator.class.getName()+" children = this.node.getChildren().iterator();");
         writer.println("    while(children.hasNext()){");
         writer.println("        "+Node.class.getName()+" child = ("+Node.class.getName()+")children.next();");
-        writer.println("        members.add(getInstanceFor("+intf.ctx.getFullyQualifiedClassName() + "Impl.class, child.getName()))");
+        writer.println("        members.add(getInstanceFor("+intf.ctx.getFullyQualifiedClassName() + "Impl.class, child.getName()));");
         writer.println("    }");
         writer.println("    return members;");
         writer.println("  }");
