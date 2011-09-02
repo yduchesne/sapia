@@ -5,7 +5,7 @@ import java.util.Date;
 @NodeType(type=TestNodePropertyCapable.class, auto=true)
 public class TestAutoPropertyHolder {
   
-  private Date creationDate;
+  private Date birthDate;
   
   private String username;
   
@@ -41,7 +41,7 @@ public class TestAutoPropertyHolder {
     return timestamp;
   }
 
-  public Date getCreationDate() {
-    return creationDate;
+  public Date getBirthDate() {
+    return birthDate;
   }
 }

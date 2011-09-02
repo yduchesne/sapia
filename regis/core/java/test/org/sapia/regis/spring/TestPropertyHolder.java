@@ -1,5 +1,7 @@
 package org.sapia.regis.spring;
 
+import java.util.Date;
+
 @NodeType(type=TestNodePropertyCapable.class)
 public class TestPropertyHolder {
   
@@ -19,6 +21,12 @@ public class TestPropertyHolder {
   
   @Prop(defaultTo="Welcome")
   private String greeting;
+
+  @Prop
+  private Date birthDate;
+  
+  @Prop
+  private TestGender gender;
   
   public String getUsername() {
     return username;
@@ -47,5 +55,13 @@ public class TestPropertyHolder {
   
   public String getGreeting() {
     return greeting;
+  }
+  
+  public Date getBirthDate() {
+    return birthDate;
+  }
+  
+  public TestGender getGender() {
+    return gender;
   }
 }
