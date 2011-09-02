@@ -1401,43 +1401,6 @@ public interface SessionManagerConf{
   </updateRegistry>]]></sapia:code>      
       </sapia:sect3>
     
-      <sapia:sect3 title="Configuration Testing"> 
-        <p>
-         Regis provides an Ant task allowing to test a configuration prior to loading it into
-         a registry (see the <sapia:class link="maven/api/org/sapia/regis/ant/CheckConfigTask.html">javadoc</sapia:class>
-         for more information). The example below illustrates how to use the task:
-        </p>
-  <sapia:code><![CDATA[<!-- declaring the taskdef -->
-  <taskdef classname="org.sapia.regis.remote.ant.CheckConfigTask"
-    name="checkConfig">  	
-    <classpath>
-      <fileset dir="${lib.dir}">
-        <include name="**/*.jar"/>
-      </fileset>      	      	
-    </classpath>
-   </taskdef>
-      
-  <!-- invoking the task -->
-  <checkConfig 
-    properties="conf/regis.properties"> 
-    
-    <checkNode path="acme/app/databases">
-      <checkProperty name="url" value="jdbc:postgresql://acme/database" />
-    </checkNode>
-    <checkNode path="acme/app/users/charliebrown">
-      <checkProperty name="username" value="cbrown" />
-      <checkProperty name="password" value="foobar1234!" />
-      
-      <!-- checking sub-node of parent -->
-      <checkNode path="permissions">
-        <checkProperty name="read"    value="true" />
-        <checkProperty name="write"   value="false" />
-        <checkProperty name="execute" value="false" />
-      </checkNode>    
-    </checkNode>
-    
-  </checkConfig>]]></sapia:code>      
-      </sapia:sect3>
     </sapia:sect2>
     
     <sapia:sect2 title="Code Generation">
@@ -1485,6 +1448,67 @@ public interface SessionManagerConf{
          
        </sapia:sect3>
        
+      <sapia:sect3 title="Generating Code with Maven">
+         <p>In a manner similar to the Ant task, code can be generated with Maven. It is a good
+         practice to create a separate Maven module for your configuration, and use the plugin
+         as part of that module. By default the plugin will generate the code in the source
+         directory of that module, where it will be picked up by the compilation phase. Your generated
+         code will thus be made available to applications in a transparent manner through Maven's
+         dependency mechanism. Here's a configuration example (see the Regis sources for more
+         details, it provides a Maven sample module meant to illustrate the plugin' usage):</p>
+         
+  <sapia:code><![CDATA[<build>
+    <plugins>
+      <plugin>
+        <groupId>org.sapia.regis.plugin</groupId>
+        <artifactId>sapia_regis_maven_plugin</artifactId>
+        <version>]]><sapia:param name="project.version"/><![CDATA[</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <bootstrap>${basedir}/etc/bootstrap.properties</bootstrap>
+              <packagePrefix>com.acme.config</packagePrefix>
+              <outputDirectory>${basedir}/generated</outputDirectory>
+              <rootClass>AcmeConfigFactory</rootClass>
+              <version>1.0</version>
+              <generateGetters>false</generateGetters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>]]></sapia:code>         
+        
+        <p>The plugin takes the following parameters:
+          <ul>
+            <li><b>bootstrap</b>: indicates the Regis boostrap that points to the properties to use for
+             loading (or connecting to) the Registry instance.</li>
+            
+            <li><b>outputDirectory</b>: indicates the directory where the sources must be generated 
+            (defaults to Maven's <tt>project.build.outputDirectory</tt> property). It is better to 
+            leave it to the default, since Maven's compilation phase will pickup the generated sources
+            from there automatically.</li>
+            
+            <li><b>packagePrefix</b>: indicates the Java package under which the code will be generated 
+            (defaults to Maven's <tt>project.groupId</tt> property).</li>
+             
+            <li><b>rootClass</b>: the name to use for the configuration factory class that will be generated
+            (defaults to <sapia:code>ConfigFactory</sapia:code>).</li>
+            
+            <li><b>version:</b> an arbitrary version number, also inserted in the generated sources
+            (defaults to Maven's <tt>project.version</tt>) property.</li>
+                                               
+            <li><b>generateGetters:</b> indicates if getters should be generated for accessors 
+            (as in <sapia:code>getName()</sapia:code>) or not (as in <sapia:code>name()</sapia:code>).</li>
+          </ul>
+        </p> 
+         
+       </sapia:sect3>
+       
        <sapia:sect3 title="Using the Generated Code">
          <p>
          The following illustrates how to use the generated code. Note
@@ -1528,6 +1552,220 @@ s.close();</sapia:code>
          </p>         
        </sapia:sect3>
     
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Spring Integration">
+      <p>
+        Regis comes with a <sapia:code link="maven/api/org/sapia/regis/spring/RegisAnnotationProcessor.html">BeanPostProcessor</sapia:code> 
+        that will process Regis-specific annotations allowing you to inject Regis-based configuration into your classes. The following are supported:
+      </p>
+      <ol>
+        <li>Injecting <sapia:class link="maven/api/org/sapia/regis/spring/Node.html">Node</sapia:class> 
+        instances into a bean.</li>
+        <li>Injecting a Regis-generated class instances into a bean 
+            (this allows working in a more strongly-types fashion).</li>
+        <li>Injecting the properties of a generated class instance to fields or members of a bean (i.e.: as Spring bean properties).</li>
+      </ol>
+      
+      <p>The <sapia:class link="maven/api/org/sapia/regis/spring/Lookup.html">Lookup</sapia:class> annotation supports the first two scenarios; the
+      <sapia:class link="maven/api/org/sapia/regis/spring/NodeType.html">NodeType</sapia:class> annotation in turn support the last.</p>
+      
+      <sapia:note>There is a sample module as part of the Regis source tree that provides a concrete example of 
+        the integration with Spring.</sapia:note>
+      
+      <sapia:sect3 title="Configurating the RegisAnnotationPostProcessor">
+        <p>
+          The first step in order to integrate Regis into a Spring-based application is to configure the 
+          <sapia:class link="maven/api/org/sapia/regis/spring/RegisAnnotationProcessor.html">RegisAnnotationPostProcessor</sapia:class>. The processor takes a single property,
+          which corresponds to the Regis bootstrap. Here's a sample configuration (in which the bootstrap
+          points to the <tt>bootstrap.properties</tt> file in the classpath):
+        </p>
+<sapia:code><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <bean id="regis" class="org.sapia.regis.spring.RegisAnnotationProcessor">
+    <property name="bootstrap" value="bootstrap.properties" />
+  </bean>
+
+</beans>]]></sapia:code>
+        <p>
+          The processor instrospects the field and setter methods of your Spring beans, looking
+          for the following annotations:
+        </p>
+        <ul>
+          <li><sapia:class link="maven/api/org/sapia/regis/spring/Lookup.html">Lookup</sapia:class></li>
+          <li><sapia:class link="maven/api/org/sapia/regis/spring/NodeType.html">NodeType</sapia:class></li>
+          <li><sapia:class link="maven/api/org/sapia/regis/spring/Prop.html">Prop</sapia:class></li>
+        </ul>
+        How the annotations are interpreted is explained in the following sections.
+      </sapia:sect3>
+      <sapia:sect3 title="Injecting a Node">
+      
+        <p>To inject a <sapia:class>Node</sapia:class> instance into a Spring bean, you use
+        the <sapia:class>Lookup</sapia:class> annotation, as shown below:</p>
+        
+<sapia:code>@Lookup(path="path/to/node")
+private Node config</sapia:code>
+        
+        <p>or:</p>
+        
+<sapia:code>@Lookup(path="path/to/node")
+void setConfig(Node config){
+  this.config = congig;
+}</sapia:code>
+        
+        You must then specify the <tt>path</tt> attribute, which corresponds to the path
+        to the node you want to inject.
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Injecting a Generated Class Instance">
+      
+        <p>If you're using the code generation facility (which creates a class for each node), 
+        you may inject the instance of a generated class, again using the <sapia:class>Lookup</sapia:class>
+        annotation, but this time without supplying a path. In this case, it is important that the field
+        (or paramter of the setter method) to which you inject the instance have the same type as that
+        instance's generated class.</p>:
+        
+<sapia:code>@Lookup
+private ConnectionConfig connectionConfig</sapia:code>
+        
+        <p>or:</p>
+        
+<sapia:code>@Lookup
+void setConnectionConfig(ConnectionConfig config){
+  this.config = config;
+}</sapia:code>
+        
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Injecting the Properties of a Generated Class Instance">
+        <p>It might be more convenient to simply inject the properties of a given node
+        directly to the properties of your Spring beans. This can be done in the following
+        way</p>
+<sapia:code>@NoteType(type=com.acme.config.DatabaseConfig.class)
+public class DatasourceServiceImpl{
+
+  @Prop
+  private String url;
+  
+  @Prop(name="user")
+  private String username;
+  
+  private String password;  
+  
+  @Prop(optional=true)
+  private int poolSize;
+  
+  @Prop(defaultTo="30000")
+  private long idleTimeOut
+  
+  private Pool&lt;Connection&gt; connections; 
+  ...
+  
+  @Prop
+  void setPassword(String password){
+    this.password = password;
+  }
+  
+}</sapia:code>
+        <p>The <sapia:class>NodeType</sapia:class> annotation takes the Regis-generated class
+        whose instance should have its property values injected into the Spring bean. 
+        As illustrated, the <sapia:class>Prop</sapia:class> annotation is used to indicate
+        which fields/methods of the bean will be targeted by the injection. Property resolution
+        follows the following rules</p>
+  
+        <ul>
+          <li>If the <sapia:class>Prop</sapia:class> annotation's <tt>name</tt> attribute
+          is <b>not</b> specified, a property whose name matches the name of the field or setter method
+          will be looked up - in the case of the method, the setter name will be truncated
+          from its <tt>set</tt> prefix, and the remaining string's first letter will be decapitalized.</li>
+          
+          <li>If the <sapia:class>Prop</sapia:class> annotation's <tt>name</tt> attribute
+          is specified, it's value will be used to retrieve the corresponding property.</li>
+        </ul>  
+        
+        Of course thus injected properties will be automatically coerced to the type of their
+        corresponding field (or setter's parameter). Conversion is supported for:
+        
+        <ul>
+          <li>All Java primitive types.</li>
+          <li>Enums.</li>
+          <li>Dates whose configured string value respects the following pattern: <tt>yyyy-MM-dd hh:mm:ss z</tt></li>
+        </ul>
+        
+        <p>
+          By default, if no property value could be found matching a <sapia:class>Prop</sapia:class> annotation instance,
+          an exception is thrown. This can be bypassed by setting the <tt>optional</tt> attribute to <tt>true</tt>,
+          as illustrated above (the attribute's value is <tt>false</tt> by default).
+        </p>
+        
+        <p>
+          Using the <tt>defaultTo</tt> attribute in turn allows specifying a default value in case no property 
+          value could be found - also bypassing the throwing of an exception, as in the case of the <tt>optional</tt>
+          attribute.
+        </p>        
+        
+        <p>
+          It is not mandatory to specify a <sapia:class>Prop</sapia:class> annotation. In this case it will be attempted
+          to look up a property that matches the field or setter's name, and if none could be found <b>no</b> exception will
+          be thrown. For such implicit injection to be supported, the <tt>auto</tt> attribute of the <sapia:class>NodeType</sapia:class>
+          annotation must be specified. The following example demonstrates the above:
+        </p>
+        
+<sapia:code>@NoteType(type=com.acme.config.DatabaseConfig.class, auto=true)
+public class DatasourceServiceImpl{
+
+  private String url;
+  
+  private String username;
+  
+  private String password;  
+  
+  private Pool&lt;Connection&gt; connections; 
+  ...
+  
+  void setPassword(String password){
+    this.password = password;
+  }
+  
+}</sapia:code>
+        
+      </sapia:sect3>
+      <sapia:sect3 title="Implementing your Own Type Converters">
+        <p>
+          Internally, the <sapia:class>RegisAnnotationProcessor</sapia:class> uses built-in implementations of the 
+          <sapia:class link="maven/api/org/sapia/regis/spring/Converter.html">Converter</sapia:class>
+          interfaces to convert string values to actual Java types. You could code your own implementations and register them with the processor (see
+          the interface's javadoc for details, it's quite simple). The register your implementation as follows (the processor takes a list of such
+          converters):
+        </p>
+<sapia:code><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <bean id="myConverter" class="com.acme.config.MyConverter" />
+
+  <bean id="regis" class="org.sapia.regis.spring.RegisAnnotationProcessor">
+    <property name="bootstrap" value="bootstrap.properties" />
+    <property name="converters">
+      <list>
+        <ref local="myConverter"/>
+      </list>
+    </property>
+  </bean>
+
+</beans>]]></sapia:code>
+
+        <p>The converters are processed in sequence, in the order in which they were added, as part of a chain of responsability.  
+         Note that that the converters that you add have precedence over the built-in ones - allowing you to overridde their behavior
+         should you require it.</p>        
+      </sapia:sect3>
+      
     </sapia:sect2>
     
     <sapia:sect2 title="Conclusion">
