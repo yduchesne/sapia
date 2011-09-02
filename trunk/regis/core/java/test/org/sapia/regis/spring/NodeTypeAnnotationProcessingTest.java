@@ -43,6 +43,8 @@ public class NodeTypeAnnotationProcessingTest {
     assertTrue(bean.isAdmin());    
     assertTrue(bean.isValid());
     assertTrue(bean.getGreeting().equals("Welcome"));
+    assertTrue(bean.getBirthDate() != null);    
+    assertTrue(bean.getGender() != null);
   }
   
   @Test
@@ -57,6 +59,7 @@ public class NodeTypeAnnotationProcessingTest {
     assertEquals(123456789L, bean.getTimestamp());
     assertTrue(bean.isAdmin());    
     assertTrue(bean.isValid());
+    assertTrue(bean.getBirthDate() != null);
   }  
 
 }

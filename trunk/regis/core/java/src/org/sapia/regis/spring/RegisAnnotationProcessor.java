@@ -1,9 +1,14 @@
 package org.sapia.regis.spring;
 
 import java.lang.annotation.Annotation;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -23,25 +28,73 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * This class loads a  
+ * This class loads a a {@link Registry} and processes the following Regis-specific annotations:
+ * 
+ * <ol>
+ *  <li> {@link NodeType}
+ *  <li> {@link Prop}
+ *  <li> {@link Lookup}
+ * </ol>
+ * 
+ * This class supports built-in {@link Converter}s that handle the following types:
+ * 
+ * <ol>
+ *   <li> {@link Enum} 
+ *   <li> {@link Date}
+ *   <li> All Java primitives.
+ * </ol>
+ * 
+ * Additional {@link Converter}s can be added to an instance of this class (see {@link #setConverters(List)}).
+ * In such a case, newly added converters have precedence over the ones that an instance of this
+ * class already holds.
+ * 
  * @author yduchesne
  *
  */
 public class RegisAnnotationProcessor implements BeanPostProcessor, InitializingBean{
   
-  private Registry    registry;
-  private String      bootstrap;  
+  private Registry        registry;
+  private String          bootstrap;  
+  private List<Converter> converters = new ArrayList<Converter>();
+  
+  {
+    converters.add(new EnumConverter());
+    converters.add(new DateConverter());
+    converters.add(new ConverterAdapter());
+  }
   
   void setRegistry(Registry registry) {
     this.registry = registry;
   }
   
+  /**
+   * Sets this instance's bootstrap String.
+   * 
+   * @param bootstrap a boostrap {@link String}.
+   */
   public void setBootstrap(String bootstrap) {
     this.bootstrap = bootstrap; 
   }
   
+  /**
+   * Adds the given {@link List} of {@link Converter}s to the head of this 
+   * instance's current list of such converters. This means that the newly 
+   * added converters have precedence over the ones that this instance already 
+   * encapsulates.
+   * 
+   * @param toAdd the {@link List} of {@link Converter}s to add
+   * to this instance.
+   */
+  public void setConverters(List<Converter> toAdd){
+    toAdd.addAll(converters);
+    converters = toAdd;
+  }
+  
   @Override
   public void afterPropertiesSet() throws Exception {
+    if(bootstrap == null){
+      throw new IllegalStateException("Bootstrap not set");
+    }
     Properties props = new Properties();
     props.setProperty(RegistryContext.BOOTSTRAP, bootstrap);
     RegistryContext ctx = new RegistryContext(props);
@@ -144,7 +197,13 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
         String propName = anno.name().equals("") ? propertyName(mutator) : anno.name();
         prop = node.getProperty(propName);
         if(prop.isNull()){
-          if(anno.defaultTo().equals("")){
+          if(!anno.defaultTo().equals("")){
+            prop = new PropertyImpl(propName, anno.defaultTo());            
+          }
+          else if(anno.optional()){
+            return;
+          }
+          else {
             throw new FatalBeanException(
                 String.format("Could not set property %s on field or method %s of %s: " +
                               "property not found in registry node: %s", 
@@ -154,9 +213,6 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
                               node.getAbsolutePath())
             );
           }
-          else{
-            prop = new PropertyImpl(propName, anno.defaultTo());
-          }
         }        
       }
       // anno == null && !nodeType.auto()
@@ -164,8 +220,21 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
         return;
       }
 
-      SimpleTypeConverter converter = new SimpleTypeConverter();
-      Object converted = converter.convertIfNecessary(prop.getValue(), mutator.getType());
+      Converter converter = findConverterFor(mutator.getType());
+      Object converted = null;
+      try{
+        converted = converter.convertFrom(mutator.getType(), prop.getValue());
+      }catch(ParseException e){
+        throw new FatalBeanException(
+            String.format("Could not set property %s on field or method %s of %s: " +
+                          "problem parsing value to field or method type", 
+                          prop.getKey(), 
+                          mutator.getName(), 
+                          bean.getClass()
+            ),
+            e
+        );        
+      }
       mutator.setAccessible(true);
       try{
         mutator.set(bean, converted);
@@ -202,10 +271,18 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
     }    
   }
   
+  private Converter findConverterFor(Class<?> type){
+    for(Converter c : converters){
+      if(c.accepts(type)){
+        return c;
+      }
+    }
+    throw new IllegalStateException(String.format("No Converter could be found for %s", type));
+  }
+  
   ///////////////////////////// INNER CLASSES /////////////////////////////////
   
   interface Mutator{
-    
     Class<?> getType();
     void set(Object instance, Object value) throws Exception;
     void setAccessible(boolean accessible);
@@ -347,6 +424,51 @@ public class RegisAnnotationProcessor implements BeanPostProcessor, Initializing
       }
     }
     return sb.toString();
+  }
+  
+  private static class ConverterAdapter implements Converter{
+    
+    private SimpleTypeConverter delegate = new SimpleTypeConverter();
+    
+    @Override
+    public boolean accepts(Class<?> type) {
+      return true;
+    }
+    
+    @Override
+    public Object convertFrom(Class<?> type, String value) {
+      return delegate.convertIfNecessary(value, type);
+    }
+    
+  }
+  
+  private static class EnumConverter implements Converter{
+      
+    @Override
+    public boolean accepts(Class<?> type) {
+      return type.isEnum();
+    }
+    
+    @Override
+    @SuppressWarnings(value="unchecked")
+    public Object convertFrom(Class<?> type, String value) {
+      return Enum.valueOf((Class<? extends Enum>)type, value.toUpperCase());
+    }
+  }
+  
+  private static class DateConverter implements Converter{
+    
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
+    
+    @Override
+    public boolean accepts(Class<?> type) {
+      return type.equals(Date.class);
+    }
+    
+    @Override
+    public Object convertFrom(Class<?> type, String value) throws ParseException{
+      return format.parse(value);
+    }
   }
   
   
