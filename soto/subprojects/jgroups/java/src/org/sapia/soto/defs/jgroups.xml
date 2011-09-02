@@ -1,6 +1,0 @@
-<soto:defs xmlns:soto="sapia:soto">
-  <soto:namespace prefix="jgroups">
-    <def class="org.sapia.soto.jgroups.ChannelFactoryServiceImpl" name="channelFactory" />
-    <def class="org.sapia.soto.jgroups.ProtocolStackDef"          name="protocolStack" />
-  </soto:namespace>  
-</soto:defs>
