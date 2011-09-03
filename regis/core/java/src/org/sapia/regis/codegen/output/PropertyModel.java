@@ -19,7 +19,7 @@ class PropertyModel implements Comparable<PropertyModel> {
             + CodeGenUtils.toCamelCase(property.getKey(), true) + "();");
       }
       else{
-        writer.println("  public " + Property.class.getName() 
+        writer.println("  public " + Property.class.getName() + " "
             + CodeGenUtils.toCamelCase(property.getKey(), false) + "();");        
       }
     } else {
@@ -28,7 +28,7 @@ class PropertyModel implements Comparable<PropertyModel> {
             + CodeGenUtils.toCamelCase(property.getKey(), true) + "() {");
       }
       else{
-        writer.println("  public " + Property.class.getName()
+        writer.println("  public " + Property.class.getName() + " "
             + CodeGenUtils.toCamelCase(property.getKey(), false) + "() {");        
       }
       writer.println("    return this.node.getProperty(\"" + property.getKey()
