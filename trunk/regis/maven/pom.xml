@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.sapia</groupId>
     <artifactId>sapia_regis_global</artifactId>
-    <version>3.5</version>
+    <version>3.6-SNAPSHOT</version>
   </parent>
 
   <dependencies>
