@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project>
   <modelVersion>4.0.0</modelVersion>
   <name>Sapia Regis Maven Plugin</name>
   <url>http://www.sapia-oss.org/projects/regis/index.html</url>
@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.sapia</groupId>
     <artifactId>sapia_regis_global</artifactId>
-    <version>3.5</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <dependencies>

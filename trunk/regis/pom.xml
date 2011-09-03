@@ -5,7 +5,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>sapia_regis_global</artifactId>
-  <version>3.5</version>
+  <version>3.5-SNAPSHOT</version>
 
   <parent>
     <groupId>org.sapia</groupId>
@@ -14,9 +14,9 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:http://sapia.googlecode.com/svn/tags/sapia_regis_global-3.5</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_regis_global-3.5</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_regis_global-3.5</url>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/trunk/regis</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/trunk/regis</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/trunk/regis</url>
   </scm>
 
   <licenses>
