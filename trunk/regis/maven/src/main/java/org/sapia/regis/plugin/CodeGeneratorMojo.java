@@ -79,7 +79,7 @@ public class CodeGeneratorMojo  extends AbstractMojo{
       throw new MojoExecutionException("rootClass not set");
     }    
     if(version == null){
-      throw new MojoExecutionException("config not set");
+      throw new MojoExecutionException("config not set"); 
     }
     
     if(!outputDirectory.exists()){

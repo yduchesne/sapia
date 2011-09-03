@@ -84,7 +84,7 @@ class ClassModel {
           }
           else{
             writer.println("  public "
-                + member.getModel().ctx.getFullyQualifiedClassName() 
+                + member.getModel().ctx.getFullyQualifiedClassName() + " "
                 + CodeGenUtils.toCamelCase(member.getName(), false) + "();");
           }
         }
@@ -130,9 +130,9 @@ class ClassModel {
                 + member.getModel().ctx.getFullyQualifiedClassName() + " get"
                 + CodeGenUtils.toCamelCase(member.getName(), true) + "(){");
           }
-          else if(ctx.getConfig().isGenerateGetters()){
+          else {
             writer.println("  public "
-                + member.getModel().ctx.getFullyQualifiedClassName() 
+                + member.getModel().ctx.getFullyQualifiedClassName() + " "
                 + CodeGenUtils.toCamelCase(member.getName(), false) + "(){");
           }          
           writer.println("    return getInstanceFor("
@@ -159,7 +159,7 @@ class ClassModel {
 
       for (ClassModel intf : membersByInterface.keySet()) {
         writer.println("  public java.util.Collection<"
-            + intf.ctx.getFullyQualifiedClassName() + "> get"
+            + intf.ctx.getFullyQualifiedClassName() + "> " + (this.ctx.getConfig().isGenerateGetters() ? "get" : "")
             + intf.ctx.getClassName() + "s(){");
         writer.println("    java.util.List<"
             + intf.ctx.getFullyQualifiedClassName()

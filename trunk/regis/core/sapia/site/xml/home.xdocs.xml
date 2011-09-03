@@ -1570,6 +1570,11 @@ s.close();</sapia:code>
       <p>The <sapia:class link="maven/api/org/sapia/regis/spring/Lookup.html">Lookup</sapia:class> annotation supports the first two scenarios; the
       <sapia:class link="maven/api/org/sapia/regis/spring/NodeType.html">NodeType</sapia:class> annotation in turn support the last.</p>
       
+      <p>
+        In addition, the processor will also automatically assign the <sapia:class>Registry</sapia:class> instance it creates to the
+        any field or setter whose type corresponds to the <sapia:class>Registry</sapia:class> interface. 
+      </p>
+      
       <sapia:note>There is a sample module as part of the Regis source tree that provides a concrete example of 
         the integration with Spring.</sapia:note>
       
@@ -1733,6 +1738,28 @@ public class DatasourceServiceImpl{
   
 }</sapia:code>
         
+      </sapia:sect3>
+      <sapia:sect3 title="Injecting the Registry">
+        <p>
+          As was mentioned previously, if your Spring bean has a field or setter method whose type corresponds to the 
+          <sapia:class>Registry</sapia:class> interface, it will automatically assign to it the registry it creates. 
+          Therefore, the <tt>registry</tt> field of an instance of the class below will have been initialized to a
+          <sapia:class>Registry</sapia:class> instance when the <tt>afterPropertiesSet()</tt> method is called:
+        </p>
+        
+<sapia:code>public class DatasourceService implements InitializingBean{
+
+  private Registry registry;
+  
+  ...
+  
+  public void afterPropertiesSet(){
+    ...
+  }
+
+}</sapia:code>        
+      <p/>
+      
       </sapia:sect3>
       <sapia:sect3 title="Implementing your Own Type Converters">
         <p>
