@@ -1,5 +1,0 @@
-<soto:defs xmlns:soto="sapia:soto">
-  <soto:namespace prefix="spring">
-    <def class="org.sapia.soto.spring.SpringLifeCycleManager" name="lifeCycle" />
-  </soto:namespace>
-</soto:defs>   
