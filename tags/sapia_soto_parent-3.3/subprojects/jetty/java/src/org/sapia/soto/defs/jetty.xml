@@ -1,0 +1,6 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="jetty">                  
+    <def class="org.sapia.soto.jetty.JettyServiceImpl"  name="server" />
+    <def class="org.sapia.soto.jetty.WebAppConfig"      name="webApp" />    
+  </soto:namespace>
+</soto:defs>  

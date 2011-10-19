@@ -1,0 +1,62 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:example="sapia:example">
+          
+  <soto:namespace prefix="example">
+    <def name="types" class="org.sapia.soto.examples.TypeService" />
+  </soto:namespace>
+  
+  <soto:setting name="stringSetting" value="someString" />
+  
+  <soto:setting name="boolSetting">  
+    <value><soto:boolean value="true" /></value>
+  </soto:setting>
+    
+  <soto:setting name="intSetting">  
+    <value><soto:int value="0" /></value>
+  </soto:setting>
+  
+  <soto:setting name="longSetting">  
+    <value><soto:long value="0" /></value>
+  </soto:setting>  
+  
+  <soto:setting name="floatSetting">  
+    <value><soto:float value="0" /></value>
+  </soto:setting>    
+  
+  <soto:setting name="doubleSetting">  
+    <value><soto:double value="0" /></value>
+  </soto:setting>      
+  
+  <soto:service id="typeService">  
+    <example:types>
+      <someShort>
+        <soto:short value="1" />
+      </someShort>    
+      <someInt>
+        <soto:int value="2" />
+      </someInt>
+      <someLong>
+        <soto:long value="3" />
+      </someLong>      
+      <someFloat>
+        <soto:float value="4" />
+      </someFloat>      
+      <someDouble>
+        <soto:double value="5" />
+      </someDouble>            
+      <someBoolean>
+        <soto:boolean value="true" />
+      </someBoolean>            
+      <someDate>
+        <soto:date value="2000/12/25" pattern="yyyy/MM/DD" />
+      </someDate>                  
+      <someArray>
+        <soto:array type="java.lang.String">
+	        <soto:string value="string1" />
+	        <soto:string value="string2" />        
+	        <soto:string value="string3" />        
+	    </soto:array>
+      </someArray>
+    </example:types>
+  </soto:service>
+</soto:app>

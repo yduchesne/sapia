@@ -1,0 +1,19 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:aop="soto:aop"
+          xmlns:sample="http://www.sapia-oss.org/soto/sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.aop.example.HelloService" name="hello" />
+  </soto:namespace>
+
+  <soto:service>
+    <sample:hello/>
+
+    <aop:aspect>
+      <adviceDef class="org.sapia.soto.aop.example.TraceAdvice" id="trace"/>    
+      <method name="helloWorld">
+        <adviceRef id="trace" />
+      </method>
+    </aop:aspect>
+  </soto:service>
+</soto:app>

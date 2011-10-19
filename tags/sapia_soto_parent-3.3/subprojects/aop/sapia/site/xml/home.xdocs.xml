@@ -1,0 +1,350 @@
+<sapia:page title="Soto AOP" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:vmenu>
+    <sapia:vsection name="Soto Home" href="../../index.html"/>
+    <sapia:vsection name="Project Home" href="index.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Soto AOP">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../home.html" />
+      <sapia:path name="aop" />   
+    </sapia:section>
+    
+    <toc/>
+
+    <sapia:sect2 title="Overview">
+      <sect-desc>
+        <p>Soto's AOP layer implementation provides a basic runtime AOP framework. It supports assignment of advices on
+        method calls through a pattern-matching notation that allows to define pointcuts. Objects are advised at runtime, 
+        using the excellent <a href="http://cglib.sourceforge.net/" target="cglib_win">GGLIB</a> toolkit. This is not an AOP tutorial, thus
+        minimal understanding of AOP terminology is required. See the <a href="http://eclipse.org/aspectj/" target="aspectj_win">AspectJ</a>
+        website for an AOP primer.</p>
+      </sect-desc>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Basics">
+      <p>Soto AOP offers different advice types, modeled as Java interfaces. The interfaces that Soto provides are:</p>
+      <ul>
+        <li><sapia:class link="maven/api/org/sapia/soto/aop/BeforeAdvice.html">BeforeAdvice</sapia:class></li>
+        <li><sapia:class link="maven/api/org/sapia/soto/aop/AfterAdvice.html">AfterAdvice</sapia:class></li>
+        <li><sapia:class link="maven/api/org/sapia/soto/aop/AroundAdvice.html">AroundAdvice</sapia:class></li>
+        <li><sapia:class link="maven/api/org/sapia/soto/aop/ThrowsAdvice.html">ThrowsAdvice</sapia:class></li>
+        <li><sapia:class link="maven/api/org/sapia/soto/aop/ReturnAdvice.html">ReturnAdvice</sapia:class></li>        
+      </ul>
+      <p>Using Soto's AOP layer configuration format - see next section, advice instances can be created in the following
+      manner:</p>
+      <ul>
+        <li>By declaring <a href="#adviceDef">adviceDef</a> elements;</li>
+        <li>By using object definitions.</li>        
+      </ul>
+      
+      <sapia:note>When using advice definitions, advice instances are created just once: a definition's advice is 
+      lazily instantiated (when the definition is first referred to), and then internally kept. This means that if
+      a given definition is referred to more than once, the same advice is returned. This is important: in
+      such a case, advice instances can potentially be <b>shared by multiple threads</b>.</sapia:note>
+      
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Specification">
+      <sect-desc>
+        <p>An AOP layer is applied to a Soto service by defining a <sapia:command>aop:aspect</sapia:command>
+        element under the <sapia:command>soto:service</sapia:command> element that corresponds to the 
+        desired service. The <sapia:command>aop:aspect</sapia:command> element encapsulates other elements that
+        define method pointcuts and advices.</p>
+        
+        <sapia:note>The AOP Layer's object definitions are built-in, within the soto_defs.xml file.</sapia:note>
+      </sect-desc>
+    
+      <sapia:sect3 title="Configuration">
+        <p><b>Prefix</b>: aop</p>
+        <p><b>Namespace</b>: soto:aop</p>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Elements">
+        <sapia:sect4 title="aop:aspect">
+          <p><i>Description</i>: applies an AOP layer (in fact, an <b>aspect</b>) to a service. The service instance
+          is dynamically advised. The service instance's class must be <b>non-final</b>.</p>
+          
+          <p><i>Children</i>: <a href="#adviceDef">adviceDef</a>, <a href="#group">group</a>, <a href="#method">method</a>.</p>
+          
+          <sapia:table>
+            <sapia:th>Attribute</sapia:th>
+            <sapia:th>Description</sapia:th>
+            <sapia:th>Mandatory</sapia:th>
+           
+            <tr>
+              <td valign="top">implements</td>
+              <td valign="top">A comma-delimited list of interface name patterns that can be specified in order to filter the effect
+              of the layer; only objects whose interfaces match the specified patterns will be advised. The pattern notation supports the '*' 
+              character to specify patterns. For example, java.** would match everything under the "java" package, java.**.Comparable would 
+              match any interface whose name is "Comparable", and whose package starts with the "java" string, java.lang.* would
+              match everything under the java.lang packages, but not in subpackages. Pattern matching is case-<b>in</b>sensitive.</td>
+              <td valign="top">false</td>
+            </tr>
+            <tr>
+              <td valign="top">id</td>
+              <td valign="top">The identifier of the definition - used to refer to the instance to which the definition corresponds. The
+              identifier must be unique within an aspect instance. Advice definitions are referred to using <a href="#adviceRef">adviceRef</a>s.
+              This attribute needs not being specified when this element is within a <a href="#group">group</a>.</td>
+              <td valign="top">false</td>
+            </tr>            
+          </sapia:table>          
+
+        </sapia:sect4>
+
+        <sapia:sect4 title="adviceDef">
+          <p><i>Description</i>: models an "advice definition", from which advice instances are created.</p>
+       
+          <sapia:table>
+            <sapia:th>Attribute</sapia:th>
+            <sapia:th>Description</sapia:th>
+            <sapia:th>Mandatory</sapia:th>
+           
+            <tr>
+              <td valign="top">class</td>
+              <td valign="top">The class of the advice.</td>
+              <td valign="top">true</td>
+            </tr>
+            <tr>
+              <td valign="top">id</td>
+              <td valign="top">The identifier of the definition - used to refer to the instance to which the definition corresponds. The
+              identifier must be unique within an aspect instance. Advice definitions are referred to using <a href="#adviceRef">adviceRef</a>s.
+              This attribute needs not being specified when this element is within a <a href="#group">group</a>.</td>
+              <td valign="top">false</td>
+            </tr>            
+          </sapia:table>
+        </sapia:sect4>
+        
+        <sapia:sect4 title="adviceRef">
+          <p><i>Description</i>: refers to a previously define <a href="#adviceDef">adviceDef</a>.</p>
+       
+          <sapia:table>
+            <sapia:th>Attribute</sapia:th>
+            <sapia:th>Description</sapia:th>
+            <sapia:th>Mandatory</sapia:th>
+           
+            <tr>
+              <td valign="top">id</td>
+              <td valign="top" width="100%">The identifier of the referred advice definition.</td>
+              <td valign="top">true</td>
+            </tr>            
+          </sapia:table>
+        </sapia:sect4>
+        
+        <sapia:sect4 title="group">
+          <p><i>Description</i>: encapsulates <a href="adviceDef">adviceDef</a>s, <a href="adviceRef">adviceRef</a>s, and
+          advice instances, created from object definitions.</p>
+          <p><i>Children</i>: <a href="#adviceDef">adviceDef</a>, <a href="#adviceRef">adviceRef</a> and
+          <a href="#advice_instances">advice instances</a>.</p>
+          
+          <sapia:table>
+            <sapia:th>Attribute</sapia:th>
+            <sapia:th>Description</sapia:th>
+            <sapia:th>Mandatory</sapia:th>
+           
+            <tr>
+              <td valign="top">id</td>
+              <td valign="top">The identifier of the group, allowing to refer to it through a <a href="">groupRef</a>.
+              This identifier must be unique within an aspect instance.</td>
+              <td valign="top">true</td>
+            </tr>
+          </sapia:table>
+        </sapia:sect4>        
+        
+        <sapia:sect4 title="method">
+          <p><i>Description</i>: models a method pointcut; this element offers a pattern-matching notation that allows
+          to apply advices to one or more methods.</p>
+          
+          <p><i>Children</i>: <a href="#groupRef">groupRef</a>, <a href="#adviceRef">adviceRef</a>.</p>
+
+          <sapia:table>
+            <sapia:th>Attribute</sapia:th>
+            <sapia:th>Description</sapia:th>
+            <sapia:th>Mandatory</sapia:th>
+            <tr>
+              <td valign="top">name</td>
+              <td valign="top">A name pattern specifying to which methods encapsulated advices will be applied. 
+              The pattern notation supports the '*' character to specify patterns. For example,
+              do* would match do() and doSomething(), do*thing() would match doSomething(), *doSomething()
+              would match pleaseDoSomething() and doSomething(), and so on. Pattern matching is case-<b>in</b>sensitive.</td>
+              <td valign="top">true</td>
+            </tr>
+            <tr>
+              <td valign="top">visibility</td>
+              <td valign="top">A comma-delimited list of access modifiers to be matched; the value of this attribute
+              can hold the following: <b>public</b>, <b>protected</b>. By default, all public and protected methods are
+              matched.</td>
+              <td valign="top">false</td>
+            </tr>
+            
+            <tr>
+              <td valign="top">includes</td>
+              <td valign="top">Allows to filter methods based on the inheritance tree of advised instances. For example, if one
+              wishes to include every method of an object, except the ones implemented by the java.lang.Object class, then one
+              can excplicitely specify which methods of which classes in the inheritance tree should be advised. For 
+              example, given the acme.service.FooService class (where that class may extend others in the same package), we could 
+              specify "acme.service.**" as a value, thereby including all methods (for a given object) declared by the
+              classes that match the given pattern.</td>
+              <td valign="top">false</td>
+            </tr>
+
+            <tr>
+              <td valign="top">excludes</td>
+              <td valign="top">Allows to filter methods based on the inheritance tree of advised instances. Going back to the
+              example used above, we could conveniently exclude the methods declared by the Object class using the following
+              value for this attribute: "java.lang.Object". <b>Combination of includes and excludes are possible</b>: in this
+              case, the includes are applied first.</td>
+              <td valign="top">false</td>
+            </tr>            
+            
+            <tr>
+              <td valign="top">sig</td>
+              <td valign="top">Specifies a Java method signature that this element must match; the value of this
+              attribute is given as a comma-delimited list of Java parameter types - this list can take
+              patterns. Pattern matching is case-<b>in</b>sensitive.
+              <p/>
+              For example, the following list: 'java.lang.*, org.stuff.Widget' would match
+              any method with the first parameter from the java.lang package, and the second of
+              type org.stuff.widget. 
+              <p/>
+              The following: '*, org.stuff.*' would match any method with
+              a first parameter of any type, and the second one from the org.stuff package. To
+              match, for example, any type from org.stuff and all of its subpackages, the following
+              would be used: 'org.stuff.**'
+              <p/>
+              <b>IMPORTANT</b>: if this attribute is omitted, the element will match any method  
+              whose name matches the pattern specified by the <sapia:command>name</sapia:command>
+              attribute. To match a no-args method, this attribute's value must correspond to an 
+              empty string.</td>
+              <td valign="top">false</td>
+            </tr>
+          </sapia:table>          
+          
+        </sapia:sect4>
+        
+        <sapia:sect4 title="advice instances" alias="advice_instances">
+          <p>Advice instances can be created dynamically, using object definitions. This requires two steps:</p>
+          <p>Declare your object definitions:</p>
+          
+<sapia:code><![CDATA[
+<soto:namespace prefix="test">
+  <def class="org.sapia.soto.aop.TestThrowsAdvice" 
+       name="throws" />    
+</soto:namespace>]]></sapia:code>
+  
+          <p>"Instantiate" your advice:</p>
+<sapia:code><![CDATA[
+<group id="group">
+  <adviceDef class="org.sapia.soto.aop.TestAfterAdvice"/>
+  <adviceRef id="before" />
+  <test:throws/>
+</group>]]></sapia:code>  
+        
+        </sapia:sect4>        
+      </sapia:sect3>
+    </sapia:sect2>
+    <sapia:sect2 title="Examples">
+    
+        <p>The following is taken from Soto's test suite. It shows a basic configuration:</p>
+
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:aop="soto:aop"
+          xmlns:test="soto:test">
+  
+  <!-- Object Definitions -->
+  <soto:namespace prefix="test">
+    <def class="org.sapia.soto.aop.TestService"      
+         name="testService" />
+         
+    <def class="org.sapia.soto.aop.TestThrowsAdvice" 
+         name="throws" />    
+  </soto:namespace>
+  
+  <soto:service>
+    <test:testService/>
+
+    <aop:aspect>
+      <!-- Advice definitions - here we must specify an id -->
+      <adviceDef class="org.sapia.soto.aop.TestAroundAdvice" 
+                 id="around"/>
+      <adviceDef class="org.sapia.soto.aop.TestBeforeAdvice" 
+                 id="before"/>
+      
+      <!-- Advice group - id is mandatory -->
+      <group id="group">
+      
+        <!-- A definition within a group is "local" - it is 
+             valid only within the group and cannot be 
+             referred to. -->
+        <adviceDef class="org.sapia.soto.aop.TestAfterAdvice"/>
+
+        <!-- An advice reference; refers to a previously 
+             declared advice definition. -->
+        <adviceRef id="before" />
+        
+        <!-- An advice instance - created from an object 
+             definition. -->
+        <test:throws/>
+      </group>
+      
+      <!-- method pointcut - more than one pointcut could 
+           be specified. -->
+      <method name="*">
+        <!-- Refers to a previously defined advice -->
+        <adviceRef id="around" />
+        
+        <!-- Refers to a previously defined group -->
+        <groupRef id="group" />
+      </method>
+    </aop:aspect>
+  </soto:service>
+</soto:app>
+]]></sapia:code>
+
+      <p>At times, it might be convenient to reuse a give aspect configuration for 
+      different services; that can easily be done with an include. An include, combined
+      with conditional instantiation, allows to spare an aspect's overhead when it is 
+      not required. For example, in our example below, a logging aspect is created only 
+      if the current debug level corresponds to "debug":</p>
+      
+<sapia:code><![CDATA[      
+<soto:service>
+  <test:testService/>
+  <soto:include 
+   uri="resource:/org/acme/services/aop/loggingAspect.xml"/>
+</soto:service>
+]]></sapia:code>      
+
+      <p>The content of  "loggingAspect.xml":</p>
+      
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:aop="soto:aop"
+          xmlns:acme="acme:services">
+  
+  <soto:if param="debug.level" value="debug" />
+    <aop:aspect>
+   
+      <group id="logging">
+        <acme:logging debugLevel="${debug.level}" />
+      </group>
+       
+      <!-- see the excludes attribute: we do not want to
+           advise methods from the Object class -->
+      <method name="*" excludes="java.lang.Object">
+        <groupRef id="logging" />
+      </method>
+    </aop:aspect>
+  </soto:if>
+</soto:app>
+]]></sapia:code>            
+        
+    </sapia:sect2>      
+    
+  </sapia:sect1>
+</sapia:page>
