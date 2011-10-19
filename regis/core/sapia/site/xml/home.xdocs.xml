@@ -1556,7 +1556,7 @@ s.close();</sapia:code>
     
     <sapia:sect2 title="Spring Integration">
       <p>
-        Regis comes with a <sapia:class link="maven/api/org/sapia/regis/spring/RegisAnnotationProcessor.html">BeanPostProcessor</sapia:code> 
+        Regis comes with a <sapia:class link="maven/api/org/sapia/regis/spring/RegisAnnotationProcessor.html">BeanPostProcessor</sapia:class> 
         that will process Regis-specific annotations allowing you to inject Regis-based configuration into your classes. The following are supported:
       </p>
       <ol>
