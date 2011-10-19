@@ -1556,7 +1556,7 @@ s.close();</sapia:code>
     
     <sapia:sect2 title="Spring Integration">
       <p>
-        Regis comes with a <sapia:code link="maven/api/org/sapia/regis/spring/RegisAnnotationProcessor.html">BeanPostProcessor</sapia:code> 
+        Regis comes with a <sapia:class link="maven/api/org/sapia/regis/spring/RegisAnnotationProcessor.html">BeanPostProcessor</sapia:code> 
         that will process Regis-specific annotations allowing you to inject Regis-based configuration into your classes. The following are supported:
       </p>
       <ol>
@@ -1578,7 +1578,7 @@ s.close();</sapia:code>
       <sapia:note>There is a sample module as part of the Regis source tree that provides a concrete example of 
         the integration with Spring.</sapia:note>
       
-      <sapia:sect3 title="Configurating the RegisAnnotationPostProcessor">
+      <sapia:sect3 title="Configuring the RegisAnnotationPostProcessor">
         <p>
           The first step in order to integrate Regis into a Spring-based application is to configure the 
           <sapia:class link="maven/api/org/sapia/regis/spring/RegisAnnotationProcessor.html">RegisAnnotationPostProcessor</sapia:class>. The processor takes a single property,
