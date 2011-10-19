@@ -10,6 +10,7 @@
     <groupId>org.sapia</groupId>
     <artifactId>sapia_regis_global</artifactId>
     <version>3.6-SNAPSHOT</version>
+    <relativePath>../</relativePath>
   </parent>
 
   <dependencies>
