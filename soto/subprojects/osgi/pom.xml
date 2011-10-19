@@ -9,6 +9,7 @@
     <groupId>org.sapia</groupId>
     <artifactId>sapia_soto_parent</artifactId>
     <version>3.2-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <dependencies>
