@@ -1497,13 +1497,13 @@ public interface SessionManagerConf{
             (defaults to Maven's <tt>project.groupId</tt> property).</li>
              
             <li><b>rootClass</b>: the name to use for the configuration factory class that will be generated
-            (defaults to <sapia:code>ConfigFactory</sapia:code>).</li>
+            (defaults to <sapia:class>ConfigFactory</sapia:class>).</li>
             
             <li><b>version:</b> an arbitrary version number, also inserted in the generated sources
             (defaults to Maven's <tt>project.version</tt>) property.</li>
                                                
             <li><b>generateGetters:</b> indicates if getters should be generated for accessors 
-            (as in <sapia:code>getName()</sapia:code>) or not (as in <sapia:code>name()</sapia:code>).</li>
+            (as in <sapia:class>getName()</sapia:class>) or not (as in <sapia:class>name()</sapia:class>).</li>
           </ul>
         </p> 
          
