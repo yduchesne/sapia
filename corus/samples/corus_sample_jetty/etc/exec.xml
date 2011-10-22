@@ -1,3 +1,0 @@
-<exec name="jetty-server" startOnBoot="true" xmlns="http://www.sapia-oss.org/xsd/corus/exec-2.0.xsd">
-  <process dist="scalable-sample-jetty" version="1.0" name="server" profile="dev" />
-</exec>
