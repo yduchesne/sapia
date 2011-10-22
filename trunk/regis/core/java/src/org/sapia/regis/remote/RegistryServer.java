@@ -146,7 +146,8 @@ public class RegistryServer implements RemoteConsts{
       return;
     }
     try{
-      _bootstrapProps = new Properties(System.getProperties());
+      _bootstrapProps = new Properties();
+      Utils.copyPropsToMap(_bootstrapProps, System.getProperties());
       if(args.length > 0){
         Utils.loadProps(RegistryServer.class, _bootstrapProps, args[0]);
       }
