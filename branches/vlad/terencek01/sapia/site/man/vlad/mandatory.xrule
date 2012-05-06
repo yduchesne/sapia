@@ -1,0 +1,47 @@
+<descriptor namespace="vlad" 
+            name="mandatory"
+            class="org.sapia.validator.rules.Mandatory"
+            nested="no"
+            >
+
+  <description>
+    Use this rule to ensure that a given object property/attribute is not null. 
+  </description>
+  <attributes>
+    <attribute name="attribute" mandatory="yes">
+      <description>Specifies the name of the accessor whose return value must <b>not</b> be null.
+      <p>
+      If this attribute is omitted, the current object on the validation context's
+      stack will be validated.
+      </p>
+      <p>This attribute's value must use the property access notation specified by the
+      <a href="http://jakarta.apache.org/commons/beanutils.html">BeanUtils</a> libary - see 
+      the library's <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/package-summary.html">
+      javadoc</a> for more information.</p>
+      </description>
+    </attribute>
+  </attributes>
+  
+  <examples>
+    <example name="Ensuring that all employees have a name">
+      <content><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <ruleSet id="checkCompany">
+    
+    <vlad:forEach attribute="employees">
+      <ruleSet id="checkEmployee">
+        <vlad:mandatory attribute="name" id="employeeName">
+          <message value="Employee does not have a name"/>
+        </vlad:mandatory>
+      </ruleSet>
+    </vlad:forEach>
+    
+  </ruleSet>    
+  
+</vlad>]]>      
+      </content>
+    </example>
+  </examples>
+
+</descriptor>
