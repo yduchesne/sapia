@@ -192,8 +192,9 @@ public class ServerStatelessSoapStreamHelper {
     } else {
       env.getBody().addObject(toSend);
     }
-
+    
     _proc.serialize(env, out);
+    out.flush();
   }
 
   private Envelope createSoapResponse(long processingTime) {

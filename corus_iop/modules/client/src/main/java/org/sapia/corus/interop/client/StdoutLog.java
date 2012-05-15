@@ -20,7 +20,7 @@ public class StdoutLog implements Log {
   public static final int FATAL   = 3;
   public static final String LOG_NAME = "CORUS-INTEROP";
   
-  private int             _lvl = DEBUG;
+  private int _lvl = FATAL;
 
   public void debug(Object o) {
     if (isValid(DEBUG)) {

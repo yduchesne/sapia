@@ -440,8 +440,8 @@ public class InteropClient implements Consts, Implementation {
   }  
   
   private void setLogLevel(StdoutLog log){
-    String levelName = System.getProperty(CORUS_PROCESS_LOG_LEVEL, LOG_LEVEL_WARN);
-    int level = StdoutLog.DEBUG;
+    String levelName = System.getProperty(CORUS_PROCESS_LOG_LEVEL, LOG_LEVEL_FATAL);
+    int level = StdoutLog.FATAL;
     if(levelName.equalsIgnoreCase(LOG_LEVEL_DEBUG)){
       level = StdoutLog.DEBUG;
     }

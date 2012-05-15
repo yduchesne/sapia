@@ -158,7 +158,7 @@ class InteropClientThread extends Thread {
             }
           }
         } catch (FaultException e) {
-          _parent._log.fatal("corus server generated a SOAP fault", e);
+          _parent._log.info("corus server generated a SOAP fault", e);
         } catch (Exception e) {
           _parent._log.info("Error caught sending SOAP request to corus server", e);
         } 
