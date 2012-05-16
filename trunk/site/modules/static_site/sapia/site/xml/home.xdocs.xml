@@ -35,11 +35,10 @@
           </td> 
           <td>
             <ul>
-              <li>Corus 2.0 (currently available)</li>
+              <li>Corus 3.0</li>
               <li>Built-in multi-language deployments (Scala, JRuby, Jython...) - planning</li>
               <li>Prepackaged Corus-enabled apps (Tomcat 7, etc.) - planning</li>
-              <li>Robust security - planning</li>
-              <li>Cloud integration - planning</li>
+              <li>Enterprise-grade management console</li>
             </ul>
           </td>
         </tr></tbody>
