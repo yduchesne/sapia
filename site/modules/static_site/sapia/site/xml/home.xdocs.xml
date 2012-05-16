@@ -35,10 +35,10 @@
           </td> 
           <td>
             <ul>
-              <li>Corus 3.0</li>
+              <li>Corus 3.0 (currently <a href="http://code.google.com/p/sapia/downloads/list">available</a>)</li>
               <li>Built-in multi-language deployments (Scala, JRuby, Jython...) - planning</li>
               <li>Prepackaged Corus-enabled apps (Tomcat 7, etc.) - planning</li>
-              <li>Enterprise-grade management console</li>
+              <li>Enterprise-grade management console - planning</li>
             </ul>
           </td>
         </tr></tbody>
