@@ -1,7 +1,0 @@
-<soto:app xmlns:soto="sapia:soto"
-          xmlns:regis="soto:regis"
-          xmlns:sample="soto:sample">
-  
-  <sample:provider name="${@regis.node.name}" address="${address}" />
-  
-</soto:app>
