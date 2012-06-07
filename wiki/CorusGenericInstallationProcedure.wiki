@@ -14,13 +14,15 @@ This procedure describes installing Corus as a service without using the Java Se
  * Since Corus is mainly a background process, we strongly suggest that the Corus server be installed and executed with the privileges of a restricted user.
  * Using the command `useradd`, created a new system user named "corus". Here's a quick example of it:
 
- ||` [root@cygnus-fedora ~]# useradd --home-dir /home/corus --create-home --system --shell /bin/bash corus `<br />` [root@cygnus-fedora ~]#`||
+ ||` sudo useradd --home-dir /home/corus --create-home --system --shell /bin/bash corus `<br />||
 
  * Using the groupadd command, create a group to which the corus user will belong (or you may simply prefer to associate the corus user to an already existing group). For example, creating an "infra" groups:
 
- ||`groupadd infra`||
+ ||`sudo groupadd infra`||
 
- * Associate the corus user to the group: usermod -G infra corus
+ * Associate the corus user to the group: 
+
+ ||`usermod -G infra corus`||
 
 == iii) Installation directory ==
  * You need to create a directory on your system in which you will install Corus.
