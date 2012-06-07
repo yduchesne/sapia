@@ -85,11 +85,11 @@ This part of the procedure may vary according to the Linux flavor you're using. 
 
  * Execute the `chkconfig` command:
 
- || `sudo chkconfig --add /etc/init.d/corus `<br />` ||
+ || `sudo chkconfig --add /etc/init.d/corus `<br />||
 
  * You can validate the run level registration as follows:
 
- ||`sudo chkconfig --list | grep corus `<br />` corus          	0:off	1:off	2:on	3:on	4:on	5:on	6:off  `<br />` ||
+ ||`sudo chkconfig --list | grep corus `<br />` corus          	0:off	1:off	2:on	3:on	4:on	5:on	6:off  `<br />||
 
  * As you can see upon installation, the Corus service is not running. You can start it using the `service` command like that:
 
