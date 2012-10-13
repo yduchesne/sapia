@@ -119,6 +119,7 @@ public class InteropClient implements Consts, Implementation {
 
       _thread = new InteropClientThread(this);
       _thread.start();
+      _thread.setPriority(Thread.MAX_PRIORITY);
     } else {
       _log.warn("No corus process ID found; VM was not started dynamically");
     }
