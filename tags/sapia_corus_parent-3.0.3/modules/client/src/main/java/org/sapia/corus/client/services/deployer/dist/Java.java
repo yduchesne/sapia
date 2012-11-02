@@ -16,7 +16,7 @@ import org.sapia.corus.client.exceptions.misc.MissingDataException;
 public class Java extends BaseJavaStarter {
   
   public static final String CORUS_JAVAPROC_MAIN_CLASS = "corus.process.java.main";
-  public static final String STARTER_CLASS 						 = "org.sapia.corus.starter.Starter";
+  public static final String STARTER_CLASS 			   = "org.sapia.corus.starter.Starter";
   
   static final long serialVersionUID = 1L;
 
