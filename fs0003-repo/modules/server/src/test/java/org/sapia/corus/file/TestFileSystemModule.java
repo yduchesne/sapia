@@ -34,4 +34,8 @@ public class TestFileSystemModule implements FileSystemModule{
   @Override
   public void unzip(File doUnzip, File destDir) throws IOException {
   }
+  
+  @Override
+  public void zip(File destFile, File srcDir) throws IOException {
+  }
 }

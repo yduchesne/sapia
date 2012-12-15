@@ -61,7 +61,7 @@ public class JmxExtension implements HttpExtension{
     ps.print("<vmStatus");
     xmlAttribute("domain", context.getDomain(), ps);
     try{
-      TCPAddress addr = context.getServerAddress();
+      TCPAddress addr = context.getCorusHost().getEndpoint().getServerTcpAddress();
       xmlAttribute("host", addr.getHost(), ps);      
       xmlAttribute("port", Integer.toString(addr.getPort()), ps);
     }catch(ClassCastException e){}

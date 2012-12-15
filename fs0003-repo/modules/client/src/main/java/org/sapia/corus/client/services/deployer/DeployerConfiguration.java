@@ -25,4 +25,8 @@ public interface DeployerConfiguration extends Remote{
    */
   public String getTempDir();
 
+  /**
+   * @return the path to the repo directory.
+   */
+  public String getRepoDir();
 }

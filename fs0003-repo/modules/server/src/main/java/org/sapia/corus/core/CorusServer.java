@@ -34,9 +34,11 @@ import org.sapia.corus.log.SyslogTarget;
 import org.sapia.corus.util.IOUtils;
 import org.sapia.corus.util.PropertiesFilter;
 import org.sapia.corus.util.PropertiesUtil;
+import org.sapia.ubik.mcast.EventChannel;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketAddress;
 import org.sapia.ubik.util.Localhost;
+import org.sapia.ubik.util.Props;
 
 /**
  * This class is the entry point called from the 'java' command line.
@@ -284,7 +286,20 @@ public class CorusServer {
       IOUtils.createLockFile(lockFile);
    
       // Initialize Corus, export it and start it
-      CorusImpl corus = new CorusImpl(new FileInputStream(aFilename), domain, new MultiplexSocketAddress(host, port), aTransport, corusHome);
+      EventChannel channel = new EventChannel(
+          domain, 
+          new Props().addSystemProperties()
+      );
+      channel.start();
+      
+      
+      CorusImpl corus = new CorusImpl(
+          CorusPropertiesLoader.load(new File(aFilename)), 
+          domain, 
+          new MultiplexSocketAddress(host, port), 
+          channel,
+          aTransport, corusHome);
+      
       ServerContext context =  corus.getServerContext();
       
       // keeping reference to stub
@@ -293,8 +308,6 @@ public class CorusServer {
       corus.start();
       
       TCPAddress addr = ((TCPAddress) aTransport.getServerAddress());
-      
-      corus.setServerAddress(addr);
       
       System.out.println("Corus server ("+CorusVersion.create()+") started on: " + addr + ":" + port +
         ", domain: " + domain);

@@ -30,7 +30,7 @@ import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
 
 public class DeployerFacadeImpl extends FacadeHelper<Deployer> implements DeployerFacade{
   
-  static final int             BUFSZ = 2048;
+  private static final int BUFSZ = 2048;
   
   public DeployerFacadeImpl(CorusConnectionContext context){
     super(context, Deployer.class);

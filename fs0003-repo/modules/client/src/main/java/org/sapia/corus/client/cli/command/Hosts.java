@@ -7,7 +7,7 @@ import org.sapia.console.InputException;
 import org.sapia.console.table.Row;
 import org.sapia.console.table.Table;
 import org.sapia.corus.client.cli.CliContext;
-import org.sapia.corus.client.services.cluster.ServerHost;
+import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.ubik.net.TCPAddress;
 
 
@@ -23,12 +23,12 @@ public class Hosts extends CorusCliCommand {
   @Override
   protected void doExecute(CliContext ctx)
                     throws AbortException, InputException {
-    Collection<ServerHost> others = ctx.getCorus().getContext().getOtherHosts();
+    Collection<CorusHost> others = ctx.getCorus().getContext().getOtherHosts();
     displayHeader(ctx);
     displayHosts(others, ctx);
   }
 
-  private void displayHosts(Collection<ServerHost> others, CliContext ctx) {
+  private void displayHosts(Collection<CorusHost> others, CliContext ctx) {
     Table      distTable = new Table(ctx.getConsole().out(), 4, 20);
     Row        row;
     TCPAddress addr;
@@ -48,8 +48,8 @@ public class Hosts extends CorusCliCommand {
     row.getCellAt(COL_JAVA_INFO).append(ctx.getCorus().getContext().getServerHost().getJavaVmInfo());
     row.flush();
 
-    for(ServerHost other:others) {
-      addr = (TCPAddress) other.getServerAddress();
+    for(CorusHost other:others) {
+      addr = (TCPAddress) other.getEndpoint().getServerAddress();
       row  = distTable.newRow();
       row.getCellAt(COL_HOST).append(addr.getHost());
       row.getCellAt(COL_PORT).append("" + addr.getPort());

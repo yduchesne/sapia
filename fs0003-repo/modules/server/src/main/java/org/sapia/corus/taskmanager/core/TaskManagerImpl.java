@@ -172,7 +172,7 @@ public class TaskManagerImpl implements TaskManager{
   }
   
   private TaskExecutionContext createExecutionContext(Task<?,?> task, TaskConfig config){
-    return new TaskExecutionContext(
+    return new TaskExecutionContextImpl(
         task,
         wrapLogFor(task, config.getLog()), 
         serverContext, 
