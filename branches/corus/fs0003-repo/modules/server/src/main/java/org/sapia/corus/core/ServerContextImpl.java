@@ -6,11 +6,14 @@ import java.util.Properties;
 import java.util.UUID;
 
 import org.sapia.corus.client.Corus;
-import org.sapia.corus.client.services.cluster.ServerHost;
+import org.sapia.corus.client.services.cluster.Endpoint;
+import org.sapia.corus.client.services.cluster.CorusHost;
+import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.util.PropertiesFilter;
 import org.sapia.corus.util.PropertiesUtil;
-import org.sapia.ubik.net.TCPAddress;
+import org.sapia.ubik.mcast.EventChannel;
+import org.sapia.ubik.net.ServerAddress;
 
 /**
  * Implements the {@link ServerContext} interface.
@@ -22,16 +25,16 @@ public class ServerContextImpl implements ServerContext {
 
   static final String CORUS_PROCESS_FILE = "corus_process";
   
-  private static final String _OS_INFO;
-  private static final String _JAVA_VM_INFO;
+  private static final String OS_INFO;
+  private static final String JAVA_VM_INFO;
   static {
-    _OS_INFO = new StringBuilder().
+    OS_INFO = new StringBuilder().
             append(System.getProperty("os.name")).
             append(" ").
             append(System.getProperty("os.version")).
             toString();
 
-    _JAVA_VM_INFO = new StringBuilder().
+    JAVA_VM_INFO = new StringBuilder().
             append(System.getProperty("java.version")).
             append(" ").
             append(System.getProperty("java.vm.name")).
@@ -41,9 +44,9 @@ public class ServerContextImpl implements ServerContext {
   private Corus 							   corus;
   private String 								 serverName = UUID.randomUUID().toString().substring(0, 8);
   private String 				 				 domain;
-  private TCPAddress 		 				 serverAddress;
-  private ServerHost 						 hostInfo;
+  private CorusHost 						 hostInfo;
   private CorusTransport 				 transport;
+  private EventChannel           eventChannel;
   private InternalServiceContext services;
   private String 								 homeDir;
   private Properties             properties;
@@ -51,19 +54,22 @@ public class ServerContextImpl implements ServerContext {
   public ServerContextImpl(
       Corus corus,
       CorusTransport transport,
-      TCPAddress addr, 
+      ServerAddress serverAddress,
+      EventChannel channel,
       String domain, 
       String homeDir, 
       InternalServiceContext services,
       Properties props){
     this.corus 				 = corus;
     this.transport     = transport;
-    this.serverAddress = addr;
+    this.eventChannel  = channel;
+    this.hostInfo      = CorusHost.newInstance(new Endpoint(serverAddress, channel.getUnicastAddress()), OS_INFO, JAVA_VM_INFO);
     this.domain        = domain;
     this.homeDir       = homeDir;
     this.services      = services;
-    this.hostInfo      = ServerHost.createNew(addr, _OS_INFO, _JAVA_VM_INFO);
     this.properties    = props;
+    String repoRoleProp = properties.getProperty(CorusConsts.PROPERTY_REPO_TYPE, CorusHost.RepoRole.NONE.name());
+    hostInfo.setRepoRole(RepoRole.valueOf(repoRoleProp.toUpperCase()));
   }
   
   @Override
@@ -95,19 +101,19 @@ public class ServerContextImpl implements ServerContext {
     return domain;
   }
   
-  @Override  
-  public TCPAddress getServerAddress() {
-    return serverAddress;
-  }
-  
   @Override
-  public ServerHost getHostInfo() {
+  public CorusHost getCorusHost() {
     return hostInfo;
   }
   
   @Override
   public CorusTransport getTransport() {
     return transport;
+  }
+  
+  @Override
+  public EventChannel getEventChannel() {
+    return eventChannel;
   }
   
   @Override
@@ -156,8 +162,8 @@ public class ServerContextImpl implements ServerContext {
     return processProps;
   }
   
-  void setServerAddress(TCPAddress addr){
-    this.serverAddress = addr;
+  void setHostInfo(CorusHost hostInfo){
+    this.hostInfo = hostInfo;
   }
 
 }

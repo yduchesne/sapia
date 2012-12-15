@@ -56,6 +56,15 @@ public interface FileSystemModule{
    */
   public void unzip(File toUnzip, File destDir) throws IOException;
   
+  /**
+   * Zips a given directory.
+   * 
+   * @param destFile the zip {@link File} to generate.
+   * @param srcDir the {@link File} corresponding to the directory to zip.
+   * @throws IOException a problem occurs while generating the zip file.
+   */
+  public void zip(File destFile, File srcDir) throws IOException;
+
   
   /**
    * Opens a stream from a given zip file and returns it.

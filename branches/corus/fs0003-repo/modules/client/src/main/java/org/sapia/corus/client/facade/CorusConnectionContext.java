@@ -23,7 +23,7 @@ import org.sapia.corus.client.exceptions.CorusException;
 import org.sapia.corus.client.exceptions.cli.ConnectionException;
 import org.sapia.corus.client.facade.impl.ClientSideClusterInterceptor;
 import org.sapia.corus.client.services.cluster.ClusterManager;
-import org.sapia.corus.client.services.cluster.ServerHost;
+import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 import org.sapia.ubik.rmi.server.Hub;
@@ -45,10 +45,10 @@ public class CorusConnectionContext {
   private long 												 lastReconnect = System.currentTimeMillis();
   private Corus 											 corus;
   private ServerAddress 					     connectAddress;
-  private ServerHost 									 serverHost;
+  private CorusHost 									 serverHost;
   private String 										   domain;
   private Map<Class<?>, Object> 		   modules 		 = Collections.synchronizedMap(new HashMap<Class<?>, Object>());
-  private Set<ServerHost> 						 otherHosts  = Collections.synchronizedSet(new HashSet<ServerHost>());
+  private Set<CorusHost> 						 otherHosts  = Collections.synchronizedSet(new HashSet<CorusHost>());
   private Map<ServerAddress, Corus> 	 cachedStubs = Collections.synchronizedMap(new HashMap<ServerAddress, Corus>());
   private ExecutorService 						 executor;
   private ClientSideClusterInterceptor interceptor;
@@ -93,7 +93,7 @@ public class CorusConnectionContext {
    * @return the {@link ServerAddress} of the other Corus instances in the
    *         cluster.
    */
-  public Collection<ServerHost> getOtherHosts() {
+  public Collection<CorusHost> getOtherHosts() {
     refresh();
     return Collections.unmodifiableCollection(otherHosts);
   }
@@ -107,7 +107,7 @@ public class CorusConnectionContext {
     return corus;
   }
 
-  public ServerHost getServerHost() {
+  public CorusHost getServerHost() {
     return serverHost;
   }
   
@@ -117,7 +117,7 @@ public class CorusConnectionContext {
    */
   public ServerAddress getAddress() {
     if (serverHost != null) {
-      return serverHost.getServerAddress();
+      return serverHost.getEndpoint().getServerAddress();
     } else {
       return connectAddress;
     }
@@ -209,8 +209,8 @@ public class CorusConnectionContext {
     
     List<ServerAddress> hostList = new ArrayList<ServerAddress>();
     hostList.add(connectAddress);
-    for (ServerHost otherHost: otherHosts) {
-      hostList.add(otherHost.getServerAddress());
+    for (CorusHost otherHost: otherHosts) {
+      hostList.add(otherHost.getEndpoint().getServerAddress());
     }
     
     Iterator<ServerAddress> itr = hostList.iterator();

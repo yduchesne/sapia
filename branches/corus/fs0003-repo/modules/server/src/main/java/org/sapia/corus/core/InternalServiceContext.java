@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sapia.corus.client.annotations.Bind;
+import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.event.EventDispatcher;
@@ -43,6 +44,13 @@ public class InternalServiceContext {
    */
   public EventDispatcher getEventDispatcher(){
     return lookup(EventDispatcher.class);
+  }
+  
+  /**
+   * @return the {@link ClusterManager}.
+   */
+  public ClusterManager getClusterManager() {
+    return lookup(ClusterManager.class);
   }
   
   /**

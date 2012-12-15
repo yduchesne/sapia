@@ -75,9 +75,19 @@
     <property name="allowedHostPatterns"   value="${corus.server.security.hostPattern.allow}" />
     <property name="deniedHostPatterns"    value="${corus.server.security.hostPattern.deny}" />
   </bean>
-  
+
+  <!-- ============ REPO ============ -->
+
+  <bean name="org.sapia.corus.client.services.repository.Repository" 
+        class="org.sapia.corus.repository.RepositoryImpl" 
+        scope="singleton"
+        autowire="autodetect">
+    <property name="type" value="${corus.server.repository.node.type}" />
+    <property name="maxConcurrentDeploymentRequests" value="${corus.server.repository.max.deployments}" />
+  </bean>
+
   <!-- ============ ALERTS ============ -->
-  
+
   <bean name="org.sapia.corus.client.services.alert.AlertManager" 
         class="org.sapia.corus.alert.AlertManagerImpl" 
         scope="singleton"

@@ -92,7 +92,7 @@ public class ProcessorExtension implements HttpExtension{
     ps.print("<processes ");
     attribute("domain", context.getDomain(), ps);
     try{
-      TCPAddress addr = context.getServerAddress();
+      TCPAddress addr = context.getCorusHost().getEndpoint().getServerTcpAddress();
       attribute("host", addr.getHost(), ps);      
       attribute("port", Integer.toString(addr.getPort()), ps);
     }catch(ClassCastException e){}

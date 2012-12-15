@@ -11,6 +11,7 @@ public class DeployerConfigurationImpl implements DeployerConfiguration{
   
   private String deployDir;
   private String tempDir;
+  private String repoDir;
   private long 	 fileLockTimeout = DEFAULT_FILELOCK_TIMEOUT;
   
   public String getDeployDir() {
@@ -33,6 +34,13 @@ public class DeployerConfigurationImpl implements DeployerConfiguration{
   }
   public void setTempDir(String tempDir) {
     this.tempDir = tempDir;
+  }
+  
+  public String getRepoDir() {
+    return repoDir;
+  }
+  public void setRepoDir(String repoDir) {
+    this.repoDir = repoDir;
   }
 
 }
