@@ -22,6 +22,7 @@ public class ForcePullTask extends RunnableTask {
   
   @Override
   public void run() {
+    super.context().debug("Pulling distributions from known repos");
     repo.pull();
   }
 

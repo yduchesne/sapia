@@ -6,6 +6,7 @@ import org.sapia.corus.client.facade.impl.CronFacadeImpl;
 import org.sapia.corus.client.facade.impl.DeployerFacadeImpl;
 import org.sapia.corus.client.facade.impl.PortManagementFacadeImpl;
 import org.sapia.corus.client.facade.impl.ProcessorFacadeImpl;
+import org.sapia.corus.client.facade.impl.RepoFacadeImpl;
 
 /**
  * An instance of this class wraps the various facades dealing with
@@ -23,6 +24,7 @@ public class CorusConnector {
   private PortManagementFacade 	 ports;
   private ConfiguratorFacade 		 config;
   private ClusterFacade          cluster;
+  private RepoFacade             repo;
   
   public CorusConnector(CorusConnectionContext context){
     this.context = context;
@@ -32,6 +34,7 @@ public class CorusConnector {
     ports 			 = new PortManagementFacadeImpl(context);
     config 			 = new ConfiguratorFacadeImpl(context);
     cluster      = new ClusterfacadeImpl(context);
+    repo         = new RepoFacadeImpl(context);
   }
   
   public CorusConnectionContext getContext() {
@@ -78,5 +81,12 @@ public class CorusConnector {
    */
   public ClusterFacade getCluster() {
 	  return cluster;
+  }
+  
+  /**
+   * @return the {@link RepoFacade}.
+   */
+  public RepoFacade getRepoFacade() {
+    return repo;
   }
 }

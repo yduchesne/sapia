@@ -51,6 +51,7 @@
     <property name="restartInterval"      value="${corus.process.restart-interval}" />
     <property name="processTimeout"       value="${corus.process.timeout}" />
     <property name="autoRestart"          value="${corus.process.auto-restart}" />
+    <property name="bootExecEnabled"      value="${corus.process.start-at-boot.enabled}" />
   </bean>
 
   <bean name="org.sapia.corus.client.services.processor.Processor" 
@@ -82,7 +83,6 @@
         class="org.sapia.corus.repository.RepositoryImpl" 
         scope="singleton"
         autowire="autodetect">
-    <property name="type" value="${corus.server.repository.node.type}" />
     <property name="maxConcurrentDeploymentRequests" value="${corus.server.repository.max.deployments}" />
   </bean>
 

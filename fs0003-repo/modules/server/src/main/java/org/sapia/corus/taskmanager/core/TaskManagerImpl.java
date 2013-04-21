@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.sapia.corus.core.ServerContext;
 
-public class TaskManagerImpl implements TaskManager{
+public class TaskManagerImpl implements TaskManager {
   
   private Timer           background;
   private ExecutorService threadpool;
@@ -130,8 +130,7 @@ public class TaskManagerImpl implements TaskManager{
           if(config.getListener() != null){
             config.getListener().executionAborted(task);
           }
-        }
-        else if(task.isMaxExecutionReached()){
+        } else if(task.isMaxExecutionReached()){
           TaskExecutionContext ctx = createExecutionContext(task, config);
           try{
             task.onMaxExecutionReached(ctx);
@@ -143,8 +142,7 @@ public class TaskManagerImpl implements TaskManager{
           if(config.getListener() != null){
             config.getListener().executionAborted(task);
           }
-        }
-        else{
+        } else{
           TaskExecutionContext ctx = createExecutionContext(task, config);
           try{
             task.execute(ctx, param);

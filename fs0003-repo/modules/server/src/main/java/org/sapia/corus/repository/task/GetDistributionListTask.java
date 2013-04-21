@@ -18,9 +18,10 @@ import org.sapia.ubik.mcast.EventChannel;
  */
 public class GetDistributionListTask extends RunnableTask {
   
+  private Set<CorusHost> repos = new HashSet<CorusHost>();
+  
   @Override
   public void run() {
-    Set<CorusHost> repos = new HashSet<CorusHost>();
     Set<CorusHost> hosts = context()
         .getServerContext()
         .getServices()
@@ -29,6 +30,7 @@ public class GetDistributionListTask extends RunnableTask {
     if (hosts.isEmpty()) {
       context().debug("Host list is empty - hosts probably not discovered yet");
     } else {
+      context().debug("Got Corus peers: " + hosts);
       for (CorusHost h : hosts) {
         if (h.getRepoRole() == RepoRole.SERVER) {
           if (repos.add(h)) {
@@ -42,6 +44,8 @@ public class GetDistributionListTask extends RunnableTask {
             } catch (IOException e) {
               context().error("Could not dispatch distribution list request", e);
             }
+          } else {
+            context().debug("Corus host already contacted, ignoring: " + h);
           }
         }
       }

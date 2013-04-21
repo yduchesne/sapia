@@ -1,10 +1,13 @@
 package org.sapia.corus.processor.task;
 
+import java.io.IOException;
+
 import org.sapia.corus.client.exceptions.processor.ProcessLockException;
 import org.sapia.corus.client.services.os.OsModule;
 import org.sapia.corus.client.services.port.PortManager;
 import org.sapia.corus.client.services.processor.LockOwner;
 import org.sapia.corus.client.services.processor.Process;
+import org.sapia.corus.client.services.processor.Process.LifeCycleStatus;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.client.services.processor.ProcessorConfiguration;
 import org.sapia.corus.client.services.processor.Process.ProcessTerminationRequestor;
@@ -85,7 +88,7 @@ public class KillTask extends Task<Void, TaskParams<Process, ProcessTerminationR
     // lock acquired, checking if process had confirmed previous kill
     // (if so, no point in continuing)
     if (proc.getStatus() == Process.LifeCycleStatus.KILL_CONFIRMED) {
-      doKillConfirmed(ctx);
+      doKillConfirmed(true, ctx);
     } else {
       ctx.getTaskManager().executeAndWait(
           new AttemptKillTask(), 
@@ -101,7 +104,9 @@ public class KillTask extends Task<Void, TaskParams<Process, ProcessTerminationR
     try{
       ctx.debug(String.format("Releasing lock on: %s", proc));
       proc.getLock().release(lockOwner);
-      proc.save();
+      if (proc.getStatus() != LifeCycleStatus.KILL_CONFIRMED) {
+    	  proc.save();
+      }
     }catch(Throwable err){
       // noop
     }finally{
@@ -109,10 +114,39 @@ public class KillTask extends Task<Void, TaskParams<Process, ProcessTerminationR
     }
   }
   
-  protected void doKillConfirmed(TaskExecutionContext ctx) throws Throwable{
+  // maximum kill retry has been reached, proceed to hard kill
+  @Override
+  protected void onMaxExecutionReached(TaskExecutionContext ctx)
+      throws Throwable {
+  
+    if(ctx.getTaskManager().executeAndWait(new ForcefulKillTask(), TaskParams.createFor(proc, requestor)).get()){
+      doKillConfirmed(false, ctx);
+    } else {
+      PortManager ports = ctx.getServerContext().getServices().lookup(PortManager.class);
+      ctx.error(String.format("Process %s could not be killed forcefully; auto-restart is aborted", proc));
+      proc.releasePorts(ports);
+      ctx.getServerContext().getServices().getProcesses().getActiveProcesses().removeProcess(proc.getProcessID());
+      if (requestor == ProcessTerminationRequestor.KILL_REQUESTOR_SERVER) {
+        ctx.getServerContext().getServices().getEventDispatcher().dispatch(new ProcessKilledEvent(requestor, proc, false));
+      }
+      abort(ctx);
+    }
+  }
+  
+  protected void doKillConfirmed(boolean performOsKill, TaskExecutionContext ctx) throws Throwable{
     try {
       ProcessorConfiguration procConfig = ctx.getServerContext().getServices().lookup(Processor.class).getConfiguration();
       ctx.info(String.format("Process kill (by %s) confirmed for %s", requestor, proc));
+      
+      try {
+        OsModule os = ctx.getServerContext().lookup(OsModule.class);
+        if (performOsKill && proc.getOsPid() != null) {
+          os.killProcess(osKillCallback(), proc.getOsPid());
+        }
+      } catch (IOException e) {
+        ctx.warn("Error caught trying to kill process", e);        
+      } 
+      
       ctx.getTaskManager().executeAndWait(new CleanupProcessTask(), proc).get(); 
       if (requestor == ProcessTerminationRequestor.KILL_REQUESTOR_SERVER) {
         if ((System.currentTimeMillis() - proc.getCreationTime()) > procConfig.getRestartIntervalMillis()) {
@@ -133,35 +167,13 @@ public class KillTask extends Task<Void, TaskParams<Process, ProcessTerminationR
     }
   }
   
-  // maximum kill retry has been reached, proceed to hard kill
-  @Override
-  protected void onMaxExecutionReached(TaskExecutionContext ctx)
-      throws Throwable {
-  
-    if(ctx.getTaskManager().executeAndWait(new ForcefulKillTask(), TaskParams.createFor(proc, requestor)).get()){
-      doKillConfirmed(ctx);
-    } else{
-      PortManager ports = ctx.getServerContext().getServices().lookup(PortManager.class);
-      ctx.error(String.format("Process %s could not be killed forcefully; auto-restart is aborted", proc));
-      proc.releasePorts(ports);
-      ctx.getServerContext().getServices().getProcesses().getActiveProcesses().removeProcess(proc.getProcessID());
-      if (requestor == ProcessTerminationRequestor.KILL_REQUESTOR_SERVER) {
-        ctx.getServerContext().getServices().getEventDispatcher().dispatch(new ProcessKilledEvent(requestor, proc, false));
-      }
-      abort(ctx);
-    }
-  }
-  
-  protected OsModule.LogCallback callback(final TaskExecutionContext ctx){
+  protected OsModule.LogCallback osKillCallback(){
     return new OsModule.LogCallback() {
       @Override
       public void error(String msg) {
-        ctx.error(msg);
       }
-      
       @Override
       public void debug(String msg) {
-        ctx.debug(msg);
       }
     };
   }

@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.processor.ExecConfig;
-import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.client.services.repository.ConfigNotification;
 import org.sapia.corus.client.services.repository.DistributionDeploymentRequest;
 import org.sapia.corus.client.services.repository.DistributionListRequest;
@@ -25,6 +25,7 @@ import org.sapia.corus.repository.task.DistributionListRequestHandlerTask;
 import org.sapia.corus.repository.task.DistributionListResponseHandlerTask;
 import org.sapia.corus.repository.task.ForcePullTask;
 import org.sapia.corus.repository.task.GetDistributionListTask;
+import org.sapia.corus.repository.task.HandleExecConfigTask;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.SemaphoreThrottle;
 import org.sapia.corus.taskmanager.core.Task;
@@ -34,6 +35,7 @@ import org.sapia.corus.util.TimeUtil;
 import org.sapia.ubik.mcast.AsyncEventListener;
 import org.sapia.ubik.mcast.RemoteEvent;
 import org.sapia.ubik.mcast.SyncEventListener;
+import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -44,14 +46,19 @@ import org.springframework.util.Assert;
  * @author yduchesne
  *
  */
-public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEventListener, SyncEventListener, Interceptor {
+@Bind(moduleInterface={Repository.class})
+@Remote(interfaces={Repository.class})
+public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEventListener, SyncEventListener, Interceptor, java.rmi.Remote{
   
-  private static final long                    MIN_BOOSTRAP_INTERVAL                      = 10000;
-  private static final int                     MAX_BOOSTRAP_INTERVAL_OFFSET               = 10000;
-  private static final long                    DEFAULT_DIST_DISCO_INTERVAL                = 10000;
+  private static final long                    MIN_BOOSTRAP_INTERVAL                      = TimeUnit.SECONDS.toMillis(5);
+  private static final int                     MAX_BOOSTRAP_INTERVAL_OFFSET               = (int) TimeUnit.SECONDS.toMillis(5);
+  private static final long                    DEFAULT_DIST_DISCO_INTERVAL                = TimeUnit.SECONDS.toMillis(5);
   private static final int                     DEFAULT_DIST_DISCO_MAX_ATTEMPTS            = 3;
-  private static final int                     DEFAULT_MAX_CONCURRENT_DEPLOYMENT_REQUESTS = 2;
-
+  private static final int                     DEFAULT_MAX_CONCURRENT_DEPLOYMENT_REQUESTS = 3;
+  private static final long                    DEFAULT_HANDLE_EXEC_CONFIG_DELAY           = TimeUnit.SECONDS.toMillis(1);
+  private static final long                    DEFAULT_HANDLE_EXEC_CONFIG_INTERVAL        = TimeUnit.SECONDS.toMillis(3);
+  private static final int                     DEFAULT_HANDLE_EXEC_CONFIG_MAX_ATTEMPTS    = 5;
+  
   @Autowired
   private TaskManager                          taskManager;
   
@@ -60,9 +67,6 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   
   @Autowired
   private Configurator                         configurator;
-  
-  @Autowired
-  private Processor                            processor;
   
   @Autowired
   private EventDispatcher                      dispatcher;
@@ -105,10 +109,6 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   
   void setDispatcher(EventDispatcher dispatcher) {
     this.dispatcher = dispatcher;
-  }
-  
-  void setProcessor(Processor processor) {
-    this.processor = processor;
   }
   
   void setTaskManager(TaskManager taskManager) {
@@ -166,39 +166,36 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
 
   @Override
   public void pull() throws IllegalStateException {
-    if (!serverContext().getCorusHost().getRepoRole().isClient()) {
-      throw new IllegalStateException("Node is not CLIENT: " + serverContext().getCorusHost().getRepoRole());
+    if (serverContext().getCorusHost().getRepoRole().isClient()) {
+      logger().debug("Node is a repo client: will try to acquire distributions from repo server");
+      GetDistributionListTask task = new GetDistributionListTask();
+      task.setMaxExecution(maxDistDiscoAttempts);
+      
+      taskManager.executeBackground(
+          task, 
+          null,
+          BackgroundTaskConfig.create()
+             .setExecDelay(TimeUtil.createRandomDelay(MIN_BOOSTRAP_INTERVAL, MAX_BOOSTRAP_INTERVAL_OFFSET))
+             .setExecInterval(TimeUnit.SECONDS.convert(distDiscoIntervalSeconds, TimeUnit.SECONDS))
+      );  
     }
-    logger().debug("Node is a repo client: will try to acquire distributions from repo server");
-    GetDistributionListTask task = new GetDistributionListTask();
-    task.setMaxExecution(maxDistDiscoAttempts);
-    
-    taskManager.executeBackground(
-        task, 
-        null,
-        BackgroundTaskConfig.create()
-           .setExecDelay(TimeUtil.createRandomDelay(MIN_BOOSTRAP_INTERVAL, MAX_BOOSTRAP_INTERVAL_OFFSET))
-           .setExecInterval(TimeUnit.SECONDS.convert(distDiscoIntervalSeconds, TimeUnit.SECONDS))
-    );  
   }
   
   @Override
   public void push() throws IllegalStateException {
-    if (!serverContext().getCorusHost().getRepoRole().isServer()) {
-      throw new IllegalStateException("Node is not SERVER: " + serverContext().getCorusHost().getRepoRole());
-    }
-    
-    ForceClientPullNotification notif = new ForceClientPullNotification(serverContext().getCorusHost().getEndpoint());
-    for (CorusHost host : clusterManager.getHosts()) {
-      if (host.getRepoRole().isClient()) {
-        notif.addTarget(host.getEndpoint());
+    if (serverContext().getCorusHost().getRepoRole().isServer()) {
+      ForceClientPullNotification notif = new ForceClientPullNotification(serverContext().getCorusHost().getEndpoint());
+      for (CorusHost host : clusterManager.getHosts()) {
+        if (host.getRepoRole().isClient()) {
+          notif.addTarget(host.getEndpoint());
+        }
       }
-    }
-    try {
-      clusterManager.send(notif);
-    } catch (Exception e) {
-      logger().error("Could not send pull notification", e);
-      throw new IllegalStateException("Error trying to send pull notification to repo clients - " + e.getMessage());
+      try {
+        clusterManager.send(notif);
+      } catch (Exception e) {
+        logger().error("Could not send pull notification", e);
+        throw new IllegalStateException("Error trying to send pull notification to repo clients - " + e.getMessage());
+      }
     }
   }
   
@@ -210,15 +207,13 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
       logger().debug("Node is a repo client: will request distributions from repository");
       Task<Void, Void> task = new ForcePullTask(this);
       task.executeOnce();
+      long delay = TimeUtil.createRandomDelay(MIN_BOOSTRAP_INTERVAL, MAX_BOOSTRAP_INTERVAL_OFFSET);
       taskManager.executeBackground(
           task, 
           null,
           BackgroundTaskConfig.create()
-             .setExecDelay(
-                 TimeUtil.createRandomDelay(
-                     MIN_BOOSTRAP_INTERVAL, MAX_BOOSTRAP_INTERVAL_OFFSET
-             )
-          )
+             .setExecInterval(delay)
+             .setExecDelay(delay)
       );      
     } else {
       logger().debug(String.format("Node is %s, Will not pull distributions from repos", serverContext().getCorusHost().getRepoRole()));
@@ -268,18 +263,23 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   // Restricted methods (event handlers)
   
   void handleExecConfigNotification(ExecConfigNotification notif) {
-    if (notif.isTargeted(serverContext().getCorusHost().getEndpoint())) {
-      for (ExecConfig ec : notif.getConfigs()) {
-        logger().info(String.format("Adding exec config: %s, %s", ec.getName(), ec.getProfile()));
-        processor.addExecConfig(ec);
+    
+    if (notif.getConfigs().isEmpty()) {
+      logger().debug("Received empty exec config list");
+      return;
+    } else {
+     for (ExecConfig config : notif.getConfigs()) {
+        logger().debug("Got exec config: " + config.getName());
       }
-      for (ExecConfig ec : notif.getConfigs()) {
-        if (ec.isStartOnBoot()) {
-          logger().info(String.format("Triggering startup for exec config: %s, %s", ec.getName(), ec.getProfile()));
-          processor.exec(ec.getName());
-        }
-      }
-    } 
+    }
+    
+    taskManager.executeBackground(
+        new HandleExecConfigTask(notif.getConfigs())
+          .setMaxExecution(DEFAULT_HANDLE_EXEC_CONFIG_MAX_ATTEMPTS), 
+        null, 
+        BackgroundTaskConfig.create()
+          .setExecDelay(DEFAULT_HANDLE_EXEC_CONFIG_DELAY)
+          .setExecInterval(DEFAULT_HANDLE_EXEC_CONFIG_INTERVAL));
     
     // cascading to next host
     try {

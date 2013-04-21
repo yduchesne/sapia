@@ -55,4 +55,8 @@ public interface ProcessorConfiguration extends Remote{
    */
   public boolean autoRestartStaleProcesses();
 
+  /**
+   * @return <code>true</code> if process startup at Corus boot time is enabled.
+   */
+  public boolean isBootExecEnabled();
 }

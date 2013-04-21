@@ -80,8 +80,8 @@ public class FileSystemModuleImpl extends ModuleHelper implements FileSystemModu
   
   @Override
   public void unzip(File toUnzip, File destDir) throws IOException {
-    Assert.isTrue(toUnzip.isDirectory(), "File to unzip is in fact a directory: " + toUnzip.getAbsolutePath());
-    Assert.isTrue(!destDir.isDirectory(), "Destination directory is a file: " + destDir.getAbsolutePath());
+    Assert.isTrue(!toUnzip.isDirectory(), "File to unzip is in fact a directory: " + toUnzip.getAbsolutePath());
+    Assert.isTrue(destDir.isDirectory(), "Destination directory is a file: " + destDir.getAbsolutePath());
 
     Expand unzip = new Expand();
     unzip.setSrc(toUnzip);
@@ -101,6 +101,7 @@ public class FileSystemModuleImpl extends ModuleHelper implements FileSystemModu
     Zip zip = new Zip();
     zip.setBasedir(srcDir);
     zip.setDestFile(destFile);
+    zip.setProject(new Project());    
     try{
       zip.execute();
     }catch(BuildException e){

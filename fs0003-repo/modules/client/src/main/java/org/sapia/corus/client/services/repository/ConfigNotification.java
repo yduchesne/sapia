@@ -53,7 +53,7 @@ public class ConfigNotification extends ClusterNotification {
    * @param tags the {@link Set} of tags to add to this instance.
    */
   public void addTags(Set<String> tags) {
-    tags.addAll(tags);
+    this.tags.addAll(tags);
   }
   
   /**
