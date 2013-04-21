@@ -14,6 +14,7 @@ public class ForcePullTaskTest extends AbstractRepoTaskTest {
 
   @Before
   public void setUp() {
+    super.doSetUp();
     repo = mock(Repository.class);
     task = new ForcePullTask(repo);
   }

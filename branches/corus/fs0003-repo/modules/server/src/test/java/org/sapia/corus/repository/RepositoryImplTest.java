@@ -79,7 +79,6 @@ public class RepositoryImplTest {
     repo.setClusterManager(cluster);
     repo.setConfigurator(config);
     repo.setDispatcher(dispatcher);
-    repo.setProcessor(processor);
     repo.setTaskManager(tasks);
     repo.setApplicationContext(appCtx);
     repo.setServerContext(serverCtx);
@@ -174,10 +173,8 @@ public class RepositoryImplTest {
     
     RemoteEvent event = new RemoteEvent(ExecConfigNotification.EVENT_TYPE, notif);
     repo.onSyncEvent(event);
-    
-    verify(processor).addExecConfig(any(ExecConfig.class));
-    verify(processor).exec(eq("test"));
 
+    verify(tasks).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class));
     verify(cluster).send(any(ExecConfigNotification.class));
   }
   
@@ -192,27 +189,7 @@ public class RepositoryImplTest {
     RemoteEvent event = new RemoteEvent(ExecConfigNotification.EVENT_TYPE, notif);
     repo.onSyncEvent(event);
     
-    verify(processor, never()).addExecConfig(any(ExecConfig.class));
-    verify(processor, never()).exec(eq("test"));
-
-    verify(cluster).send(any(ExecConfigNotification.class));
-  }
-  
-  @Test
-  public void testHandleExecConfigNotificationNoStartOnBoot() throws Exception {
-    host.setRepoRole(RepoRole.CLIENT);
-    ExecConfig conf = new ExecConfig();
-    conf.setName("test");
-    conf.setStartOnBoot(false);
-    ExecConfigNotification notif = new ExecConfigNotification(Collections2.arrayToList(conf));
-    notif.addTarget(host.getEndpoint());
-    
-    RemoteEvent event = new RemoteEvent(ExecConfigNotification.EVENT_TYPE, notif);
-    repo.onSyncEvent(event);
-    
-    verify(processor).addExecConfig(any(ExecConfig.class));
-    verify(processor, never()).exec(eq("test"));
-
+    verify(tasks, never()).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class));
     verify(cluster).send(any(ExecConfigNotification.class));
   }
   

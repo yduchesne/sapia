@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 import org.sapia.corus.client.services.cluster.Endpoint;
 import org.sapia.corus.client.services.deployer.transport.ClientDeployOutputStream;
@@ -16,10 +14,7 @@ import org.sapia.corus.client.services.deployer.transport.DeployOsAdapter;
 import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
 import org.sapia.corus.client.services.deployer.transport.DeploymentClientFactory;
 import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
-import org.sapia.corus.client.services.processor.ExecConfig;
-import org.sapia.corus.client.services.repository.ConfigNotification;
 import org.sapia.corus.client.services.repository.DistributionDeploymentRequest;
-import org.sapia.corus.client.services.repository.ExecConfigNotification;
 import org.sapia.corus.taskmanager.util.RunnableTask;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.util.Collections2;
@@ -49,9 +44,7 @@ public class DeploymentRequestHandlerTask extends RunnableTask {
     } else {
       try {
         context().debug("Deploying to: " + targets);
-        doSendConfig();
         doDeployDistribution();
-        doSendExecConfig();
       } catch (Exception e) {
         context().error("Problem performing deployment", e);
       }
@@ -60,44 +53,6 @@ public class DeploymentRequestHandlerTask extends RunnableTask {
 
   // --------------------------------------------------------------------------
   // Restricted visibility methods - for unit testing
-  
-  private void doSendConfig() throws Exception {
-    Properties props = context().getServerContext().getProcessProperties();
-    Set<String> tags = context().getServerContext().getServices().getConfigurator().getTags();
-    
-    if (props.isEmpty() && tags.isEmpty()) {
-      context().debug("No tags or properties to push to: " + targets);
-    } else {
-      context().debug("Sending configuration notification to: " + targets);
-      ConfigNotification notif = new ConfigNotification();
-      notif.getTargets().addAll(targets);
-      notif.addProperties(props);
-      notif.addTags(tags);
-    
-      context()
-        .getServerContext()
-        .getServices()
-        .getClusterManager()
-        .send(notif);
-    }
-  }
-  
-  void doSendExecConfig() throws Exception {
-    List<ExecConfig>       confs   = new ArrayList<ExecConfig>(context().getServerContext().getServices().getExecConfigs().getConfigs());
-    
-    if (confs.isEmpty()) {
-      context().debug("Sending execution configurations to push to: " + targets);
-    } else {
-      context().debug("Sending execution configuration notification to: " + targets);
-      ExecConfigNotification notif   = new ExecConfigNotification(confs);
-      notif.getTargets().addAll(targets);
-      context()
-        .getServerContext()
-        .getServices()
-        .getClusterManager()
-        .send(notif);
-    }
-  }
   
   void doDeployDistribution() throws IOException {
     OutputStream        os     = null;
@@ -110,7 +65,7 @@ public class DeploymentRequestHandlerTask extends RunnableTask {
       
       DeploymentMetadata meta = new DeploymentMetadata(distributionFile.getName(), distributionFile.length(), true);
       
-      Endpoint first = targetsCopy.remove(0);
+      Endpoint first = targetsCopy.get(0);
       
       meta.getTargeted().addAll(Collections2.convertAsSet(targetsCopy, new Function<ServerAddress, Endpoint>() {
         public ServerAddress call(Endpoint arg) {

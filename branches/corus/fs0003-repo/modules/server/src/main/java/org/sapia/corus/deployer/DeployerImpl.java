@@ -54,7 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Yanick Duchesne
  */
 @Bind(moduleInterface={Deployer.class, InternalDeployer.class})
-@Remote(interfaces={ Deployer.class})
+@Remote(interfaces={Deployer.class})
 public class DeployerImpl extends ModuleHelper implements InternalDeployer,
   DeploymentConnector, Interceptor {
   /**
@@ -257,7 +257,7 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
           .createFile();
       if (distDir.exists()) {
         try {
-          serverContext().getServices().getFileSystem().zip(distFile, distDir);
+          serverContext().getServices().getFileSystem().zip(distDir, distFile);
           return distFile;
         } catch (IOException e) {
           throw new IORuntimeException(String.format("Could generate zip file for distribution %s, %s"), e);
@@ -308,10 +308,14 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
         logger().error("Could not lookup ClusterManager while performing deployment", e);
         return;
       }
-
+      
       Set<ServerAddress>  visited = meta.getVisited();
       ServerAddress       addr;
       ServerAddress       current = serverContext().getCorusHost().getEndpoint().getServerAddress();
+      
+      logger().debug("Targeted hosts: " + meta.getTargeted());
+      logger().debug("Visited hosts: " + meta.getVisited());
+      logger().debug("Current host: " + current);
 			
       // adding this host to visited set
       visited.add(current);

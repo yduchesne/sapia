@@ -68,8 +68,6 @@ public class ConfiguratorImpl extends ModuleHelper implements Configurator, Inte
     } else{
       serverContext().overrideServerName(serverName);
     }
-    
-    serverContext().getServices().bind(InternalConfigurator.class, this);
   }
   
   @Override

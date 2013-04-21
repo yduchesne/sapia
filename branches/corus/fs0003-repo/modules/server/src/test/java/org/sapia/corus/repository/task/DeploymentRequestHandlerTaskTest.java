@@ -64,24 +64,6 @@ public class DeploymentRequestHandlerTaskTest extends AbstractRepoTaskTest {
   public void testExecuteWithTargets() throws Throwable {
     task.execute(taskContext, null);
     assertTrue(task.deploy);
-    verify(cluster, times(2)).send(any(ClusterNotification.class));
-  }
-  
-  @Test
-  public void testExecuteWithAndEmptyTagsAndProperties() throws Throwable {
-    tags.clear();
-    processProperties.clear();
-    task.execute(taskContext, null);
-    assertTrue(task.deploy);
-    verify(cluster, times(1)).send(any(ClusterNotification.class));
-  }
-
-  @Test
-  public void testExecuteWithAndEmptyExecConfigs() throws Throwable {
-    execConfigs.clear();
-    task.execute(taskContext, null);
-    assertTrue(task.deploy);
-    verify(cluster, times(1)).send(any(ClusterNotification.class));
   }
   
   // ==========================================================================

@@ -8,6 +8,7 @@ import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
 import org.sapia.corus.client.services.cluster.Endpoint;
 import org.sapia.corus.client.services.configurator.Configurator;
+import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.InternalServiceContext;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
@@ -24,6 +25,7 @@ public abstract class AbstractRepoTaskTest {
   protected EventChannel           eventChannel;
   protected Configurator           configurator;
   protected TaskManager            taskMan;
+  protected Processor              processor;
   protected CorusHost              node;
   
   protected void doSetUp() {
@@ -35,6 +37,7 @@ public abstract class AbstractRepoTaskTest {
     configurator   = mock(Configurator.class);
     taskMan        = mock(TaskManager.class);
     eventChannel   = mock(EventChannel.class);
+    processor      = mock(Processor.class);
     
     node = CorusHost.newInstance(new Endpoint(new TcpSocketAddress("test", 1001), new TcpSocketAddress("test", 1001)), "test", "test");
     node.setRepoRole(RepoRole.CLIENT);
@@ -44,6 +47,7 @@ public abstract class AbstractRepoTaskTest {
     when(serverContext.getCorusHost()).thenReturn(node);
     when(serviceContext.getClusterManager()).thenReturn(cluster);
     when(serviceContext.getConfigurator()).thenReturn(configurator);
+    when(serviceContext.getProcessor()).thenReturn(processor);
     when(taskContext.getTaskManager()).thenReturn(taskMan);
     when(cluster.getEventChannel()).thenReturn(eventChannel);
   }

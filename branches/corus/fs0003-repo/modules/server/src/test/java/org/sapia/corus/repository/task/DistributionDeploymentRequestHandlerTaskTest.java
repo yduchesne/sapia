@@ -8,10 +8,11 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,6 +22,8 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.sapia.corus.client.services.cluster.Endpoint;
+import org.sapia.corus.client.services.processor.ExecConfig;
+import org.sapia.corus.client.services.processor.ProcessDef;
 import org.sapia.corus.client.services.repository.DistributionDeploymentRequest;
 import org.sapia.corus.client.services.repository.RepoDistribution;
 import org.sapia.corus.deployer.InternalDeployer;
@@ -35,6 +38,7 @@ public class DistributionDeploymentRequestHandlerTaskTest extends AbstractRepoTa
   private Queue<DistributionDeploymentRequest>     requests;
   private InternalDeployer                         internalDeployer;
   private DistributionDeploymentRequestHandlerTask task;
+  private List<ExecConfig>                         execConfigs;
   
   @Before
   public void setUp() throws Exception {
@@ -59,6 +63,21 @@ public class DistributionDeploymentRequestHandlerTaskTest extends AbstractRepoTa
     
     task = new DistributionDeploymentRequestHandlerTask(requests);
     
+    ExecConfig conf1 = new ExecConfig();
+    ProcessDef def1 = conf1.createProcess();
+    def1.setDist("dist1");
+    def1.setVersion("1.0");
+
+    ExecConfig conf2 = new ExecConfig();
+    ProcessDef def2 = conf2.createProcess();
+    def2.setDist("dist2");
+    def2.setVersion("1.0");
+    
+    execConfigs = new ArrayList<ExecConfig>();
+    execConfigs.add(conf1);
+    execConfigs.add(conf2);
+    
+    when(processor.getExecConfigs()).thenReturn(execConfigs);
     when(serverContext.lookup(eq(InternalDeployer.class))).thenReturn(internalDeployer);
     when(internalDeployer.getDistributionFile(anyString(), anyString())).thenReturn(new File("test"));
     
@@ -80,7 +99,7 @@ public class DistributionDeploymentRequestHandlerTaskTest extends AbstractRepoTa
 
     task.execute(taskContext, null);
 
-    assertEquals(2, expected.get().getChildTasks().size());
+    assertEquals(5, expected.get().getChildTasks().size());
   }
   
   @Test
@@ -101,20 +120,19 @@ public class DistributionDeploymentRequestHandlerTaskTest extends AbstractRepoTa
 
     task.execute(taskContext, null);
 
-    assertEquals(1, expected.get().getChildTasks().size());
+    assertEquals(3, expected.get().getChildTasks().size());
   }
 
   @Test
   public void testExecuteEmptyDistributions() throws Throwable {
     requests.removeAll();
     task.execute(taskContext, null);
-
-    verify(taskMan, never()).execute(any(Task.class), any(Void.class));
+    verify(taskMan).execute(any(Task.class), any(Void.class));
   }
   
   @Test
   public void testGetDistributionTargets() {
-    Map<RepoDistribution, Set<Endpoint>> targets = task.getDistributionTargets(taskContext);
+    Map<RepoDistribution, Set<Endpoint>> targets = task.getDistributionTargets(taskContext, requests.removeAll());
 
     assertTrue(targets.containsKey(dist1));
     assertTrue(targets.containsKey(dist2));

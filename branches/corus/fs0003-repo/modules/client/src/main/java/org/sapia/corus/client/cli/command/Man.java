@@ -35,6 +35,7 @@ public class Man extends CorusCliCommand{
     COMMANDS.put("man", Man.class);
     COMMANDS.put("port", Port.class);
     COMMANDS.put("ps", Ps.class);
+    COMMANDS.put("pull", Pull.class);    
     COMMANDS.put("quit", Quit.class);
     COMMANDS.put("restart", Restart.class);
     COMMANDS.put("resume", Resume.class);

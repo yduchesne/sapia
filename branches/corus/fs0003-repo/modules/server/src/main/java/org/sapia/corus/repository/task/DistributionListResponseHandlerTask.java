@@ -51,18 +51,14 @@ public class DistributionListResponseHandlerTask extends RunnableTask {
       }
     }
     
-    if (toReceive.isEmpty()) {
-      context().debug("No distribution to request");
-    } else {
-      context().debug("Sending deployment request");
-      EventChannel                  channel = cluster.getEventChannel();
-      DistributionDeploymentRequest request = new DistributionDeploymentRequest(context().getServerContext().getCorusHost().getEndpoint());
-      request.addDistributions(toReceive); 
-      try {
-        channel.dispatch(distsRes.getEndpoint().getChannelAddress(), DistributionDeploymentRequest.EVENT_TYPE, request);
-      } catch (Exception e) {
-        context().error(String.format("Could not send distribution list to %s", distsRes.getEndpoint()), e);
-      }
+    context().debug("Sending deployment request");
+    EventChannel                  channel = cluster.getEventChannel();
+    DistributionDeploymentRequest request = new DistributionDeploymentRequest(context().getServerContext().getCorusHost().getEndpoint());
+    request.addDistributions(toReceive); 
+    try {
+      channel.dispatch(distsRes.getEndpoint().getChannelAddress(), DistributionDeploymentRequest.EVENT_TYPE, request);
+    } catch (Exception e) {
+      context().error(String.format("Could not send distribution list to %s", distsRes.getEndpoint()), e);
     }
   }
 }

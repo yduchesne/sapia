@@ -38,6 +38,7 @@ import org.sapia.corus.processor.task.BootstrapExecConfigStartTask;
 import org.sapia.corus.processor.task.EndUserExecConfigStartTask;
 import org.sapia.corus.processor.task.KillTask;
 import org.sapia.corus.processor.task.MultiExecTask;
+import org.sapia.corus.processor.task.ProcessAutoshutDownConfirmTask;
 import org.sapia.corus.processor.task.ProcessCheckTask;
 import org.sapia.corus.processor.task.RestartTask;
 import org.sapia.corus.processor.task.ResumeTask;
@@ -57,7 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Yanick Duchesne
  */
-@Bind(moduleInterface=Processor.class)
+@Bind(moduleInterface= Processor.class)
 @Remote(interfaces=Processor.class)
 public class ProcessorImpl extends ModuleHelper implements Processor {
     
@@ -80,6 +81,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   public ProcessorConfiguration getConfiguration() {
     return configuration;
   }
+
 
   public void init() throws Exception {
 
@@ -142,15 +144,19 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   public void start() throws Exception {
     ProcessorExtension ext = new ProcessorExtension(this, serverContext());
     http.addHttpExtension(ext);
-    
-    BootstrapExecConfigStartTask boot = new BootstrapExecConfigStartTask();
-    
-    taskman.executeBackground(
-        boot,
-        null,
-        BackgroundTaskConfig.create()
-          .setExecDelay(configuration.getBootExecDelayMillis())
-          .setExecInterval(configuration.getStartIntervalMillis()));
+   
+    if (configuration.isBootExecEnabled()) {
+      BootstrapExecConfigStartTask boot = new BootstrapExecConfigStartTask();
+      
+      taskman.executeBackground(
+          boot,
+          null,
+          BackgroundTaskConfig.create()
+            .setExecDelay(configuration.getBootExecDelayMillis())
+            .setExecInterval(configuration.getStartIntervalMillis()));
+    } else {
+      log.warn("Automatic startup of processes at boot time is disabled for this node");
+    }
     
     ProcessCheckTask check = new ProcessCheckTask();
     taskman.executeBackground(
@@ -341,6 +347,22 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
               .setExecInterval(configuration.getKillIntervalMillis())
         );
       }
+  }
+  
+  @Override
+  public void confirmShutdown(String corusPid) throws ProcessNotFoundException {
+    Process process = getProcess(corusPid);
+    
+    // if the process is currently active, it means it shut down autonomously
+    if (process.getStatus() == LifeCycleStatus.ACTIVE) {
+      taskman.execute(new ProcessAutoshutDownConfirmTask(), process);
+      
+    // else, just making sure the status is set to confirm, the current background 
+    // kill task will complete the work based on that status being set.
+    } else if (process.getStatus() != LifeCycleStatus.KILL_CONFIRMED) {
+      process.confirmKilled();
+      process.save();
+    }
   }
 
   @Override

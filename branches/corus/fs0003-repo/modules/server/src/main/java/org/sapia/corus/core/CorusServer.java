@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -95,6 +97,10 @@ public class CorusServer {
         return;
       }
       
+      if (cmd.containsOption(PORT_OPT, true)) {
+        port = cmd.assertOption(PORT_OPT, true).asInt();
+      }      
+      
       // ----------------------------------------------------------------------
       // Determining location of server properties 
       // (can be specified at command-line)
@@ -104,18 +110,27 @@ public class CorusServer {
         configFileName = cmd.assertOption(CONFIG_FILE_OPT, true).getValue();
       }
       
-      String aFilename = new StringBuffer(corusHome).
-        append(File.separator).append("config").
-        append(File.separator).append(configFileName).
-        toString();      
+      String aFilename = new StringBuffer(corusHome)
+        .append(File.separator).append("config")
+        .append(File.separator).append(configFileName)
+        .toString();      
       
       File propFile = new File(aFilename);
+      
+      String specificFileName = new StringBuffer(corusHome)
+        .append(File.separator).append("config")
+        .append(File.separator).append("corus_")
+        .append(port).append(".properties")
+        .toString();      
+      
+      File specificPropFile = new File(specificFileName);
 
       // ----------------------------------------------------------------------
       // First off, we're loading the server properties to extract the includes
       
       Properties rawProps       = new Properties();
       PropertiesUtil.loadIfExist(rawProps, propFile);
+      PropertiesUtil.loadIfExist(rawProps, specificPropFile);      
       Properties includes       = PropertiesUtil.filter(
       		                          rawProps, 
       		                          PropertiesFilter.NamePrefixPropertiesFilter.createInstance(PROP_INCLUDES)
@@ -145,22 +160,15 @@ public class CorusServer {
       // included properties as parents (in that order). We're performing 
       // variable substitution.
       
-      Properties corusProps = new Properties(System.getProperties());
-      // copying the included props to the server props (server props will 
-      // override included props
-      PropertiesUtil.copy(includedProps, corusProps);
-      if(propFile.exists()){
-        InputStream is = null;
-        InputStream propStream = null;
-        try{
-          propStream = IOUtils.replaceVars(new PropertiesStrLookup(corusProps), is = new FileInputStream(propFile));
-          corusProps.load(propStream);
-        }finally{
-          if(is != null){
-            try{ is.close(); }catch(Exception e){}
-          }
-        }
+      List<File> configFiles = new ArrayList<File>();
+      configFiles.add(propFile);
+      if (specificPropFile.exists()) {
+        configFiles.add(specificPropFile);
       }
+
+      Properties corusProps = new Properties(System.getProperties());
+      PropertiesUtil.copy(includedProps, corusProps);
+      CorusPropertiesLoader.load(corusProps, configFiles);
       
       // ----------------------------------------------------------------------
       // Determining domain: can be specified at command line, or in server 
@@ -180,12 +188,11 @@ public class CorusServer {
       System.setProperty(CorusConsts.PROPERTY_CORUS_DOMAIN, domain);
       
       // ----------------------------------------------------------------------
-      // Determining port.
+      // Determining port: if a port other than the default was passed at the 
+      // command-line, we're using it. Otherwise, we're using the configured
+      // port.
       
-      if (cmd.containsOption(PORT_OPT, true)) {
-        port = cmd.assertOption(PORT_OPT, true).asInt();
-      }
-      else if(corusProps.getProperty(CorusConsts.PROPERTY_CORUS_PORT) != null){
+      if (port == DEFAULT_PORT && corusProps.getProperty(CorusConsts.PROPERTY_CORUS_PORT) != null) {
         port = Integer.parseInt(corusProps.getProperty(CorusConsts.PROPERTY_CORUS_PORT));
       }
       
@@ -256,6 +263,16 @@ public class CorusServer {
       h.setDefaultLogTarget(logTarget);
       
       Logger serverLog = h.getLoggerFor(CorusServer.class.getName());
+      
+      if (propFile.exists()) {
+        serverLog.info("Initialized server with properties: " + propFile.getAbsolutePath());
+      }
+      if (specificPropFile.exists()) {
+        serverLog.info("Server properties overridden with specific properties: " + specificPropFile.getAbsolutePath());
+      } else {
+        serverLog.info("Server override properties not found, will not be used: " + specificPropFile.getAbsolutePath());
+      }
+      
       if(serverLog.isDebugEnabled()) {
       	serverLog.debug("------------------------ Starting server with following properties: ------------------------");
       	Map<String, String> sortedServerProps = PropertiesUtil.map(corusProps);
@@ -294,7 +311,7 @@ public class CorusServer {
       
       
       CorusImpl corus = new CorusImpl(
-          CorusPropertiesLoader.load(new File(aFilename)), 
+          corusProps, 
           domain, 
           new MultiplexSocketAddress(host, port), 
           channel,

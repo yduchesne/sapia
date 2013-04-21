@@ -50,15 +50,17 @@ public abstract class Task<R,P> {
    * 
    * @see #isMaxExecutionReached()
    */
-  public void setMaxExecution(int maxExecution) {
+  public Task<R, P> setMaxExecution(int maxExecution) {
     this.maxExecution = maxExecution;
+    return this;
   }
   
   /**
    * Sets this instance's maximum number of executions to 1.
    */
-  public void executeOnce() {
+  public Task<R, P> executeOnce() {
     maxExecution = 1;
+    return this;
   }
 
   /**
