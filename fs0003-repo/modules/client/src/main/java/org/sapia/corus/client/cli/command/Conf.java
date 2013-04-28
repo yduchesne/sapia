@@ -21,36 +21,53 @@ import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
 import org.sapia.corus.client.cli.CliContext;
 import org.sapia.corus.client.cli.CliError;
+import org.sapia.corus.client.cli.TableDef;
 import org.sapia.corus.client.common.NameValuePair;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.util.Collections2;
 
+/**
+ * @author yduchesne
+ *
+ */
 public class Conf extends CorusCliCommand{
+  
+  private static final TableDef PROPS_TBL = TableDef.newInstance()
+      .createCol("name", 38)
+      .createCol("val", 38);
+  
+  private static final TableDef TAGS_TBL = TableDef.newInstance()
+      .createCol("val", 78);
+  
+  private static final TableDef TITLE_TBL = TableDef.newInstance()
+      .createCol("val", 78);
+  
+  //--------------------------------------------------------------------------
   
   public static final String ARG_ADD 				= "add";
   public static final String ARG_DEL 				= "del";
   public static final String ARG_LS  				= "ls";
   public static final String ARG_EXPORT     = "export";
   
-  public static final String OPT_PROPERTY 	= "p";
-  public static final String OPT_FILE       = "f";
-  public static final String OPT_TAG 				= "t";
-  public static final String OPT_SCOPE 			= "s";
-  public static final String OPT_SCOPE_SVR 	= "s";
-  public static final String OPT_SCOPE_PROC = "p";
-  public static final String OPT_CLEAR 			= "clear";
-
-  private static final int COL_PROP_TAG   = 0;
-  private static final int COL_PROP_NAME  = 0;
-  private static final int COL_PROP_VALUE = 1;
+  private static final String OPT_PROPERTY 	 = "p";
+  private static final String OPT_FILE       = "f";
+  private static final String OPT_TAG 			 = "t";
+  private static final String OPT_SCOPE 		 = "s";
+  private static final String OPT_SCOPE_SVR  = "s";
+  private static final String OPT_SCOPE_PROC = "p";
+  private static final String OPT_CLEAR 		 = "clear";
   
-  public enum Op{
+  // --------------------------------------------------------------------------
+  
+  private enum Op{
     ADD,
     DELETE,
     LIST,
     EXPORT
   }
+  
+  //--------------------------------------------------------------------------
   
   @Override
   protected void doExecute(CliContext ctx) throws AbortException, InputException{
@@ -178,7 +195,7 @@ public class Conf extends CorusCliCommand{
   }
   
   private void exportTagResults(Results<Set<String>> res, CliContext ctx) throws InputException {
-    File        exportFile = ctx.getFileSystem().getFile(ctx.getCommandLine().assertOption(OPT_FILE, true).getValue());
+    File exportFile = ctx.getFileSystem().getFile(ctx.getCommandLine().assertOption(OPT_FILE, true).getValue());
     try  {
       PrintWriter writer     = new PrintWriter(new FileOutputStream(exportFile));
       try  {
@@ -211,45 +228,37 @@ public class Conf extends CorusCliCommand{
   }
   
   private void displayTagsHeader(ServerAddress addr, CliContext ctx) {
-    Table         hostTable;
-    Table         distTable;
-    Row           row;
-    Row           headers;
+    Table titleTable    = TITLE_TBL.createTable(ctx.getConsole().out());
+    Table headersTable  = TAGS_TBL.createTable(ctx.getConsole().out());
 
-    hostTable = new Table(ctx.getConsole().out(), 1, 78);
-    hostTable.drawLine('=');
-    row = hostTable.newRow();
-    row.getCellAt(0).append("Host: ").append(addr.toString());
+    titleTable.drawLine('=', 0, CONSOLE_WIDTH);
+    
+    Row row = titleTable.newRow();
+    row.getCellAt(TITLE_TBL.col("val").index()).append("Host: ").append(addr.toString());
     row.flush();
 
-    hostTable.drawLine(' ');
+    titleTable.drawLine(' ', 0, CONSOLE_WIDTH);
 
-    distTable = new Table(ctx.getConsole().out(), 1, 78);
-    distTable.getTableMetaData().getColumnMetaDataAt(COL_PROP_TAG).setWidth(78);
-    
-    headers = distTable.newRow();
+    Row headers = headersTable.newRow();
 
-    headers.getCellAt(COL_PROP_TAG).append("Tag");
+    headers.getCellAt(TAGS_TBL.col("val").index()).append("Tag");
     headers.flush();
   }
   
   private void displayTag(String tag, CliContext ctx) {
-    Table         distTable = new Table(ctx.getConsole().out(), 1, 78);
-    Row           row;
+    Table tagsTable  = TAGS_TBL.createTable(ctx.getConsole().out());
     
-    distTable.getTableMetaData().getColumnMetaDataAt(COL_PROP_TAG).setWidth(78);
+    tagsTable.drawLine('-', 0, CONSOLE_WIDTH);
 
-    distTable.drawLine('-');
-
-    row = distTable.newRow();
-    row.getCellAt(COL_PROP_TAG).append(tag);
+    Row row = tagsTable.newRow();
+    row.getCellAt(TAGS_TBL.col("val").index()).append(tag);
     row.flush();
   }
   
   // --------------------------------------------------------------------------
 
   private void exportPropertyResults(Results<List<NameValuePair>> res, CliContext ctx) throws InputException {
-    File        exportFile = ctx.getFileSystem().getFile(ctx.getCommandLine().assertOption(OPT_FILE, true).getValue());
+    File exportFile = ctx.getFileSystem().getFile(ctx.getCommandLine().assertOption(OPT_FILE, true).getValue());
     try {
       PrintWriter writer     = new PrintWriter(new FileOutputStream(exportFile));
       try  {
@@ -282,38 +291,35 @@ public class Conf extends CorusCliCommand{
   }
   
   private void displayPropertiesHeader(ServerAddress addr, CliContext ctx) {
-    Table         hostTable;
-    Table         distTable;
-    Row           row;
-    Row           headers;
+    Table titleTable    = TITLE_TBL.createTable(ctx.getConsole().out());
+    Table headersTable  = PROPS_TBL.createTable(ctx.getConsole().out());
 
-    hostTable = new Table(ctx.getConsole().out(), 1, 78);
-    hostTable.drawLine('=');
-    row = hostTable.newRow();
-    row.getCellAt(0).append("Host: ").append(addr.toString());
+    titleTable.drawLine('=', 0, CONSOLE_WIDTH);
+    
+    Row row = titleTable.newRow();
+    row.getCellAt(TITLE_TBL.col("val").index()).append("Host: ").append(addr.toString());
     row.flush();
 
-    hostTable.drawLine(' ');
+    titleTable.drawLine(' ', 0, CONSOLE_WIDTH);
 
-    distTable = new Table(ctx.getConsole().out(), 2, 38);
-    
-    headers = distTable.newRow();
+    Row headers = headersTable.newRow();
 
-    headers.getCellAt(COL_PROP_NAME).append("Name");
-    headers.getCellAt(COL_PROP_VALUE).append("Value");
+    headers.getCellAt(PROPS_TBL.col("name").index()).append("Name");
+    headers.getCellAt(PROPS_TBL.col("val").index()).append("Value");
     headers.flush();
   }
   
   private void displayProperties(NameValuePair prop, CliContext ctx) {
-    Table         distTable = new Table(ctx.getConsole().out(), 2, 38);
-    Row           row;
+    Table propŝTable = PROPS_TBL.createTable(ctx.getConsole().out());
+    
+    propŝTable.drawLine('-', 0, CONSOLE_WIDTH);
 
-    distTable.drawLine('-');
-
-    row = distTable.newRow();
-    row.getCellAt(COL_PROP_NAME).append(prop.getName());
-    row.getCellAt(COL_PROP_VALUE).append(prop.getValue());
+    Row row = propŝTable.newRow();
+    row.getCellAt(PROPS_TBL.col("name").index()).append(prop.getName());
+    row.getCellAt(PROPS_TBL.col("val").index()).append(prop.getValue());
     row.flush();
   }
   
 }
+
+

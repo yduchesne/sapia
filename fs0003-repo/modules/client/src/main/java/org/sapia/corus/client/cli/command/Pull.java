@@ -5,6 +5,8 @@ import org.sapia.console.InputException;
 import org.sapia.corus.client.cli.CliContext;
 
 /**
+ * Forces a repo pull.
+ * 
  * @author yduchesne
  */
 public class Pull extends CorusCliCommand {

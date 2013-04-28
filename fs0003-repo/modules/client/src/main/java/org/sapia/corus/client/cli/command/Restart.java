@@ -14,6 +14,8 @@ import org.sapia.corus.client.services.processor.Process;
 import org.sapia.corus.client.services.processor.ProcessCriteria;
 
 /**
+ * Restarts processes.
+ * 
  * @author Yanick Duchesne
  */
 public class Restart extends CorusCliCommand {

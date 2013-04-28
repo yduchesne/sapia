@@ -29,11 +29,9 @@ public class Deploy extends CorusCliCommand {
           deployDistribution(ctx, elem.getName());
         }
       }
-    }
-    else if(ctx.getCommandLine().containsOption(OPT_EXEC_CONF, true)){
+    } else if(ctx.getCommandLine().containsOption(OPT_EXEC_CONF, true)){
       deployExec(ctx, ctx.getCommandLine().assertOption(OPT_EXEC_CONF, true).getValue());
-    }
-    else{
+    } else{
       throw new InputException("File name expected as argument");
     }
   }
