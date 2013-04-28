@@ -21,6 +21,11 @@ public class RepoFacadeImpl extends FacadeHelper<Repository> implements RepoFaca
   public void pull(ClusterInfo cluster) {
     proxy.pull();
     invoker.invokeLenient(void.class, cluster);
-    
+  }
+  
+  @Override
+  public void push(ClusterInfo cluster) {
+    proxy.push();
+    invoker.invokeLenient(void.class, cluster);
   }
 }

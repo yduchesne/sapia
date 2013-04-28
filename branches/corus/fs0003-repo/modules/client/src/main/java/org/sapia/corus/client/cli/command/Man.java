@@ -13,6 +13,8 @@ import org.sapia.corus.client.cli.help.Help;
 import org.sapia.corus.client.cli.help.NoHelpException;
 
 /**
+ * Displays command-line doc.
+ * 
  * @author Yanick Duchesne
  */
 public class Man extends CorusCliCommand{

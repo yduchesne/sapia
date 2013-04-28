@@ -122,7 +122,6 @@ public class DeployerFacadeImpl extends FacadeHelper<Deployer> implements Deploy
       
       byte[] b    = new byte[BUFSZ];
       int    read;
-      
       while ((read = bis.read(b)) > -1) {
         os.write(b, 0, read);
       }

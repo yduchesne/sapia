@@ -3,7 +3,7 @@ package org.sapia.corus.client.services.processor;
 import java.rmi.Remote;
 
 
-public interface ProcessorConfiguration extends Remote{
+public interface ProcessorConfiguration extends Remote {
 
   /**
    * Returns the delay after which processes that have not polled their Corus server 

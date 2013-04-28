@@ -262,7 +262,7 @@ public class Distribution implements java.io.Serializable, ObjectCreationCallbac
       return newInstance(fs.openZipEntryStream(zipFile, DEPLOYMENT_DESCRIPTOR));
     } catch (IOException e) {
       throw new DeploymentException("could not extract entry: " +
-                                    DEPLOYMENT_DESCRIPTOR, e);
+                                    DEPLOYMENT_DESCRIPTOR + " from " + zipFile.getAbsolutePath(), e);
     }
   }
   

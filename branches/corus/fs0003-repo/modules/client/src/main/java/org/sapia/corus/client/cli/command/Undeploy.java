@@ -10,6 +10,8 @@ import org.sapia.corus.client.services.deployer.DistributionCriteria;
 
 
 /**
+ * Performs undeployment.
+ * 
  * @author Yanick Duchesne
  */
 public class Undeploy extends CorusCliCommand {

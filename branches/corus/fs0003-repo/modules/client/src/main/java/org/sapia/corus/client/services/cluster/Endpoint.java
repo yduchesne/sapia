@@ -74,8 +74,7 @@ public class Endpoint implements Externalizable {
   public boolean equals(Object obj) {
     if (obj instanceof Endpoint) {
       Endpoint other = (Endpoint) obj;
-      return serverAddress.equals(other.serverAddress) 
-          && channelAddress.equals(other.channelAddress);
+      return serverAddress.equals(other.serverAddress);
     }
     return false;
   }

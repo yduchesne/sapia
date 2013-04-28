@@ -9,8 +9,9 @@ import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.exceptions.processor.TooManyProcessInstanceException;
 import org.sapia.corus.client.services.processor.ProcessCriteria;
 
-
 /**
+ * Executes processes.
+ * 
  * @author Yanick Duchesne
  */
 public class Exec extends CorusCliCommand {

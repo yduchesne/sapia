@@ -1,6 +1,5 @@
 package org.sapia.corus.client.services.repository;
 
-import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
 
 
 /**
@@ -18,15 +17,11 @@ public interface Repository {
   
   /**
    * Forces a pull from repository server nodes.
-   * 
-   * @throws IllegalStateException if this instance's role is not {@link RepoRole#CLIENT}
    */
-  public void pull() throws IllegalStateException;
+  public void pull();
   
   /**
    * Forces a push to repository client nodes.
-   * 
-   * @throws IllegalStateException if this instance's role is not {@link RepoRole#SERVER}
    */
-  public void push() throws IllegalStateException;
+  public void push();
 }
