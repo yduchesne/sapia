@@ -18,6 +18,7 @@ import org.sapia.corus.client.services.repository.DistributionListResponse;
 import org.sapia.corus.client.services.repository.ExecConfigNotification;
 import org.sapia.corus.client.services.repository.ForceClientPullNotification;
 import org.sapia.corus.client.services.repository.Repository;
+import org.sapia.corus.client.services.repository.RepositoryConfiguration;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.corus.repository.task.DistributionDeploymentRequestHandlerTask;
@@ -38,7 +39,6 @@ import org.sapia.ubik.mcast.SyncEventListener;
 import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 /**
  * Implements the {@link Repository} interface.
@@ -52,9 +52,6 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   
   private static final long                    MIN_BOOSTRAP_INTERVAL                      = TimeUnit.SECONDS.toMillis(5);
   private static final int                     MAX_BOOSTRAP_INTERVAL_OFFSET               = (int) TimeUnit.SECONDS.toMillis(5);
-  private static final long                    DEFAULT_DIST_DISCO_INTERVAL                = TimeUnit.SECONDS.toMillis(5);
-  private static final int                     DEFAULT_DIST_DISCO_MAX_ATTEMPTS            = 3;
-  private static final int                     DEFAULT_MAX_CONCURRENT_DEPLOYMENT_REQUESTS = 3;
   private static final long                    DEFAULT_HANDLE_EXEC_CONFIG_DELAY           = TimeUnit.SECONDS.toMillis(1);
   private static final long                    DEFAULT_HANDLE_EXEC_CONFIG_INTERVAL        = TimeUnit.SECONDS.toMillis(3);
   private static final int                     DEFAULT_HANDLE_EXEC_CONFIG_MAX_ATTEMPTS    = 5;
@@ -73,30 +70,13 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
 
   private Queue<DistributionListRequest>       distListRequestQueue   = new Queue<DistributionListRequest>();
   private Queue<DistributionDeploymentRequest> distDeployRequestQueue = new Queue<DistributionDeploymentRequest>();
-  private int                                  maxConcurrentDeploymentRequests = DEFAULT_MAX_CONCURRENT_DEPLOYMENT_REQUESTS;
-  private long                                 distDiscoIntervalSeconds        = DEFAULT_DIST_DISCO_INTERVAL;
-  private int                                  maxDistDiscoAttempts            = DEFAULT_DIST_DISCO_MAX_ATTEMPTS;
   
-  /**
-   * @param maxDistDiscoAttempts the maximum number of attempts when performing discovery distributions.
-   */
-  public void setMaxDistDiscoAttempts(int maxDistDiscoAttempts) {
-    this.maxDistDiscoAttempts = maxDistDiscoAttempts;
-  }
+  @Autowired
+  private RepositoryConfiguration              repoConfig;
+  
 
-  /**
-   * @param discoIntervalSeconds interval (in seconds) to wait for when attempting to discover relational distributions.
-   */
-  public void setDistDiscoveryIntervalSeconds(long discoIntervalSeconds) {
-    this.distDiscoIntervalSeconds = discoIntervalSeconds;
-  }
-  
-  /**
-   * @param maxConcurrentDeploymentRequests the maximum number of deployment requests to process concurrently.
-   */
-  public void setMaxConcurrentDeploymentRequests(int maxConcurrentDeploymentRequests) {
-    Assert.isTrue(maxConcurrentDeploymentRequests > 0, "Max concurrent deployment requests must be greater than 0");
-    this.maxConcurrentDeploymentRequests = maxConcurrentDeploymentRequests;
+  public void setRepoConfig(RepositoryConfiguration repoConfig) {
+    this.repoConfig = repoConfig;
   }
   
   void setClusterManager(ClusterManager clusterManager) {
@@ -136,14 +116,29 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
       clusterManager.getEventChannel().registerAsyncListener(DistributionDeploymentRequest.EVENT_TYPE, this);
       taskManager.registerThrottle(
           DistributionDeploymentRequestHandlerTask.DEPLOY_REQUEST_THROTTLE, 
-          new SemaphoreThrottle(maxConcurrentDeploymentRequests)
+          new SemaphoreThrottle(repoConfig.getMaxConcurrentDeploymentRequests())
       );
+      
+      if (!repoConfig.isPushPropertiesEnabled()) {
+        logger().info("Properties push is disabled");
+      }
+      if (!repoConfig.isPushTagsEnabled()) {
+        logger().info("Tag push is disabled");
+      }
     } else if (serverContext().getCorusHost().getRepoRole().isClient()){
       logger().info("Node is repo client");
       clusterManager.getEventChannel().registerAsyncListener(DistributionListResponse.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(ConfigNotification.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(ExecConfigNotification.EVENT_TYPE, this);
-      
+      if (!repoConfig.isPullPropertiesEnabled()) {
+        logger().info("Properties pull is disabled");
+      }
+      if (!repoConfig.isPullTagsEnabled()) {
+        logger().info("Tag pull is disabled");
+      }
+      if (!repoConfig.isBootExecEnabled()) {
+        logger().info("This node is configured NOT to perform automatic startup of processes with 'startOnBoot' enabled upon pull");
+      }                  
     } else {
       logger().info("This node will not act as either a repository server or client");
     }
@@ -169,20 +164,20 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
     if (serverContext().getCorusHost().getRepoRole().isClient()) {
       logger().debug("Node is a repo client: will try to acquire distributions from repo server");
       GetDistributionListTask task = new GetDistributionListTask();
-      task.setMaxExecution(maxDistDiscoAttempts);
+      task.setMaxExecution(repoConfig.getDistributionDiscoveryMaxAttempts());
       
       taskManager.executeBackground(
           task, 
           null,
           BackgroundTaskConfig.create()
              .setExecDelay(TimeUtil.createRandomDelay(MIN_BOOSTRAP_INTERVAL, MAX_BOOSTRAP_INTERVAL_OFFSET))
-             .setExecInterval(TimeUnit.SECONDS.convert(distDiscoIntervalSeconds, TimeUnit.SECONDS))
+             .setExecInterval(TimeUnit.MILLISECONDS.convert(repoConfig.getDistributionDiscoveryIntervalSeconds(), TimeUnit.SECONDS))
       );  
     }
   }
   
   @Override
-  public void push() throws IllegalStateException {
+  public void push() {
     if (serverContext().getCorusHost().getRepoRole().isServer()) {
       ForceClientPullNotification notif = new ForceClientPullNotification(serverContext().getCorusHost().getEndpoint());
       for (CorusHost host : clusterManager.getHosts()) {
@@ -194,7 +189,6 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
         clusterManager.send(notif);
       } catch (Exception e) {
         logger().error("Could not send pull notification", e);
-        throw new IllegalStateException("Error trying to send pull notification to repo clients - " + e.getMessage());
       }
     }
   }
@@ -274,7 +268,7 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
     }
     
     taskManager.executeBackground(
-        new HandleExecConfigTask(notif.getConfigs())
+        new HandleExecConfigTask(repoConfig, notif.getConfigs())
           .setMaxExecution(DEFAULT_HANDLE_EXEC_CONFIG_MAX_ATTEMPTS), 
         null, 
         BackgroundTaskConfig.create()
@@ -299,14 +293,24 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
           logger().debug(String.format("Property %s = %s", n, props.getProperty(n)));
         }
       }
-      configurator.addProperties(PropertyScope.PROCESS, notif.getProperties(), false);
+      
+      if (repoConfig.isPullPropertiesEnabled()) {
+        configurator.addProperties(PropertyScope.PROCESS, notif.getProperties(), false);
+      } else {
+        logger().info("Aborting adding properties: node does not support pull of properties");
+      }
       
       if (logger().isDebugEnabled()) {
         for (String t : notif.getTags()) {
           logger().debug("tag: " + t);
         }
       }
-      configurator.addTags(notif.getTags());
+      
+      if (repoConfig.isPullTagsEnabled()) {
+        configurator.addTags(notif.getTags());
+      } else {
+        logger().info("Aborting adding tags: node does not support pull of tags");
+      }
     } 
     
     // cascading to next host
@@ -337,7 +341,7 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   void handleDistributionDeploymentRequest(DistributionDeploymentRequest req) {
     if (serverContext().getCorusHost().getRepoRole().isServer()) {
       distDeployRequestQueue.add(req);
-      taskManager.execute(new DistributionDeploymentRequestHandlerTask(distDeployRequestQueue), null);
+      taskManager.execute(new DistributionDeploymentRequestHandlerTask(repoConfig, distDeployRequestQueue), null);
     } else {
       logger().debug("Ignoring " + req + "; repo type is " + serverContext().getCorusHost().getRepoRole());
     }

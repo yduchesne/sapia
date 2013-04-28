@@ -32,28 +32,22 @@ public class DeployOutputStreamImpl extends FileOutputStream implements DeployOu
     this.fileName = fileName;
   }
 
+  @Override
   public void close() throws IOException {
   	if(closed) return;
-    try {
-      super.flush();
-
-      if (deployer != null) {
-        queue = deployer.completeDeployment(fileName);
-      }
-    } finally {
-      super.close();
+    super.flush();
+    super.close();
+    if (deployer != null) {
+      queue = deployer.completeDeployment(fileName);
     }
     closed = true;
   }
   
-  /**
-   * @see org.sapia.corus.client.services.deployer.transport.DeployOutputStream#getProgressQueue()
-   */
+  @Override
   public ProgressQueue getProgressQueue() {
     if (queue == null) {
       throw new IllegalStateException("progress queue not available");
     }
-
     return queue;
   }
 }

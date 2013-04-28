@@ -10,7 +10,7 @@ import org.sapia.corus.client.exceptions.core.ServiceNotFoundException;
 import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.naming.JndiModule;
 import org.sapia.ubik.mcast.EventChannel;
-import org.sapia.ubik.net.TCPAddress;
+import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.rmi.naming.remote.RemoteContext;
 import org.sapia.ubik.rmi.naming.remote.RemoteContextProvider;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -33,7 +33,7 @@ public class CorusImpl implements Corus, RemoteContextProvider {
   CorusImpl(
       Properties config, 
       String domain,
-      TCPAddress serverAddress,
+      ServerAddress serverAddress,
       EventChannel channel,
       CorusTransport aTransport, 
       String corusHome) throws IOException, Exception{
@@ -64,7 +64,7 @@ public class CorusImpl implements Corus, RemoteContextProvider {
   private ServerContext init(
                           final Properties props, 
                           String domain,
-                          TCPAddress address,
+                          ServerAddress address,
                           EventChannel channel,
                           CorusTransport aTransport, 
                           String corusHome) throws IOException, Exception {

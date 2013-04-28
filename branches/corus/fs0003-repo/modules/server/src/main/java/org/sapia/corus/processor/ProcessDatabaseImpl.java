@@ -5,7 +5,6 @@ import java.util.List;
 import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.client.services.db.DbMap;
 import org.sapia.corus.client.services.processor.Process;
-import org.sapia.corus.client.services.processor.Process.LifeCycleStatus;
 import org.sapia.corus.client.services.processor.ProcessCriteria;
 import org.sapia.corus.util.CompositeMatcher;
 import org.sapia.corus.util.IteratorFilter;

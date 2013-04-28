@@ -51,9 +51,9 @@ public class HandleExecConfigTaskTest extends AbstractRepoTaskTest {
     proc3.setDist("dist3");
     proc3.setVersion("v3");
     
-    configsTask           = new HandleExecConfigTask(Collections2.arrayToList(conf1, conf2));
-    emptyConfigsTask      = new HandleExecConfigTask(new ArrayList<ExecConfig>());
-    startOnBootConfigTask = new HandleExecConfigTask(Collections2.arrayToList(conf3));
+    configsTask           = new HandleExecConfigTask(repoConfig, Collections2.arrayToList(conf1, conf2));
+    emptyConfigsTask      = new HandleExecConfigTask(repoConfig, new ArrayList<ExecConfig>());
+    startOnBootConfigTask = new HandleExecConfigTask(repoConfig, Collections2.arrayToList(conf3));
     
     InternalServiceContext services = mock(InternalServiceContext.class);
     when(serverContext.getServices()).thenReturn(services);
@@ -82,5 +82,14 @@ public class HandleExecConfigTaskTest extends AbstractRepoTaskTest {
     verify(processor, times(1)).addExecConfig(any(ExecConfig.class));
     verify(processor, times(1)).exec(anyString());
   }
+  
+  @Test
+  public void testExecuteWithStartOnBootConfigsDisabled() throws Throwable {
+    repoConfig.setBootExecEnabled(false);
+    startOnBootConfigTask.execute(taskContext, null);
+    verify(deployer, times(1)).getDistribution(any(DistributionCriteria.class));
+    verify(processor, times(1)).addExecConfig(any(ExecConfig.class));
+    verify(processor, never()).exec(anyString());
+  }  
 
 }

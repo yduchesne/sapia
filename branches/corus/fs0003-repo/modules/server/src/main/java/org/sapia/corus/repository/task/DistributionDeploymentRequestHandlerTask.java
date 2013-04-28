@@ -13,6 +13,7 @@ import org.sapia.corus.client.services.processor.ExecConfig;
 import org.sapia.corus.client.services.processor.ProcessDef;
 import org.sapia.corus.client.services.repository.DistributionDeploymentRequest;
 import org.sapia.corus.client.services.repository.RepoDistribution;
+import org.sapia.corus.client.services.repository.RepositoryConfiguration;
 import org.sapia.corus.deployer.InternalDeployer;
 import org.sapia.corus.taskmanager.core.DefaultThrottleKey;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
@@ -38,10 +39,12 @@ public class DistributionDeploymentRequestHandlerTask extends RunnableThrottleab
    */
   public static final ThrottleKey DEPLOY_REQUEST_THROTTLE = new DefaultThrottleKey();
 
+  private RepositoryConfiguration              repoConfig;
   private Queue<DistributionDeploymentRequest> distDeployRequestQueue;
   
-  public DistributionDeploymentRequestHandlerTask(Queue<DistributionDeploymentRequest> distDeployRequestQueue) {
+  public DistributionDeploymentRequestHandlerTask(RepositoryConfiguration repoConfig, Queue<DistributionDeploymentRequest> distDeployRequestQueue) {
     super(DEPLOY_REQUEST_THROTTLE);
+    this.repoConfig             = repoConfig;
     this.distDeployRequestQueue = distDeployRequestQueue;
   }
   
@@ -62,9 +65,13 @@ public class DistributionDeploymentRequestHandlerTask extends RunnableThrottleab
     
     context().info(String.format("Got %s targets to deploy to", distributionTargets));
     PerformDeploymentTask deployTasks = new PerformDeploymentTask();
-    deployTasks.add(new SendConfigNotificationTask(allTargets));
+    if (repoConfig.isPushPropertiesEnabled()) {
+      deployTasks.add(new SendConfigNotificationTask(allTargets));
+    } else {
+      context().debug("Push of properties disabled for this node, so not sending properties to: " + allTargets);
+    }
     for (final Map.Entry<RepoDistribution, Set<Endpoint>> entry : distributionTargets.entrySet()) {
-      context().debug(String.format("Triggering deployment of %s to %s", entry.getKey(), entry.getValue()));
+      context().info(String.format("Triggering deployment of %s to %s", entry.getKey(), entry.getValue()));
       try {
         RunnableTask task = new DeploymentRequestHandlerTask(
             deployer.getDistributionFile(entry.getKey().getName(), entry.getKey().getVersion()), 
@@ -83,7 +90,11 @@ public class DistributionDeploymentRequestHandlerTask extends RunnableThrottleab
           }
         });
         if (!execConfigsForDistribution.isEmpty()) {
-          deployTasks.add(new SendExecConfigNotificationTask(execConfigsForDistribution, entry.getValue()));          
+          if (repoConfig.isPushTagsEnabled()) {
+            deployTasks.add(new SendExecConfigNotificationTask(execConfigsForDistribution, entry.getValue()));
+          } else {
+            context().debug("Push of properties disabled for this node, so not sending properties to: " + entry.getValue());
+          }
         }
       } catch (DistributionNotFoundException e) {
         context().error("Caught error attempting to initiate distribution deployment", e);

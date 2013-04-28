@@ -6,6 +6,7 @@ import org.sapia.corus.client.exceptions.deployer.DistributionNotFoundException;
 import org.sapia.corus.client.services.deployer.DistributionCriteria;
 import org.sapia.corus.client.services.processor.ExecConfig;
 import org.sapia.corus.client.services.processor.ProcessDef;
+import org.sapia.corus.client.services.repository.RepositoryConfiguration;
 import org.sapia.corus.taskmanager.util.RunnableTask;
 
 /**
@@ -27,13 +28,16 @@ public class HandleExecConfigTask extends RunnableTask {
     PROCESSED;
   }
   
-  private List<ExecConfig> execConfigs;
-  private State            state          = State.PENDING;
+  private RepositoryConfiguration repoConfig;
+  private List<ExecConfig>        execConfigs;
+  private State                   state          = State.PENDING;
   
   /**
+   * @param repoConfig the {@link RepositoryConfiguration}.
    * @param execConfigs a {@link List} of {@link ExecConfig}s.
    */
-  public HandleExecConfigTask(List<ExecConfig> execConfigs) {
+  public HandleExecConfigTask(RepositoryConfiguration repoConfig, List<ExecConfig> execConfigs) {
+    this.repoConfig  = repoConfig;
     this.execConfigs = execConfigs;
   }
   
@@ -48,7 +52,7 @@ public class HandleExecConfigTask extends RunnableTask {
         context().getServerContext().getServices().getProcessor().addExecConfig(ec);
       }
       for (ExecConfig ec : execConfigs) {
-        if (ec.isStartOnBoot()) {
+        if (ec.isStartOnBoot() && repoConfig.isBootExecEnabled()) {
           context().debug(String.format("Triggering startup for exec config: %s, %s", ec.getName(), ec.getProfile()));
           context().getServerContext().getServices().getProcessor().exec(ec.getName());
         }

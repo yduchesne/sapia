@@ -8,7 +8,6 @@ import org.sapia.corus.client.exceptions.misc.MissingDataException;
 import org.sapia.corus.client.services.http.HttpContext;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
-import org.sapia.corus.client.services.processor.Process.LifeCycleStatus;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.interop.AbstractCommand;
@@ -54,7 +53,7 @@ public class SoapExtension implements HttpExtension, RequestListener {
   }
   
   public void process(HttpContext ctx) throws Exception {
-    ctx.getResponse().set("Content-Type", "text/xml");
+    ctx.getResponse().setHeader("Content-Type", "text/xml");
     try {
       helper.processRequest(ctx.getRequest().getInputStream(), ctx.getResponse().getOutputStream());
     } catch (Exception e) {

@@ -54,10 +54,13 @@ public class RepositoryImplTest {
   private Set<CorusHost>     peers;
   private Queue<DistributionListRequest>       distListRequestQueue;
   private Queue<DistributionDeploymentRequest> distDeployRequestQueue;
-  private int                corusPort;
+  private RepositoryConfigurationImpl          repoConfig;
+  private int                                  corusPort;
   @Before
   public void setUp() throws Exception {
+    repoConfig = new RepositoryConfigurationImpl();
     repo = new RepositoryImpl();
+    repo.setRepoConfig(repoConfig);
 
     cluster    = mock(ClusterManager.class);
     config     = mock(Configurator.class);
@@ -103,21 +106,21 @@ public class RepositoryImplTest {
     verify(tasks).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class)); 
   }
   
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testPullForServerNode() {
     host.setRepoRole(RepoRole.SERVER);
     repo.pull();
-    verify(tasks).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class)); 
+    verify(tasks, never()).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class)); 
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testPullForUndefinedNode() {
     host.setRepoRole(RepoRole.NONE);
     repo.pull();
-    verify(tasks).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class)); 
+    verify(tasks, never()).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class)); 
   }
   
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testPushForClientNode() throws Exception {
     host.setRepoRole(RepoRole.CLIENT);
     repo.push();
@@ -130,7 +133,7 @@ public class RepositoryImplTest {
     verify(cluster).send(any(ClusterNotification.class)); 
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testPushForUndefinedNode() throws Exception {
     host.setRepoRole(RepoRole.NONE);
     repo.push();
@@ -212,6 +215,48 @@ public class RepositoryImplTest {
     
     verify(cluster).send(any(ExecConfigNotification.class));
   }
+  
+  @Test
+  public void testHandleConfigNotificationTagsPullDisabled() throws Exception {
+    repoConfig.setPullTagsEnabled(false);
+    host.setRepoRole(RepoRole.CLIENT);
+    ConfigNotification notif = new ConfigNotification();
+    notif.addTarget(host.getEndpoint());
+    
+    Properties props = new Properties();
+    props.setProperty("test", "val");
+    notif.addProperties(props);
+    notif.addTags(Collections2.arrayToSet("tag1", "tag2"));
+    
+    RemoteEvent event = new RemoteEvent(ConfigNotification.EVENT_TYPE, notif);
+    repo.onSyncEvent(event);
+    
+    verify(config).addProperties(eq(PropertyScope.PROCESS), any(Properties.class), eq(Boolean.FALSE));
+    verify(config, never()).addTags(anySet());
+    
+    verify(cluster).send(any(ExecConfigNotification.class));
+  }
+  
+  @Test
+  public void testHandleConfigNotificationPropertiesPullDisabled() throws Exception {
+    repoConfig.setPullPropertiesEnabled(false);
+    host.setRepoRole(RepoRole.CLIENT);
+    ConfigNotification notif = new ConfigNotification();
+    notif.addTarget(host.getEndpoint());
+    
+    Properties props = new Properties();
+    props.setProperty("test", "val");
+    notif.addProperties(props);
+    notif.addTags(Collections2.arrayToSet("tag1", "tag2"));
+    
+    RemoteEvent event = new RemoteEvent(ConfigNotification.EVENT_TYPE, notif);
+    repo.onSyncEvent(event);
+    
+    verify(config, never()).addProperties(eq(PropertyScope.PROCESS), any(Properties.class), eq(Boolean.FALSE));
+    verify(config).addTags(anySet());
+    
+    verify(cluster).send(any(ExecConfigNotification.class));
+  }  
   
   @Test
   public void testConfigNotificationHostNotTargeted() throws Exception {

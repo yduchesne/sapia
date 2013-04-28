@@ -11,21 +11,14 @@ import org.apache.log.Logger;
 import org.sapia.corus.client.services.http.HttpContext;
 import org.sapia.corus.client.services.http.HttpExtension;
 import org.sapia.corus.client.services.http.HttpExtensionInfo;
+import org.sapia.corus.client.services.http.HttpResponseFacade;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.http.helpers.HomePageHelper;
 import org.sapia.corus.http.helpers.NotFoundHelper;
-import org.sapia.ubik.net.mplex.MultiplexSocketConnector;
-import org.sapia.ubik.net.mplex.ServerSocketAdapter;
-import org.sapia.ubik.rmi.server.transport.TransportProvider;
-import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketHelper;
-import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketTransportProvider;
-
-import simple.http.ProtocolHandler;
-import simple.http.Request;
-import simple.http.Response;
-import simple.http.connect.Connection;
-import simple.http.connect.ConnectionFactory;
-import simple.util.net.Path;
+import org.sapia.ubik.rmi.server.transport.http.Handler;
+import org.simpleframework.http.Path;
+import org.simpleframework.http.Request;
+import org.simpleframework.http.Response;
 
 /**
  * An instance of this class manages {@link HttpExtension}s.
@@ -33,14 +26,12 @@ import simple.util.net.Path;
  * @author yduchesne
  *
  */
-public class HttpExtensionManager implements ProtocolHandler{
+public class HttpExtensionManager implements Handler {
   
   public static final String FOOTER = "<hr><i>Corus HTTP Service - <a href=\"http://www.sapia-oss.org/projects/corus\">www.sapia-oss.org</a></i>";
   
-  private MultiplexSocketConnector httpConnector;  
-  private Connection 							 connection;
-  private Logger 									 logger;
-  private ServerContext 					 context;
+  private Logger 									              logger;
+  private ServerContext 					              context;
   private Map<HttpExtensionInfo, HttpExtension> extensions = Collections.synchronizedMap(new HashMap<HttpExtensionInfo, HttpExtension>());
 
   public HttpExtensionManager(Logger logger, ServerContext context) {
@@ -48,34 +39,8 @@ public class HttpExtensionManager implements ProtocolHandler{
      this.context = context;
   }
   
-  public void init() throws Exception {
-    TransportProvider provider = this.context.getTransport().getTransportProvider();
-      
-    if (!(provider instanceof MultiplexSocketTransportProvider)) {
-      throw new IllegalStateException(
-              "Could not initialize the http module - the transport provider is not multiplex [" + provider + "]");
-    }
-  }  
-  
-  public void start() throws Exception{
-    logger.info("Starting http extension manager");
-    
-    // Create the connector for HTTP post to /corus/ext context
-    HttpStreamSelector selector = new HttpStreamSelector(null, null);
-    httpConnector = MultiplexSocketHelper.createSocketConnector(selector);
-    
-    connection = ConnectionFactory.getConnection(this);
-    connection.connect(new ServerSocketAdapter(httpConnector));
-  }
-  
-  public void dispose(){
-    if(httpConnector != null){
-      try {
-        httpConnector.close();
-      } catch (IOException ioe) {
-        logger.error("Error closing the http connector", ioe);
-      }
-    }
+  @Override
+  public void shutdown() {
   }
   
   /**
@@ -110,10 +75,10 @@ public class HttpExtensionManager implements ProtocolHandler{
   
   @Override
   public void handle(Request req, Response res) {
-    try{
+    try {
       doHandle(req, res);
-    }catch(Exception e){
-      res.setCode(500);
+    } catch(Exception e) {
+      res.setCode(HttpResponseFacade.STATUS_SERVER_ERROR);
       logger.error("Could not process HTTP request", e);
     }
     
@@ -138,8 +103,8 @@ public class HttpExtensionManager implements ProtocolHandler{
           if(path.getPath().startsWith(info.getContextPath())){
             HttpExtension ext = (HttpExtension)extensions.get(info);
             HttpContext ctx = new HttpContext();
-            ctx.setRequest(req);
-            ctx.setResponse(res);
+            ctx.setRequest(new DefaultHttpRequestFacade(req));
+            ctx.setResponse(new DefaultHttpResponseFacade(res));
             ctx.setContextPath(info.getContextPath());
             if(path.getPath().equals(info.getContextPath())){
               ctx.setPathInfo("");
@@ -156,10 +121,10 @@ public class HttpExtensionManager implements ProtocolHandler{
             }catch(FileNotFoundException e){
               logger.error("URI not recognized: " + path);
               NotFoundHelper out = new NotFoundHelper();
-              out.print(req, res);            
+              out.print(new DefaultHttpRequestFacade(req), new DefaultHttpResponseFacade(res));            
             }catch(Exception e){
               logger.error("Error caught while handling request", e);            
-              res.setCode(500);
+              res.setCode(HttpResponseFacade.STATUS_SERVER_ERROR);
               try{
                 res.getOutputStream().close();
               }catch(IOException e2){}
@@ -177,6 +142,6 @@ public class HttpExtensionManager implements ProtocolHandler{
     }
     logger.error("Could not find extension for URI " + req.getPath());
     NotFoundHelper out = new NotFoundHelper();
-    out.print(req, res);    
+    out.print(new DefaultHttpRequestFacade(req), new DefaultHttpResponseFacade(res));    
   }
 }

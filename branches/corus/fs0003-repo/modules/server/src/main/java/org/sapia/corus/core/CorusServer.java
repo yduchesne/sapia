@@ -1,9 +1,7 @@
 package org.sapia.corus.core;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,9 +35,7 @@ import org.sapia.corus.util.IOUtils;
 import org.sapia.corus.util.PropertiesFilter;
 import org.sapia.corus.util.PropertiesUtil;
 import org.sapia.ubik.mcast.EventChannel;
-import org.sapia.ubik.net.TCPAddress;
-import org.sapia.ubik.rmi.server.transport.socket.MultiplexSocketAddress;
-import org.sapia.ubik.util.Localhost;
+import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.util.Props;
 
 /**
@@ -294,9 +290,7 @@ public class CorusServer {
         System.setProperty(org.sapia.ubik.rmi.Consts.IP_PATTERN_KEY, pattern);
       }
       
-      String host = Localhost.getAnyLocalAddress().getHostAddress();
-
-      CorusTransport aTransport = new TcpCorusTransport(host, port);
+      CorusTransport transport = new HttpCorusTransport(port);
       
       // Create Lock file
       File lockFile = new File(corusHome + File.separator + "bin" + File.separator + LOCK_FILE_NAME + "_" + domain + "_" + port);
@@ -313,24 +307,24 @@ public class CorusServer {
       CorusImpl corus = new CorusImpl(
           corusProps, 
           domain, 
-          new MultiplexSocketAddress(host, port), 
+          transport.getServerAddress(), 
           channel,
-          aTransport, corusHome);
+          transport, corusHome);
       
       ServerContext context =  corus.getServerContext();
       
       // keeping reference to stub
       @SuppressWarnings("unused")
-      Corus stub = (Corus) aTransport.exportObject(corus);
+      Corus stub = (Corus) transport.exportObject(corus);
       corus.start();
       
-      TCPAddress addr = ((TCPAddress) aTransport.getServerAddress());
+      ServerAddress addr = transport.getServerAddress();
       
-      System.out.println("Corus server ("+CorusVersion.create()+") started on: " + addr + ":" + port +
-        ", domain: " + domain);
+      System.out.println("Corus server ("+CorusVersion.create()+") started on: " + addr +
+          ", domain: " + domain);
       
       EventDispatcher dispatcher = context.lookup(EventDispatcher.class);
-      dispatcher.dispatch(new ServerStartedEvent(aTransport.getServerAddress()));
+      dispatcher.dispatch(new ServerStartedEvent(addr));
             
       Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
       

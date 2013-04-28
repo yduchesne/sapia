@@ -73,7 +73,10 @@ public class FilePath {
   public String createFilePath() {
     StringBuilder sb = new StringBuilder();
     for (String dir : dirs) {
-      sb.append(dir).append(File.separator);
+      sb.append(dir);
+      if (!dir.endsWith(File.separator)) {
+        sb.append(File.separator);
+      }
     }
     if (file != null) {
       sb.append(file);

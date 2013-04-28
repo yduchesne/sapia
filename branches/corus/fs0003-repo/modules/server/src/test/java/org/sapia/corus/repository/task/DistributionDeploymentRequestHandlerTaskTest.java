@@ -61,7 +61,7 @@ public class DistributionDeploymentRequestHandlerTaskTest extends AbstractRepoTa
     requests.add(request1);
     requests.add(request2);
     
-    task = new DistributionDeploymentRequestHandlerTask(requests);
+    task = new DistributionDeploymentRequestHandlerTask(repoConfig, requests);
     
     ExecConfig conf1 = new ExecConfig();
     ProcessDef def1 = conf1.createProcess();
@@ -122,6 +122,48 @@ public class DistributionDeploymentRequestHandlerTaskTest extends AbstractRepoTa
 
     assertEquals(3, expected.get().getChildTasks().size());
   }
+  
+  @Test
+  public void testExecuteWithTagPushDisabled() throws Throwable {
+    repoConfig.setPushTagsEnabled(false);
+    requests.removeLast();
+    
+    final AtomicReference<PerformDeploymentTask> expected = new AtomicReference<PerformDeploymentTask>();
+    
+    doAnswer(new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        PerformDeploymentTask task = (PerformDeploymentTask) invocation.getArguments()[0];
+        expected.set(task);
+        return null;
+      }
+    }).when(taskMan).execute(any(Task.class), any(Void.class));
+
+    task.execute(taskContext, null);
+
+    assertEquals(2, expected.get().getChildTasks().size());
+  }
+  
+  @Test
+  public void testExecuteWithPropertiesPushDisabled() throws Throwable {
+    repoConfig.setPushTagsEnabled(false);
+    requests.removeLast();
+    
+    final AtomicReference<PerformDeploymentTask> expected = new AtomicReference<PerformDeploymentTask>();
+    
+    doAnswer(new Answer<Void>() {
+      @Override
+      public Void answer(InvocationOnMock invocation) throws Throwable {
+        PerformDeploymentTask task = (PerformDeploymentTask) invocation.getArguments()[0];
+        expected.set(task);
+        return null;
+      }
+    }).when(taskMan).execute(any(Task.class), any(Void.class));
+
+    task.execute(taskContext, null);
+
+    assertEquals(2, expected.get().getChildTasks().size());
+  }    
 
   @Test
   public void testExecuteEmptyDistributions() throws Throwable {
