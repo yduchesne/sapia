@@ -78,12 +78,22 @@
   </bean>
 
   <!-- ============ REPO ============ -->
+  
+  <bean name="repository.configuration" class="org.sapia.corus.repository.RepositoryConfigurationImpl">
+    <property name="maxConcurrentDeploymentRequests"      value="${corus.server.repository.max.concurrent-deployments}" />
+    <property name="distributionDiscoveryMaxAttempts"     value="${corus.server.repository.dist.disco.max-attempts}" />    
+    <property name="distributionDiscoveryIntervalSeconds" value="${corus.server.repository.dist.disco.interval}" />
+    <property name="pushTagsEnabled"                      value="${corus.server.repository.tags.push.enabled}" />
+    <property name="pushPropertiesEnabled"                value="${corus.server.repository.properties.push.enabled}" />    
+    <property name="pullTagsEnabled"                      value="${corus.server.repository.tags.pull.enabled}" />
+    <property name="pullPropertiesEnabled"                value="${corus.server.repository.properties.pull.enabled}" />
+    <property name="bootExecEnabled"                      value="${corus.process.start-at-boot.enabled}" />
+  </bean>
 
   <bean name="org.sapia.corus.client.services.repository.Repository" 
         class="org.sapia.corus.repository.RepositoryImpl" 
         scope="singleton"
         autowire="autodetect">
-    <property name="maxConcurrentDeploymentRequests" value="${corus.server.repository.max.deployments}" />
   </bean>
 
   <!-- ============ ALERTS ============ -->

@@ -11,6 +11,7 @@ import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.processor.Processor;
 import org.sapia.corus.core.InternalServiceContext;
 import org.sapia.corus.core.ServerContext;
+import org.sapia.corus.repository.RepositoryConfigurationImpl;
 import org.sapia.corus.taskmanager.core.TaskExecutionContext;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.ubik.mcast.EventChannel;
@@ -27,9 +28,10 @@ public abstract class AbstractRepoTaskTest {
   protected TaskManager            taskMan;
   protected Processor              processor;
   protected CorusHost              node;
+  protected RepositoryConfigurationImpl repoConfig;
   
   protected void doSetUp() {
-    
+    repoConfig     = new RepositoryConfigurationImpl();
     taskContext    = mock(TaskExecutionContext.class);
     serverContext  = mock(ServerContext.class);
     serviceContext = mock(InternalServiceContext.class);

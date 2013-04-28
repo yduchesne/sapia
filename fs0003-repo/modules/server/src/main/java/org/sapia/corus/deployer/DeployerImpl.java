@@ -165,7 +165,7 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
    */
   public void onServerStartedEvent(ServerStartedEvent evt) {
     try {
-      processor = new DeploymentProcessor(this, serverContext(), logger());
+      processor = new DeploymentProcessor(this, serverContext());
       processor.init();
       processor.start();
     } catch (Exception e) {
