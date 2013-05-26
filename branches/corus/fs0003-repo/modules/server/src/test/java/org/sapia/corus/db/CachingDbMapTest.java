@@ -42,10 +42,10 @@ public class CachingDbMapTest {
   public void testCreateMatcherFor() {
     RecordMatcher<TestAbstractPersistent> matcher = mock(RecordMatcher.class);
     when(delegate.createMatcherFor(any(TestAbstractPersistent.class))).thenReturn(matcher);
-    TestAbstractPersistent template = new TestAbstractPersistent("test");
+    TestAbstractPersistent template = new TestAbstractPersistent().setKey("test");
     
     assertNotNull(cache.createMatcherFor(template));
-    verify(delegate.createMatcherFor(eq(template)));
+    verify(delegate).createMatcherFor(eq(template));
   }
 
   @Test
@@ -56,7 +56,8 @@ public class CachingDbMapTest {
 
   @Test
   public void testGetClassDescriptor() {
-    when(delegate.getClassDescriptor()).thenReturn(new ClassDescriptor<TestAbstractPersistent>(TestAbstractPersistent.class));
+    ClassDescriptor<TestAbstractPersistent> desc = new ClassDescriptor<TestAbstractPersistent>(TestAbstractPersistent.class);
+    when(delegate.getClassDescriptor()).thenReturn(desc);
     cache.getClassDescriptor();
     verify(delegate).getClassDescriptor();
   }
@@ -70,14 +71,14 @@ public class CachingDbMapTest {
 
   @Test
   public void testPut() {
-    TestAbstractPersistent obj = new TestAbstractPersistent("test");
+    TestAbstractPersistent obj = new TestAbstractPersistent().setKey("test");
     cache.put(obj.key, obj);
     verify(delegate).put(eq(obj.key), eq(obj));
   }
 
   @Test
   public void testRefresh() {
-    TestAbstractPersistent obj = new TestAbstractPersistent("test");
+    TestAbstractPersistent obj = new TestAbstractPersistent().setKey("test");
     cache.refresh(obj.key, obj);
     verify(delegate).refresh(eq(obj.key), eq(obj));
   }
@@ -85,7 +86,7 @@ public class CachingDbMapTest {
   @Test
   public void testRemove() {
     cache.remove("test");
-    verify(cache).remove("test");
+    verify(delegate).remove("test");
   }
 
   @Test
@@ -101,18 +102,23 @@ public class CachingDbMapTest {
     Collection coll = mock(Collection.class);
     RecordMatcher<TestAbstractPersistent> matcher = mock(RecordMatcher.class);
     when(delegate.values(any(RecordMatcher.class))).thenReturn(coll);
+    Iterator itr = mock(Iterator.class);
+    when(coll.iterator()).thenReturn(itr);
     cache.values(matcher);
     verify(delegate).values(any(RecordMatcher.class));
   }
 
-  class TestAbstractPersistent extends AbstractPersistent<String, TestAbstractPersistent> {
+  public static class TestAbstractPersistent extends AbstractPersistent<String, TestAbstractPersistent> {
   
     private String key;
     
-    public TestAbstractPersistent(String key) {
+    public TestAbstractPersistent setKey(String key) {
       this.key = key;
+      return this;
     }
     
+    public TestAbstractPersistent() {
+    }
     @Override
     public String getKey() {
       return key;

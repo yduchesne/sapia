@@ -11,22 +11,29 @@ import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.processor.ExecConfig;
+import org.sapia.corus.client.services.repository.ArtifactDeploymentRequest;
+import org.sapia.corus.client.services.repository.ArtifactListRequest;
 import org.sapia.corus.client.services.repository.ConfigNotification;
 import org.sapia.corus.client.services.repository.DistributionDeploymentRequest;
-import org.sapia.corus.client.services.repository.DistributionListRequest;
 import org.sapia.corus.client.services.repository.DistributionListResponse;
 import org.sapia.corus.client.services.repository.ExecConfigNotification;
+import org.sapia.corus.client.services.repository.FileDeploymentRequest;
+import org.sapia.corus.client.services.repository.FileListResponse;
 import org.sapia.corus.client.services.repository.ForceClientPullNotification;
 import org.sapia.corus.client.services.repository.Repository;
 import org.sapia.corus.client.services.repository.RepositoryConfiguration;
+import org.sapia.corus.client.services.repository.ShellScriptDeploymentRequest;
+import org.sapia.corus.client.services.repository.ShellScriptListResponse;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
-import org.sapia.corus.repository.task.DistributionDeploymentRequestHandlerTask;
-import org.sapia.corus.repository.task.DistributionListRequestHandlerTask;
+import org.sapia.corus.repository.task.ArtifactDeploymentRequestHandlerTask;
+import org.sapia.corus.repository.task.ArtifactListRequestHandlerTask;
 import org.sapia.corus.repository.task.DistributionListResponseHandlerTask;
+import org.sapia.corus.repository.task.FileListResponseHandlerTask;
 import org.sapia.corus.repository.task.ForcePullTask;
-import org.sapia.corus.repository.task.GetDistributionListTask;
+import org.sapia.corus.repository.task.GetArtifactListTask;
 import org.sapia.corus.repository.task.HandleExecConfigTask;
+import org.sapia.corus.repository.task.ShellScriptListResponseHandlerTask;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.SemaphoreThrottle;
 import org.sapia.corus.taskmanager.core.Task;
@@ -68,8 +75,8 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   @Autowired
   private EventDispatcher                      dispatcher;
 
-  private Queue<DistributionListRequest>       distListRequestQueue   = new Queue<DistributionListRequest>();
-  private Queue<DistributionDeploymentRequest> distDeployRequestQueue = new Queue<DistributionDeploymentRequest>();
+  private Queue<ArtifactListRequest>           listRequests   = new Queue<ArtifactListRequest>();
+  private Queue<ArtifactDeploymentRequest>     deployRequests = new Queue<ArtifactDeploymentRequest>();
   
   @Autowired
   private RepositoryConfiguration              repoConfig;
@@ -95,12 +102,12 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
     this.taskManager = taskManager;
   }
   
-  void setDeployRequestQueue(Queue<DistributionDeploymentRequest> distDeployRequestQueue) {
-    this.distDeployRequestQueue = distDeployRequestQueue;
+  void setDeployRequestQueue(Queue<ArtifactDeploymentRequest> deployRequests) {
+    this.deployRequests = deployRequests;
   }
   
-  void setDistributionListRequestQueue(Queue<DistributionListRequest> distListRequestQueue) {
-    this.distListRequestQueue = distListRequestQueue;
+  void setArtifactListRequestQueue(Queue<ArtifactListRequest> listRequests) {
+    this.listRequests = listRequests;
   }
   
   // --------------------------------------------------------------------------
@@ -112,10 +119,13 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
 
     if (serverContext().getCorusHost().getRepoRole().isServer()) {
       logger().info("Node is repo server");
-      clusterManager.getEventChannel().registerAsyncListener(DistributionListRequest.EVENT_TYPE, this);
+      clusterManager.getEventChannel().registerAsyncListener(ArtifactListRequest.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerAsyncListener(DistributionDeploymentRequest.EVENT_TYPE, this);
+      clusterManager.getEventChannel().registerAsyncListener(FileDeploymentRequest.EVENT_TYPE, this);
+      clusterManager.getEventChannel().registerAsyncListener(ShellScriptDeploymentRequest.EVENT_TYPE, this);      
+      
       taskManager.registerThrottle(
-          DistributionDeploymentRequestHandlerTask.DEPLOY_REQUEST_THROTTLE, 
+          ArtifactDeploymentRequestHandlerTask.DEPLOY_REQUEST_THROTTLE, 
           new SemaphoreThrottle(repoConfig.getMaxConcurrentDeploymentRequests())
       );
       
@@ -128,6 +138,8 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
     } else if (serverContext().getCorusHost().getRepoRole().isClient()){
       logger().info("Node is repo client");
       clusterManager.getEventChannel().registerAsyncListener(DistributionListResponse.EVENT_TYPE, this);
+      clusterManager.getEventChannel().registerAsyncListener(FileListResponse.EVENT_TYPE, this);
+      clusterManager.getEventChannel().registerAsyncListener(ShellScriptListResponse.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(ConfigNotification.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(ExecConfigNotification.EVENT_TYPE, this);
       if (!repoConfig.isPullPropertiesEnabled()) {
@@ -163,7 +175,7 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   public void pull() throws IllegalStateException {
     if (serverContext().getCorusHost().getRepoRole().isClient()) {
       logger().debug("Node is a repo client: will try to acquire distributions from repo server");
-      GetDistributionListTask task = new GetDistributionListTask();
+      GetArtifactListTask task = new GetArtifactListTask();
       task.setMaxExecution(repoConfig.getDistributionDiscoveryMaxAttempts());
       
       taskManager.executeBackground(
@@ -220,15 +232,34 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   @Override
   public void onAsyncEvent(RemoteEvent evt) {
     try {
-      if (evt.getType().equals(DistributionListRequest.EVENT_TYPE)) {
-        logger().debug("Got distribution list request");
-        handleDistributionListRequest((DistributionListRequest) evt.getData());
+      if (evt.getType().equals(ArtifactListRequest.EVENT_TYPE)) {
+        logger().debug("Got artifact list request");
+        handleArtifactListRequest((ArtifactListRequest) evt.getData());
+        
+      // Distribution (list response, deployment request
       } else if (evt.getType().equals(DistributionListResponse.EVENT_TYPE)) {
         logger().debug("Got distribution list response");
         handleDistributionListResponse((DistributionListResponse) evt.getData());
       } else if (evt.getType().equals(DistributionDeploymentRequest.EVENT_TYPE)) {
         logger().debug("Got distribution deployment request");
         handleDistributionDeploymentRequest((DistributionDeploymentRequest) evt.getData());
+
+        // Shell script (list response, deployment request
+      } else if (evt.getType().equals(ShellScriptListResponse.EVENT_TYPE)) {
+        logger().debug("Got shell script list response");
+        handleShellScriptListResponse((ShellScriptListResponse) evt.getData());
+      } else if (evt.getType().equals(ShellScriptDeploymentRequest.EVENT_TYPE)) {
+        logger().debug("Got shell script deployment request");
+        handleShellScriptDeploymentRequest((ShellScriptDeploymentRequest) evt.getData());
+
+        // File (list response, deployment request
+      } else if (evt.getType().equals(FileListResponse.EVENT_TYPE)) {
+        logger().debug("Got file list response");
+        handleFileListResponse((FileListResponse) evt.getData());
+      } else if (evt.getType().equals(FileDeploymentRequest.EVENT_TYPE)) {
+        logger().debug("Got file deployment request");
+        handleFileDeploymentRequest((FileDeploymentRequest) evt.getData());
+        
       } else {
         logger().debug("Unknown event type: " + evt.getType()); 
       }
@@ -257,23 +288,24 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   // Restricted methods (event handlers)
   
   void handleExecConfigNotification(ExecConfigNotification notif) {
-    
-    if (notif.getConfigs().isEmpty()) {
-      logger().debug("Received empty exec config list");
-      return;
-    } else {
-     for (ExecConfig config : notif.getConfigs()) {
-        logger().debug("Got exec config: " + config.getName());
+    if (notif.isTargeted(serverContext().getCorusHost().getEndpoint())) {
+      if (notif.getConfigs().isEmpty()) {
+        logger().debug("Received empty exec config list");
+        return;
+      } else {
+       for (ExecConfig config : notif.getConfigs()) {
+          logger().debug("Got exec config: " + config.getName());
+        }
       }
+      
+      taskManager.executeBackground(
+          new HandleExecConfigTask(repoConfig, notif.getConfigs())
+            .setMaxExecution(DEFAULT_HANDLE_EXEC_CONFIG_MAX_ATTEMPTS), 
+          null, 
+          BackgroundTaskConfig.create()
+            .setExecDelay(DEFAULT_HANDLE_EXEC_CONFIG_DELAY)
+            .setExecInterval(DEFAULT_HANDLE_EXEC_CONFIG_INTERVAL));
     }
-    
-    taskManager.executeBackground(
-        new HandleExecConfigTask(repoConfig, notif.getConfigs())
-          .setMaxExecution(DEFAULT_HANDLE_EXEC_CONFIG_MAX_ATTEMPTS), 
-        null, 
-        BackgroundTaskConfig.create()
-          .setExecDelay(DEFAULT_HANDLE_EXEC_CONFIG_DELAY)
-          .setExecInterval(DEFAULT_HANDLE_EXEC_CONFIG_INTERVAL));
     
     // cascading to next host
     try {
@@ -321,14 +353,17 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
     }
   } 
   
-  void handleDistributionListRequest(DistributionListRequest distsReq) {
+  void handleArtifactListRequest(ArtifactListRequest distsReq) {
     if (serverContext().getCorusHost().getRepoRole().isServer()) {
-      distListRequestQueue.add(distsReq);
-      taskManager.execute(new DistributionListRequestHandlerTask(distListRequestQueue), null);
+      listRequests.add(distsReq);
+      taskManager.execute(new ArtifactListRequestHandlerTask(repoConfig, listRequests), null);
     } else {
       logger().debug("Ignoring " + distsReq + "; repo type is " + serverContext().getCorusHost().getRepoRole());
     }
   }
+  
+  // --------------------------------------------------------------------------
+  // Distribution
   
   void handleDistributionListResponse(final DistributionListResponse distsRes) {
     if (serverContext().getCorusHost().getRepoRole().isClient()) {
@@ -340,8 +375,52 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   
   void handleDistributionDeploymentRequest(DistributionDeploymentRequest req) {
     if (serverContext().getCorusHost().getRepoRole().isServer()) {
-      distDeployRequestQueue.add(req);
-      taskManager.execute(new DistributionDeploymentRequestHandlerTask(repoConfig, distDeployRequestQueue), null);
+      deployRequests.add(req);
+      taskManager.execute(new ArtifactDeploymentRequestHandlerTask(repoConfig, deployRequests), null);
+    } else {
+      logger().debug("Ignoring " + req + "; repo type is " + serverContext().getCorusHost().getRepoRole());
+    }
+  }
+  
+  // --------------------------------------------------------------------------
+  // ShellScript
+  
+  void handleShellScriptListResponse(final ShellScriptListResponse response) {
+    if (!repoConfig.isPullScriptsEnabled()) {
+      logger().debug("Ignoring " + response + "; script pull is disabled");
+    } else if (serverContext().getCorusHost().getRepoRole().isClient()) {
+      taskManager.execute(new ShellScriptListResponseHandlerTask(response), null);
+    } else {
+      logger().debug("Ignoring " + response + "; repo type is " + serverContext().getCorusHost().getRepoRole());
+    }
+  }
+  
+  void handleShellScriptDeploymentRequest(ShellScriptDeploymentRequest req) {
+    if (serverContext().getCorusHost().getRepoRole().isServer()) {
+      deployRequests.add(req);
+      taskManager.execute(new ArtifactDeploymentRequestHandlerTask(repoConfig, deployRequests), null);
+    } else {
+      logger().debug("Ignoring " + req + "; repo type is " + serverContext().getCorusHost().getRepoRole());
+    }
+  }
+  
+  // --------------------------------------------------------------------------
+  // File
+  
+  void handleFileListResponse(final FileListResponse response) {
+    if (!repoConfig.isPullFilesEnabled()) {
+      logger().debug("Ignoring " + response + "; file pull is disabled");
+    } else if (serverContext().getCorusHost().getRepoRole().isClient()) {
+      taskManager.execute(new FileListResponseHandlerTask(response), null);
+    } else {
+      logger().debug("Ignoring " + response + "; repo type is " + serverContext().getCorusHost().getRepoRole());
+    }
+  }
+  
+  void handleFileDeploymentRequest(FileDeploymentRequest req) {
+    if (serverContext().getCorusHost().getRepoRole().isServer()) {
+      deployRequests.add(req);
+      taskManager.execute(new ArtifactDeploymentRequestHandlerTask(repoConfig, deployRequests), null);
     } else {
       logger().debug("Ignoring " + req + "; repo type is " + serverContext().getCorusHost().getRepoRole());
     }

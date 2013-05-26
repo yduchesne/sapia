@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.sapia.corus.client.common.PropertiesStrLookup;
-import org.sapia.corus.util.IOUtils;
+import org.sapia.corus.util.IOUtil;
 import org.sapia.corus.util.PropertiesFilter;
 import org.sapia.corus.util.PropertiesTransformer;
 import org.sapia.corus.util.PropertiesUtil;
@@ -70,7 +70,7 @@ class CorusPropertiesLoader {
     
     for (Supplier<InputStream> s : propertySuppliers) {
       InputStream supplied = s.get();
-      InputStream tmp = IOUtils.replaceVars(new PropertiesStrLookup(corusProps), s.get());
+      InputStream tmp = IOUtil.replaceVars(new PropertiesStrLookup(corusProps), s.get());
       corusProps.load(tmp);
       supplied.close();
       tmp.close();

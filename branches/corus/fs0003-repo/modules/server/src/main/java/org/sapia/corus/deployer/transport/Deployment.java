@@ -16,6 +16,7 @@ import org.sapia.corus.core.ServerContext;
 import org.sapia.ubik.rmi.server.transport.MarshalStreamFactory;
 import org.sapia.ubik.rmi.server.transport.RmiObjectOutput;
 import org.sapia.ubik.serialization.SerializationStreams;
+import org.sapia.ubik.util.Streams;
 
 /**
  * This class models a deployment on the server-side.
@@ -70,11 +71,11 @@ public class Deployment {
 	 */
 	public void deploy(DeployOutputStream deployOutput) throws IOException{
 		long length = getMetadata().getContentLength();
-		InputStream is = conn.getInputStream();
-		long total = 0;
-		byte[] buf = new byte[BUFSZ];
-		int read = 0;
-		long remaining = length;
+		InputStream is   = conn.getInputStream();
+		long   total     = 0;
+		byte[] buf       = new byte[BUFSZ];
+		int    read      = 0;
+		long   remaining = length;
 
     log.debug(String.format("Processing deployment stream of %s bytes : %s", length, meta.getFileName()));
 		try {
@@ -90,16 +91,23 @@ public class Deployment {
   		deployOutput.flush();
   		deployOutput.close();
 		} finally {
-		  is.close();
+		  Streams.closeSilently(is);
 		}
 		handleResult(deployOutput.getProgressQueue());
 	}
 	
-  void handleResult(ProgressQueue result) throws IOException{
-    ObjectOutputStream os = MarshalStreamFactory.createOutputStream(conn.getOutputStream());
-    ((RmiObjectOutput)os).setUp(getMetadata().getOrigin(), context.getTransport().getServerAddress().getTransportType());
+  private void handleResult(ProgressQueue result) throws IOException {
+    ObjectOutputStream os = createObjectOutputStream(conn.getOutputStream());
     os.writeObject(result);
-    os.flush();
-    os.close();
+    Streams.flushAndCloseSilently(os);
   }	
+  
+  // --------------------------------------------------------------------------
+  // Provided for testing purposes
+  
+  ObjectOutputStream createObjectOutputStream(OutputStream os) throws IOException {
+    ObjectOutputStream oos = MarshalStreamFactory.createOutputStream(os);
+    ((RmiObjectOutput)oos).setUp(getMetadata().getOrigin(), context.getTransport().getServerAddress().getTransportType());
+    return oos;
+  }
 }

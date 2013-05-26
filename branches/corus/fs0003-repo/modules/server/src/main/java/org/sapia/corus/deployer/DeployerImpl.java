@@ -3,12 +3,12 @@ package org.sapia.corus.deployer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.sapia.corus.client.annotations.Bind;
-import org.sapia.corus.client.common.IDGenerator;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.client.common.ProgressQueueImpl;
 import org.sapia.corus.client.exceptions.core.IORuntimeException;
@@ -77,6 +77,8 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
   @Autowired
   private DeployerConfiguration configuration;
   
+  private List<DeploymentHandler> deploymentHandlers = new ArrayList<DeploymentHandler>();
+  
   private DeploymentProcessor   processor;
   private DistributionDatabase  store;
   
@@ -85,6 +87,13 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
    */
   public DeployerConfiguration getConfiguration() {
     return configuration;
+  }
+  
+  /**
+   * @param deploymentHandlers a {@link List} of {@link DeploymentHandler}s to assign.
+   */
+  public void setDeploymentHandlers(List<DeploymentHandler> deploymentHandlers) {
+    this.deploymentHandlers = deploymentHandlers;
   }
 
   /**
@@ -106,9 +115,29 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
         ThrottleFactory.createMaxConcurrentThrottle(1)
     );
 
-    String defaultDeployDir = FilePath.newInstance().addDir(serverContext().getHomeDir()).addDir("deploy").createFilePath();
-    String defaultRepoDir   = FilePath.newInstance().addDir(serverContext().getHomeDir()).addDir("repo").createFilePath();
-    String defaultTmpDir    = FilePath.newInstance().addDir(serverContext().getHomeDir()).addDir("tmp").createFilePath();
+    String defaultDeployDir = FilePath.newInstance().addDir(serverContext().getHomeDir())
+        .addDir("deploy")
+        .createFilePath();
+    
+    String defaultRepoDir   = FilePath.newInstance().addDir(serverContext().getHomeDir())
+        .addDir("repo")
+        .createFilePath();
+    
+    String defaultTmpDir    = FilePath.newInstance().addDir(serverContext().getHomeDir())
+        .addDir("tmp")
+        .createFilePath();
+    
+    String defaultScriptDir = FilePath.newInstance().addDir(serverContext().getHomeDir())
+        .addDir("deploy")
+        .addDir("files")
+        .addDir("scripts")
+        .createFilePath();
+    
+    String defaultUploadDir = FilePath.newInstance().addDir(serverContext().getHomeDir())
+        .addDir("deploy")
+        .addDir("files")
+        .addDir("uploads")
+        .createFilePath();    
     
     String pattern = serverContext().getDomain() + '_' + serverContext().getCorusHost().getEndpoint().getServerTcpAddress().getPort();
     
@@ -133,29 +162,50 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
       config.setRepoDir(FilePath.newInstance().addDir(defaultRepoDir).addDir(pattern).createFilePath());
     }
     
-    configuration = config;
+    if (configuration.getScriptDir() != null) {
+      config.setScriptDir(FilePath.newInstance().addDir(configuration.getScriptDir()).addDir(pattern).createFilePath());
+    } else {
+      config.setScriptDir(FilePath.newInstance().addDir(defaultScriptDir).addDir(pattern).createFilePath());
+    }
     
-    File f = new File(new File(configuration.getDeployDir()).getAbsolutePath());
+    if (configuration.getUploadDir() != null) {
+      config.setUploadDir(FilePath.newInstance().addDir(configuration.getUploadDir()).addDir(pattern).createFilePath());
+    } else {
+      config.setUploadDir(FilePath.newInstance().addDir(defaultUploadDir).addDir(pattern).createFilePath());
+    }    
+    
+    configuration.copyFrom(config);
+    
+    File f = new File(configuration.getDeployDir());
     f.mkdirs();
     assertFile(f);
-    logger().debug(String.format("Deploy dir: %s", f.getAbsolutePath()));
+    log.debug(String.format("Deploy dir: %s", f.getAbsolutePath()));
     
-    f = new File(new File(configuration.getTempDir()).getAbsolutePath());
+    f = new File(configuration.getTempDir());
     f.mkdirs();
     assertFile(f);
-    logger().debug(String.format("Temporary dir: %s", f.getPath()));
+    log.debug(String.format("Temporary dir: %s", f.getAbsolutePath()));
     
-    f = new File(new File(configuration.getRepoDir()).getAbsolutePath());
+    f = new File(configuration.getRepoDir());
     f.mkdirs();
     assertFile(f);
-    logger().debug(String.format("Repo dir: %s", f.getPath()));
+    log.debug(String.format("Repo dir: %s", f.getAbsolutePath()));
+
+    f = new File(configuration.getScriptDir());
+    f.mkdirs();
+    assertFile(f);
+    log.debug(String.format("Script dir: %s", f.getAbsolutePath()));
     
+    f = new File(configuration.getUploadDir());
+    f.mkdirs();
+    assertFile(f);
+    log.debug(String.format("Upload dir: %s", f.getAbsolutePath()));  
     
-    logger().info("Initializing: rebuilding distribution objects");
+    log.info("Initializing: rebuilding distribution objects");
 
     taskman.executeAndWait(new BuildDistTask(configuration.getDeployDir(), getDistributionStore()), null);
 
-    logger().info("Distribution objects succesfully rebuilt");
+    log.info("Distribution objects succesfully rebuilt");
 
     events.addInterceptor(ServerStartedEvent.class, this);
   }
@@ -169,15 +219,14 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
       processor.init();
       processor.start();
     } catch (Exception e) {
-      logger().error("Could not start deployment processor", e);
+      log.error("Could not start deployment processor", e);
     }
     try{
       DeployerExtension ext = new DeployerExtension(this, serverContext);
       http.addHttpExtension(ext);
     }catch (Exception e){
-      logger().error("Could not add deployer HTTP extension", e);
+      log.error("Could not add deployer HTTP extension", e);
     }
-    
   }
 
   /**
@@ -280,21 +329,23 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
    * @see DeploymentConnector#connect(Deployment)
    */
   public void connect(Deployment deployment) {
-    String             fileName;
     DeploymentMetadata meta;
 
     try {
       meta       = deployment.getMetadata();
-      fileName   = meta.getFileName() + "." + IDGenerator.makeId();
     } catch (IOException e) {
       deployment.close();
-      logger().error("Could not acquire deployment metadata", e);
+      log.error("Could not acquire deployment metadata", e);
 
       return;
     }
-
-    logger().info("Processing incoming deployment: " + fileName);
-
+    
+    DeploymentHandler handler = selectDeploymentHandler(meta);
+    File destFile = handler.getDestFile(meta);
+    
+    log.info("Processing incoming deployment: " + meta.getFileName() + " with " + handler);
+    log.info("Transferring deployment stream to: " + destFile.getAbsolutePath());
+    
     DeployOutputStream out;
 
     // if deployment is clustered...
@@ -305,7 +356,7 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
         siblings = cluster.getHostAddresses();
       } catch (RuntimeException e) {
         deployment.close();
-        logger().error("Could not lookup ClusterManager while performing deployment", e);
+        log.error("Could not lookup ClusterManager while performing deployment", e);
         return;
       }
       
@@ -313,44 +364,37 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
       ServerAddress       addr;
       ServerAddress       current = serverContext().getCorusHost().getEndpoint().getServerAddress();
       
-      logger().debug("Targeted hosts: " + meta.getTargeted());
-      logger().debug("Visited hosts: " + meta.getVisited());
-      logger().debug("Current host: " + current);
+      log.debug("Targeted hosts: " + meta.getTargeted());
+      log.debug("Visited hosts: " + meta.getVisited());
+      log.debug("Current host: " + current);
 			
       // adding this host to visited set
       visited.add(current);
 
       try {
+        
 				// no next host to deploy to; we have reached end of chain  
 				// - deployment stops here        	
         if ((addr = ClusteringHelper.selectNextTarget(visited, siblings)) == null) {
           if (!meta.isTargeted(current)) {
-            logger().info("This host is not targeted and there are not more hosts to visit. Deployment is deemed finished");
+            log.info("This host is not targeted and there are not more hosts to visit. Deployment is deemed finished");
             out = new NullDeployOutputStream();
           } else {
-            out = new DeployOutputStreamImpl(
-                configuration.getTempDir() + File.separator +
-                fileName, fileName, this);
+            out = new DeployOutputStreamImpl(destFile, meta, handler);
           }
         } else {
 					// chaining deployment to next host.
           if (!meta.isTargeted(current)) {
-            logger().info("This host is not targeted. Deployment is cascaded to the next host");
+            log.info("This host is not targeted. Deployment is cascaded to the next host");
             out = new ClientDeployOutputStream(meta, DeploymentClientFactory.newDeploymentClientFor(addr));
           } else {
-            out = new ClusteredDeployOutputStreamImpl(
-                FilePath.newInstance()
-                  .addDir(configuration.getTempDir())
-                  .setRelativeFile(fileName).createFilePath(), 
-                fileName, 
-                this,
-                new ClientDeployOutputStream(meta,
-                  DeploymentClientFactory.newDeploymentClientFor(addr)));
+            DeployOutputStream next = new ClientDeployOutputStream(meta, DeploymentClientFactory.newDeploymentClientFor(addr));
+            out = new ClusteredDeployOutputStreamImpl(destFile, meta, handler, next);
           }
         }
       } catch (IOException e) {
         deployment.close();
-        logger().error("Could not create output stream while performing clustered deployment", e);
+        log.error("Could not create output stream while performing clustered deployment", e);
 
         return;
       }
@@ -358,14 +402,10 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
     // deployment is not clustered		
     else {
       try {
-        out = new DeployOutputStreamImpl(
-            FilePath.newInstance()
-              .addDir(configuration.getTempDir())
-              .setRelativeFile(fileName).createFilePath(),
-            fileName, this);
+        out = new DeployOutputStreamImpl(destFile, meta, handler);
       } catch (FileNotFoundException e) {
         deployment.close();
-        logger().error("Could not create output stream while performing deployment", e);
+        log.error("Could not create output stream while performing deployment", e);
 
         return;
       }
@@ -380,14 +420,14 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
         // noop
       }
 
-      logger().error("Problem deploying: " + fileName, e);
+      log.error("Problem deploying: " + meta.getFileName(), e);
 
       return;
     } finally {
       deployment.close();
     }
 
-    logger().info("Deployment upload completed for: " + fileName);
+    log.info("Deployment upload completed for: " + meta.getFileName());
   }
 
 
@@ -418,5 +458,14 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
     if (!f.exists()) {
       throw new IllegalArgumentException(f.getAbsolutePath() + " does not exist");
     }
+  }
+ 
+  private DeploymentHandler selectDeploymentHandler(DeploymentMetadata meta) {
+    for (DeploymentHandler handler : deploymentHandlers) {
+      if (handler.accepts(meta)) {
+        return handler;
+      }
+    }
+    throw new IllegalStateException("Could not find deployment handler for: " + meta);
   }
 }

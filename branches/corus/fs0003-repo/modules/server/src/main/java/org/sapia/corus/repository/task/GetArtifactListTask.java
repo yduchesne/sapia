@@ -6,17 +6,17 @@ import java.util.Set;
 
 import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
-import org.sapia.corus.client.services.repository.DistributionListRequest;
+import org.sapia.corus.client.services.repository.ArtifactListRequest;
 import org.sapia.corus.taskmanager.util.RunnableTask;
 import org.sapia.ubik.mcast.EventChannel;
 
 /**
- * This task sends a {@link DistributionListRequest} to Corus repository server nodes.
+ * This task sends a {@link ArtifactListRequest} to Corus repository server nodes.
  * 
  * @author yduchesne
  *
  */
-public class GetDistributionListTask extends RunnableTask {
+public class GetArtifactListTask extends RunnableTask {
   
   private Set<CorusHost> repos = new HashSet<CorusHost>();
   
@@ -38,12 +38,13 @@ public class GetDistributionListTask extends RunnableTask {
             try {
               EventChannel channel = context().getServerContext().getServices().getClusterManager().getEventChannel();
               channel.dispatch(
-                  DistributionListRequest.EVENT_TYPE, 
-                  new DistributionListRequest(context().getServerContext().getCorusHost().getEndpoint())
+                  h.getEndpoint().getChannelAddress(),
+                  ArtifactListRequest.EVENT_TYPE, 
+                  new ArtifactListRequest(context().getServerContext().getCorusHost().getEndpoint())
               );
             } catch (IOException e) {
               context().error("Could not dispatch distribution list request", e);
-            }
+            } 
           } else {
             context().debug("Corus host already contacted, ignoring: " + h);
           }

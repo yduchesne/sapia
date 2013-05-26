@@ -14,28 +14,33 @@ import org.sapia.corus.client.services.deployer.transport.DeployOsAdapter;
 import org.sapia.corus.client.services.deployer.transport.DeployOutputStream;
 import org.sapia.corus.client.services.deployer.transport.DeploymentClientFactory;
 import org.sapia.corus.client.services.deployer.transport.DeploymentMetadata;
-import org.sapia.corus.client.services.repository.DistributionDeploymentRequest;
 import org.sapia.corus.taskmanager.util.RunnableTask;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.util.Collections2;
 import org.sapia.ubik.util.Function;
 
 /**
- * This task performs the deployment to a provided list of nodes, following a {@link DistributionDeploymentRequest}.
+ * This task provides the basic behavior for deploying artifacts to a provided list of nodes.
  * 
  * @author yduchesne
  *
  */
-public class DeploymentRequestHandlerTask extends RunnableTask {
+public abstract class ArtifactRequestHandlerTaskSupport extends RunnableTask {
     
   private static final int BUFSZ = 2048;
   
   private List<Endpoint> targets;
-  private File           distributionFile;
+  private File           artifactFile;
+  private Function<DeploymentMetadata, Boolean> metadataFunc;
   
-  public DeploymentRequestHandlerTask(File distFile, List<Endpoint> targets) {
-    this.distributionFile = distFile;
-    this.targets          = targets;
+  protected ArtifactRequestHandlerTaskSupport(
+      File artifactFile, 
+      List<Endpoint> targets, 
+      Function<DeploymentMetadata, Boolean> metadataFunc
+  ) {
+    this.artifactFile = artifactFile;
+    this.targets      = targets;
+    this.metadataFunc = metadataFunc;
   }
   
   public void run() { 
@@ -44,7 +49,7 @@ public class DeploymentRequestHandlerTask extends RunnableTask {
     } else {
       try {
         context().debug("Deploying to: " + targets);
-        doDeployDistribution();
+        doDeploy();
       } catch (Exception e) {
         context().error("Problem performing deployment", e);
       }
@@ -54,7 +59,7 @@ public class DeploymentRequestHandlerTask extends RunnableTask {
   // --------------------------------------------------------------------------
   // Restricted visibility methods - for unit testing
   
-  void doDeployDistribution() throws IOException {
+  void doDeploy() throws IOException {
     OutputStream        os     = null;
     BufferedInputStream bis    = null;
     boolean             closed = false;
@@ -63,7 +68,7 @@ public class DeploymentRequestHandlerTask extends RunnableTask {
     
     try {
       
-      DeploymentMetadata meta = new DeploymentMetadata(distributionFile.getName(), distributionFile.length(), true);
+      DeploymentMetadata meta = metadataFunc.call(Boolean.TRUE);
       
       Endpoint first = targetsCopy.get(0);
       
@@ -76,7 +81,7 @@ public class DeploymentRequestHandlerTask extends RunnableTask {
       DeployOutputStream dos = new ClientDeployOutputStream(meta, DeploymentClientFactory.newDeploymentClientFor(first.getServerAddress()));
 
       os  = new DeployOsAdapter(dos);
-      bis = new BufferedInputStream(new FileInputStream(distributionFile));
+      bis = new BufferedInputStream(new FileInputStream(artifactFile));
       
       byte[] b    = new byte[BUFSZ];
       int    read;

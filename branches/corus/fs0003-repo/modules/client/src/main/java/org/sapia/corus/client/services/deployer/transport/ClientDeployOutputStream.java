@@ -19,7 +19,7 @@ public class ClientDeployOutputStream implements DeployOutputStream {
   private ProgressQueue 	 queue;
   private boolean 				 closed;
 	
-	public ClientDeployOutputStream(DeploymentMetadata meta, DeploymentClient client) throws IOException{
+	public ClientDeployOutputStream(DeploymentMetadata meta, DeploymentClient client) throws IOException {
   	this.client = client;			
 		out = this.client.getOutputStream();
 		ObjectOutputStream oos = SerializationStreams.createObjectOutputStream(out);

@@ -31,7 +31,7 @@ import org.sapia.corus.log.CompositeTarget;
 import org.sapia.corus.log.FormatterFactory;
 import org.sapia.corus.log.StdoutTarget;
 import org.sapia.corus.log.SyslogTarget;
-import org.sapia.corus.util.IOUtils;
+import org.sapia.corus.util.IOUtil;
 import org.sapia.corus.util.PropertiesFilter;
 import org.sapia.corus.util.PropertiesUtil;
 import org.sapia.ubik.mcast.EventChannel;
@@ -294,7 +294,7 @@ public class CorusServer {
       
       // Create Lock file
       File lockFile = new File(corusHome + File.separator + "bin" + File.separator + LOCK_FILE_NAME + "_" + domain + "_" + port);
-      IOUtils.createLockFile(lockFile);
+      IOUtil.createLockFile(lockFile);
    
       // Initialize Corus, export it and start it
       EventChannel channel = new EventChannel(

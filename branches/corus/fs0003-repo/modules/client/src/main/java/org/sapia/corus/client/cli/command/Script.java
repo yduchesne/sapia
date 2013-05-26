@@ -29,7 +29,7 @@ public class Script extends CorusCliCommand {
     }
    
     try {
-      File scriptFile = new File(ctx.getCommandLine().next().getName());
+      File scriptFile = ctx.getFileSystem().getFile(ctx.getCommandLine().next().getName());
       processScript(scriptFile, ctx);
     } catch (FileNotFoundException e) {
       throw new InputException(e.getMessage());

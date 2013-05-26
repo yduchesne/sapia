@@ -72,7 +72,7 @@ public class HandleExecConfigTaskTest extends AbstractRepoTaskTest {
     configsTask.execute(taskContext, null);
     verify(deployer, times(2)).getDistribution(any(DistributionCriteria.class));
     verify(processor, times(2)).addExecConfig(any(ExecConfig.class));
-    verify(processor, never()).exec(anyString());
+    verify(processor, never()).execConfig(anyString());
   }
 
   @Test
@@ -80,7 +80,7 @@ public class HandleExecConfigTaskTest extends AbstractRepoTaskTest {
     startOnBootConfigTask.execute(taskContext, null);
     verify(deployer, times(1)).getDistribution(any(DistributionCriteria.class));
     verify(processor, times(1)).addExecConfig(any(ExecConfig.class));
-    verify(processor, times(1)).exec(anyString());
+    verify(processor, times(1)).execConfig(anyString());
   }
   
   @Test
@@ -89,7 +89,7 @@ public class HandleExecConfigTaskTest extends AbstractRepoTaskTest {
     startOnBootConfigTask.execute(taskContext, null);
     verify(deployer, times(1)).getDistribution(any(DistributionCriteria.class));
     verify(processor, times(1)).addExecConfig(any(ExecConfig.class));
-    verify(processor, never()).exec(anyString());
+    verify(processor, never()).execConfig(anyString());
   }  
 
 }

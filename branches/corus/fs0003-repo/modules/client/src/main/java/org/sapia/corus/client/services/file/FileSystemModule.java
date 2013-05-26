@@ -3,6 +3,7 @@ package org.sapia.corus.client.services.file;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Abstracts the file system.
@@ -75,4 +76,11 @@ public interface FileSystemModule{
    * @throws IOException if a problem occurs attempting to open the entry stream. 
    */
   public InputStream openZipEntryStream(File zipFile, String entryName) throws IOException;
+  
+  /**
+   * @param baseDir the {@link File} corresponding to the directory from which to get the file list.
+   * @return the {@link List} of files under the given base directory (does not return files that correspond
+   * to subdirectories). 
+   */
+  public List<File> listFiles(File baseDir);
 }

@@ -8,42 +8,47 @@ import java.io.ObjectOutput;
 import org.sapia.corus.client.services.cluster.Endpoint;
 
 /**
- * This request is sent to a Corus server that acts as a repository in order to obtain the 
- * list of distributions that it currently holds.
+ * Base class for artifact deployment requests.
  * 
  * @author yduchesne
  *
  */
-public class DistributionListRequest implements Externalizable {
+public abstract class ArtifactDeploymentRequest implements Externalizable {
   
   static final long serialVersionID = 1L;
   
-  public static final String EVENT_TYPE = "corus.event.repository.request.distributions";
-
   private Endpoint endpoint;
-
+  
   /**
-   * Do not use: meant for externalization.
+   * Do not call: meant for externalization.
    */
-  public DistributionListRequest() {
+  protected ArtifactDeploymentRequest() {
+   
   }
   
   /**
-   * @param endpoint the {@link Endpoint} of the requester from which
-   * this instance originates.
+   * @param endpoint the {@link Endpoint} corresponding to the Corus node from which this request
+   * originates.
    */
-  public DistributionListRequest(Endpoint endpoint) {
+  protected ArtifactDeploymentRequest(Endpoint endpoint) {
     this.endpoint = endpoint;
   }
-
+  
+  /**
+   * @return the {@link Endpoint} corresponding to the Corus node from which this request
+   * originates.
+   */
   public Endpoint getEndpoint() {
     return endpoint;
   }
   
+  // --------------------------------------------------------------------------
+  // Externalizable interface
+  
   @Override
   public void readExternal(ObjectInput in) throws IOException,
       ClassNotFoundException {
-    this.endpoint = (Endpoint) in.readObject();
+    endpoint = (Endpoint) in.readObject();
   }
   
   @Override

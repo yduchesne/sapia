@@ -24,7 +24,7 @@ public class SendConfigNotificationTaskTest extends AbstractRepoTaskTest {
   public void setUp() {
     super.doSetUp();
     Set<Endpoint> endpoints = new HashSet<Endpoint>();
-    task = new SendConfigNotificationTask(endpoints);
+    task = new SendConfigNotificationTask(repoConfig, endpoints);
     properties = new Properties();
     properties.setProperty("test", "testValue");
     tags = new HashSet<String>();

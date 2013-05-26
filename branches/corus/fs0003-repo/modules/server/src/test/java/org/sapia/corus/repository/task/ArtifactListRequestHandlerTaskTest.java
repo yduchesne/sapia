@@ -16,24 +16,28 @@ import org.sapia.corus.client.services.cluster.Endpoint;
 import org.sapia.corus.client.services.deployer.Deployer;
 import org.sapia.corus.client.services.deployer.DistributionCriteria;
 import org.sapia.corus.client.services.deployer.dist.Distribution;
-import org.sapia.corus.client.services.repository.DistributionListRequest;
+import org.sapia.corus.client.services.repository.ArtifactListRequest;
 import org.sapia.corus.client.services.repository.DistributionListResponse;
+import org.sapia.corus.client.services.repository.RepositoryConfiguration;
 import org.sapia.corus.util.Queue;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.util.Collections2;
 
-public class DistributionListRequestHandlerTaskTest extends AbstractRepoTaskTest {
+public class ArtifactListRequestHandlerTaskTest extends AbstractRepoTaskTest {
  
-  private Endpoint                           ep1, ep2;
-  private Queue<DistributionListRequest>     requests;
-  private Distribution                       dist1, dist2;
-  private List<Distribution>                 distributions;
-  private Deployer                           deployer;
-  private DistributionListRequestHandlerTask task;
+  private Endpoint                       ep1, ep2;
+  private Queue<ArtifactListRequest>     requests;
+  private Distribution                   dist1, dist2;
+  private List<Distribution>             distributions;
+  private Deployer                       deployer;
+  private ArtifactListRequestHandlerTask task;
+  private RepositoryConfiguration        conf;
   
   @Before
   public void setUp() throws Exception {
     super.doSetUp();
+    
+    conf = mock(RepositoryConfiguration.class);
     
     ep1 = new Endpoint(mock(ServerAddress.class), mock(ServerAddress.class));
     ep2 = new Endpoint(mock(ServerAddress.class), mock(ServerAddress.class));
@@ -44,11 +48,11 @@ public class DistributionListRequestHandlerTaskTest extends AbstractRepoTaskTest
     dist2         = new Distribution("dist2", "1.0");
     distributions = Collections2.arrayToList(dist1, dist2);
     
-    requests = new Queue<DistributionListRequest>();
-    requests.add(new DistributionListRequest(ep1));
-    requests.add(new DistributionListRequest(ep2));
+    requests = new Queue<ArtifactListRequest>();
+    requests.add(new ArtifactListRequest(ep1));
+    requests.add(new ArtifactListRequest(ep2));
     
-    task =  new DistributionListRequestHandlerTask(requests);
+    task =  new ArtifactListRequestHandlerTask(conf, requests);
     
     when(serviceContext.getDeployer()).thenReturn(deployer);
     when(deployer.getDistributions(any(DistributionCriteria.class))).thenReturn(distributions);
