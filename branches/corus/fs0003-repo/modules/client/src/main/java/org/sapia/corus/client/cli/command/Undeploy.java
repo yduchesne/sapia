@@ -6,7 +6,6 @@ import org.sapia.console.InputException;
 import org.sapia.corus.client.cli.CliContext;
 import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.common.ArgFactory;
-import org.sapia.corus.client.common.ProgressMsg;
 import org.sapia.corus.client.common.ProgressQueue;
 import org.sapia.corus.client.exceptions.deployer.RunningProcessesException;
 import org.sapia.corus.client.services.deployer.DistributionCriteria;
@@ -77,7 +76,7 @@ public class Undeploy extends CorusCliCommand {
     ProgressQueue progress = ctx.getCorus().getScriptManagementFacade().removeScripts(
         ShellScriptCriteria.newInstance().setAlias(ArgFactory.parse(alias)), 
         getClusterInfo(ctx));
-    doHandleProgress(progress, ctx);
+    displayProgress(progress, ctx);
   }
   
   private void doUndeployFile(CliContext ctx) throws InputException {
@@ -85,19 +84,7 @@ public class Undeploy extends CorusCliCommand {
     ProgressQueue progress = ctx.getCorus().getFileManagementFacade().deleteFiles(
         FileCriteria.newInstance().setName(ArgFactory.parse(name)), 
         getClusterInfo(ctx));
-    doHandleProgress(progress, ctx);
+    displayProgress(progress, ctx);
   }  
   
-  private void doHandleProgress(ProgressQueue progress, CliContext ctx) {
-    while (progress.hasNext()) {
-      for (ProgressMsg p : progress.next()) {
-        if (p.isError()) {
-          CliError err = ctx.createAndAddErrorFor(this, p.getError());
-          ctx.getConsole().print(err.getSimpleMessage());
-          throw new AbortException();
-        }
-        ctx.getConsole().print(p.getMessage().toString());
-      }
-    }    
-  }
 }
