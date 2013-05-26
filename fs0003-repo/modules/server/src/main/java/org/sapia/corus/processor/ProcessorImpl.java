@@ -187,7 +187,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
                        Processor INTERFACE METHODS
   ////////////////////////////////////////////////////////////////////*/
   
-  public ProgressQueue exec(String execConfigName) {
+  public ProgressQueue execConfig(String execConfigName) {
     ProgressQueue progress = new ProgressQueueImpl();
     EndUserExecConfigStartTask start = new EndUserExecConfigStartTask(execConfigName);
     try{
@@ -406,7 +406,12 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
   @Override
   public ProgressQueue resume() {
-    Iterator<Process> procs  = processes.getSuspendedProcesses().getProcesses(ProcessCriteria.builder().all()).iterator();
+    return resume(ProcessCriteria.builder().all());
+  }
+  
+  @Override  
+  public ProgressQueue resume(ProcessCriteria processCriteria) {
+    Iterator<Process> procs  = processes.getSuspendedProcesses().getProcesses(processCriteria).iterator();
     ResumeTask  			resume;
     Process     			proc;
 

@@ -37,7 +37,7 @@ public class DistributionListResponse implements Externalizable {
   }
 
   /**
-   * @param repoAddress the {@link Endpoint} of the Corus node from which this
+   * @param endpoint the {@link Endpoint} of the Corus node from which this
    * response originates.
    */
   public DistributionListResponse(Endpoint endpoint) {

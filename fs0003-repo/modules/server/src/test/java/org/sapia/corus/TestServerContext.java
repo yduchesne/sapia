@@ -45,7 +45,7 @@ public class TestServerContext extends ServerContextImpl{
     TestServerContext created = new TestServerContext(mock(EventChannel.class));
     created._disp  = mock(EventDispatcher.class);
     created._depl  = new TestDeployer();
-    
+
     created._proc  = new TestProcessor();
     
     created._ports = new TestPortManager();

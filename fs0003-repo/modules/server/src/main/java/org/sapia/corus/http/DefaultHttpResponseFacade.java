@@ -6,6 +6,12 @@ import java.io.OutputStream;
 import org.sapia.corus.client.services.http.HttpResponseFacade;
 import org.simpleframework.http.Response;
 
+/**
+ * Implements the {@link HttpResponseFacade} around the {@link Response} interface.
+ * 
+ * @author yduchesne
+ *
+ */
 public class DefaultHttpResponseFacade implements HttpResponseFacade {
   
   private Response response;

@@ -4,9 +4,11 @@ import org.sapia.corus.client.facade.impl.ClusterfacadeImpl;
 import org.sapia.corus.client.facade.impl.ConfiguratorFacadeImpl;
 import org.sapia.corus.client.facade.impl.CronFacadeImpl;
 import org.sapia.corus.client.facade.impl.DeployerFacadeImpl;
+import org.sapia.corus.client.facade.impl.FileManagementFacadeImpl;
 import org.sapia.corus.client.facade.impl.PortManagementFacadeImpl;
 import org.sapia.corus.client.facade.impl.ProcessorFacadeImpl;
 import org.sapia.corus.client.facade.impl.RepoFacadeImpl;
+import org.sapia.corus.client.facade.impl.ShellScriptManagementFacadeImpl;
 
 /**
  * An instance of this class wraps the various facades dealing with
@@ -17,14 +19,16 @@ import org.sapia.corus.client.facade.impl.RepoFacadeImpl;
  */
 public class CorusConnector {
   
-  private CorusConnectionContext context;
-  private DeployerFacade 				 deployer;
-  private ProcessorFacade 			 processor;
-  private CronFacade 						 cron;
-  private PortManagementFacade 	 ports;
-  private ConfiguratorFacade 		 config;
-  private ClusterFacade          cluster;
-  private RepoFacade             repo;
+  private CorusConnectionContext   context;
+  private DeployerFacade 				   deployer;
+  private ProcessorFacade 			   processor;
+  private CronFacade 						   cron;
+  private PortManagementFacade 	   ports;
+  private ConfiguratorFacade 		   config;
+  private ClusterFacade            cluster;
+  private RepoFacade               repo;
+  private ShellScriptManagementFacade scripts;
+  private FileManagementFacade        files;
   
   public CorusConnector(CorusConnectionContext context){
     this.context = context;
@@ -35,6 +39,8 @@ public class CorusConnector {
     config 			 = new ConfiguratorFacadeImpl(context);
     cluster      = new ClusterfacadeImpl(context);
     repo         = new RepoFacadeImpl(context);
+    scripts      = new ShellScriptManagementFacadeImpl(context);
+    files        = new FileManagementFacadeImpl(context);
   }
   
   public CorusConnectionContext getContext() {
@@ -88,5 +94,19 @@ public class CorusConnector {
    */
   public RepoFacade getRepoFacade() {
     return repo;
+  }
+  
+  /**
+   * @return the {@link ShellScriptManagementFacade}.
+   */
+  public ShellScriptManagementFacade getScriptManagementFacade() {
+    return scripts;
+  }
+  
+  /**
+   * @return the {@link FileManagementFacade}.
+   */
+  public FileManagementFacade getFileManagementFacade() {
+    return files;
   }
 }

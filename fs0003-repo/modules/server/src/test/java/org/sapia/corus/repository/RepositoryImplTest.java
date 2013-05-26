@@ -1,6 +1,5 @@
 package org.sapia.corus.repository;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySet;
 import static org.mockito.Matchers.eq;
@@ -9,6 +8,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -21,21 +22,27 @@ import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
 import org.sapia.corus.client.services.cluster.Endpoint;
 import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.client.services.deployer.FileInfo;
+import org.sapia.corus.client.services.deployer.ShellScript;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.processor.ExecConfig;
 import org.sapia.corus.client.services.processor.Processor;
+import org.sapia.corus.client.services.repository.ArtifactDeploymentRequest;
+import org.sapia.corus.client.services.repository.ArtifactListRequest;
 import org.sapia.corus.client.services.repository.ConfigNotification;
 import org.sapia.corus.client.services.repository.DistributionDeploymentRequest;
-import org.sapia.corus.client.services.repository.DistributionListRequest;
 import org.sapia.corus.client.services.repository.DistributionListResponse;
 import org.sapia.corus.client.services.repository.ExecConfigNotification;
+import org.sapia.corus.client.services.repository.FileDeploymentRequest;
+import org.sapia.corus.client.services.repository.FileListResponse;
+import org.sapia.corus.client.services.repository.ShellScriptDeploymentRequest;
+import org.sapia.corus.client.services.repository.ShellScriptListResponse;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.Task;
 import org.sapia.corus.taskmanager.core.TaskManager;
 import org.sapia.corus.util.Queue;
 import org.sapia.ubik.mcast.RemoteEvent;
-import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.rmi.server.transport.socket.TcpSocketAddress;
 import org.sapia.ubik.util.Collections2;
 import org.springframework.context.ApplicationContext;
@@ -52,10 +59,10 @@ public class RepositoryImplTest {
   private CorusHost          host;
   private RepositoryImpl     repo;
   private Set<CorusHost>     peers;
-  private Queue<DistributionListRequest>       distListRequestQueue;
-  private Queue<DistributionDeploymentRequest> distDeployRequestQueue;
-  private RepositoryConfigurationImpl          repoConfig;
-  private int                                  corusPort;
+  private Queue<ArtifactListRequest>       listRequestQueue;
+  private Queue<ArtifactDeploymentRequest> deployRequestQueue;
+  private RepositoryConfigurationImpl      repoConfig;
+  private int                              corusPort;
   @Before
   public void setUp() throws Exception {
     repoConfig = new RepositoryConfigurationImpl();
@@ -69,8 +76,8 @@ public class RepositoryImplTest {
     tasks      = mock(TaskManager.class);
     appCtx     = mock(ApplicationContext.class);
     serverCtx  = mock(ServerContext.class);
-    distListRequestQueue   = mock(Queue.class);
-    distDeployRequestQueue = mock(Queue.class);
+    listRequestQueue   = mock(Queue.class);
+    deployRequestQueue = mock(Queue.class);
     
     host       = createCorusHost(RepoRole.SERVER);
     
@@ -85,8 +92,8 @@ public class RepositoryImplTest {
     repo.setTaskManager(tasks);
     repo.setApplicationContext(appCtx);
     repo.setServerContext(serverCtx);
-    repo.setDeployRequestQueue(distDeployRequestQueue);
-    repo.setDistributionListRequestQueue(distListRequestQueue);
+    repo.setDeployRequestQueue(deployRequestQueue);
+    repo.setArtifactListRequestQueue(listRequestQueue);
     
     when(serverCtx.getCorusHost()).thenReturn(host);
     when(cluster.getHosts()).thenReturn(peers);
@@ -141,6 +148,17 @@ public class RepositoryImplTest {
   }
   
   @Test
+  public void testHandleArtifactListRequest() throws Exception {
+    ArtifactListRequest req = new ArtifactListRequest(createCorusHost(RepoRole.CLIENT).getEndpoint());
+    RemoteEvent event = new RemoteEvent(ArtifactListRequest.EVENT_TYPE, req);
+    repo.onAsyncEvent(event);
+    verify(listRequestQueue).add(any(ArtifactListRequest.class));
+  }
+  
+  // --------------------------------------------------------------------------
+  // Distributions
+  
+  @Test
   public void testHandleDistributionListResponse() throws Exception {
     host.setRepoRole(RepoRole.CLIENT);
     DistributionListResponse res = new DistributionListResponse(createCorusHost(RepoRole.SERVER).getEndpoint());
@@ -150,20 +168,82 @@ public class RepositoryImplTest {
   }
   
   @Test
-  public void testHandleDistributionListRequest() throws Exception {
-    DistributionListRequest req = new DistributionListRequest(createCorusHost(RepoRole.CLIENT).getEndpoint());
-    RemoteEvent event = new RemoteEvent(DistributionListRequest.EVENT_TYPE, req);
-    repo.onAsyncEvent(event);
-    verify(distListRequestQueue).add(any(DistributionListRequest.class));
-  }
-  
-  @Test
   public void testHandleDistributionDeploymentRequest() throws Exception {
     DistributionDeploymentRequest req = new DistributionDeploymentRequest(createCorusHost(RepoRole.CLIENT).getEndpoint());
     RemoteEvent event = new RemoteEvent(DistributionDeploymentRequest.EVENT_TYPE, req);
     repo.onAsyncEvent(event);
-    verify(distDeployRequestQueue).add(any(DistributionDeploymentRequest.class));
+    verify(deployRequestQueue).add(any(DistributionDeploymentRequest.class));
   }
+  
+  // --------------------------------------------------------------------------
+  // ShellScripts
+  
+  @Test
+  public void testHandleShellScriptListResponse() throws Exception {
+    host.setRepoRole(RepoRole.CLIENT);
+    List<ShellScript> scripts = new ArrayList<ShellScript>();
+    ShellScriptListResponse res = new ShellScriptListResponse(createCorusHost(RepoRole.SERVER).getEndpoint(), scripts);
+    RemoteEvent event = new RemoteEvent(ShellScriptListResponse.EVENT_TYPE, res);
+    repo.onAsyncEvent(event);
+    verify(tasks).execute(any(Task.class), any(Void.class));
+  }
+
+  @Test
+  public void testHandleShellScriptListResponsePullDisabled() throws Exception {
+    repoConfig.setPullScriptsEnabled(false);
+    host.setRepoRole(RepoRole.CLIENT);
+    List<ShellScript> scripts = new ArrayList<ShellScript>();
+    ShellScriptListResponse res = new ShellScriptListResponse(createCorusHost(RepoRole.SERVER).getEndpoint(), scripts);
+    RemoteEvent event = new RemoteEvent(ShellScriptListResponse.EVENT_TYPE, res);
+    repo.onAsyncEvent(event);
+    verify(tasks, never()).execute(any(Task.class), any(Void.class));
+  }
+
+  
+  @Test
+  public void testHandleShellScriptDeploymentRequest() throws Exception {
+    List<ShellScript> scripts = new ArrayList<ShellScript>();
+    ShellScriptDeploymentRequest req = new ShellScriptDeploymentRequest(createCorusHost(RepoRole.CLIENT).getEndpoint(), scripts);
+    RemoteEvent event = new RemoteEvent(ShellScriptDeploymentRequest.EVENT_TYPE, req);
+    repo.onAsyncEvent(event);
+    verify(deployRequestQueue).add(any(ShellScriptDeploymentRequest.class));
+  }
+  
+  // --------------------------------------------------------------------------
+  // Files
+  
+  @Test
+  public void testHandleFileListResponse() throws Exception {
+    host.setRepoRole(RepoRole.CLIENT);
+    List<FileInfo> files = new ArrayList<FileInfo>();
+    FileListResponse res = new FileListResponse(createCorusHost(RepoRole.SERVER).getEndpoint(), files);
+    RemoteEvent event = new RemoteEvent(FileListResponse.EVENT_TYPE, res);
+    repo.onAsyncEvent(event);
+    verify(tasks).execute(any(Task.class), any(Void.class));
+  }
+  
+  @Test
+  public void testHandleFileListResponsePullDisabled() throws Exception {
+    repoConfig.setPullFilesEnabled(false);    
+    host.setRepoRole(RepoRole.CLIENT);
+    List<FileInfo> files = new ArrayList<FileInfo>();
+    FileListResponse res = new FileListResponse(createCorusHost(RepoRole.SERVER).getEndpoint(), files);
+    RemoteEvent event = new RemoteEvent(FileListResponse.EVENT_TYPE, res);
+    repo.onAsyncEvent(event);
+    verify(tasks, never()).execute(any(Task.class), any(Void.class));
+  }
+  
+  @Test
+  public void testHandleFileDeploymentRequest() throws Exception {
+    List<FileInfo> files = new ArrayList<FileInfo>();
+    FileDeploymentRequest req = new FileDeploymentRequest(createCorusHost(RepoRole.CLIENT).getEndpoint(), files);
+    RemoteEvent event = new RemoteEvent(FileDeploymentRequest.EVENT_TYPE, req);
+    repo.onAsyncEvent(event);
+    verify(deployRequestQueue).add(any(FileDeploymentRequest.class));
+  }
+
+  // --------------------------------------------------------------------------
+  // ExecConfigs
   
   @Test
   public void testHandleExecConfigNotification() throws Exception {
@@ -195,6 +275,9 @@ public class RepositoryImplTest {
     verify(tasks, never()).executeBackground(any(Task.class), any(Void.class), any(BackgroundTaskConfig.class));
     verify(cluster).send(any(ExecConfigNotification.class));
   }
+  
+  // --------------------------------------------------------------------------
+  // Configs
   
   @Test
   public void testHandleConfigNotification() throws Exception {

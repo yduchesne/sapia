@@ -18,6 +18,10 @@ public class RepositoryConfigurationImpl implements RepositoryConfiguration {
   
   private boolean pushTagsEnabled       = true;
   private boolean pullTagsEnabled       = true;
+  private boolean pushScriptsEnabled    = true;  
+  private boolean pullScriptsEnabled    = true;
+  private boolean pushFilesEnabled      = true;  
+  private boolean pullFilesEnabled      = true;  
   private boolean pushPropertiesEnabled = true;
   private boolean pullPropertiesEnabled = true;
   private boolean bootExecEnabled       = true;
@@ -26,6 +30,9 @@ public class RepositoryConfigurationImpl implements RepositoryConfiguration {
   private int     distributionDiscoveryMaxAttempts      = DEFAULT_DIST_DISCO_MAX_ATTEMPTS;
   private int     maxConcurrentDeploymentRequests       = DEFAULT_MAX_CONCURRENT_DEPLOYMENT_REQUESTS;
   
+  // --------------------------------------------------------------------------
+  // tags
+  
   public void setPushTagsEnabled(boolean pushTagsEnabled) {
     this.pushTagsEnabled = pushTagsEnabled;
   }
@@ -33,15 +40,6 @@ public class RepositoryConfigurationImpl implements RepositoryConfiguration {
   @Override
   public boolean isPushTagsEnabled() {
     return pushTagsEnabled;
-  }
-  
-  public void setPushPropertiesEnabled(boolean pushPropertiesEnabled) {
-    this.pushPropertiesEnabled = pushPropertiesEnabled;
-  }
-
-  @Override
-  public boolean isPushPropertiesEnabled() {
-    return pushPropertiesEnabled;
   }
   
   public void setPullTagsEnabled(boolean pullTagsEnabled) {
@@ -53,6 +51,18 @@ public class RepositoryConfigurationImpl implements RepositoryConfiguration {
     return pullTagsEnabled;
   }
   
+  // --------------------------------------------------------------------------
+  // properties  
+  
+  public void setPushPropertiesEnabled(boolean pushPropertiesEnabled) {
+    this.pushPropertiesEnabled = pushPropertiesEnabled;
+  }
+
+  @Override
+  public boolean isPushPropertiesEnabled() {
+    return pushPropertiesEnabled;
+  }
+  
   public void setPullPropertiesEnabled(boolean pullPropertiesEnabled) {
     this.pullPropertiesEnabled = pullPropertiesEnabled;
   }
@@ -61,6 +71,51 @@ public class RepositoryConfigurationImpl implements RepositoryConfiguration {
   public boolean isPullPropertiesEnabled() {
     return pullPropertiesEnabled;
   }
+  
+  // --------------------------------------------------------------------------
+  // files  
+  
+  public void setPullFilesEnabled(boolean pullFilesEnabled) {
+    this.pullFilesEnabled = pullFilesEnabled;
+  }
+  
+  @Override
+  public boolean isPullFilesEnabled() {
+    return pullFilesEnabled;
+  }
+  
+  public void setPushFilesEnabled(boolean pushFilesEnabled) {
+    this.pushFilesEnabled = pushFilesEnabled;
+  }
+  
+  @Override
+  public boolean isPushFilesEnabled() {
+    return pushFilesEnabled;
+  }
+  
+  // --------------------------------------------------------------------------
+  // scripts  
+ 
+  @Override
+  public boolean isPullScriptsEnabled() {
+    return pullScriptsEnabled;
+  }
+  
+  public void setPullScriptsEnabled(boolean pullScriptsEnabled) {
+    this.pullScriptsEnabled = pullScriptsEnabled;
+  }
+  
+  @Override
+  public boolean isPushScriptsEnabled() {
+    return pushScriptsEnabled;
+  }
+  
+  public void setPushScriptsEnabled(boolean pushScriptsEnabled) {
+    this.pushScriptsEnabled = pushScriptsEnabled;
+  }
+  
+  // --------------------------------------------------------------------------
+  // others  
   
   public void setDistributionDiscoveryIntervalSeconds(
       int distributionDiscoveryIntervalSeconds) {

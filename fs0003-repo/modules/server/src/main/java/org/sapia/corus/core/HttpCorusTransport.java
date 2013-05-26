@@ -49,7 +49,7 @@ public class HttpCorusTransport extends AbstractTransport {
   protected Object initExport(Object anObject) throws RemoteException {
     Properties props = new Properties();
     props.setProperty(HttpTransportProvider.HTTP_PORT_KEY, Integer.toString(address.getPort()));
-    props.setProperty(Consts.TRANSPORT_TYPE, HttpTransportProvider.DEFAULT_HTTP_TRANSPORT_TYPE);
+    props.setProperty(Consts.TRANSPORT_TYPE, HttpTransportProvider.HTTP_TRANSPORT_TYPE);
     return Hub.exportObject(anObject, props);
   }
 
@@ -57,6 +57,6 @@ public class HttpCorusTransport extends AbstractTransport {
    * @return The Ubik transport provider used by this corus transport implementation.
    */
   public TransportProvider getTransportProvider() {
-    return Hub.getModules().getTransportManager().getProviderFor(HttpTransportProvider.DEFAULT_HTTP_TRANSPORT_TYPE);
+    return Hub.getModules().getTransportManager().getProviderFor(HttpTransportProvider.HTTP_TRANSPORT_TYPE);
   }
 }

@@ -2,6 +2,7 @@ package org.sapia.corus.repository.task;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,13 +16,15 @@ import org.junit.Test;
 import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
 import org.sapia.corus.client.services.cluster.Endpoint;
+import org.sapia.corus.client.services.repository.ArtifactListRequest;
+import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.rmi.server.transport.socket.TcpSocketAddress;
 import org.sapia.ubik.util.Collections2;
 
-public class GetDistributionListTaskTest extends AbstractRepoTaskTest {
+public class GetArtifactListTaskTest extends AbstractRepoTaskTest {
 
   private Set<CorusHost>       emptyHosts, clientHosts, serverHosts;
-  private GetDistributionListTask task;
+  private GetArtifactListTask task;
   
   @Before
   public void setUp() {
@@ -37,27 +40,27 @@ public class GetDistributionListTaskTest extends AbstractRepoTaskTest {
     server.setRepoRole(RepoRole.SERVER);
     serverHosts    = Collections2.arrayToSet(server);
     
-    task           = new GetDistributionListTask();
+    task           = new GetArtifactListTask();
    }
   
   @Test
   public void testRunWithEmptyHosts() throws Throwable {
     when(cluster.getHosts()).thenReturn(emptyHosts);
     task.execute(taskContext, null);
-    verify(eventChannel, never()).dispatch(anyString(), any(Object.class));
+    verify(eventChannel, never()).dispatch(any(ServerAddress.class), anyString(), any(Object.class));
   }
 
   @Test
   public void testRunWithClientHosts() throws Throwable {
     when(cluster.getHosts()).thenReturn(clientHosts);
     task.execute(taskContext, null);
-    verify(eventChannel, never()).dispatch(anyString(), any(Object.class));
+    verify(eventChannel, never()).dispatch(any(ServerAddress.class), anyString(), any(Object.class));
   }
   
   @Test
   public void testRunWithServerHosts() throws Throwable {
     when(cluster.getHosts()).thenReturn(serverHosts);
     task.execute(taskContext, null);
-    verify(eventChannel, times(1)).dispatch(anyString(), any(Object.class));
+    verify(eventChannel, times(1)).dispatch(eq(new TcpSocketAddress("test", 1000)), eq(ArtifactListRequest.EVENT_TYPE), any(ArtifactListRequest.class));
   }
 }

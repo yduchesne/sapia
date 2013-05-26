@@ -22,7 +22,7 @@ import org.apache.commons.lang.text.StrSubstitutor;
  *
  * @author <a href="mailto:jc@sapia-oss.org">Jean-Cedric Desrochers</a>
  */
-public class IOUtils {
+public class IOUtil {
   
   /**
    * Extracts all the available data of the passed in input stream and add it
@@ -187,7 +187,7 @@ public class IOUtils {
       channel.force(false);
     }
     else {
-      throw new IOException(String.format("Lock file already exists, server probably running %s", file.getAbsolutePath()));      
+      throw new IOException(String.format("Lock file already exists, process probably running %s", file.getAbsolutePath()));      
     }
   }
   

@@ -17,8 +17,8 @@ import org.sapia.corus.util.Matcher;
  * @author Yanick Duchesne
  */
 public class ProcessDatabaseImpl implements ProcessDatabase {
+  
   private DbMap<String, Process> _processes;
-
   
   public ProcessDatabaseImpl(DbMap<String, Process> map) {
     _processes = map;
@@ -75,6 +75,13 @@ public class ProcessDatabaseImpl implements ProcessDatabase {
         }
       }
     )
+    .add(
+      new Matcher<Process>() {
+        public boolean matches(Process object) {
+          return criteria.getPid().matches(object.getProcessID());
+        }
+      }
+    )    
     .add(
       new Matcher<Process>() {
         public boolean matches(Process object) {

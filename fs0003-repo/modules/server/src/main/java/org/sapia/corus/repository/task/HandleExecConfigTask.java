@@ -54,7 +54,7 @@ public class HandleExecConfigTask extends RunnableTask {
       for (ExecConfig ec : execConfigs) {
         if (ec.isStartOnBoot() && repoConfig.isBootExecEnabled()) {
           context().debug(String.format("Triggering startup for exec config: %s, %s", ec.getName(), ec.getProfile()));
-          context().getServerContext().getServices().getProcessor().exec(ec.getName());
+          context().getServerContext().getServices().getProcessor().execConfig(ec.getName());
         }
       }
       state = State.PROCESSED;

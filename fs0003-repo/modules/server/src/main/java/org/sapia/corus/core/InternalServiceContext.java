@@ -7,6 +7,8 @@ import org.sapia.corus.client.annotations.Bind;
 import org.sapia.corus.client.services.cluster.ClusterManager;
 import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.deployer.Deployer;
+import org.sapia.corus.client.services.deployer.FileManager;
+import org.sapia.corus.client.services.deployer.ShellScriptManager;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.file.FileSystemModule;
 import org.sapia.corus.client.services.os.OsModule;
@@ -114,6 +116,20 @@ public class InternalServiceContext {
    */
   public FileSystemModule getFileSystem(){
     return lookup(FileSystemModule.class);
+  }
+  
+  /**
+   * @return the {@link FileManager}.
+   */
+  public FileManager getFileManager() {
+    return lookup(FileManager.class);
+  }
+  
+  /**
+   * @return the {@link ShellScriptManager}.
+   */
+  public ShellScriptManager getScriptManager() {
+    return lookup(ShellScriptManager.class);
   }
   
   /**

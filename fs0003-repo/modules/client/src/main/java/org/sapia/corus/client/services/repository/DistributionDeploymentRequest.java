@@ -1,6 +1,5 @@
 package org.sapia.corus.client.services.repository;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -18,7 +17,7 @@ import org.sapia.corus.client.services.cluster.Endpoint;
  * @author yduchesne
  *
  */
-public class DistributionDeploymentRequest implements Externalizable {
+public class DistributionDeploymentRequest extends ArtifactDeploymentRequest {
   
   static final long serialVersionID = 1L;
   
@@ -31,6 +30,7 @@ public class DistributionDeploymentRequest implements Externalizable {
    * Do not use: meant for externalization.
    */
   public DistributionDeploymentRequest() {
+    super();
   }
   
   /**
@@ -38,16 +38,8 @@ public class DistributionDeploymentRequest implements Externalizable {
    * this instance originates.
    */
   public DistributionDeploymentRequest(Endpoint endpoint) {
-    this.endpoint = endpoint;
+    super(endpoint);
   }
-
-  /**
-   * @return the {@link Endpoint} corresponding to the requester from which this
-   * instance originates.
-   */
-  public Endpoint getEndpoint() {
-    return endpoint;
-  }  
   
   /**
    * @return this instance's  unmodifiable {@link List} of {@link RepoDistribution}.
@@ -74,12 +66,14 @@ public class DistributionDeploymentRequest implements Externalizable {
   @Override
   public void readExternal(ObjectInput in) throws IOException,
       ClassNotFoundException {
+    super.readExternal(in);
     this.endpoint = (Endpoint) in.readObject();
     this.distributions = (List<RepoDistribution>) in.readObject();
   }
   
   @Override
   public void writeExternal(ObjectOutput out) throws IOException {
+    super.writeExternal(out);
     out.writeObject(endpoint);
     out.writeObject(distributions);
   }

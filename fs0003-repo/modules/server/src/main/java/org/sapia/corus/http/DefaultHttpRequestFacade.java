@@ -6,6 +6,12 @@ import java.io.InputStream;
 import org.sapia.corus.client.services.http.HttpRequestFacade;
 import org.simpleframework.http.Request;
 
+/**
+ * Implements the {@link HttpRequestFacade} around the {@link Request} interface.
+ * 
+ * @author yduchesne
+ *
+ */
 public class DefaultHttpRequestFacade implements HttpRequestFacade {
   
   private Request request;

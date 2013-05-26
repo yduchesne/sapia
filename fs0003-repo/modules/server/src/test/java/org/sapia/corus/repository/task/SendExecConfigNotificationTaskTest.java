@@ -1,15 +1,13 @@
 package org.sapia.corus.repository.task;
 
-import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
