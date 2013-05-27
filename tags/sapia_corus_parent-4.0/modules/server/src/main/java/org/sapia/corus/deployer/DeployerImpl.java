@@ -120,6 +120,7 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
         .createFilePath();
     
     String defaultRepoDir   = FilePath.newInstance().addDir(serverContext().getHomeDir())
+        .addDir("files")        
         .addDir("repo")
         .createFilePath();
     
@@ -128,13 +129,11 @@ public class DeployerImpl extends ModuleHelper implements InternalDeployer,
         .createFilePath();
     
     String defaultScriptDir = FilePath.newInstance().addDir(serverContext().getHomeDir())
-        .addDir("deploy")
         .addDir("files")
         .addDir("scripts")
         .createFilePath();
     
     String defaultUploadDir = FilePath.newInstance().addDir(serverContext().getHomeDir())
-        .addDir("deploy")
         .addDir("files")
         .addDir("uploads")
         .createFilePath();    

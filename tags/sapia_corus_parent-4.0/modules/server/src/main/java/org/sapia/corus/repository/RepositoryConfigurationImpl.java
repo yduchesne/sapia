@@ -24,6 +24,8 @@ public class RepositoryConfigurationImpl implements RepositoryConfiguration {
   private boolean pullFilesEnabled      = true;  
   private boolean pushPropertiesEnabled = true;
   private boolean pullPropertiesEnabled = true;
+  private boolean pushPortRangesEnabled = true;
+  private boolean pullPortRangesEnabled = true;  
   private boolean bootExecEnabled       = true;
   
   private int     distributionDiscoveryIntervalSeconds  = DEFAULT_DIST_DISCO_INTERVAL_SECONDS;
@@ -112,6 +114,27 @@ public class RepositoryConfigurationImpl implements RepositoryConfiguration {
   
   public void setPushScriptsEnabled(boolean pushScriptsEnabled) {
     this.pushScriptsEnabled = pushScriptsEnabled;
+  }
+  
+  // --------------------------------------------------------------------------
+  // port ranges  
+  
+  @Override
+  public boolean isPushPortRangesEnabled() {
+    return pushPortRangesEnabled;
+  }
+  
+  public void setPushPortRangesEnabled(boolean pushPortRangesEnabled) {
+    this.pushPortRangesEnabled = pushPortRangesEnabled;
+  }
+  
+  @Override
+  public boolean isPullPortRangesEnabled() {
+    return pullPortRangesEnabled;
+  }
+  
+  public void setPullPortRangesEnabled(boolean pullPortRangesEnabled) {
+    this.pullPortRangesEnabled = pullPortRangesEnabled;
   }
   
   // --------------------------------------------------------------------------

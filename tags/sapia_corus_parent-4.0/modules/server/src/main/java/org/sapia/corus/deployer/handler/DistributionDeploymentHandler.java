@@ -65,6 +65,7 @@ public class DistributionDeploymentHandler implements DeploymentHandler {
   public ProgressQueue completeDeployment(DeploymentMetadata meta, File file) {
     log.info("Finished uploading " + meta.getFileName());
     ProgressQueue progress = new ProgressQueueImpl();
+    progress.info("Distribution file uploaded, proceeding to deployment completion");
     try {
       taskman.executeAndWait(
         new DeployTask(),
@@ -75,6 +76,7 @@ public class DistributionDeploymentHandler implements DeploymentHandler {
     } catch (Throwable e) {
       log.error("Could not deploy", e);
       progress.error(e);
+      progress.close();
     }
     return progress;
   }

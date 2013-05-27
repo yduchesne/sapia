@@ -1,6 +1,10 @@
 package org.sapia.corus.repository;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -10,6 +14,8 @@ import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.configurator.Configurator;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
 import org.sapia.corus.client.services.event.EventDispatcher;
+import org.sapia.corus.client.services.port.PortManager;
+import org.sapia.corus.client.services.port.PortRange;
 import org.sapia.corus.client.services.processor.ExecConfig;
 import org.sapia.corus.client.services.repository.ArtifactDeploymentRequest;
 import org.sapia.corus.client.services.repository.ArtifactListRequest;
@@ -20,6 +26,7 @@ import org.sapia.corus.client.services.repository.ExecConfigNotification;
 import org.sapia.corus.client.services.repository.FileDeploymentRequest;
 import org.sapia.corus.client.services.repository.FileListResponse;
 import org.sapia.corus.client.services.repository.ForceClientPullNotification;
+import org.sapia.corus.client.services.repository.PortRangeNotification;
 import org.sapia.corus.client.services.repository.Repository;
 import org.sapia.corus.client.services.repository.RepositoryConfiguration;
 import org.sapia.corus.client.services.repository.ShellScriptDeploymentRequest;
@@ -45,6 +52,7 @@ import org.sapia.ubik.mcast.RemoteEvent;
 import org.sapia.ubik.mcast.SyncEventListener;
 import org.sapia.ubik.rmi.Remote;
 import org.sapia.ubik.rmi.interceptor.Interceptor;
+import org.sapia.ubik.util.Collections2;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -74,6 +82,9 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   
   @Autowired
   private EventDispatcher                      dispatcher;
+  
+  @Autowired
+  private PortManager                          portManager;
 
   private Queue<ArtifactListRequest>           listRequests   = new Queue<ArtifactListRequest>();
   private Queue<ArtifactDeploymentRequest>     deployRequests = new Queue<ArtifactDeploymentRequest>();
@@ -100,6 +111,10 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
   
   void setTaskManager(TaskManager taskManager) {
     this.taskManager = taskManager;
+  }
+  
+  public void setPortManager(PortManager portManager) {
+    this.portManager = portManager;
   }
   
   void setDeployRequestQueue(Queue<ArtifactDeploymentRequest> deployRequests) {
@@ -135,6 +150,9 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
       if (!repoConfig.isPushTagsEnabled()) {
         logger().info("Tag push is disabled");
       }
+      if (!repoConfig.isPushPortRangesEnabled()) {
+        logger().info("Port range push is disabled");
+      }      
     } else if (serverContext().getCorusHost().getRepoRole().isClient()){
       logger().info("Node is repo client");
       clusterManager.getEventChannel().registerAsyncListener(DistributionListResponse.EVENT_TYPE, this);
@@ -142,12 +160,16 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
       clusterManager.getEventChannel().registerAsyncListener(ShellScriptListResponse.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(ConfigNotification.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(ExecConfigNotification.EVENT_TYPE, this);
+      clusterManager.getEventChannel().registerSyncListener(PortRangeNotification.EVENT_TYPE, this);      
       if (!repoConfig.isPullPropertiesEnabled()) {
         logger().info("Properties pull is disabled");
       }
       if (!repoConfig.isPullTagsEnabled()) {
         logger().info("Tag pull is disabled");
       }
+      if (!repoConfig.isPullPortRangesEnabled()) {
+        logger().info("Port range pull is disabled");
+      }      
       if (!repoConfig.isBootExecEnabled()) {
         logger().info("This node is configured NOT to perform automatic startup of processes with 'startOnBoot' enabled upon pull");
       }                  
@@ -277,7 +299,10 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
       } else if (evt.getType().equals(ConfigNotification.EVENT_TYPE)) {
         logger().debug("Got config notification");
         handleConfigNotification((ConfigNotification) evt.getData()); 
-      } 
+      } else if (evt.getType().equals(PortRangeNotification.EVENT_TYPE)) {
+        logger().debug("Got port range notification");
+        handlePortRangeNotification((PortRangeNotification) evt.getData());
+      }
     } catch (IOException e) {
       logger().error("IO Error caught trying to handle event: " + evt.getType(), e);
     }
@@ -352,6 +377,50 @@ public class RepositoryImpl extends ModuleHelper implements Repository, AsyncEve
       logger().error("Could not cascade notification to next host", e);
     }
   } 
+  
+  void handlePortRangeNotification(PortRangeNotification notif) {
+    if (notif.isTargeted(serverContext().getCorusHost().getEndpoint()) && repoConfig.isPullPortRangesEnabled()) {
+      logger().info(String.format("Adding port ranges %s", notif));
+      if (!notif.getPortRanges().isEmpty()) {
+        try {
+          Map<String, PortRange> currentRangesByName = new HashMap<String, PortRange>();
+          for (PortRange c : portManager.getPortRanges()) {
+            currentRangesByName.put(c.getName(), c);
+          }
+          
+          List<PortRange> toAdd = new ArrayList<PortRange>();          
+          
+          for (PortRange r : notif.getPortRanges()) {
+            PortRange current = currentRangesByName.get(r.getName());
+            if (current != null) {
+              if (current.getMin() == r.getMin() && current.getMax() == r.getMax()) {
+                logger().info("This node alreay has range, so not adding: " + r);
+              } else if (!current.getActive().isEmpty()) {
+                logger().warn("This node has range with same and ports currently active, so not adding: " + r);
+              } else {
+                logger().warn("Adding new port range version: " + r);                
+                toAdd.add(current);
+              }
+            } else {
+              logger().warn("Adding new port range: " + r);              
+              toAdd.add(r);
+            }
+          }
+          portManager.addPortRanges(notif.getPortRanges(), true);
+        } catch (Exception e) {
+          logger().error("Could not add port ranges", e);          
+        }
+      }
+    }
+    
+    // cascading to next host
+    try {
+      clusterManager.send(notif);
+    } catch (Exception e) {
+      logger().error("Could not cascade notification to next host", e);
+    }    
+
+  }
   
   void handleArtifactListRequest(ArtifactListRequest distsReq) {
     if (serverContext().getCorusHost().getRepoRole().isServer()) {

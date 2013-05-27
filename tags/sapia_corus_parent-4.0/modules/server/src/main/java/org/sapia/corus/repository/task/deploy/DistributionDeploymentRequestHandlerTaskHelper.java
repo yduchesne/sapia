@@ -40,7 +40,7 @@ public class DistributionDeploymentRequestHandlerTaskHelper  extends ArtifactDep
   
   @Override
   public void addTo(CompositeTask toAddTo) {
-    InternalDeployer deployer = context().getServerContext().lookup(InternalDeployer.class);    
+    InternalDeployer deployer = context().getServerContext().lookup(InternalDeployer.class);
 
     List<ExecConfig> execConfigs = context().getServerContext().getServices().getProcessor().getExecConfigs();
     
