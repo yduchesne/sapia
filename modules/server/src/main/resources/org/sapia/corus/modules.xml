@@ -37,6 +37,7 @@
     <property name="deployDir"  value="${corus.server.deploy.dir}" />
     <property name="uploadDir"  value="${corus.server.uploads.dir}" />    
     <property name="scriptDir"  value="${corus.server.scripts.dir}" />
+    <property name="repoDir"    value="${corus.server.repo.dir}" />
   </bean>
   
   <bean name="deployer.shellScriptManager" 
@@ -116,6 +117,8 @@
     <property name="pullFilesEnabled"                     value="${corus.server.repository.uploads.pull.enabled}" />    
     <property name="pushScriptsEnabled"                   value="${corus.server.repository.scripts.push.enabled}" />    
     <property name="pullScriptsEnabled"                   value="${corus.server.repository.scripts.pull.enabled}" />    
+    <property name="pushPortRangesEnabled"                value="${corus.server.repository.port-ranges.push.enabled}" />    
+    <property name="pullPortRangesEnabled"                value="${corus.server.repository.port-ranges.pull.enabled}" />    
     <property name="bootExecEnabled"                      value="${corus.process.start-at-boot.enabled}" />
   </bean>
 

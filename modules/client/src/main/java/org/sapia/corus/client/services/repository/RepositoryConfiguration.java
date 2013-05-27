@@ -29,6 +29,11 @@ public interface RepositoryConfiguration extends Remote {
    * @return <code>true</code> if the repo server should send uploaded files to repo clients (<code>true</code> by default).
    */  
   public boolean isPushFilesEnabled();
+  
+  /**
+   * @return <code>true</code> if the repo server should send port ranges to repo clients (<code>true</code> by default).
+   */  
+  public boolean isPushPortRangesEnabled();  
 
   /**
    * @return <code>true</code> if the repo client should accept tags from repo servers (<code>true</code> by default).
@@ -49,6 +54,11 @@ public interface RepositoryConfiguration extends Remote {
    * @return <code>true</code> if the repo client should accept uploaded files from repo servers (<code>true</code> by default).
    */
   public boolean isPullFilesEnabled();    
+  
+  /**
+   * @return <code>true</code> if the repo client should accept port ranges from repo servers (<code>true</code> by default).
+   */
+  public boolean isPullPortRangesEnabled();  
   
   /**
    * @return <code>true</code> if process configs that have their <code>startOnBoot</code> flag to true should have

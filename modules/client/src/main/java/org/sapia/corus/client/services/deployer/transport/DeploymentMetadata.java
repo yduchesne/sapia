@@ -110,7 +110,7 @@ public abstract class DeploymentMetadata implements java.io.Serializable {
 	 * target by this deployment.
 	 */
 	public boolean isTargeted(ServerAddress addr) {
-	  return !targeted.isEmpty() && targeted.contains(addr);
+	  return targeted.isEmpty() || targeted.contains(addr);
 	}
 	
 	/**
