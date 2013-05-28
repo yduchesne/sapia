@@ -175,11 +175,13 @@ public class Conf extends CorusCliCommand{
           }catch(IOException e){}
         }
       } else{
-        String[] nameValue = pair.split("=");
-        if(nameValue.length != 2){
+        int index = pair.indexOf('=');
+        if (index > 0) {
+          String name = pair.substring(0, index);
+          String value = pair.substring(1 + index);
+          ctx.getCorus().getConfigFacade().addProperty(scope, name, value, getClusterInfo(ctx));
+        } else {
           throw new InputException("Invalid property format; expected: <name>=<value>");
-        } else{
-          ctx.getCorus().getConfigFacade().addProperty(scope, nameValue[0], nameValue[1], getClusterInfo(ctx));
         }
       }
     } else if(op == Op.DELETE){
