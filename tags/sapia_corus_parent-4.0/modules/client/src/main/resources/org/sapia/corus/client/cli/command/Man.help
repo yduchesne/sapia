@@ -33,13 +33,15 @@
     <p/>
     <p>Misc:</p>
     <p/>
+    <p>- cluster</p>    
     <p>- connect</p>
+    <p>- err</p>
+    <p>- exit</p>    
     <p>- host</p>
     <p>- hosts</p>
-    <p>- err</p>
-    <p>- exit</p>
+    <p>- man</p>
+    <p>- pull</p>         
     <p>- quit</p>
-    <p>- man</p>    
     <p>- ver</p>
     <p/>    
   </section>
