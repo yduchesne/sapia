@@ -217,26 +217,23 @@ public class DeployerFacadeImpl extends FacadeHelper<Deployer> implements Deploy
   }
 
   static Object[] split(ClientFileSystem fileSys, String fileName){
-    if(fileName.startsWith(ArgFactory.PATTERN)){
+    if(fileName.startsWith(ArgFactory.PATTERN)) {
       return new Object[]{fileSys.getBaseDir(), fileName};
-    }
-    else{
+    } else {
       String baseDirName = fileName.substring(0, fileName.indexOf(ArgFactory.PATTERN));
       int idx;
-      if((idx = baseDirName.lastIndexOf("/")) > 0 || (idx = baseDirName.lastIndexOf("\\")) > 0){
+      if((idx = baseDirName.lastIndexOf("/")) > 0 || (idx = baseDirName.lastIndexOf("\\")) > 0) {
         baseDirName = fileName.substring(0, idx);
         idx = idx+1;
-      }
-      else{
+      } else {
         idx = fileName.indexOf(ArgFactory.PATTERN);
       }
       File baseDir = fileSys.getFile(baseDirName);
      
-      if(baseDir.exists()){
+      if(baseDir.exists()) {
         String pattern = fileName.substring(idx);
         return new Object[]{baseDir, pattern};
-      }
-      else{
+      } else {
         String pattern = fileName.substring(idx);
         return new Object[]{fileSys.getBaseDir(), pattern};
       }
