@@ -153,7 +153,7 @@ public class DeployerFacadeImpl extends FacadeHelper<Deployer> implements Deploy
       deployer.start();
       return queue;
     } else{
-      File toDeploy = new File(fileName);
+      File toDeploy = context.getFileSystem().getFile(fileName);
       DeploymentMetadata meta = factory.create(toDeploy.getName(), toDeploy.length(), cluster.isClustered());
       return doDeploy(toDeploy, meta, cluster);
     }
