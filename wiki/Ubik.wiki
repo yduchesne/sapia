@@ -12,10 +12,6 @@ Ubik offers scalability and reliability without the complexity of JINI and the b
 
 <wiki:toc max_depth="1" />
 
-= News =
-
- * 2008-12-11: Added Guice support
-
 = Guice and Ubik =
 
 The Ubik-Guice integration provides:
