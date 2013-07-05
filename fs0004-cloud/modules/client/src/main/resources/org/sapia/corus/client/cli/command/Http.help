@@ -1,0 +1,38 @@
+<help>
+  <section title="Description">
+   <pThe HTTP command provides HTTP-related functionality: 1) the ability to poll HTTP endpoints in 
+    order to determine if startup of given servers has completed; 2) the ability to send HTTP post requests to arbitrary URLs.</p>
+   <p/>
+   <p>This command is convenient when there's a need for confirming that servers have completely started up before moving
+   on with deployment.</p>
+   <p/>
+  </section>
+  <section title="Syntax">
+    <p>http &lt;command&gt; [-u url] [-p [port_range_patterns]] [-c context_path] [-m max_poll_attempts] [-t poll_interval] [-s expected_status_code] </p>
+    <p/>
+    <p>Where:</p>
+    <p/> 
+    <p>&lt;command&gt; is expected to be check or post.</p>
+    <p/>
+    <p>- u: is the URL to check or to post to (used by check and post).</p>
+    <p/>
+    <p>- p: a comma-delimited list of HTTP port range patterns, as configured in Corus (if this option is used, the -u option is ignore and should
+    therefore not be specified).</p>
+    <p/>
+    <p>- m: the maximum number of time to poll, until the 200 HTTP status code is returned by the server - or until a status code corresponding to the
+    one specified by the -s option is returned (see below). If this option is not specified, polling is done forever.</p>
+    <p/>
+    <p>- t: the interval (in seconds) between polling attempts (defaults to 10).</p>
+    <p/>
+    <p>- s: the expected status code (defaults to 200 HTTP status code).</p>
+    <p/>    
+  </section>
+  <section title="Examples">
+    <p>Polls the given URL every 5 seconds until 10 attempts are reached, or until the 200 HTTP status code is obtained:</p>
+    <p>http check -u http://192.168.0.101:8080/demo -m 10 -t 5</p>
+    <p/>    
+    <p>Polls the given URLs corresponding to the port ranges whose name matches the given pattern, at each node in the Corus cluster: </p>
+    <p>http check -p *.server.* -m 10 -t 5 -c /demo -cluster</p>
+    <p/>    
+  </section>    
+</help>
