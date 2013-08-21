@@ -23,7 +23,7 @@ import org.sapia.ubik.util.Collections2;
 
 /**
  * This command executes a script against the Corus instances in the cluster, a given number of instances
- * at time. The name of this command comes from the kink of "ripple" effect that it has.
+ * at time. The name of this command comes from the "ripple" effect that it has.
  *  
  * @author yduchesne
  *
