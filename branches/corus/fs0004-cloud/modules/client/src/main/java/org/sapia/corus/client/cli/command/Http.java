@@ -77,9 +77,10 @@ public class Http extends CorusCliCommand {
     
     if (ctx.getCommandLine().containsOption(URL_OPT, true)) {
       String url = ctx.getCommandLine().assertOption(URL_OPT, true).getValue();
-      doCheck(url, maxAttempts, expected, interval);
+      doCheck(ctx, url, maxAttempts, expected, interval);
     } else if (ctx.getCommandLine().containsOption(PORT_RANGE_OPT, false)) {
       String contextPath = getOptValue(ctx, CONTEXT_PATH_OPT);
+      
       Results<List<PortRange>> portRangesByNode = ctx.getCorus().getPortManagementFacade().getPortRanges(getClusterInfo(ctx));
       List<Arg> portRangePatterns = getOptValues(ctx, PORT_RANGE_OPT, new Function<Arg, String>() {
         @Override
@@ -102,12 +103,15 @@ public class Http extends CorusCliCommand {
                   url = url + "/" + contextPath;
                 }
               }
-              doCheck(url, maxAttempts, expected, interval);
+              doCheck(ctx, url, maxAttempts, expected, interval);
             }
           }
         }
       } 
+    } else {
+      throw new InputException("-u or -p option must be specified");
     }
+    
   }
   
   static void doPost(CliContext ctx) throws InputException {
@@ -147,26 +151,39 @@ public class Http extends CorusCliCommand {
     }
   }
   
-  static void doCheck(String url, int  maxAttempts, int expected, int interval) {
+  static void doCheck(CliContext ctx, String url, int  maxAttempts, int expected, int interval) {
+    ctx.getConsole().println(String.format("Checking HTTP endpoint: %s. Expecting status code: %s", url, expected));
+    
     HttpClient client = new DefaultHttpClient();
 
     int count = 0;
+    long start = System.currentTimeMillis();
     while (count < maxAttempts) {
       HttpGet get = new HttpGet(url);
       try {
         HttpResponse response = client.execute(get);
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == expected) {
+          long durationSeconds = TimeUnit.SECONDS.convert(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
+          ctx.getConsole().println(String.format("Expected response received from server at %s after %s seconds.", 
+              url, durationSeconds));
           break;
-        } else if (count == maxAttempts) {
+        } else if (count >= maxAttempts - 1) {
+          long durationSeconds = TimeUnit.SECONDS.convert(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
+          ctx.getConsole().println(String.format("Unexpected response received from server at %s (check duration: %s seconds)."
+              + " Got HTTP status code: %s", 
+              url, durationSeconds, statusCode));
           throw new AbortException();
         }
         EntityUtils.consume(response.getEntity());
       } catch (Exception e) {
-        if (count == maxAttempts) {
+        if (count >= maxAttempts - 1) {
+          long durationSeconds = TimeUnit.SECONDS.convert(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
+          ctx.getConsole().println(String.format("Server not responding properly: %s. Aborting (check duration: %s seconds).", 
+              url, durationSeconds));
           throw new AbortException();
         }
-      } 
+      }
       count++;
       sleep(TimeUnit.MILLISECONDS.convert(interval, TimeUnit.SECONDS));
     }

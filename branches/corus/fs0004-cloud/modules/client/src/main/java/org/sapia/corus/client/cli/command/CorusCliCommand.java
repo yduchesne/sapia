@@ -124,6 +124,14 @@ public abstract class CorusCliCommand implements Command {
     }
   }
   
+  static Option getOpt(CliContext ctx, String name) throws InputException {
+    if (ctx.getCommandLine().containsOption(name, false)) {
+      return ctx.getCommandLine().assertOption(name, false);
+    } else {
+      return null;
+    }
+  }
+  
   /**
    * @param ctx the {@link CliContext}.
    * @param name the name of the option whose value should be returned.

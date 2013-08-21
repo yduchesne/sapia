@@ -12,6 +12,7 @@ import java.util.Map;
 import org.sapia.console.AbortException;
 import org.sapia.console.CommandNotFoundException;
 import org.sapia.console.InputException;
+import org.sapia.console.Option;
 import org.sapia.corus.client.cli.CliContext;
 import org.sapia.corus.client.cli.CliError;
 import org.sapia.corus.client.cli.Interpreter;
@@ -30,6 +31,7 @@ import org.sapia.ubik.util.Collections2;
 public class Ripple extends CorusCliCommand {  
   
   private static final String SCRIPT_OPT       = "s";
+  private static final String COMMAND_OPT      = "c";
   private static final String MIN_HOST_OPT     = "m";
   private static final String BATCH_POLICY_OPT = "b";
   
@@ -40,8 +42,8 @@ public class Ripple extends CorusCliCommand {
   @Override
   protected void doExecute(CliContext ctx) throws AbortException, InputException {
     
-    String scriptFilePath = ctx.getCommandLine().assertOption(SCRIPT_OPT, true).getValue();
     int    minHosts       = DEFAULT_MIN_HOSTS;
+    
     if (ctx.getCommandLine().containsOption(MIN_HOST_OPT, true)) {
       minHosts = ctx.getCommandLine().assertOption(MIN_HOST_OPT, true).asInt();
     } 
@@ -50,12 +52,6 @@ public class Ripple extends CorusCliCommand {
     }
         
     String policy   = ctx.getCommandLine().assertOption(BATCH_POLICY_OPT, true).getValue();
-    
-    File scriptFile = ctx.getFileSystem().getFile(scriptFilePath);
-    
-    if (!ctx.getCommandLine().hasNext()) {
-      throw new InputException("Path to script file expected");
-    }
     
     List<CorusHost> allHosts = new ArrayList<CorusHost>();
     allHosts.add(ctx.getCorus().getContext().getServerHost());
@@ -88,13 +84,26 @@ public class Ripple extends CorusCliCommand {
     for (List<CorusHost> batch : hostBatches) {
       try {
         Map<String, String> vars = new HashMap<String, String>();
-        vars.put(TARGETS_VAR_NAME, getTargetString(batch));
-        processScript(scriptFile, ctx, vars);
+        Option cmdOpt = getOpt(ctx, COMMAND_OPT);
+        if (cmdOpt != null) {
+          processCommand(batch, cmdOpt.getValue(), ctx);
+        } else {
+          String scriptFilePath = ctx.getCommandLine().assertOption(SCRIPT_OPT, true).getValue();
+          File scriptFile = ctx.getFileSystem().getFile(scriptFilePath);
+          if (!ctx.getCommandLine().hasNext()) {
+            throw new InputException("Path to script file expected");
+          }
+          String targetString = getTargetString(batch);
+          vars.put(TARGETS_VAR_NAME, targetString);
+          ctx.getConsole().println("Rippling execution of script " + scriptFile + " against targets: " + targetString);          
+          processScript(scriptFile, ctx, vars);
+        }
       } catch (FileNotFoundException e) {
         throw new InputException(e.getMessage());
       } catch (Throwable e) {
-        CliError err = ctx.createAndAddErrorFor(this, "Unable to execute script", e);
+        CliError err = ctx.createAndAddErrorFor(this, "Unable to perform ripple operation", e);
         ctx.getConsole().println(err.getSimpleMessage());      
+        break;
       }
     }
   }
@@ -119,5 +128,15 @@ public class Ripple extends CorusCliCommand {
       throw new FileNotFoundException("File not found: " + scriptFile.getAbsolutePath());
     }
   }
+  
+  private void processCommand(List<CorusHost> batch, String cmdLine, CliContext ctx) throws IOException, CommandNotFoundException, Throwable {
+    Interpreter interpreter = new Interpreter(ctx.getCorus());
+    if (cmdLine.contains("-cluster")) {
+      throw new InputException("Rippled command must not be invoked with -cluster option");
+    }
+    String toExecute = cmdLine + " -cluster " + getTargetString(batch);
+    ctx.getConsole().println("Rippling command: " + toExecute);        
+    interpreter.eval(toExecute);
+  }  
   
 }
