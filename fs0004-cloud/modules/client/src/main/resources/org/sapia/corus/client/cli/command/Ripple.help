@@ -15,9 +15,13 @@
   <section title="Syntax">
     <p>ripple -s script_file_path -b batch_size  [-m min_hosts]</p>
     <p/>
+    <p>ripple -c "command_line_to_execute" -b batch_size  [-m min_hosts]</p>
+    <p/>
     <p>Where:</p>
     <p/>    
     <p>- s: the path to the script to execute (either relative or absolute).</p>
+    <p/>
+    <p>- c: the command line to "ripple".</p>
     <p/>
     <p>- b: the size of the batches of Corus hosts to which to deploy at a time (the batch size can also be expressed
     as a percentage of nodes in the cluster).</p>
@@ -35,10 +39,14 @@
   </section>
   <section title="Examples">
     <p>Given the following command:</p>
+    <p/>
+    <p>ripple -c "kill all" -b 2 -m 5</p>
+    <p/>
     <p>ripple -s myDeploymentScript.txt -b 2 -m 5</p>
     <p/>    
-    <p>The above means: execute the myDeploymentScript.txt for batches of 2 nodes at a time, if there's at least 
-    5 nodes in the cluster (otherwise, the script will be executed for 1 node at a time). </p>
+    <p>The above means: execute the "kill all" command (in the first case) or the "myDeploymentScript.txt" script 
+    (in the second case) for batches of 2 nodes at a time, if there's at least 
+    5 nodes in the cluster (otherwise, execution will be performed 1 node at a time). </p>
     <p/>    
     <p>The content of the myDeploymentScript.txt file specified above could be as follows: </p>
     <p/>      
@@ -51,5 +59,6 @@
     <p>The convenience of the ripple command can clearly be seen above: the kill/undeploy/deploy sequence 
     will only be performed against a subset of the cluster, sparing the whole cluster from being brought to
     a halt when upgrading an application.</p>
+    <p/>
   </section>    
 </help>

@@ -39,7 +39,7 @@ public class Exec extends CorusCliCommand {
   private static final String OPT_SCRIPT      = "s";
   private static final String OPT_WAIT        = "w";
   
-  private static final int  DEFAULT_WAIT_TIME_SECONDS = 60;
+  private static final int  DEFAULT_WAIT_TIME_SECONDS = 120;
   private static final long WAIT_INTERVAL_MILLIS      = 5000;
   
   @Override
@@ -200,31 +200,34 @@ public class Exec extends CorusCliCommand {
       
       // we've got the target hosts: checking on them
       int expectedNumberOfProcesses = targets.size() * startedInstances;
-      int currentCount = 0;
-      ClusterInfo targetInfo = new ClusterInfo(true);
-      targetInfo.addTargets(targets);
-      ctx.getConsole().println(String.format("Waiting for startup of %s process(es). Expecting a total of %s process(es) on %s Corus node(s)", procNames, expectedNumberOfProcesses, targets.size()));
-      while (!delay.isOver()) {
-        currentCount = 0;
-        Results<List<Process>> processes = ctx.getCorus().getProcessorFacade().getProcesses(criteria, targetInfo);
-        while (processes.hasNext()) {
-          Result<List<Process>> proc = processes.next();
-          currentCount += proc.getData().size();
+      if (expectedNumberOfProcesses > 0) {
+        int currentCount = 0;
+        ClusterInfo targetInfo = new ClusterInfo(true);
+        targetInfo.addTargets(targets);
+        ctx.getConsole().println(String.format("Waiting for startup of %s process(es). Expecting a total of %s process(es) on %s Corus node(s)", procNames, expectedNumberOfProcesses, targets.size()));
+        while (!delay.isOver()) {
+          currentCount = 0;
+          Results<List<Process>> processes = ctx.getCorus().getProcessorFacade().getProcesses(criteria, targetInfo);
+          while (processes.hasNext()) {
+            Result<List<Process>> proc = processes.next();
+            currentCount += proc.getData().size();
+          }
+          if (currentCount < expectedNumberOfProcesses) {
+            sleep(WAIT_INTERVAL_MILLIS);
+          } else {
+            break;
+          }
         }
+        
         if (currentCount < expectedNumberOfProcesses) {
-          sleep(WAIT_INTERVAL_MILLIS);
+          throw new IllegalStateException("Expected number of processes not started. Got: " + currentCount + ", expected: " + expectedNumberOfProcesses);
         } else {
-          break;
+          ctx.getConsole().println(String.format("%s processes all started (got %s)", procNames, currentCount));
         }
-      }
-      
-      if (currentCount < expectedNumberOfProcesses) {
-        throw new IllegalStateException("Expected number of processes not started. Got: " + currentCount + ", expected: " + expectedNumberOfProcesses);
       } else {
-        ctx.getConsole().println(String.format("%s processes all started (got %s)", procNames, currentCount));
+        ctx.getConsole().println("No process will be started (are process tags matching Corus tags?)");
       }
-      
-    }
+    } 
   }
   
 }
