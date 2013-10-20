@@ -1,8 +1,0 @@
-<soto:defs xmlns:soto="sapia:soto">
-  <soto:namespace prefix="freemarker">
-    <def class="org.sapia.soto.freemarker.FreemarkerServiceImpl" name="configuration" />
-    <def class="org.sapia.soto.freemarker.stm.FreemarkerStep"        name="template" />
-    <def class="org.sapia.soto.freemarker.stm.FreemarkerJspStep"     name="jsp" />    
-    <def class="org.sapia.soto.freemarker.stm.FreemarkerIncludeStep" name="include" />            
-  </soto:namespace>
-</soto:defs> 
