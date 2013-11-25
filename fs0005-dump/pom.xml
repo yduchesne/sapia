@@ -7,7 +7,7 @@
   <url>http://www.sapia-oss.org/projects/corus/index.html</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_corus_parent</artifactId>
-  <version>4.1.2-SNAPSHOT</version>
+  <version>fs0005-SNAPSHOT</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,7 +36,7 @@
 
   <modules>
     <module>modules/client</module>
-    <module>modules/thirdparty</module>    
+    <module>modules/thirdparty</module>
     <module>modules/server</module>
     <module>samples</module>
   </modules>
