@@ -1,0 +1,145 @@
+package org.sapia.corus.interop.protobuf;
+
+message CorusInteropHeader {
+    extensions 401 to 499;
+    
+    enum HeaderType {
+        PROCESS = 1;
+        SERVER  = 2;
+    }
+    
+    required HeaderType type       = 1;
+    optional string     request_id = 2;
+}
+
+message Process {
+    extend CorusInteropHeader {
+        required Process header = 401;
+    }
+    
+    required string corus_pid  = 1;
+}
+
+message Server {
+    extend CorusInteropHeader {
+        required Server header = 402;
+    }
+    
+    required int32 processing_time = 1;
+}
+
+
+
+message CorusInteropCommand {
+    extensions 501 to 599;
+
+    enum CommandType {
+        POLL             = 1;
+        STATUS           = 2;
+        RESTART          = 3;
+        CONFIRM_SHUTDOWN = 4;
+        ACK              = 5;
+        SHUTDOWN         = 6;
+        DUMP             = 7;
+        CONFIRM_DUMP     = 8;
+    }
+    
+    required CommandType type       = 1;
+    optional string      command_id = 2;
+}
+
+message Poll {
+    extend CorusInteropCommand {
+        required Poll command = 501;
+    }
+}
+
+message Status {
+    extend CorusInteropCommand {
+        required Status command = 502;
+    }
+    
+    message Context {
+        required string name   = 1;
+        repeated Param  params = 2;
+    }
+    
+    message Param {
+        required string name  = 1;
+        required string value = 2;
+    }
+    
+    repeated Context contexts = 1;
+}
+
+message Restart {
+    extend CorusInteropCommand {
+        required Restart command = 503;
+    }
+}
+
+message ConfirmShutdown {
+    extend CorusInteropCommand {
+        required ConfirmShutdown command = 504;
+    }
+}
+
+message Ack {
+    extend CorusInteropCommand {
+        required Ack command = 505;
+    }
+}
+
+message Shutdown {
+    extend CorusInteropCommand {
+        required Shutdown command = 506;
+    }
+    
+    enum RequestorActor {
+        SERVER  = 1;
+        PROCESS = 2;
+        ADMIN   = 3;
+    }
+    
+    required RequestorActor requestor = 1;
+}
+
+message Dump {
+    extend CorusInteropCommand {
+        required Dump command = 507;
+    }
+    
+    enum DumpType {
+        THREAD = 1;
+        HEAP   = 2;
+    }
+    
+    required DumpType type        = 1;
+    required string   output_file = 2;
+}
+
+message ConfirmDump {
+    extend CorusInteropCommand {
+        required ConfirmDump command = 508;
+    }
+}
+
+
+
+message CorusInteropMessage {
+
+    // The required header of this message
+    required CorusInteropHeader  header   = 1;
+    
+    // The commands that are part of this message
+    repeated CorusInteropCommand commands = 2;
+
+    // When reporting an error, contains the error code    
+    optional string error_code            = 3;
+
+    // When reporting an error, contains the error message    
+    optional string error_message         = 4;
+
+    // When reporting an error, contains the error details    
+    optional string error_detail          = 5;
+} 
