@@ -1,6 +1,6 @@
 package org.sapia.corus.interop.protobuf;
 
-message CorusInteropHeader {
+message Header {
     extensions 401 to 499;
     
     enum HeaderType {
@@ -8,29 +8,30 @@ message CorusInteropHeader {
         SERVER  = 2;
     }
     
-    required HeaderType type       = 1;
-    optional string     request_id = 2;
+    required HeaderType type = 1;
 }
 
 message Process {
-    extend CorusInteropHeader {
+    extend Header {
         required Process header = 401;
     }
     
-    required string corus_pid  = 1;
+    required string request_id = 1;
+    required string corus_pid  = 2;
 }
 
 message Server {
-    extend CorusInteropHeader {
+    extend Header {
         required Server header = 402;
     }
     
-    required int32 processing_time = 1;
+    required string request_id      = 1;
+    required int32  processing_time = 2;
 }
 
 
 
-message CorusInteropCommand {
+message Command {
     extensions 501 to 599;
 
     enum CommandType {
@@ -44,18 +45,19 @@ message CorusInteropCommand {
         CONFIRM_DUMP     = 8;
     }
     
-    required CommandType type       = 1;
-    optional string      command_id = 2;
+    required CommandType type = 1;
 }
 
 message Poll {
-    extend CorusInteropCommand {
+    extend Command {
         required Poll command = 501;
     }
+    
+    required string command_id = 1;
 }
 
 message Status {
-    extend CorusInteropCommand {
+    extend Command {
         required Status command = 502;
     }
     
@@ -69,29 +71,36 @@ message Status {
         required string value = 2;
     }
     
-    repeated Context contexts = 1;
+    required string  command_id = 1;
+    repeated Context contexts   = 2;
 }
 
 message Restart {
-    extend CorusInteropCommand {
+    extend Command {
         required Restart command = 503;
     }
+    
+    required string command_id = 1;
 }
 
 message ConfirmShutdown {
-    extend CorusInteropCommand {
+    extend Command {
         required ConfirmShutdown command = 504;
     }
+    
+    required string command_id = 1;
 }
 
 message Ack {
-    extend CorusInteropCommand {
+    extend Command {
         required Ack command = 505;
     }
+    
+    required string command_id = 1;
 }
 
 message Shutdown {
-    extend CorusInteropCommand {
+    extend Command {
         required Shutdown command = 506;
     }
     
@@ -101,11 +110,12 @@ message Shutdown {
         ADMIN   = 3;
     }
     
-    required RequestorActor requestor = 1;
+    required string         command_id = 1;
+    required RequestorActor requestor  = 2;
 }
 
 message Dump {
-    extend CorusInteropCommand {
+    extend Command {
         required Dump command = 507;
     }
     
@@ -114,25 +124,28 @@ message Dump {
         HEAP   = 2;
     }
     
-    required DumpType type        = 1;
-    required string   output_file = 2;
+    required string   command_id  = 1;
+    required DumpType type        = 2;
+    required string   output_file = 3;
 }
 
 message ConfirmDump {
-    extend CorusInteropCommand {
+    extend Command {
         required ConfirmDump command = 508;
     }
+
+    required string command_id = 1;
 }
 
 
 
-message CorusInteropMessage {
+message Message {
 
     // The required header of this message
-    required CorusInteropHeader  header   = 1;
+    required Header  header   = 1;
     
     // The commands that are part of this message
-    repeated CorusInteropCommand commands = 2;
+    repeated Command commands = 2;
 
     // When reporting an error, contains the error code    
     optional string error_code            = 3;
