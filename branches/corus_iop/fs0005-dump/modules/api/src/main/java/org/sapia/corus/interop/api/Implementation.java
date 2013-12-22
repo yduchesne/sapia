@@ -7,6 +7,8 @@
 
 package org.sapia.corus.interop.api;
 
+import java.lang.ref.SoftReference;
+
 /**
  * An imlementation of this insterface is provided as a link to the Corus
  * server that started this VM.
@@ -73,30 +75,39 @@ public interface Implementation {
 
   /**
    * Shuts down this client. And terminates this VM. Internally
-   * calls this client's <code>ShutdownListener</code>s so that the
+   * calls this client's {@link ShutdownListener}s so that the
    * latter can cleanly shut down.
    */
   public void shutdown();
   
   /**
-   * Adds a <code>ShutdownListener</code> to this client. The listener
-   * is internally kept in a <code>SoftReference</code>, so client applications
+   * Adds a {@link ShutdownListener} to this client. The listener
+   * is internally kept in a {@link SoftReference}, so client applications
    * should keep a reference on the given listener in order to spare the
    * latter from being GC'ed.
    *
-   * @param listener a <code>ShutdownListener</code>.
+   * @param listener a {@link ShutdownListener}.
    */
   public void addShutdownListener(ShutdownListener listener);
   
   /**
-   * Adds a <code>StatusRequestListener</code> to this client. The listener
-   * is internally kept in a <code>SoftReference</code>, so client applications
+   * Adds a {@link StatusRequestListener} to this client. The listener
+   * is internally kept in a {@link SoftReference}, so client applications
    * should keep a reference on the given listener in order to spare the
    * latter from being GC'ed.
    *
-   * @param listener a <code>StatusRequestListener</code>.
+   * @param listener a {@link StatusRequestListener}.
    */
   public void addStatusRequestListener(StatusRequestListener listener);
   
+  /**
+   * Adds a {@link ProcessEventListener} to this client. The listener is internally
+   * kept in a {@link SoftReference}, so client applications
+   * should keep a reference on the given listener in order to spare the
+   * latter from being GC'ed.
+   * 
+   * @param listener a {@link ProcessEventListener}. 
+   */
+  public void addProcessEventListener(ProcessEventListener listener);
   
 }

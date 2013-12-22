@@ -2,6 +2,7 @@ package org.sapia.corus.interop.client;
 
 import junit.framework.TestCase;
 
+import org.sapia.corus.interop.ProcessEvent;
 import org.sapia.corus.interop.api.Consts;
 
 
@@ -49,5 +50,18 @@ public class InteropClientTest extends TestCase {
     cli.addShutdownListener(listener);
     cli.shutdown();
     super.assertTrue("Shutdown listener was not called", listener.called);
+  }
+  
+  public void testProcessEvent() throws Exception {
+    TestProcessEventListener listener = new TestProcessEventListener();
+    InteropClient        cli   = InteropClient.getInstance();
+    TestProtocol         proto = new TestProtocol();
+    cli._proto = null;
+    cli.setProtocol(proto);
+    cli._exitSystemOnShutdown = false;
+    cli.addProcessEventListener(listener);
+    ProcessEvent evt = new ProcessEvent();
+    cli.notifyProcessEventListeners(evt);
+    super.assertTrue("ProcessEvent listener was not called", listener.called);
   }
 }

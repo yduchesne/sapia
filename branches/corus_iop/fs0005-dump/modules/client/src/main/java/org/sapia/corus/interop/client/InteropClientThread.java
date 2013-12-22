@@ -1,16 +1,15 @@
 package org.sapia.corus.interop.client;
 
-import org.sapia.corus.interop.AbstractCommand;
-import org.sapia.corus.interop.Ack;
-import org.sapia.corus.interop.api.Consts;
-import org.sapia.corus.interop.Shutdown;
-import org.sapia.corus.interop.Status;
-import org.sapia.corus.interop.soap.FaultException;
-
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.sapia.corus.interop.AbstractCommand;
+import org.sapia.corus.interop.Ack;
+import org.sapia.corus.interop.ProcessEvent;
+import org.sapia.corus.interop.Shutdown;
+import org.sapia.corus.interop.Status;
+import org.sapia.corus.interop.api.Consts;
+import org.sapia.corus.interop.soap.FaultException;
 
 
 /**
@@ -155,6 +154,10 @@ class InteropClientThread extends Thread {
               _parent.shutdown();
 
               break;
+            } else if (command instanceof ProcessEvent) {
+              ProcessEvent event = (ProcessEvent) command;
+              _parent._log.debug("Process event received: " + event.getType());
+              _parent.notifyProcessEventListeners(event);
             }
           }
         } catch (FaultException e) {
