@@ -10,10 +10,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.sapia.corus.interop.ProcessEvent;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.interop.api.Consts;
 import org.sapia.corus.interop.api.Implementation;
 import org.sapia.corus.interop.api.InteropLink;
+import org.sapia.corus.interop.api.ProcessEventListener;
 import org.sapia.corus.interop.api.ShutdownListener;
 import org.sapia.corus.interop.api.StatusRequestListener;
 import org.sapia.corus.interop.soap.FaultException;
@@ -92,6 +94,7 @@ public class InteropClient implements Consts, Implementation {
   boolean                 _dynamic = System.getProperty(Consts.CORUS_PID) != null;
   List<SoftReference<ShutdownListener>>      _shutdownListeners    = new ArrayList<SoftReference<ShutdownListener>>();
   List<SoftReference<StatusRequestListener>> _statusListeners      = new ArrayList<SoftReference<StatusRequestListener>>();
+  List<SoftReference<ProcessEventListener>>  _eventListeners      = new ArrayList<SoftReference<ProcessEventListener>>();
   boolean                 _exitSystemOnShutdown = true;
   boolean                 _isShutdownInProgress = false;
   InteropClientThread     _thread;
@@ -368,6 +371,18 @@ public class InteropClient implements Consts, Implementation {
   public synchronized void addStatusRequestListener(StatusRequestListener listener) {
     _statusListeners.add(new SoftReference<StatusRequestListener>(listener));
   }
+  
+  /**
+   * Adds a {@link ProcessEventListener} to this client. The listener is internally
+   * kept in a {@link SoftReference}, so client applications
+   * should keep a reference on the given listener in order to spare the
+   * latter from being GC'ed.
+   * 
+   * @param listener a {@link ProcessEventListener}. 
+   */
+  public synchronized void addProcessEventListener(ProcessEventListener listener) {
+    _eventListeners.add(new SoftReference<ProcessEventListener>(listener));
+  }
 
   /**
    * Internally goes through this client's <code>StatusRequestListener</code>
@@ -390,7 +405,29 @@ public class InteropClient implements Consts, Implementation {
       }
     }
   }
+  
+  /**
+   * Internally goes through this client's {@link ProcessEventListener}s, passing
+   * to each the given {@link ProcessEvent}.
+   *
+   * @param event a {@link ProcessEvent}.
+   */
+  void notifyProcessEventListeners(ProcessEvent event) {
+    ProcessEventListener listener;
 
+    for (int i = 0; i < _eventListeners.size(); i++) {
+      SoftReference<ProcessEventListener> ref = _eventListeners.get(i);
+      listener = (ProcessEventListener) ref.get();
+
+      if (listener == null) {
+        _eventListeners.remove(i);
+        i--;
+      } else {
+        listener.onProcessEvent(event);
+      }
+    }
+  }
+ 
   /**
    * THIS METHOD IS PROVIDED FOR TESTING PURPOSES ONLY.
    *

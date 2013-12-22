@@ -10,6 +10,7 @@ import org.sapia.corus.interop.InteropProcessor;
 import org.sapia.corus.interop.Param;
 import org.sapia.corus.interop.Poll;
 import org.sapia.corus.interop.Process;
+import org.sapia.corus.interop.ProcessEvent;
 import org.sapia.corus.interop.Restart;
 import org.sapia.corus.interop.Server;
 import org.sapia.corus.interop.Shutdown;
@@ -21,6 +22,7 @@ import org.sapia.corus.interop.soap.Fault;
 import org.sapia.corus.interop.soap.Header;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 
 /**
@@ -249,6 +251,43 @@ public class InteropDeserializationTest extends TestCase {
                  aShutdown.getCommandId());
     assertEquals("The requestor of the shutdown command is invalid",
                  "InteropDeserializationTest", aShutdown.getRequestor());
+  }
+  
+  public void testProcessEventResponse() throws Exception {
+    String anXmlBody =
+            "<CORUS-IOP:ProcessEvent xmlns:CORUS-IOP=\"http://schemas.sapia-oss.org/corus/interoperability/\"" +
+            " commandId=\"1234\"" +
+            " type=\"InteropDeserializationTest\">" + 
+            "   <CORUS-IOP:Param name=\"name1\" value=\"val1\"/>" + 
+            "   <CORUS-IOP:Param name=\"name2\" value=\"val2\"/>" + 
+            "</CORUS-IOP:ProcessEvent>";
+    String processEventResponse = createSoapResponse(anXmlBody);
+
+    Object aResult = _theProcessor.deserialize(new ByteArrayInputStream(processEventResponse.getBytes()));
+    assertNotNull("The result object should not be null", aResult);
+    assertTrue("The result object is not an Envelope",
+               aResult instanceof Envelope);
+
+    Envelope anEnvelope = (Envelope) aResult;
+    assertResponse(anEnvelope);
+
+    Body aBody = anEnvelope.getBody();
+    assertEquals("The size of the object list of the body is invalid", 1,
+                 aBody.getObjects().size());
+    assertTrue("The object of the body is not a ProcessEvent",
+               aBody.getObjects().get(0) instanceof ProcessEvent);
+
+    ProcessEvent event = (ProcessEvent) aBody.getObjects().get(0);
+    assertEquals("The command id of the process event response is invalid", "1234",
+                 event.getCommandId());
+    assertEquals("The type of the process event command is invalid",
+                 "InteropDeserializationTest", event.getType());
+    
+    Map<String, String> params = event.paramMap();
+    
+    assertEquals("val1", params.get("name1"));
+    assertEquals("val2", params.get("name2"));
+    
   }
 
   /**
