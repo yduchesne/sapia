@@ -248,11 +248,6 @@ public class DocumentationMojo extends AbstractMojo{
       copyStyleResource("sapia.css", cssDir);
       
       // the various graphic files
-      copyStyleResource("gradient-blue.jpg", cssDir);
-      copyStyleResource("img01.jpg", cssDir);
-      copyStyleResource("img02-green.jpg", cssDir);
-      copyStyleResource("img03.gif", cssDir);
-      copyStyleResource("img05.jpg", cssDir);
       copyStyleResource("logo-25.png", cssDir);
     }
   }
