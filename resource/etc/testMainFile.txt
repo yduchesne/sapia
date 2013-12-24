@@ -1,3 +1,0 @@
-#testRelativeFileInclude.txt#
-#resource:/org/sapia/resource/testUrlResource.txt#
-#file:testRelativeFileInclude.txt#
