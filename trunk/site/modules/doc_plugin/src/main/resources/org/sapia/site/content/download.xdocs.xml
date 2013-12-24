@@ -27,47 +27,60 @@
       <sapia:dependency />
 
       <p>
-        We have been using the Java.net repository, and following some issues 
-        with it we decided to set up our own repository under Sapia's web site.
-        In any case, make sure that you configure both repositories in your
-        Maven <tt>settings.xml</tt> as follows:       
+      	Add the following repository declarations to your Maven <tt>setting.xml</tt> (in the order specified):       
       </p>
       
       <sapia:code><![CDATA[
 ...
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Central</name>
+      <url>http://repo1.maven.org/maven2</url>
+    </repository>
+    <repository>
+      <id>bintray-sapia</id>
+      <url>http://dl.bintray.com/sapiaoss/main</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>  
 
-<repositories>
-  <repository>
-    <id>java.net-m2-repository</id>
-    <name>Java.net Repository for Maven</name>
-    <url>http://download.java.net/maven/2</url>
-  </repository>    
-  <repository>
-    <id>sapia-m2-repository</id>
-    <name>Sapia Repository for Maven</name>
-    <url>http://www.sapia-oss.org/maven2</url>
-  </repository>
+    <!-- old Sapia repo (deprecated, will eventually be removed) -->  
+    <repository>
+      <id>sapia-old-repo</id>
+      <name>Old Sapia Maven Repo</name>
+      <url>http://www.sapia-oss.org/maven2</url>
+    </repository>        
+  </repositories>
   
-  ...
-  
-</repositories>
-
-<pluginRepositories>
-  <pluginRepository>
-    <id>java.net-m2-repository</id>
-    <name>Java.net Repository for Maven</name>
-    <url>http://download.java.net/maven/2</url>
-  </pluginRepository>
-  <pluginRepository>
-    <id>sapia-m2-repository</id>
-    <name>Sapia Repository for Maven</name>
-    <url>http://www.sapia-oss.org/maven2</url>
-  </pluginRepository>
-  
-  ...
-  
-</pluginRepositories>
-
+  <pluginRepositories>
+    <pluginRepository>
+      <id>central</id>
+      <name>Central</name>
+      <url>http://repo1.maven.org/maven2</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>bintray-sapia</id>
+      <url>http://dl.bintray.com/sapiaoss/main</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    
+    <!-- old Sapia repo (deprecated, will eventually be removed) -->  
+    <pluginRepository>
+      <id>sapia-old-repo</id>
+      <name>Old Sapia Maven Repo</name>
+      <url>http://www.sapia-oss.org/maven2</url>
+    </pluginRepository>        
+  </pluginRepositories>    
 ...
 ]]>  
       </sapia:code>
