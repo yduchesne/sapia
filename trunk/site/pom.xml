@@ -20,7 +20,6 @@
     <module>modules/skin</module>
     <module>modules/doc_plugin</module>
     <module>modules/static_site</module>
-    <module>modules/site_gen</module>
   </modules>
 
   <licenses>
