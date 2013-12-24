@@ -8,7 +8,6 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <groupId>org.sapia</groupId>
   <artifactId>sapia_site_content</artifactId>
 
   <name>Sapia Site</name>

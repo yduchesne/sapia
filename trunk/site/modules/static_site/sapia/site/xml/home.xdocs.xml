@@ -13,37 +13,34 @@
         <li>Avoid prohibitive license costs</li>
       </ul>
       
-      <table class="rich_table gradient">
-        <thead><th>What is it ?</th><th>How is it used ?</th><th>Roadmap</th></thead>
+      <table class="rich_table gradient; padding-bottom: 30px">
+        <thead><th>What is it ?</th><th>How is it used ?</th><th>Recent</th></thead>
         <tbody><tr>
           <td>
               <ul>
                 <li>Allows managing distributed Java virtual machines collectively on multiple hosts</li>
                 <li>Monitors JVMs to insure high-availability (automatically restarts crashed JVMs)</li>
                 <li>Provides command-line interface mimicking Linux/Unix commands, easing the job of sysadmins</li>
-                <li>Deploys, undeploys, executes, terminates JVMs (and applications) on multiple hosts as one, streamlining deployment and maintenance</li>
-                <li>Does not require specialized infrastructure; works on commodity hardware</li>
               </ul>
           </td>
           <td>
             <ul>
               <li>Do away with the app server model: deploy standard Java apps using your lightweight framework of choice (Spring, Guice, etc.)</li>
-              <li>Deploy, cluster-wide, any application that can run in the JVM using the Corus command-line interface (we've even tried it with JBoss)</li>
-              <li>Improve productivity and reduce downtime through cluster-wide deployment</li>
-              <li>Integrate distributed JVM and application thresholds as part of monitoring infrastructure</li>
+              <li>Deploys, undeploys, executes, terminates JVMs (and applications) on multiple hosts as one</li>
+              <li>Install on commodity hardware</li>
             </ul>
           </td> 
           <td>
             <ul>
-              <li>Corus 3.0 (currently <a href="http://code.google.com/p/sapia/downloads/list">available</a>)</li>
-              <li>Built-in multi-language deployments (Scala, JRuby, Jython...) - planning</li>
-              <li>Prepackaged Corus-enabled apps (Tomcat 7, etc.) - planning</li>
-              <li>Enterprise-grade management console - planning</li>
-            </ul>
+              <li>Corus 4.1.2 (currently <a href="http://code.google.com/p/sapia/downloads/list">available</a>)</li>
+              <li>Repository functionality: auto-deployment and execution of applications to new nodes in cluster</li>
+              <li>Ripple: target command execution to cluster subset (minimize downtime when deploying over large clusters)</li>
+            </ul>            
           </td>
         </tr></tbody>
       </table>
-      <a href="projects/corus/index.html">&gt;&gt; more...</a>
+      <br/>
+      <a href="projects/corus/index.html">more...</a>
 
    </sapia:sect-desc>
   
