@@ -11,6 +11,17 @@
     <name>Sapia OSS</name>
     <url>http://www.sapia-oss.org</url>
   </organization>  
+  
+  <mailingLists>
+  	<mailingList>
+  		<subscribe>https://groups.google.com/forum/?fromgroups#!forum/sapia-support</subscribe>
+  		<unsubscribe>https://groups.google.com/forum/?fromgroups#!forum/sapia-support</unsubscribe>
+  	    <archive>sapia-support@googlegroups.com</archive>
+  	    <name>Sapia Support</name>
+  	    <post>sapia-support@googlegroups.com</post>
+  	</mailingList>
+  
+  </mailingLists>
 
   <repositories>
     <repository>
