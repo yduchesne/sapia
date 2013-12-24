@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>sapia_site_parent</artifactId>
-  <version>1.17</version>
+  <version>1.18-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
@@ -30,10 +30,4 @@
       <comments>A business-friendly OSS license</comments>
      </license>
   </licenses>
-
-  <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/sapia_site_parent-1.17</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_site_parent-1.17</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_site_parent-1.17</url>
-  </scm>
 </project>
