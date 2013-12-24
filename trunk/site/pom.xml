@@ -7,11 +7,12 @@
   <parent>
     <groupId>org.sapia</groupId>
     <artifactId>sapia_global</artifactId>
-    <version>1.19</version>
+    <version>1.18</version>
+    <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
   <artifactId>sapia_site_parent</artifactId>
-  <version>1.17-SNAPSHOT</version>
+  <version>1.16-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
@@ -19,6 +20,7 @@
     <module>modules/skin</module>
     <module>modules/doc_plugin</module>
     <module>modules/static_site</module>
+    <module>modules/site_gen</module>
   </modules>
 
   <licenses>
@@ -29,4 +31,5 @@
       <comments>A business-friendly OSS license</comments>
      </license>
   </licenses>
+
 </project>
