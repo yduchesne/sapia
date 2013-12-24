@@ -8,9 +8,9 @@ Released for free under a Creative Commons Attribution 2.5 License
 */
 
 body {
-  background: #FFFFFF url(img01.jpg) repeat-x top left;
+  background: #FFFFFF;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   margin: 0px 0px 0px 0px;
   padding: 0px;
   color: #757575;
@@ -18,7 +18,7 @@ body {
 
 input, textarea {
   width: 220px;
-  background: #FFFFFF url(img04.gif) repeat-x;
+  background: #FFFFFF;
   border-top: 1px solid #A3A3A3;
   border-right: 1px solid #E5E5E5;
   border-bottom: 1px solid #FFFFFF;
@@ -129,7 +129,7 @@ hr {
 }
 
 #logo-title {
-  margin-left:  75px;
+  margin-left:  50px;
   margin-right: 35px;
   padding: 0;
   font-size:   20px;
@@ -166,10 +166,8 @@ hr {
 }
 
 #menu {
-  height:       30px;
+  height:       20px;
   width:        754px;
-  padding-left: 20px;
-  background:   url(img02-green.jpg) no-repeat left top;
   font-family:  Arial, Helvetica, sans-serif;
 }
 
@@ -187,23 +185,23 @@ hr {
 #menu a {
   display:      block;
   float:        left;
-  padding:      10px 30px 10px 18px;
+  padding:      10px 50px 10px 0px;
   margin-right: 1px;
-  height:       30px;
-  background:   url(img03.gif) no-repeat left 20%;
-  text-decoration: none;
+  height:       20px;
   text-transform:  uppercase;
-  font-size:       10px;
-  color:           #FFFFFF;
+  font-size:       14px;
+  color:           #000000;
 }
 
 #menu a:hover {
-  color: #FFFFFF;
+  color: #000000;
+  text-decoration: underline;
+  
 }
 
 #menu .current_page_item a {
   background: none;
-  color:      #FFFFFF;
+  color:      #000000;
 }
 
 /* Search */
@@ -239,7 +237,6 @@ hr {
 #wrapper {
   width:  754px;
   margin: 0 auto;
-  background: url(img05.jpg) repeat-x left top;
 }
 
 /* Page */
@@ -287,7 +284,6 @@ hr {
   margin: 15px 0 20px 0;
   padding: 15px 0 0 20px;
   line-height: normal;
-  background: url(http://sapia-oss.org/content/images/img05.jpg) repeat-x left top;
 }
 
 .post a {
@@ -296,7 +292,7 @@ hr {
 
 .section-title {
   margin: 0;
-  padding: 10px 20px 10px 10px;
+  padding: 10px 20px 10px 0px;
   border-bottom: 1px dotted #D6C9BF;
 }
 
@@ -349,52 +345,52 @@ hr {
 }
 
 #sidebar a:active {
-    text-decoration: none; color: #000000
+    text-decoration: none; color: black
 }
     
 #sidebar a:link {
-  text-decoration: none; color: #000000
+  text-decoration: none; color: black
 }
   
 #sidebar a:visited {
-  text-decoration: none; color: #000000
+  text-decoration: none; color: black
 }
   
 #sidebar a:hover {
-  text-decoration: underline; color: #000000
+  text-decoration: underline; color: black
 }
 
 
 #toc a:active {
-    text-decoration: none; color: #000000
+    text-decoration: none; color: black
 }
     
 #toc a:link {
-  text-decoration: none; color: #000000
+  text-decoration: none; color: black
 }
   
 #toc a:visited {
-  text-decoration: none; color: #000000
+  text-decoration: none; color: black
 }
   
 #toc a:hover {
-  text-decoration: underline; color: #000000
+  text-decoration: underline; color: black
 }
 
 #breadcrumb a:active {
-    text-decoration: none; color: #000000
+    text-decoration: none; color: black
 }
     
 #breadcrumb a:link {
-  text-decoration: none; color: #000000
+  text-decoration: none; color: black
 }
   
 #breadcrumb a:visited {
-  text-decoration: none; color: #000000
+  text-decoration: none; color: black
 }
   
 #breadcrumb a:hover {
-  text-decoration: underline; color: #000000
+  text-decoration: underline; color: black
 }
 
 
@@ -447,20 +443,18 @@ hr {
   height: 50px;
   margin: 0 auto;
   margin-top: 50px;
-  background: #FFFFFF url(http://sapia-oss.org/content/images/img01.jpg) repeat-x top left;
 }
 
 #footer p {
   margin: 0;
   line-height: normal;
-  padding: 35px 15px;
 }
 
 #footer a {
 }
 
 #footer .legal {
-  float: left;
+  
 }
 
 #footer .credit {
@@ -490,7 +484,6 @@ hr {
 .rich_table{
   width: 100%;
   background: white;
-  background-image: url(http://sapia-oss.org/content/images/gradient-blue.jpg);
   background-repeat: repeat-x;
   background-position : top left;
   background-color: #ffffff;
@@ -503,34 +496,34 @@ hr {
 
 .rich_table td{
   width: 33%; 
-  padding: 5px;
+  padding: 10px;
+  font-size: 12px;  
   vertical-align: top;
 }
 
 .rich_table th{
   color: white; 
+  background-color: #757575;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  font-weight: 14px;
+  font-size: 12px;
+  font-weight: 12px;
   padding: 5px;
-  padding-top: 15px;
   text-transform: uppercase;
 }
 
 .rich_text{
-  color: black; 
+  color: #757575; 
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .rich_table ul{
   list-style: square outside none;
   font-size: 12px;
-  color: black;
 }
 
 .rich_table li{
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /*************************************************************************

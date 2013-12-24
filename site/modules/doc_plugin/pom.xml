@@ -43,20 +43,21 @@
 			<artifactId>ant-optional</artifactId>
 			<version>1.5.3-1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.commonjava.googlecode.markdown4j</groupId>
+			<artifactId>markdown4j</artifactId>
+			<version>2.2-cj-1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>15.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

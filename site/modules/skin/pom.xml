@@ -10,14 +10,11 @@
       <relativePath>../..</relativePath>
     </parent>
 
-    <groupId>org.sapia</groupId>
-    <artifactId>skin</artifactId>
+    <artifactId>sapia_site_skin</artifactId>
     <packaging>jar</packaging>
 
     <name>Sapia Skin</name>
     <description>Based on the Fuido skin: http://code.google.com/p/fluido-skin/</description>
-    <url>http://code.google.com/p/fluido-skin/</url>
-    <inceptionYear>2009</inceptionYear>
 
     <licenses>
         <license>
