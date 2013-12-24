@@ -167,7 +167,7 @@
   <distributionManagement>
     <repository>
       <id>bintray-sapia</id>
-      <url>https://api.bintray.com/maven/sapiaoss/main</url>
+      <url>https://api.bintray.com/maven/sapiaoss/main/${project.artifactId}</url>
     </repository>
   </distributionManagement>
 
