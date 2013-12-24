@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org</url>
   <groupId>org.sapia</groupId>
   <artifactId>sapia_global</artifactId>
-  <version>1.16-SNAPSHOT</version>
+  <version>1.16</version>
   
   <organization>
     <name>Sapia OSS</name>
@@ -20,7 +20,7 @@
     </repository>
     <repository>
       <id>bintray-sapia</id>
-      <url>http://dl.bintray.com/sapiaoss/main</url>
+      <url>http://dl.bintray.com/sapia-oss/main</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -50,7 +50,7 @@
     </pluginRepository>
     <pluginRepository>
       <id>bintray-sapia</id>
-      <url>http://dl.bintray.com/sapiaoss/main</url>
+      <url>http://dl.bintray.com/sapia-oss/main</url>
       <releases>
         <enabled>true</enabled>
       </releases>
