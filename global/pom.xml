@@ -81,9 +81,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/svn/sapia_global-1.16</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.16</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.16</url>
+    <connection>scm:svn:https://sapia.googlecode.com</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn</url>
   </scm>
 
   <packaging>pom</packaging>
@@ -110,24 +110,6 @@
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.sapia</groupId>
-        <artifactId>sapia_site_doc_plugin</artifactId>
-        <version>1.14</version>
-        <configuration>
-          <deleteDestdir>false</deleteDestdir>
-        </configuration>
-
-        <executions>
-          <execution>
-            <phase>site</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
