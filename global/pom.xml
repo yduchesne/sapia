@@ -130,7 +130,37 @@
           <tagBase>https://sapia.googlecode.com/svn/tags</tagBase>
         </configuration>
       </plugin>
+      
+	    <plugin>
+	      <groupId>org.sapia</groupId>
+	      <artifactId>sapia_site_doc_plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+	    </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+         <executions>
+           <execution>
+             <phase>site</phase>
+             <goals>
+               <goal>site</goal>
+             </goals>
+           </execution>
+         </executions>
+        <configuration>
+          <outputDirectory>${basedir}/target/site/maven</outputDirectory>
+          <generatedSiteDirectory>${basedir}/target/site/maven</generatedSiteDirectory>
+          <siteDirectory>${basedir}/src/site</siteDirectory>
+        </configuration>
+      </plugin>
     </plugins>
  </build>
 
