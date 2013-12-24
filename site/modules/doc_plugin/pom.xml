@@ -10,7 +10,6 @@
 
 	<name>Sapia Doc Plugin</name>
 
-    <groupId>org.sapia</groupId>
 	<artifactId>sapia_site_doc_plugin</artifactId>
 
 	<packaging>maven-plugin</packaging>
