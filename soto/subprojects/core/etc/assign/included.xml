@@ -1,6 +1,0 @@
-<soto:new class="org.sapia.soto.config.example.IOC3Service" xmlns:soto="sapia:soto">
-  <arg>test</arg>
-  <arg><soto:int value="10" /></arg>
-  <arg type="int">100</arg>
-  <property>test</property>
-</soto:new>
