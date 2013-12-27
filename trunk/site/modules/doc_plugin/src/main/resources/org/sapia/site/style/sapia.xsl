@@ -292,7 +292,7 @@
 <!-- =====================================      SECTION PATH     ====================================== -->
 
   <xsl:template match="sapia:section">
-    <span id="breadcrumb" style="text-transform:lowercase">
+    <div id="breadcrumb" style="text-transform:lowercase">
       <xsl:for-each select="sapia:path">
         <xsl:choose>
           <xsl:when test="@href">
@@ -310,7 +310,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:for-each>
-    </span>
+    </div>
   </xsl:template>          
 
 <!-- ======================================        POP UP      ====================================== -->
