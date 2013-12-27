@@ -377,6 +377,10 @@ hr {
   text-decoration: underline; color: black
 }
 
+#breadcrumb {
+  margin-top: 20px;
+}
+
 #breadcrumb a:active {
     text-decoration: none; color: black
 }
