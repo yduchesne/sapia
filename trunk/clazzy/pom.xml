@@ -5,7 +5,7 @@
   <url>http://www.sapia-oss.org/projects/clazzy/index.html</url>
 
   <artifactId>sapia_clazzy</artifactId>
-  <version>2.2</version>
+  <version>2.3-SNAPSHOT</version>
 
   <parent>
     <groupId>org.sapia</groupId>
@@ -131,10 +131,4 @@
    	</plugins>
    </pluginManagement>
   </build>
-
-  <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/sapia_clazzy-2.2</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_clazzy-2.2</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_clazzy-2.2</url>
-  </scm>
 </project>
