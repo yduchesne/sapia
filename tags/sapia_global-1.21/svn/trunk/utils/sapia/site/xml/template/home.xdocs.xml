@@ -1,0 +1,83 @@
+<sapia:page title="Template" cssPath="../css/sapia.css" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+      <sapia:vsection name="Project Home" href="home.html" />
+      <sapia:vsection name="Javadoc" href="../maven/utils/api/index.html" />
+      <sapia:vsection name="Download" href="../download.html" />
+      <sapia:vsection name="Mailing List" href="../list.html" />
+      <sapia:vsection name="Maven" href="../maven/utils/index.html" />
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Template">
+    <sapia:section>
+      <sapia:path name="home" href="../../../home.html" />
+      <sapia:path name="projects"/>
+      <sapia:path name="utilities" href="../home.html"/>      
+      <sapia:path name="template" />
+    </sapia:section>
+    
+    <toc/>
+    <sapia:sect2 title="Overview">
+      <p>The Template API allows you to put variables in your configuration files; the variables 
+      are interpreted at runtime, and their values can be specified in an application-specific manner.</p>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Usage">
+      <sapia:sect3 title="A Simple example">
+        
+        <p>Using the Template API can be summarized as follows:
+          <ul>
+            <li>Create a <sapia:class><a href="../maven/api/org/sapia/util/text/TemplateFactory.html">TemplateFactory</a></sapia:class>.</li>
+            <li>Create a <sapia:class><a href="../maven/api/org/sapia/util/text/TemplateContextIF.html">TemplateContextIF</a></sapia:class>.</li>
+            <li>Parse some content with the factory - this returns a <sapia:class><a href="../maven/api/org/sapia/util/text/TemplateElementIF.html">TemplateElementIF</a></sapia:class>.</li>
+            <li>Render the content, passing the context to the template element's <sapia:command>render()</sapia:command> method.</li>
+          </ul>
+        The following code illustrates how to use the API:</p>
+        <sapia:code>
+// template-related classes are imported 
+// from org.sapia.util.text
+
+String toRender = "your current directory: ${user.dir}";
+TemplateFactory fac = new TemplateFactory();
+TemplateContextIF ctx = new SystemContext();
+TemplateElementIF template = fac.parse(toRender);
+System.out.println(template.render(ctx));</sapia:code>
+        <p>The above will display your current directory (corresponding to the "user.dir" system property).</p>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="How It Works">
+        <p>The template factory parses a template element out of a given string content. The template element is the
+        actual object representation of the string content; it can be kept in memory, without the content needing to
+        be reparsed prior to each use. The template element is used to "render" its content, given a context that 
+        contains values used internally for variable interpolation.</p>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="What's in a Context?">
+        <p>The <sapia:class>TemplateContextIF</sapia:class> interface simply models bindings of name/value pairs that are used for
+        variable interpolation. When using the API, you will often want to implement your own <sapia:class>TemplateContextIF</sapia:class>. 
+        There are two implementations provided as part of the API:</p>
+        <ul>
+          <li><sapia:class><a href="../maven/api/org/sapia/util/text/SystemContext.html">SystemContext</a></sapia:class>: implements its
+          behavior on top of the Java system properties.</li>
+          <li><sapia:class><a href="../maven/api/org/sapia/util/text/MapContext.html">MapContext</a></sapia:class>: implements its behavior
+          over a <sapia:class>Map</sapia:class> instance.</li>          
+        </ul>
+        <p>The <sapia:class>TemplateContextIF</sapia:class> interface is quite simple:</p>
+        <sapia:code>
+public interface TemplateContextIF {
+
+  public Object getValue(String aName);
+  
+  public void put(String name, Object value);
+}</sapia:code>
+        <p>The required methods are semantically identical to their <sapia:command>get</sapia:command>/<sapia:command>put</sapia:command>
+        counterparts in the <sapia:class>java.util.Map</sapia:class> interface.</p>
+      </sapia:sect3>
+    </sapia:sect2>
+    <sapia:sect2 title="Conclusion">
+      <p>Use the template API to put variables in configuration files (or in other types of files); the variables
+      are interpolated at runtime through an application-defined context. 
+      </p>
+    </sapia:sect2>
+    
+  </sapia:sect1>
+</sapia:page>

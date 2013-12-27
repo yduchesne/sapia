@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Sapia Site</name>
+  <description>Sapia Web Site and Documentation Plugins</description>
+  <url>http://www.sapia-oss.org/</url>
+
+  <groupId>org.sapia</groupId>
+  <artifactId>sapia_site_parent</artifactId>
+  <version>1.1</version>
+
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>modules/skin</module>
+    <module>modules/doc_plugin</module>
+    <module>modules/static_site</module>
+  </modules>
+
+  <organization>
+    <name>Sapia OSS</name>
+    <url>http://www.sapia-oss.org</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>yduchesne</id>
+      <name>Yanick Duchesne</name>
+      <email>yd@sapia-oss.org</email>
+      <url>http://www.sapia-oss.org</url>
+      <organization>Sapia</organization>
+      <organizationUrl>http://www.sapia-oss.org</organizationUrl>
+      <roles>
+        <role>architect</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>jcdesrochers</id>
+      <name>Jean-Cedric Desrochers</name>
+      <email>jc@sapia-oss.org</email>
+      <url>http://www.sapia-oss.org</url>
+      <organization>Sapia</organization>
+      <organizationUrl>http://www.sapia-oss.org</organizationUrl>
+      <roles>
+        <role>architect</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://sapia.googlecode.com/svn/tags/site/sapia_site_parent-1.1</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/site/sapia_site_parent-1.1</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/branches/tags/site/sapia_site_parent-1.1</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+     </license>
+  </licenses>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.0-beta-7</version>
+        <configuration>
+          <tagBase>https://sapia.googlecode.com/svn/tags/site</tagBase>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <extensions>
+      <extension>
+        <groupId>org.jvnet.wagon-svn</groupId>
+        <artifactId>wagon-svn</artifactId>
+        <version>1.9</version>
+      </extension>
+    </extensions>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>java.net-m2-repository</id>
+      <url>java-net:/maven2-repository/trunk/repository/</url>
+    </repository>
+  </distributionManagement>
+
+ <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.0-alpha-4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

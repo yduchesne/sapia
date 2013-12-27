@@ -1,0 +1,12 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="conf">
+    <def class="org.sapia.soto.configuration.ConfigProperty"                   name="prop" />
+    <def class="org.sapia.soto.configuration.If"                               name="if" />
+    <def class="org.sapia.soto.configuration.Unless"                           name="unless" />
+    <def class="org.sapia.soto.configuration.Choose"                           name="choose" />
+    <def class="org.sapia.soto.configuration.jconfig.Include"                  name="include" />
+    <def class="org.sapia.soto.configuration.ConfigCategoryRef"                name="category" />
+    <def class="org.sapia.soto.configuration.ConfigurationServiceSingleton"    name="serviceSingleton" />
+    <def class="org.sapia.soto.configuration.jconfig.ConfigurationServiceImpl" name="jconfig" />
+  </soto:namespace>
+</soto:defs> 

@@ -1,0 +1,6 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="hb8">                  
+    <def class="org.sapia.soto.hibernate.HibernateServiceImpl"         name="hibernate" />
+    <def class="org.sapia.soto.hibernate.stm.TxStep"                   name="tx" />
+  </soto:namespace>
+</soto:defs>  

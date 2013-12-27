@@ -1,0 +1,40 @@
+<sapia:page title="Idefix" cssPath="../css/sapia.css" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+      <sapia:vsection name="Project Home" href="home.html" />
+      <sapia:vsection name="Javadoc" href="../maven/utils/api/index.html" />
+      <sapia:vsection name="Download" href="../download.html" />
+      <sapia:vsection name="Mailing List" href="../list.html" />
+      <sapia:vsection name="Maven" href="../maven/utils/index.html" />
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Idefix">
+    <sapia:section>
+      <sapia:path name="home" href="../../../home.html" />
+      <sapia:path name="projects"/>
+      <sapia:path name="utilities" href="../home.html"/>
+      <sapia:path name="idefix" />
+    </sapia:section>
+
+    <toc/>
+    <sapia:sect2 title="Overview">
+      <p>To be completed...
+      </p>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Features">
+    </sapia:sect2>
+
+    <sapia:sect2 title="Architecture">
+    </sapia:sect2>
+
+    <sapia:sect2 title="Learning by Example">
+    </sapia:sect2>
+
+    <sapia:sect2 title="Advanced Issues">
+    </sapia:sect2>
+
+    <sapia:sect2 title="Conclusion">
+    </sapia:sect2>
+
+  </sapia:sect1>
+</sapia:page>

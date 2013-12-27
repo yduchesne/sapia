@@ -1,0 +1,31 @@
+<soto:defs xmlns:soto="sapia:soto">
+  
+  <soto:namespace prefix="soto">
+    <def class="org.sapia.soto.config.types.StringType"      name="string" />      
+    <def class="org.sapia.soto.config.types.BooleanType"     name="boolean" />    
+    <def class="org.sapia.soto.config.types.DateType"        name="date" />        
+    <def class="org.sapia.soto.config.types.DoubleType"      name="double" />            
+    <def class="org.sapia.soto.config.types.FloatType"       name="float" />
+    <def class="org.sapia.soto.config.types.IntType"         name="int" />    
+    <def class="org.sapia.soto.config.types.IntType"         name="integer" />        
+    <def class="org.sapia.soto.config.types.LongType"        name="long" />
+    <def class="org.sapia.soto.config.types.ShortType"       name="short" />    
+    <def class="org.sapia.soto.config.types.ListType"        name="list" /> 
+    <def class="org.sapia.soto.config.types.MapType"         name="map" /> 
+    <def class="org.sapia.soto.config.types.PropertiesType"  name="properties" /> 
+    <def class="org.sapia.soto.config.types.ClassType"       name="class" /> 
+    <def class="org.sapia.soto.config.types.NewType"         name="new" /> 
+    <def class="org.sapia.soto.config.types.FileType"        name="file" /> 
+    <def class="org.sapia.soto.config.types.ResourceType"    name="resource" /> 
+    <def class="org.sapia.soto.config.types.UriType"         name="uri" /> 
+    <def class="org.sapia.soto.config.types.ConstantType"    name="constant" />     
+    <def class="org.sapia.soto.config.Setting"               name="setting" />         
+    <def class="org.sapia.soto.config.types.ArrayType"       name="array" />   
+    <def class="org.sapia.soto.config.Bind"                  name="bind" />        
+    <def class="org.sapia.soto.config.Ref"                   name="ref" />
+    <def class="org.sapia.soto.config.JndiRef"               name="jndiRef" /> 
+    <def class="org.sapia.soto.config.ResourceAliasTag"      name="resourceAlias" />       
+    <def class="org.sapia.soto.i18n.i18nServiceImpl"         name="i18n" />            
+  </soto:namespace>
+
+</soto:defs>

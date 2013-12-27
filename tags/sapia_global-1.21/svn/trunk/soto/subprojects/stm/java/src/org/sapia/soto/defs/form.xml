@@ -1,0 +1,12 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="form">
+    <def class="org.sapia.soto.state.form.logic.GotoStep"              name="goto" />
+    <def class="org.sapia.soto.state.form.logic.ReturnStep"            name="return" />
+    <def class="org.sapia.soto.state.form.logic.NewFormStep"           name="new" />
+    <def class="org.sapia.soto.state.form.logic.CreateFormStep"        name="create" />
+    <def class="org.sapia.soto.state.form.logic.PushFormStep"          name="push" />
+    <def class="org.sapia.soto.state.form.logic.CancelFormStep"        name="cancel" />
+    <def class="org.sapia.soto.state.form.logic.ExportFormIdStep"      name="exportId" />
+    <def class="org.sapia.soto.state.form.logic.ClearStep"             name="clear" />
+  </soto:namespace>
+</soto:defs>

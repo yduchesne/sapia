@@ -1,0 +1,22 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:mq="soto:activemq"
+          xmlns:ex="soto:example">
+          
+  <soto:namespace prefix="ex">
+    <def class="org.sapia.soto.activemq.example.QueueSender" name="sender" />
+  </soto:namespace>          
+          
+  <soto:service id="factory">
+    <mq:factory>
+      <brokerURL>tcp://localhost:61616</brokerURL>
+    </mq:factory> 
+  </soto:service>         
+  
+  <soto:service id="sender">
+    <ex:sender>
+      <queue><mq:queue name="msgQueue" /></queue>    
+      <queueConnectionFactory><soto:serviceRef id="factory" /></queueConnectionFactory>
+    </ex:sender> 
+  </soto:service>           
+  
+</soto:app>

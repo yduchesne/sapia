@@ -1,0 +1,5 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="xfire">                  
+    <def class="org.sapia.soto.xfire.XFireLayer"  name="layer" />
+  </soto:namespace>
+</soto:defs>  

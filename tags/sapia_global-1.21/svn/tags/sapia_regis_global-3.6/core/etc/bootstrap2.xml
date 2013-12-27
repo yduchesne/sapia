@@ -1,0 +1,9 @@
+<registry>
+  <node name="databases">
+    <node name="001" id="db1">
+      <property name="username" value="stiger" />
+      <property name="password" value="bar123" />      
+      <property name="url"      value="jdbc://pluto:5432/" />                
+    </node>    
+  </node>
+</registry>

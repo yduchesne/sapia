@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Soto JGroups</name>
+  <description>Integrates Javagroups</description>
+  <url>http://www.sapia-oss.org/projects/soto/subprojects/jgroups/index.html</url>
+  <artifactId>sapia_soto_jgroups</artifactId>
+
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_soto_parent</artifactId>
+    <version>3.3</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto_log</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>backport-util-concurrent</groupId>
+        <artifactId>backport-util-concurrent</artifactId>
+    </dependency>
+		<dependency>
+		    <groupId>concurrent</groupId>
+		    <artifactId>concurrent</artifactId>
+		    <version>1.3.4</version>
+		</dependency>
+
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>jgroups</groupId>
+        <artifactId>jgroups-all</artifactId>
+        <version>2.2.9.1</version>
+    </dependency>
+  </dependencies>
+
+</project>

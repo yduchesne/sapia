@@ -1,0 +1,35 @@
+<soto:app xmlns:soto="http://www.sapia-oss.org/soto/core/2003"
+	    xmlns:jmx="http://www.sapia-oss.org/soto/jmx/2003"
+          xmlns:aop="http://www.sapia-oss.org/soto/aop/2003"
+          xmlns:sample="http://www.sapia-oss.org/soto/sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.examples.MasterService"    name="master" />
+    <def class="org.sapia.soto.examples.SecondaryService" name="secondary" />
+  </soto:namespace>
+
+  <soto:service id="secondary"> 
+    <sample:secondary>
+       <someService>
+	       <soto:choose>
+	       
+	         <!-- This is optional -->	       
+	         <when param="set.master.service" equals="1">
+	           <sample:master message="1" />
+	         </when>
+	         
+	         <!-- This is optional -->
+	         <when param="set.master.service" equals="2">
+	           <sample:master message="2" />
+	         </when>
+	         
+	         <!-- This is optional -->
+	         <otherwise>
+	           <sample:master message="3" />
+	         </otherwise>
+	       </soto:choose>
+	   </someService>
+    </sample:secondary>
+  </soto:service>
+
+</soto:app>

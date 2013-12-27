@@ -1,0 +1,729 @@
+<sapia:page title="Registry Service" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:vmenu>
+    <sapia:vsection name="Soto Home" href="../../index.html"/>
+    <sapia:vsection name="Project Home" href="index.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Registry Service">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org/home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../home.html" />
+      <sapia:path name="services" />
+      <sapia:path name="registry" />      
+    </sapia:section>
+    <toc/>
+    
+    <sapia:sect2 title="Namespace">
+      <ul>
+        <li><b>URI</b>: <sapia:command>soto:regis</sapia:command></li>
+        <li><b>Prefix</b>: <sapia:command>regis</sapia:command></li>
+      </ul>
+    </sapia:sect2>    
+    
+    <sapia:sect2 title="Overview">
+    
+      <p>The <sapia:class link="maven/api/org/sapia/soto/regis/RegistryService.html" target="reg_service">RegistryService</sapia:class> 
+      integrates the <a href="http://www.sapia-oss.org/projects/regis/index.html">Regis</a> configuration framework. The <sapia:class>RegistryService</sapia:class> class implements
+      Regis' <sapia:class>Registry</sapia:class> interface - therefore, applications use that interface's API when
+      working with a <sapia:class>RegistryService</sapia:class> (see Regis' exhaustive documentation documentation for more info).</p>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Usage">    
+
+      <sapia:sect3 title="Configuring a Registry Service">
+      <p>To use a registry service, declare a <sapia:command>regis:registry</sapia:command> element as part of your Soto application. 
+      This element will evaluate to a <sapia:class target="reg_api" link="maven/api/org/sapia/soto/regis/RegistryService.html">
+      RegistryService</sapia:class> instance at runtime.
+      </p>
+      
+      <p>A <sapia:class>RegistryService</sapia:class> instance expects Regis-defined properties in order to create the underlying
+      registry that will be used (see the Regis framework's documentation with regards to these properties). The properties can be specified
+      in many ways, through dependency injection:</p>
+      
+      <ul>
+        <li>By assigning a <sapia:class>java.util.Properties</sapia:class> instance.</li>
+        <li>By specifying the URI corresponding to a Java properties file (the URI is expected to be understood by Soto - it will
+        be resolved using Soto's resource-handling capabilities).</li>        
+        <li>By assigning each property individually.</li>                
+      </ul>
+      
+      <p>The above methods can be used in conjunction. The following example illustrates what we mean:</p>
+
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto" 
+  xmlns:log="soto:log" 
+  xmlns:regis="soto:regis">
+
+  <soto:service id="registry">
+    <regis:registry uri="path/to/properties">
+      <properties>
+        <soto:properties uri="path/to/other/properties" />
+      </properties>
+      <property name="propName" value="propValue" />
+    </regis:registry>
+  </soto:service>
+...
+</soto:app>]]></sapia:code>
+
+      <p>Now, more concretely, here is how a <sapia:class>RegistryService</sapia:class> would be configured
+      to use a <sapia:class>org.sapia.soto.regis.local.LocalRegistry</sapia:class>:</p>
+
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto" 
+  xmlns:log="soto:log" 
+  xmlns:regis="soto:regis">
+
+  <soto:service id="registry">
+    <regis:registry>
+      <property name="org.sapia.regis.factory" 
+        value="org.sapia.soto.regis.local.LocalRegistry" />
+      <property name="org.sapia.regis.local.bootstrap" 
+        value="etc/regis/regisConfig.xml" />        
+    </regis:registry>
+  </soto:service>
+...
+</soto:app>]]></sapia:code>
+
+    </sapia:sect3>
+     
+    <sapia:sect3 title="Includes">
+    
+      <sapia:sect4 title="regis:include">
+        <p>The <sapia:command>regis:include</sapia:command> element allows including
+        a Soto configuration file (that must evaluate to a single object, be it a
+        Soto service or not). That is: the element is inserted in a given
+        Soto configuration, and "points" to another configuration file, which
+        is evaluated at initialization time.</p>
+        
+        <p>For example, given the following:</p>
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  ...
+  <soto:service id="registry">
+    <regis:registry uri="com/acme/sso/regis.properties" />
+  </soto:service>
+  
+  <regis:foreach uri="dbService.xml">
+    <nodes>
+      <regis:query path="databases" />
+    </nodes>
+  </regis:foreach>  
+  
+  <soto:service id="dbService">
+    <regis:include path="registry/databases/002" 
+                   uri="dbService.xml" />
+  </soto:service>
+  ...
+<soto:app>]]></sapia:code>        
+        
+        <p>The <sapia:command>regis:include</sapia:command> element expects the
+        following elements/attributes:</p>
+        
+        <ul>
+          <li><b>uri</b>: a Soto URI pointing to the file to include.</li>
+          <li><b>path</b>: corresponds to the registry service instance to use and 
+          the path of the <sapia:class>Node</sapia:class> whose properties will be made 
+          available to the included file, for variable interpolation. The path is expected
+          to have the following format <sapia:command>serviceId/path/to/node</sapia:command>.</li>
+        </ul>
+        
+        <sapia:note>For the sake clarity, let us say that it is very well possible to have
+        more than one registry service instantiated as part of a Soto container. That
+        is why the first element in the path is the identifier of the registry
+        service instance to use. The rest of the path is delegated to the actual registry
+        instance, ans is interpreted by the latter as specifying the path of a desired 
+        node.</sapia:note>
+        
+        <p>The example file above points to an "dbService.xml" file, which, given
+        the URI, is evaluated relatively to the including file. Here is the
+        hypothetical content of the file that is included:</p> 
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  
+  <soto:service id="database/${@regis.node.name}">
+    <sample:dbService 
+      username="${username}" 
+      password="${password}" 
+      url="${url}">
+    </sample:dbService>
+  </soto:service>
+<soto:app>]]></sapia:code>      
+        <p>
+          The excerpt above attempts to demonstrate two things:
+          <ol>
+            <li>The properties of the registry node in the context of which
+            the inclusion is performed are made available to the included file.</li>
+            <li>The <sapia:command>regis:include</sapia:command> element in
+            addition exports special, built-in variables: <b>@regis.node.name</b>
+            and <b>@regis.node.path</b>, corresponding to the current node's
+            name and absolute path, respectively.</li>
+          </ol>
+        </p>
+        
+        <sapia:note>
+          Keep in mind that variable resolution works in the context of nested 
+          includes also: if some variables cannot be resolved at the current
+          inclusion level, resolution is attempted at the parent inclusion levels.
+        </sapia:note>
+
+        <a name="propAlias" />
+        <p>It is also possible to specify nested <sapia:command>param</sapia:command> elements within an include.
+        Such elements allow:
+        <ul>
+          <li>a) declaring parameters whose values can be recuperated in the included file using the <sapia:command>${param_name}</sapia:command>
+          notation;</li>
+          <li>b) injecting node properties as parameters, under an alternate name (i.e.: an alias).</li>
+        </ul>
+        The example below demonstrates what we mean: 
+        </p>
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  ...
+  <soto:service>
+    <regis:include uri="subConfig.xml">
+      <path>registry/myapp/users/dbUser</path>
+      <path>registry/myapp/databases/prod</path>
+      <param name="someParam" value="someValue" />
+      <param name="username"  alias="db.user.username" />     
+      <param name="password"  alias="db.user.password" />           
+    </regis:include>
+  </soto:service>
+  ...
+<soto:app>]]></sapia:code>                
+        <p>When a <sapia:command>param</sapia:command> element is used with a <sapia:command>name</sapia:command> and <sapia:command>value</sapia:command>
+        attribute, the specified value can be recuperated in the included file, using the <sapia:command>${param_name}</sapia:command> notation.</p>
+        
+        <p>In the second case though, when the <sapia:command>name</sapia:command> and <sapia:command>alias</sapia:command> combination is used, the
+        given name is interpreted as the name of a property on the included node. The value of that property is then "exported" to the included file
+        using the given alias. Therefore, the value of the aliased property can be recuperated in the included file using <sapia:command>${alias_name}</sapia:command>.</p>
+
+        <a name="compositeNode" />
+        <p>Furthemore, note that the element may take one to many <b>path</b> elements (instead of attributes)
+        in order to allow specifying multiple nodes to retrieve. In this case, a 
+        <sapia:class target="composite" link="maven/api/org/sapia/soto/regis/CompositeNode.html">CompositeNode</sapia:class> 
+        is created, that is made to hold the nodes corresponding to each of the specified paths. Each of these nodes is added to the
+        composite node under its name (not its absolute path). Therefore, if the name of a given node X is "nodeX", and that node is added to
+        a composite node, it can be retrieved under that composite as follows: composite.getChild("nodeX"). When using
+        multiple paths, the <sapia:command>regis:node</sapia:command> element evaluates to a composite node, and applications
+        should behave accordingly. The snippet below shows how multiple paths are specified: 
+        </p>
+        
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  ...
+  <soto:service>
+    <regis:include uri="subConfig.xml">
+      <path>registry/myapp/users/dbUser</path>
+      <path>registry/myapp/databases/prod</path>      
+    </regis:include>
+  </soto:service>
+  ...
+<soto:app>]]></sapia:code>        
+        
+          <p>In the above example, the include evaluates to a composite node, with 2 child nodes. These child nodes
+          are bound to the composite node using their respective names (dbUser and prod). This means that the "dbUser"
+          node can accessed using <sapia:command>getChild("dbUser")</sapia:command> on the composite that the
+          <sapia:command>regis:include</sapia:command> element evaluates to. In addition, an <sapia:command>alias</sapia:command>
+          attribute can be specified on the <sapia:command>path</sapia:command> element, which in this case will be 
+          used when binding the child node under the composite:</p>
+        
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  ...
+  <soto:service>
+    <regis:include uri="subConfig.xml">
+      <path>registry/myapp/users/dbUser</path>
+      <path alias="database">registry/myapp/databases/prod</path>      
+    </regis:include>
+  </soto:service>
+  ...
+<soto:app>]]></sapia:code>
+
+          <p>
+          In addition, note that the <sapia:command>path</sapia:command> element can take an optional 
+          <sapia:command>notNull</sapia:command> attribute. If the attribute's value is set to 
+          <sapia:command>false</sapia:command>, no exception will be thrown if no node could be found 
+          under the corresponding path. The snippet below provides an example:
+          </p>
+
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  ...
+  <path alias="database" notNull="false">registry/myapp/databases/prod</path>      
+  ...
+<soto:app>]]></sapia:code>
+
+        </sapia:sect4>
+    
+      <sapia:sect4 title="regis:foreach">
+        <p>The <sapia:command>regis:foreach</sapia:command> element is similar to the
+        <sapia:command>regis:include</sapia:command> element, but is meant for a special
+        purpose: it is provided in order to allow aggregating service instances, based
+        on corresponding configuration nodes in the registry.</p>
+        
+        <p>For example, let's say that you implement a single-sign-on service that 
+        can potentially connect to multiple different databases at once, using each
+        database as a source of users. Let's say that the single-sign-on service 
+        dispatches authentication to internal authentication handler (each handler
+        being in charge of connecting to a source of users - be it a relational 
+        database, a XML file, etc.).</p>
+        
+        <p>Now, from a configuration point of view, one way to tackle this problem
+        would be to "statically" include the configuration required by each handler in your
+        application. But what if you want to add other handlers dynamically (i.e.: what
+        if you do not want to redeploy your single-sign-on service when a new user
+        data source is integrated)? Or what if the handlers that are present in your
+        different environments (dev, QA, prod, etc.) are not the same across
+        all environments?</p>
+        
+        <p>Well, using Soto in conjunction with Regis (more precisely, using the
+        <sapia:command>regis:foreach</sapia:command> element) allows solving this
+        problem elegantly. Let's demonstrate how. Here's the Regis configuration
+        file that would correspond to the different databases used to acquire user
+        account information (always in the context of our single-sign-on example):</p>
+    <sapia:code><![CDATA[<registry>
+  <node name="databases">
+    <node name="000">
+      <property name="username" value="jsmith" />
+      <property name="password" value="foo123" />      
+      <property name="url"      value="jdbc://saturn:5432/" />
+    </node>
+    <node name="001" id="db1">
+      <property name="username" value="stiger" />
+      <property name="password" value="bar123" />
+      <property name="url"      value="jdbc://pluto:5432/" />
+    </node>    
+    <node name="002">
+      <link ref="db1" />
+      <property name="url"      value="jdbc://mercury:5432/" />
+    </node>        
+  </node>]]></sapia:code>    
+        <p>Now, let's say that what we want, in terms of Soto services, is the following:</p>
+        <ul>
+          <li>One authentication handler per data source.</li>
+          <li>The single-sign-on service, to which the handlers are injected/aggregated
+          at initialization time.</li>
+        </ul>    
+        
+        <p>Here's how the above wish is fulfilled, using the 
+        <sapia:command>regis:foreach</sapia:command> element:</p>
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sso="acme:sso">
+  
+  <soto:namespace prefix="sample">
+    <def class="com.acme.sso.SSOService"  name="ssoService" />
+    <def class="com.acme.sso.JDBCHandler" name="jdbcHandler" />
+  </soto:namespace>
+    
+  <soto:service id="registry">
+    <regis:registry uri="etc/regis/regis.properties" />
+  </soto:service>
+  
+  <regis:foreach uri="authenticationHandler.template.xml">
+    <nodes>
+      <regis:query path="registry/databases" />
+    </nodes>
+  </regis:foreach>  
+    
+  <soto:service id="singleSignOn">
+    <sample:ssoService>
+      <handlers>
+        <soto:select>
+          <attribute name="acme:ssoType" 
+                     value="authenticationHandler" />
+        </soto:select>
+      </handlers>      
+    </sample:client>
+  </soto:service>  
+  
+</soto:app>]]></sapia:code>        
+        <p>
+         The <sapia:command>regis:foreach</sapia:command> element expects the following
+         elements/attributes:
+         
+         <ul>
+            <li><b>uri</b>: this attribute indicates the file to include.
+            </li>
+            <li><b>nodes</b>: this element expectes a nested element that will be evaluated
+            to a collection (<sapia:class>java.util.Collection</sapia:class>) of nodes
+            at initialization time (this is exactly what the <sapia:command>regis:query</sapia:command>
+            element corresponds to).</li>
+         </ul>
+        </p>
+        
+        <p>How it works:</p>
+        <ul>
+          <li>At initialization time, the Nodes corresponding to the
+              given <sapia:command>regis:query</sapia:command> elements are acquired.</li>
+          <li>Inclusion of the specified file is performed using each acquired node,
+          one after the other.</li>
+        </ul>
+        
+        <p>And for the sake of completeness, here is the content of the 
+        <sapia:command>authenticationHandler.template.xml</sapia:command>:</p>
+
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sso="acme:sso">
+          
+  <soto:service id="database/${@regis.node.name}">
+    <attribute name="acme:ssoType" 
+               value="authenticationHandler" />
+    <acme:jdbcHandler 
+      username="${username}" 
+      password="${password}" 
+      url="${url}">
+    </acme:jdbcHandler>
+  </soto:service>
+  
+</soto:app>]]></sapia:code>        
+
+        <p>Thus, in the context of our problem, the following happens:
+          <ul>
+            <li>The collection of nodes corresponding to the specified query is acquired.</li>
+            <li>The <sapia:command>authenticationHandler.template.xml</sapia:command> file is
+            included for as many nodes as there are in the collection. The current node's
+            properties become candidate of variable interpolation, when including
+            the file.</li>
+          </ul>
+        </p>
+        <p>The net result will be that one authentication handler will be created
+        for each given node. If the Regis configuration changes, it is reflected in
+        the service instances that are created. This way, you externalize part of the
+        assembly of your application services. In our case, the 
+        <sapia:command>authenticationHandler.template.xml</sapia:command> file acts
+        (as the file's extension suggests) as a configuration template for potential
+        Soto services. This, coupled with Regis' distributed configuration
+        capabilities, is a great way to avoid application redeployment when
+        service configuration and/or application structure changes - the only thing
+        needed is to reload/restart your app.</p>
+        
+        <p>Lastly, the <sapia:command>regis:foreach</sapia:command> element supports
+        nested <sapia:command>param</sapia:command> elements. Their use is identical to the
+        one explained <a href="#propAlias">earlier on</a>:</p>
+        
+<sapia:code><![CDATA[<regis:foreach uri="authenticationHandler.template.xml">
+    ...
+    <nodes>
+      <regis:query path="registry/databases" />
+      <param name="username" alias="auth.username" />
+      <param name="password" alias="auth.password" />
+
+    </nodes>
+    ...
+  </regis:foreach>]]></sapia:code>           
+        
+        
+      </sapia:sect4>  
+      <sapia:sect4 title="Node and Property References">
+        <p>When file includes are performed (that is, when the 
+          <sapia:command>regis:include</sapia:command> or <sapia:command>regis:foreach</sapia:command>
+          elements are used), special elements can be used in the included configuration in order
+          to:
+          <ul>
+            <li>Inject the current node (i.e.: the one that is "passed" to the included file).</li>
+            <li>Inject properties of the current node.</li>
+          </ul>
+        </p>
+        <p>Here is an example for both cases:</p>
+<sapia:code><![CDATA[<sample:dbService 
+      xmlns:soto="sapia:soto"
+      xmlns:regis="soto:regis"
+      xmlns:sample="soto:sample">
+  <username>
+    <regis:propertyRef name="username" />      
+  </username>
+  <password>
+    <regis:propertyRef name="password" />      
+  </password>
+  <url>
+    <regis:propertyRef name="url" />
+  </url> 
+</sample:dbService>]]></sapia:code>
+        <p/>
+<sapia:code><![CDATA[<sample:dbService 
+      xmlns:soto="sapia:soto"
+      xmlns:regis="soto:regis"
+      xmlns:sample="soto:sample">
+  <config>
+    <regis:nodeRef />      
+  </config>
+</sample:dbService>]]></sapia:code>
+      
+        <p>
+        Both elements are typically used in the context of an included file. But
+        this can be worked around as far as the <sapia:command>regis:propertyRef</sapia:command>
+        element is concerned. To avoid the file inclusion constraint, the <sapia:command>soto:bind</sapia:command>
+        element can be used in order to lookup a node that can be referred to later on:
+        </p>
+        
+<sapia:code><![CDATA[<soto:app 
+      xmlns:soto="sapia:soto"
+      xmlns:regis="soto:regis"
+      xmlns:sample="soto:sample">
+  ...
+  <soto:bind id="db-node">
+    <regis:node path="registry/database/connection" />
+  </soto:bind>
+  ...
+</soto:app>]]></sapia:code>
+
+        <p>
+        Then, to refer to the configured node from a <sapia:command>propertyRef</sapia:command>, the
+        <sapia:command>soto:ref</sapia:command> element can be used:
+        </p>
+<sapia:code><![CDATA[<soto:app 
+      xmlns:soto="sapia:soto"
+      xmlns:regis="soto:regis"
+      xmlns:sample="soto:sample">
+  ...
+  <soto:service>
+    <sample:dbService>
+      <url>
+        <regis:propertyRef name="url">
+          <soto:ref id="db-node" />
+        </regis:propertyRef>
+      </url>
+    </sample:dbService>
+  </soto:service>
+  ...
+</soto:app>]]></sapia:code>        
+        
+        <p>Note that the <sapia:command>regis:propertyRef</sapia:command> elements supports a nested
+        <sapia:command>node</sapia:command> element. That element must evaluate to the Node from
+        which the given property should be acquired. As a shortcut, the <sapia:command>nodeRef</sapia:command>
+        attribute can be used, which in this case takes the ID of the node to use:</p>
+
+<sapia:code><![CDATA[<soto:app 
+      xmlns:soto="sapia:soto"
+      xmlns:regis="soto:regis"
+      xmlns:sample="soto:sample">
+  ...
+  <soto:service>
+    <sample:dbService>
+      <url>
+        <regis:propertyRef nodeRef="db-node" name="url" />
+      </url>
+    </sample:dbService>
+  </soto:service>
+  ...
+</soto:app>]]></sapia:code>        
+        
+        <p>
+        Furthermore, if the "current" (or referred) node has child nodes, you can access properties of these nodes 
+        in the following manner:
+        </p>
+<sapia:code><![CDATA[<sample:clientConnection 
+      xmlns:soto="sapia:soto"
+      xmlns:regis="soto:regis"
+      xmlns:sample="soto:sample">
+  <timeout>
+    <regis:propertyRef path="connection/http" name="timeout" />
+  </timeout>   
+  <url>
+    <regis:propertyRef name="connection/http@url" />
+  </url>
+</sample:clientConnection>]]></sapia:code>
+        <p>The first <sapia:command>propertyRef</sapia:command> element takes an optional
+        <sapia:command>path</sapia:command> attribute, which specifies the path of the child
+        node (under the current node) that holds the desired property. The second element shows
+        an alternate notation, where the path and property name are delimited by a "@".</p>
+        
+      </sapia:sect4>
+    </sapia:sect3>
+    <sapia:sect3 title="Node injection">
+      <p>
+        The <sapia:command>regis:query</sapia:command> and <sapia:command>regis:node</sapia:command>
+        respectively allow retrieving a collection of nodes corresponding to a path and criteria, 
+        or a single node, given a path. The <sapia:command>regis:query</sapia:command> element
+        has been seen in action in the context of file includes, but its use is not limited to that.
+        As was explained, the element evaluates at initialization time to a collection of nodes matching
+        the actual configured query:
+      </p>
+<sapia:code><![CDATA[...
+<soto:service>
+    <sample:someService>
+      <nodes>
+        <regis:query path="registry/users/backoffice">
+          <param name="username" value="cbrown" />
+        </regis:query>
+      </nodes>      
+    </sample:someService>
+  </soto:service>  
+...]]></sapia:code>
+      
+      <p>The element takes the following attributes/nested elements:</p>
+      <ul>
+        <li><b>path</b>: attribute that corresponds to the path of the node in the context of which the query will be
+        executed - children of that node that match the query criteria will be returned.</li>
+        <li><b>param</b>: optionally one to many such elements can be used to specify criterion for which node properties
+        will be tested.</li>
+      </ul>
+      
+      <p>For its part, the <sapia:command>regis:node</sapia:command> element evaluates to a single node. Its
+      use is straightforward:</p>
+    
+<sapia:code><![CDATA[...
+<soto:service>
+    <sample:someService>
+      <config>
+        <regis:node path="registry/users/backoffice" />
+      </config>      
+    </sample:someService>
+</soto:service>  
+...]]></sapia:code>
+      
+      <p>The element takes one <b>path</b> attribute, specifying the path of the node to retrieve. But it can instead
+      nest multiple <sapia:command>path</sapia:command> elements. In this case, the <sapia:command>regis:node</sapia:command>
+      element evaluates to a composite node (which was explained <a href="#compositeNode">earlier on</a>).</p>
+      
+    </sapia:sect3>
+    <sapia:sect3 title="Regis URIs">
+      <p>The Regis integration supports special URIs that allow retrieving properties of a given 
+       node as a stream of Java properties. In order to use one such URI, at least one registry service must
+       have been configured has part of your application. The use of Regis URIs is illustraded below:</p>
+     
+<sapia:code><![CDATA[<soto:app
+  xmlns:soto="sapia:soto" 
+  xmlns:props="soto:properties">
+
+  <soto:service id="properties">
+    <props:configuration>
+      <properties name="default" uri="defaults.properties" />
+      <properties name="sso"      
+        uri="regis:/registry/acme/sso/global"
+        depends="default" />
+    </props:configuration>
+  </soto:service>
+</soto:app>]]></sapia:code>
+    
+      <p>
+      The above URI corresponds to our single-sign-on example, seen previously. In this case, the URI would yield a stream
+      of Java properties corresponding to the node with the following path: <sapia:command>databases/CRM</sapia:command>. 
+      The first part in the path ( <sapia:command>registry</sapia:command>) corresponds to the identifier of the registry
+      service to use in order to resolve the URI.
+      </p>
+    
+      <p>
+      As our example shows, since Regis URIs yield Java properties, they can be used in conjunction with Soto's 
+      <a href="http://www.sapia-oss.org/projects/properties">Properties Service</a>.
+      </p>
+      
+      <p>Furthermore, the URI supports a special notation, illustrated below:</p>
+    
+<sapia:code><![CDATA[<soto:app
+  xmlns:soto="sapia:soto" 
+  xmlns:props="soto:sample">
+  <soto:service>
+    <sample:loggingService
+      uri="regis:/registry/acme/logging?resource:/com/acme/log4j.xml"
+    />
+  </soto:service>
+</soto:app>]]></sapia:code>
+      <p>The Regis URI allows passing a "sub-URI" (after a question mark). If such a URI is configured, then it is the stream of the
+      resource corresponding to that URI that is returned. The first part(preceding the question mark), indicates the node whose properties
+      will be "injected" into the underlying file. More concretely: the node's properties can be recuperated in the underlying file
+      using the <sapia:command>${property_name}</sapia:command> notation. For example, here is the <sapia:command>log4j.xml</sapia:command>
+      that would be loaded:
+      </p>
+      
+<sapia:code><![CDATA[<?xml version="1.0" encoding="UTF-8" ?>
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+  <appender name="console" class="org.apache.log4j.ConsoleAppender" />
+  <root>
+      <level value="${debugLevel}" />
+      <appender-ref ref="console" />
+  </root>
+</log4j:configuration>]]></sapia:code>      
+
+      <p>The <sapia:command>${debugLevel}</sapia:command> variable in the file would correspond to the <sapia:command>debugLevel</sapia:command>
+      property under the <sapia:command>acme/logging</sapia:command> node.</p>
+      
+      <p>Here is another example of the URI use:</p>
+      
+<sapia:code><![CDATA[<soto:app
+  xmlns:soto="sapia:soto" 
+  xmlns:props="soto:sample">
+  <soto:service>
+    <sample:dummyService>
+      <soto:properties uri="regis:/registry/acme/someProperties" />
+    </sample:dummyService>
+  </soto:service>
+</soto:app>]]></sapia:code>
+
+     <p>The <sapia:command>soto:properties</sapia:command> element evaluates to a <sapia:class>java.util.Properties</sapia:class>. It 
+     expects a URI corresponding to a Java property resource , which in this case correspond to a registry node.</p>
+      
+      
+      <sapia:note>
+      Note that the appended URI cannot be a relative URI.
+      </sapia:note>
+    </sapia:sect3>
+    
+    <sapia:sect3 title="Configuration Beans">
+      <p>Soto supports Regis' "configuration bean" feature (see the Regis doc for details). In short, this feature allows specifying a
+      Java interface corresponding to a given configuration node. An implementation of the interface is created as a dynamic proxy "on top"
+      of that node. In order to inject a configuration bean, the <sapia:command>regis:bean</sapia:command> element is used:</p>
+    
+<sapia:code><![CDATA[...
+<soto:service>
+    <sample:someService>
+      <config>
+        <regis:bean path="registry/users/backoffice" 
+          implements="org.acme.app.DbConfiguration"/>
+      </config>
+    </sample:someService>
+  </soto:service>
+...]]></sapia:code>
+    
+      <p>
+      The <sapia:command>regis:bean</sapia:command> element expects the following nested elements/attributes:
+      </p>
+      <ul>
+        <li><b>path</b>: attribute that specifies the path to the node over which to create a dynamic proxy.</li>
+        <li><b>implements</b>: attribute that indicates the Java interface (given as the interface's fully-qualified name) that the dynamic
+        proxy should implement.</li>
+      </ul>
+      <p>
+      When a getter method on the generated configuration bean is called, an underlying <sapia:class>RegisSession</sapia:class> is created and closed.
+      This means that if you call many getters in one unit of work, multiple sessions are opened/and closed, as in the following:
+      </p>
+    
+<sapia:code>...
+long timeout = sessionConfigBean.getTimeout();
+boolean persist = sessionConfigBean.getPersist();
+...</sapia:code>
+    
+      <p>
+        In the above case, a session is created for each method call. To ensure that a unique session is created for a unit of work, 
+        you must do as follows:
+      </p>
+<sapia:code>import org.sapia.regis.SessionUtil;
+...
+
+SessionUtil.openSessionFor(sessionConfigBean);
+try{
+  long timeout = sessionConfigBean.getTimeout();
+  boolean persist = sessionConfigBean.getPersist();
+  ...
+}finally{
+  SessionUtil.close();
+}</sapia:code>
+      
+    </sapia:sect3>
+  </sapia:sect2>
+  <sapia:sect2 title="Conclusion">
+   <p>For more details about Regis, consult the <a href="http://www.sapia-oss.org/projects/regis">project's web site</a>.</p>
+  </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>

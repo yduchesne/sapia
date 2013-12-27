@@ -1,0 +1,61 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:mq="soto:activemq"
+          xmlns:test="soto:test">
+
+  <soto:namespace prefix="test">
+      <def class="org.sapia.soto.activemq.cluster.TestableClusterPeer" name="peer" />
+  </soto:namespace>          
+
+
+  <soto:service id="connectionFactory">
+      <mq:factory>
+          <brokerURL>vm://localhost?broker.persistent=false&amp;broker.useJmx=false</brokerURL>
+      </mq:factory> 
+  </soto:service>         
+  
+  <soto:service id="clusterFactory">
+      <mq:clusterFactory acknowledgeMode="1" dataTopicPrefix="SAPIACLUSTER." deliveryMode="1"
+                         inactiveTime="60000" transacted="false" useQueueForInbox="false">
+          <connectionFactory>
+              <soto:serviceRef id="connectionFactory" />
+          </connectionFactory>
+      </mq:clusterFactory>
+  </soto:service>           
+
+  <soto:service id="peerA">
+      <test:peer name="peerA">
+          <cluster>
+              <mq:cluster groupName="sapia.soto.test">
+                  <clusterFactory>
+                      <soto:serviceRef id="clusterFactory" />
+                  </clusterFactory>
+              </mq:cluster>
+          </cluster>
+      </test:peer>
+  </soto:service>
+
+  <soto:service id="peerB">
+      <test:peer name="peerB">
+          <cluster>
+              <mq:cluster groupName="sapia.soto.test">
+                  <clusterFactory>
+                      <soto:serviceRef id="clusterFactory" />
+                  </clusterFactory>
+              </mq:cluster>
+          </cluster>
+      </test:peer>
+  </soto:service>
+
+  <soto:service id="peerC">
+      <test:peer name="peerC">
+          <cluster>
+              <mq:cluster groupName="sapia.soto.test">
+                  <clusterFactory>
+                      <soto:serviceRef id="clusterFactory" />
+                  </clusterFactory>
+              </mq:cluster>
+          </cluster>
+      </test:peer>
+  </soto:service>
+  
+</soto:app>

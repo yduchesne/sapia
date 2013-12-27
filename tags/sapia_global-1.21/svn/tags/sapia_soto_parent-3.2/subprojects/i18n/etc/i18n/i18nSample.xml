@@ -1,0 +1,8 @@
+<soto:app xmlns:soto="sapia:soto">
+  
+  <soto:service>
+    <soto:i18n>
+      <entries id="hello" uri="entries.xml" />
+    </soto:i18n>
+  </soto:service>
+</soto:app>

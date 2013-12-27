@@ -1,0 +1,7 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="osgi">
+    <def class="org.sapia.soto.osgi.deployer.DeploymentManagerImpl" name="deploymentManager" />    
+    <def class="org.sapia.soto.osgi.deployer.BundleDeployer"        name="bundleDeployer" />        
+    <def class="org.sapia.soto.osgi.OSGILayer"                      name="publish" />            
+  </soto:namespace>
+</soto:defs>

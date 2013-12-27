@@ -1,0 +1,13 @@
+<registry>
+  <node name="databases">
+    <staticInclude uri="etc/staticIncludeFile.xml">
+      <param name="username" value="jsmith" />
+      <param name="password" value="foo123" />      
+      <param name="url" value="jdbc://saturn:5432/" />            
+      <param name="maxConnection" value="10" />                  
+    </staticInclude>
+  </node>
+  <node name="datalink">
+    <link path="databases/000" />
+  </node>
+</registry>

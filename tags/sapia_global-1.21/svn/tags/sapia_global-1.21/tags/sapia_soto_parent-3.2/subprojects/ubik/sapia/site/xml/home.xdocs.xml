@@ -1,0 +1,526 @@
+<sapia:page title="Soto Remoting" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+    <sapia:vsection name="Soto Home" href="../../index.html"/>
+    <sapia:vsection name="Project Home" href="index.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Ubik Integration">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org/home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../index.html" />
+      <sapia:path name="ubik"/>      
+    </sapia:section>
+    
+    <toc/>
+    
+    <sapia:sect2 title="Overview">
+      <sect-desc>
+        <p>Soto's Ubik integration of course depends on the <a href="http://www.sapia-oss.org/projects/ubik/" target="window_ubik">Ubik</a> 
+        distributed computing framework. It comes with:</p>
+        
+        <ul>
+         <li>A Soto layer that allows transparently distributing plain-vanilla Soto services over the network.</li>
+         <li>A monitoring framework.</li>         
+        </ul>
+        
+        
+        <sapia:note>Ubik integration sits on top of the Ubik RMI runtime. Generated stubs for remoted
+        Soto services obey the rules of Ubik. Please refer to the latter's doc for more information.</sapia:note>
+
+        <p><b>Prefix</b>: ubik</p>
+        <p><b>Namespace</b>: soto:ubik</p>
+        
+      </sect-desc>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="The Ubik Layer">
+      <sect-desc>
+        <p>A Ubik layer is applied to a Soto service by defining a <sapia:command>ubik:bind</sapia:command>
+        element under the <sapia:command>soto:service</sapia:command> element that corresponds to the 
+        desired service.</p>
+      </sect-desc>
+    </sapia:sect2>
+    <sapia:sect2 title="Usage">
+        <sapia:sect3 title="Remoting a Service">
+          <p>To distribute a service, follow the steps below:</p>
+          
+          <sapia:sect4 title="1. Create the NamingService">
+          
+            <p>The <sapia:command>ubik:naming</sapia:command> element creates a service that is
+            in fact a proxy that hooks up to a Ubik JNDI server - which must be running. Remoted services must
+            be provided with such an instance in order to be able to publish themselves. The following
+            ilustrates how to instantiate a <sapia:class>NamingService</sapia:class>:</p>
+          
+<sapia:code><![CDATA[          
+<soto:service id="ubik/naming">
+  <ubik:naming jndiHost="localhost" 
+               jndiPort="1099" 
+               domain="ubikSample"/>
+                     
+</soto:service>]]></sapia:code>
+
+            <p>The instance is configured with the following attributes (all <b>mandatory</b>:</p>
+            
+            <ul>
+              <li><b>jndiHost</b>: the host of the remote JNDI server to which the service connects (<b>optional</b>, defaults to localhost).</li>
+              <li><b>jndiPort</b>: the port of the remote JNDI server to which the service connects (<b>optional</b>, defaults to 1099).</li>
+              <li><b>multicastHost</b>: the multicast address used for discovery - see note below (<b>optional</b>, defaults to 224.0.0.1).</li>
+              <li><b>multicastPort</b>: the multicast port used for discovery (<b>optional</b>, defaults to 5454).</li>
+              <li><b>domain</b>: the logical domain that the service is part of (<b>optional</b>, defaults to "default").</li>
+            </ul>
+
+            <sapia:note>
+            Note that <b>client-side</b> discovery is supported, in a-la-Jini fashion: if a connection to the 
+            specified remote JNDI provider can't be acquired, Ubik attempts to discover another one in the domain:
+            the service instance registers behind the scenes with the Ubik framework in order to be notified when a 
+            Ubik JNDI server appears on the network.
+            </sapia:note>
+           
+          </sapia:sect4>
+          <sapia:sect4 title="2. Bind your Service">
+          
+            <p>To bind a given service, apply the Ubik layer to it, using the <sapia:command>ubik:bind</sapia:command>
+            element:</p>
+          
+ <sapia:code>
+&lt;soto:service id="soto/ubik/pingService"&gt;
+  
+  &lt;!-- Our service instance to be remoted --&gt;
+  
+  &lt;example:pingService/&gt;
+
+  &lt;!-- The layer that binds the service --&gt;
+  &lt;ubik:bind&lt;
+  
+    &lt;!-- 
+      Assigning the naming service (see above) that will 
+      be used for the binding. The UbikLayer class has a 
+      setNamingService() method that expects a NamingService
+    --&gt;
+    &lt;namingService&gt;
+    
+      &lt;!-- 
+         Note the "id" - it refers to the service 
+         configured in step 1 
+      --&gt;
+      &lt;soto:serviceRef id="ubik/naming" /&gt;
+    &lt;/namingService&gt;
+
+  &lt;/ubik:bind&gt;
+
+&lt;/soto:service&gt;</sapia:code>
+
+            <p>The Ubik layer supports the following attributes and elements:</p>
+            
+            <ul>
+              <li><b>jndiName</b>: The JNDI name under which the server should be bound, and with
+              which it should be looked up (<b>optional</b>). If omitted, the Soto service identifier is used.</li>
+
+              <li><b>namingService</b>: A service reference that associates an existing naming service
+              to the layer(<b>optional</b>). If omitted, the layer attempts acquiring a 
+              <sapia:class>NamingService</sapia:class> instance from the Soto container.</li>              
+            </ul>
+            
+            <p>If the <sapia:command>jndiName</sapia:command> attribute is not specified, the layer resorts
+            to using the service's identifier as a JNDI name; if no identifier is specified, an exception
+            is thrown.</p>
+          
+          </sapia:sect4>
+          
+        </sapia:sect3>
+        <sapia:sect3 title="Remote Service Association">
+          <p>Once a service has been bound it can be looked up and associated to other services, using
+          the <sapia:command>soto:lookup</sapia:command> element:</p>
+          
+<sapia:code><![CDATA[
+<soto:service>
+  <example:pingClient>
+          
+    <pingService>
+      <ubik:lookup 
+            jndiHost="localhost" 
+            jndiPort="1099" 
+            jndiName="soto/ubik/pingService"
+            domain="ubikSample" />
+    </pingService>
+    
+  </example:pingClient>
+</soto:service>]]></sapia:code>
+
+            <p>The <sapia:command>soto:lookup</sapia:command> element supports the following 
+            attributes:</p>
+            
+            <ul>
+              <li><b>jndiName</b>: The JNDI name with which to perform the lookup (<b>mandatory</b>).</li>            
+              <li><b>jndiHost</b>: the host of the remote JNDI server to look up (<b>optional</b>, defaults to localhost).</li>
+              <li><b>jndiPort</b>: the port of the remote JNDI server to look up (<b>optional</b>, defaults to 1099).</li>
+              <li><b>domain</b>: the logical domain that looked up service is part of (<b>optional</b>, defaults to "default").</li>
+            </ul>
+
+            <p>The lookup implementation will use the provided information to acquire a remote service instance from
+            the JNDI server and return it to the calling code. In our example, we then assign the looked up service to our ping client
+            service, that has a <sapia:command>setPingService()</sapia:command>. The <sapia:command>soto:lookup</sapia:command>
+            element can be viewed as a distributed service reference.</p>            
+
+        </sapia:sect3>
+
+        <sapia:sect3 title="Custom Properties">
+
+          <p>Ubik supports multiple types of transport. It also supports
+          <a href="http://www.sapia-oss.org/projects/ubik/maven/api/org/sapia/ubik/rmi/server/transport/http/HttpConsts.html" target="props">
+          configuration properties</a>, very often transport-dependent. The Ubik layer allows passing properties to 
+          the underlying Ubik framework. The example below corresponds to the 
+          <a href="http://www.sapia-oss.org/projects/ubik/transport/http.html" target="http">HTTP transport</a> on
+          Ubik's web site: </p>
+         
+<sapia:code><![CDATA[
+<soto:service>
+  <example:pingClient>
+     
+    <pingService/>
+
+    <ubik:bind jndiName="soto/ubik/pingService">
+      <!-- Indicates to the Ubik runtime which 
+           transport provider to use -->
+      <property>
+        <name>ubik.rmi.transport.type</name>
+        <value>http</value>
+      </property>
+      <!-- The port under which the embedded web 
+           server should be bound -->
+      <property>
+        <name>ubik.rmi.transport.http.port</name>
+        <value>8080</value>
+      </property>
+      <!-- The context path under the web root that 
+           the server corresponds to -->
+      <property>
+        <name>ubik.rmi.transport.http.path</name>
+        <value>/ubik</value>
+      </property>
+      <!-- The public URL that is embedded in the stubs 
+           generated by Ubik -->
+      <property>
+        <name>ubik.rmi.transport.http.url</name>
+        <value>http://www.someurl.org/ubik</value>
+      </property>
+    </ubik:bind>
+        
+  </example:pingClient>
+</soto:service>]]></sapia:code>
+
+        </sapia:sect3>
+
+        <sapia:sect3 title="Remote Service Proxies">
+          <p>A distributed applications is made of different stand-alone applications
+          that collaborate with each other by way of the network. Stand-alone applications
+          therefore rely on existing network links to perform these tasks. Such dependencies
+          can pose problems: what if stand-alone application A needs the services of
+          stand-alone application B upon startup and B is not yet up? The only workarounds
+          are to make sure B has started before starting A, or to leave the RPC model of
+          communication at once and go for Javaspace or JMS...</p>
+
+          <p>Soto provides a convenient service that in fact proxies a remote service without
+          requiring that the remote service be running at startup. Imagine the A and B services
+          of our example:</p>
+
+<sapia:code><![CDATA[
+...
+<soto:service>
+  <example:serviceA>
+    <serviceB>
+      <soto:serviceRef id="serviceB" />
+    </serviceB>
+  </example:serviceA>
+</soto:service>
+
+<soto:service id="serviceB">
+  <ubik:proxy jndiName="soto/ubik/serviceB">
+    <implements>org.acmeserver.domain.ServiceB</implements>
+  </ubik:proxy>
+</soto:service>
+...     
+</soto:service>]]></sapia:code>
+          <p>To make a long story short: the <sapia:command>ubik:proxy</sapia:command> tag proxies the
+          actuel remote service. It collaborates with a <sapia:class>NamingService</sapia:class> instance
+          to retrieve a remote reference that corresponds to a JNDI name. In addition, it allows specifying
+          the interfaces that the proxy should implement (the goal is to make the proxy appear as the
+          actual service that should be looked up).</p>
+
+          <p>The proxy gracefully handles failed lookups: if a proxy cannot find the required service,
+          it will attempt performing client-side discovery. If a method of the proxied service is called and
+          no remote reference has yet been retrieved, a <sapia:class>UnavailableRemoteObjectException</sapia:class>
+          (which is a runtime exception) is thrown to the caller.</p>
+
+          <p>Here are the attributes and elements that the <sapia:command>ubik:proxy</sapia:command>
+          supports:</p>
+
+            <ul>
+              <li><b>jndiName</b>: The JNDI name with which to perform the lookup (<b>mandatory</b>).</li> 
+           
+              <li><b>implements</b> (1-*): an interface that the generated dynamic proxy is expected to implement 
+              (<b>optional</b>, but none doesn't make much sense).</li>
+
+              <li><b>namingService</b>: A service reference that associates an existing naming service
+               to the proxy (<b>optional</b>). If omitted, the proxy attempts acquiring a 
+               <sapia:class>NamingService</sapia:class> instance from the Soto container.</li>              
+            </ul>
+
+        </sapia:sect3>
+        
+     </sapia:sect2>
+     <sapia:sect2 title="Monitoring">
+       <p>Soto's Ubik subproject allows enabling monitoring of  Soto services remotely, by offering a monitoring framework
+       based on simple primitives and logic.</p>
+       
+       <sapia:sect3 title="Topology">
+         <p>The topology presents itself as an agent-based architecture where so-called "monitoring agents" are hooked (in-VM)
+         over Soto services - in fact as Soto layers. These agents are in charge of invoking the monitoring hook on their
+         corresponding service and relaying the results to a remote monitor.</p>
+         
+         <p>The monitor communicates with the agents using Ubik (each agent corresponding to a remote object). Agents are
+         discovered using multicast, as part of a simple publish/discover protocol: when appearing on the network, remote monitor
+         and agents publish themselves on the network, allowing for the opposite parties to discover them. Typically, one monitor
+         will interact with many agents.</p>
+         
+         <p>The diagram below better illustrates this topology:</p>
+         
+         <center><img src="UbikMonitor.png" /></center>
+         
+       </sapia:sect3>
+       
+       <sapia:sect3 title="Usage" alias="monitor_usage">
+         <sapia:sect4 title="The Monitoring Agent">
+           <p>The <sapia:class link="maven/api/org/sapia/soto/ubik/monitor/impl/UbikMonitorAgentLayer.html" target="ubikagent">UbikMonitorAgentLayer</sapia:class> class
+           implements both the <sapia:class>MonitorAgent</sapia:class> and <sapia:class>Layer</sapia:class> interface. Therefore
+           an instance of this class can be configured as a Soto layer, "on top" of a given service instance:</p>
+
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+
+  <soto:service>
+    <soto:new class="org.sapia.soto.ubik.example.MonitoredService" />
+    
+    <!-- The agent layer -->
+    <ubik:monitorAgent  id="monitoredService">
+
+      <!-- Configure the event channel 
+           used for publish/discovery -->
+      <eventChannel>
+        <!-- Must be configured as a Soto service, since
+	         it follows the Soto service lifcycle -->
+        <soto:service>
+          <ubik:eventChannel domain="default" />
+        </soto:service>
+      </eventChannel>
+
+      <invoke name="doCheck">
+        <arg value="test">
+          <type><soto:class name="java.lang.String" /></type>
+        </arg>
+       	<arg>
+       	  <value><soto:int value="0" /></value>
+       	  <type><soto:constant name="TYPE" 
+       	          class="java.lang.Integer" /></type>       	  
+       	</arg>
+      </invoke>
+    </ubik:monitorAgent>
+    
+  </soto:service>]]></sapia:code>
+  
+           <p>The <sapia:command>ubik:monitorAgent</sapia:command> element corresponds to a <sapia:class>UbikMonitorAgent</sapia:class>
+           instance. It takes the following elements/attributes:</p>
+           
+           <ul>
+	         <li><b>id</b>: indicates under which logical ID the monitoring status check will be bound. This ID is used when generating
+	         the status object that provides information about the invocation of the monitoring hook. If not specified, the identifier
+	         of the service is used; if the service has no identifier, then no ID is specified - on the client side, the application
+	         should check on the result that this ID has been set, or use the name of the class of the service that is monitored. That
+	         class name is always provided as part of the status object that is returned - more on the client-side API further below.</li>
+           
+             <li><b>eventChannel</b>: corresponds to a <sapia:class link="maven/api/org/sapia/soto/ubik/EventChannelProvider.html" target="evtchannel">EventChannelProvider</sapia:class>
+             instance. Such an instance is used by the agent to publish its presence through multicast, so that it can be discovered by remote
+             monitors. If this element is not specified, the agent will attempt to find one within the Soto container and use it. If none can be
+             found, then no exception is thrown, and no publish/discover is done;`remotely accessing the agent will not be possible. Note that
+             the <sapia:command>ubik:naming</sapia:command> element corresponds to a class that implements the 
+             <sapia:class>EventChannelProvider</sapia:class> interface, therefore if such a naming object has been configured before, setting 
+             the event channel is not necessary, since the naming object's event channel will be used - of course, the domain has to 
+             correspond to the one that is desired.</li>
+             
+             <li><b>invoke</b>: this elements specifies the name and arguments of the method of the service instance that serves as a monitoring
+             hook. If this element is not specified, the agent will check if the service is an instance of either the 
+             <sapia:class link="maven/api/org/sapia/soto/ubik/monitor/Monitorable.html" target="monitorable">Monitorable</sapia:class> or 
+             <sapia:class link="maven/api/org/sapia/soto/ubik/monitor/FeedbackMonitorable.html" target="fbk_monitorable">FeedBackMonitorable</sapia:class>
+             interfaces. If so, it will interact with the service instance by casting it to the proper interface - using the method
+             of one of these interfaces (whichever of these applies) as a monitoring hook.</li>             
+           </ul>
+           <sapia:note>Note that if a method has been configured to be called dynamically as a monitoring hook, it may return a <sapia:class>java.util.Properties</sapia:class>
+           object that is itself returned by the layer as part of the status object representing the result of the monitoring hook invocation. This
+           allows applications to publish custom data, such as various statistics, to an eventual monitoring infrastructure.</sapia:note>
+           
+           <p>If invocation of the monitoring hook (whether dynamically through Java reflection or on Monitorable and FeedbackMonitorable instances)
+           throws an exception, then the corresponding service is interpreted as being "in error", and the status object that will be returned will be flagged as an error. 
+           Applications can therefore use that logic to indicate inconsistencies in
+           a straightforward fashion.</p>
+           
+           <p>To complete this section, let us illustrate how implementing the <sapia:class>FeedBackMonitorableInterface</sapia:class> would be
+           handled:</p>
+           
+           <sapia:sect5 title="The Implementation">
+<sapia:code>import org.sapia.soto.ubik.monitor.FeedbackMonitorable;
+
+public class MonitoredService implements FeedbackMonitorable{
+  ...
+  public Properties monitor() throws Exception{
+    ...
+  }
+  ...
+}</sapia:code>
+           </sapia:sect5>
+           
+           <sapia:sect5 title="The Configuration">
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+
+  <soto:service>
+    <soto:new class="org.sapia.soto.ubik.example.MonitoredService" />
+    
+    <ubik:monitorAgent  id="monitoredService">
+      <eventChannel>
+        <soto:service>
+          <ubik:eventChannel domain="default" />
+        </soto:service>
+      </eventChannel>
+    </ubik:monitorAgent>
+    
+  </soto:service>]]></sapia:code>
+  
+  			<p>As can be seen above, the <sapia:command>invoke</sapia:command> element can be omitted, since the <sapia:class>FeedbackMonitorable</sapia:class>
+  			instance is recognized by the agent and managed properly.</p>
+          </sapia:sect5>           
+           
+           
+         </sapia:sect4>
+         <sapia:sect4 title="The Monitor">
+           <p>A monitor is used on the client-side to discover monitor agents and perform status checks on these agents. In our case,
+           the monitor that we use is an instance of the <sapia:class link="maven/api/org/sapia/soto/ubik/monitor/impl/DomainMonitor.html">DomainMonitor</sapia:class>
+           class. Such an instance is configured with a <sapia:command>ubik:domainMonitor</sapia:command> element, as follows:
+           </p>
+           
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+
+  <soto:service>
+    <ubik:domainMonitor>
+      <eventChannel>    
+        <soto:service>
+	      <ubik:eventChannel domain="default" />
+        </soto:service>
+      </eventChannel>        
+    </ubik:domainMonitor>
+  </soto:service>    
+  
+</soto:app>]]></sapia:code>
+
+           <p>The domain monitor only requires that an event channel be specified, configured for the desired domain. The above configuration
+           could be loaded in a Soto container, and the monitor used as follows:</p>		  
+<sapia:code>public static void main(String[] args) throws Exception{
+    
+SotoContainer soto = new SotoContainer();
+soto.load(new File("etc/ubik/monitor.server.xml"));
+soto.start();
+
+System.out.println("Started monitor...");
+
+while(true){
+  try{
+    Thread.sleep(1000);
+  }catch(InterruptedException e){
+    soto.dispose();
+  }
+  
+  System.out.println("================ RUN =================");
+  Monitor mon = (Monitor)soto.lookup(Monitor.class);
+  StatusResultList results = mon.getStatusForClass(null);
+  Iterator itr = results.getResults().iterator();
+  while(itr.hasNext()){
+    StatusResult res = (StatusResult)itr.next();
+    System.out.println("--------------------------------------");
+    System.out.println("Got status for " + 
+        res.getServiceClassName() + ", " + 
+        (res.getServiceId() != null ? res.getServiceId() : " ---"));      
+    if(res.isError()){
+      System.out.println("Status indicates an error:");
+      res.getError().printStackTrace(System.out);
+    }
+    else{
+      System.out.println("Status OK");
+    }
+    System.out.println();
+    System.out.println("Status properties: ");      
+    Properties props = res.getProperties();
+    props.list(System.out);
+  }
+}</sapia:code>
+           <p>As can be seen above, a monitor is used by client applications to invoke monitoring hooks. This, in the
+           context of what has been explained previously, means that a call to <sapia:command>getStatusForClass()</sapia:command>
+           or <sapia:command>getStatusForID()</sapia:command> will be translated in status checks on the underlying remote monitor agents.</p>
+           
+           <p>If passing <sapia:command>null</sapia:command> to one of the <sapia:command>getStatusForXXX()</sapia:command> methods, 
+           the returned result list will hold a result for all available agents (the null acting as a "select *"); if a specific class or ID is given,
+           than only the agents whose service class or ID matches the one specified will provided a status. The service ID corresponds to 
+           the <sapia:command>id</sapia:command> attribute of the <sapia:command>ubik:monitorAgent</sapia:command> element that was explained above.</p>
+           
+           <p>Both <sapia:command>getStatusForXXX()</sapia:command> methods return a 
+           <sapia:class link="maven/api/org/sapia/soto/ubik/monitor/StatusResultList.html">StatusResultList</sapia:class> that contains as many 
+           <sapia:class link="maven/api/org/sapia/soto/ubik/monitor/StatusResult.html">StatusResult</sapia:class> instances as there are agents available
+           that have "answered" the status check. This means that if one result is missing (according to the number of results that were expected),
+           the corresponding agent cannot be reached (meaning that it's VM is probably down).</p>
+           
+           <p>In addition, note that the result's properties can be instrospected. These properties correspond to custom application monitoring
+           data (as explained previously), and can be used for analytical and alert purposes. The code snippet above
+           indicates how these properties can be accessed - in a pretty straightforward fashion.</p>
+
+         </sapia:sect4>
+         
+       </sapia:sect3>
+       <sapia:sect3 title="Corus Integration">
+       	 <p>A <sapia:class>UbikMonitorAgentLayer</sapia:class> instance will also detect if the JVM within which it resides has been started by 
+           	<a href="http://www.sapia-oss.org/projects/corus" target="corus_project">Corus</a> and, if so, will publish its status periodically to its
+           	Corus server, as described in the Corus documentation. This allows sys admins to hook up with Corus through a specific HTTP hook in order
+           	to gather the status data.</p>
+           	
+ 		 <p>This is a convenient way to gather such data from non-Java tools, such as Nagios. In this case, no domain monitor (as seen in the last section)
+ 		 needs being used as a bridge between a monitoring platform and multiple distributed applications. This also allows simplifies configuration,
+ 		 as illustrated below:</p>
+ 		 
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+
+  <soto:service>
+    <soto:new class="org.sapia.soto.ubik.example.MonitoredService" />
+    
+    <ubik:monitorAgent  id="monitoredService" />
+    
+  </soto:service>
+</soto:app>]]></sapia:code> 
+         
+         <p>In the above case, the <sapia:command>eventChannel</sapia:command> element was omitted, since it was not wished that status data be
+         made available to a domain monitor. Note, though, that both (integration with Corus and domain monitor) could be used simultaneously.</p> 		 
+
+       </sapia:sect3>
+       
+     </sapia:sect2>
+     <sapia:sect2 title="Conclusion">
+      Soto integrates Ubik to provide seamless remoting to services. For more information, download the distribution and 
+      have a look at the sources of the Ubik layer examples. Also pay a visit to the 
+      <a href="http://www.sapia-oss.org/projects/ubik/" target="ubik">Ubik web site</a>.
+
+
+     </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>

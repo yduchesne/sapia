@@ -1,0 +1,13 @@
+  <soto:service id="secondary" xmlns:soto="http://www.sapia-oss.org/soto/core/2003"
+	                         xmlns:jmx="http://www.sapia-oss.org/soto/jmx/2003"
+                               xmlns:sample="http://www.sapia-oss.org/soto/sample">
+
+    <sample:secondary>
+      <someService>
+        <soto:serviceRef id="master"/>
+      </someService>
+    </sample:secondary>
+
+    <soto:include uri="nestedResourceInclude.xml"/>
+
+  </soto:service>

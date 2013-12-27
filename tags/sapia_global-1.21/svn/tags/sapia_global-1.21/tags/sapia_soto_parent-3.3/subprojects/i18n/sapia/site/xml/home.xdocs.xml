@@ -1,0 +1,132 @@
+<sapia:page title="Internationalization" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+    <sapia:vsection name="Soto Home" href="../../index.html"/>
+    <sapia:vsection name="Project Home" href="index.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Internationalization">
+    <sapia:section>
+      <sapia:path name="home" href="http://www.sapia-oss.org/home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="soto" href="../../index.html" />
+      <sapia:path name="services" />
+      <sapia:path name="i18n" /> 
+    </sapia:section>
+    <toc/>
+    <sapia:sect2 title="Overview">
+    
+      <p>The <sapia:class link="maven/api/org/sapia/soto/i18n/i18nService.html" target="target_window">i18nService</sapia:class>
+      interface provides methods to retrieve internationalized text snippets, given locale information.</p>
+      
+      <p>Soto's internationalization implementation sports the following features:</p>
+      
+      <ul>
+        <li>XML-based configuration of internationalized entries.</li>
+        <li>Hierarchical lookup based on the language/country/variant of the passed in locale.</li>
+        <li>Auto-reload of configuration files holding localized entries when these files are modified.</li>        
+      </ul>
+      
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Usage">
+      
+      <sapia:sect3 title="Configuring">
+         <sapia:sect4 title="i18nService">
+	      <p>The i18n service is configured as follows:</p>
+	      
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto"
+... 
+  <soto:service>
+    <soto:i18n>
+      <entries id="hello" uri="conf/i18n/helloEntries.xml" />
+    </soto:i18n>
+  </soto:service>
+...
+</soto:app>]]>
+</sapia:code>  
+	
+	      <p>The <sapia:command>soto:i18n</sapia:command> tag corresponds to an <sapia:class>i18nService</sapia:class> implementation. 
+	      That implementation expects one to many "entries", specified as <sapia:command>entries</sapia:command> elements. Such an
+	      element points to a file holding localized text entries. The <sapia:command>entries</sapia:command> element is described below:</p>
+	      
+	      <ul>
+	        <li><b>id</b>: identities the set of localized entries corresponding to the element.</li>
+           <li><b>uri</b>: the URI pointing to the resource containing the entries (the resource is retrieved at runtime through
+           Soto's resource resolving mechanism).</li>
+	      </ul>
+	      </sapia:sect4>
+	      
+	      <sapia:sect4 title="Localized Entries">
+	      <p>As explained in the previous section, an <sapia:command>entries</sapia:command> element points to a resource
+	      holding localized entries. Here is one such resource's contents:</p>
+<sapia:code><![CDATA[<entries>
+  <group id="morning">
+    <entry la="en">Good morning world</entry>
+    <entry la="fr">Bonjour le monde</entry>
+  </group>
+  <group id="evening">
+    <entry la="en">Good evening world</entry>
+    <entry la="fr">Bonsoir le monde</entry>
+  </group>  
+</entries>]]></sapia:code>  	      
+
+         <p>A set of localized entries corresponds to a "domain" or "subject". It can be further subdivided in groups (each
+         group is represented by a <sapia:command>group</sapia:command> element). Within these groups lie the actual entries. 
+         An <sapia:command>entry</sapia:command> element corresponds to such an entry; it has the following attributes:
+         </p>
+         <ul>
+           <li><b>la</b>: indicates the language of the entry (en, fr, es, etc.).</li>
+           <li><b>co</b>: indicates the country of the entry.</li>
+           <li><b>va</b>: indicates the variant of the language of the entry.</li>
+         </ul>
+         <p>Entries are looked up according to the language, country and variant. For example, consider the following entries:</p>
+	      </sapia:sect4>
+<sapia:code><![CDATA[<entries>
+  <group id="someEntries">
+    <entry>behavior</entry>
+    <entry la="en" co="ca">behaviour</entry>
+    <entry la="fr">comportement</entry>
+  </group>
+</entries>]]></sapia:code>  	      	    
+        <p>Now imagine that we require an entry for the US locale: "behavior" is returned. Indeed, an entry for
+        the given exact locale is searched. Since no entry is found under the specified country, an entry with only the
+        specified language is searched. Since there is no entry with <i>only</i> the specified language, the default entry
+        is selected (no variant, no country, no language).</p>
+        
+        <p>Grouping of entries is arbitrary. For example, you could have entries that correspond to error messages: each
+        group would correspond to an error message, and each entry to the localized text of that message.</p>
+      </sapia:sect3>
+      <sapia:sect3 title="Programming">
+        <p>To obtain the localized text of an entry, one must use an <sapia:class>i18nService</sapia:class> instance and
+        call one of the <sapia:command>getText()</sapia:command> methods:</p>
+<sapia:code>
+// the i18n variable is an instance of
+// i18nService, and the someLocale variable
+// an instance of java.util.Locale
+
+String text = i18n.getText("hello", "morning", someLocale);
+</sapia:code>
+        <p>The i18n service supports passing variables (in a <sapia:class>java.util.Map</sapia:class>) that are inserted
+        in the returned text. For example, take the following configuration:</p>
+
+<sapia:code><![CDATA[<entries>
+  <group id="morning">
+    <entry>Good morning ${var}</entry>
+    <entry la="fr">Bonjour ${var}</entry>
+  </group>
+</entries>]]></sapia:code>  	      	            
+
+        <p>We can pass the expected variable's value to the <sapia:command>getText()</sapia:command> method:</p>
+<sapia:code>
+Map vars = new HashMap();
+vars.put("var", "world");
+String text = i18n.getText("hello", "morning", vars, Locale.US);
+</sapia:code>
+        
+      </sapia:sect3>
+    </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>

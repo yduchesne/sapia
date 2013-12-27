@@ -1,0 +1,20 @@
+<soto:app xmlns:soto="sapia:soto" xmlns:log="soto:log" xmlns:concurrent="soto:concurrent">
+
+  <soto:service id="log4j">
+      <log:log4j configPath="main.log4j.xml">
+          <log:loggerDef id="main" name="org.sapia.soto" />
+      </log:log4j>
+  </soto:service>
+
+  <soto:service id="executor">
+      <concurrent:throttledExecutor name="ThrottledExecutorServiceTest" corePoolSize="5"
+                                    maxThroughputPerSecond="4" threadKeepAliveTime="120000">
+          <Logger>
+              <log:loggerRef type="commons" id="main" />
+          </Logger>
+          <rejectedExecutionHandler>
+              <concurrent:abortPolicy />
+          </rejectedExecutionHandler>
+      </concurrent:throttledExecutor>
+  </soto:service>
+</soto:app>

@@ -1,0 +1,26 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+  
+  <soto:namespace prefix="ubik">
+    <def class="org.sapia.soto.ubik.Lookup"             name="lookup" />
+    <def class="org.sapia.soto.ubik.example.UbikClient" name="pingClient" />
+  </soto:namespace>
+  
+  <soto:service>
+    
+    <!-- the client instance -->
+    <ubik:pingClient>
+    
+      <!-- assigning the service that will be used for the binding -->
+      <ubikService>
+        <ubik:lookup 
+              jndiHost="localhost" 
+              jndiPort="1099" 
+              jndiName="soto/example/ubikService"
+              domain="ubikSample" />
+      </ubikService>
+
+    </ubik:pingClient>
+    
+  </soto:service>
+</soto:app>

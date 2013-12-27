@@ -1,0 +1,20 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+
+  
+  <!-- instantiating the service that hooks to the remote Ubik JNDI -->
+  <soto:service id="ubik/naming">
+  
+    <ubik:naming jndiHost="localhost" 
+                 jndiPort="1099" 
+	         domain="default"/>
+                 
+  </soto:service>
+  
+  <soto:service id="proxy">
+    <ubik:proxy 
+      jndiName="soto/example/ubikService" 
+      implements="org.sapia.soto.ubik.example.StatelessUbikService" />
+  </soto:service>    
+
+</soto:app>

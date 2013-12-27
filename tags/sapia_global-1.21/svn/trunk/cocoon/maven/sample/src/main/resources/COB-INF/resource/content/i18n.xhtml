@@ -1,0 +1,59 @@
+  <div id="content">
+    <h1>I18N Demo</h1>
+    <p>
+    This demo gets the internationalization catalogues from Cocoon (used by the <a href="http://cocoon.apache.org/2.1/userdocs/i18nTransformer.html">i18n Transformer</a>),
+    in JSON format. The catalogues are sent to the client in the appropriate language. 
+    </p>
+    
+    <p>
+    If entries for a given language are missing, they are taken from the base catalogue (or from the "closest" locale in terms of catalogue lookup).
+    </p>
+    
+    <p>
+    At the first startup of this page, a first set of catalogues are loaded as a <a href="catalogues.js">javascript resource</a>.
+    </p>
+    
+    <p>
+    The resulting Javascript initializes a global variable named CATALOGUES, which is then loaded into an object created from the <a href="sapia-cocoon.js">I18N class</a>
+    (the object is created in this page). The instance may then be used to translate text entries.
+    </p>  
+    
+    <p>
+    The javascript that is thus loaded is generated dynamically by a Cocoon pipeline that aggregates the the catalog files used on the server-side
+    (as explained further above).
+    </p>
+    
+    <pre id="response">
+    </pre>
+
+    <h3>Translate</h3>
+    <script>
+	    function selectLang(select){
+	      var lang = select.options[select.selectedIndex].value;
+	      if(lang.length > 0){
+		      document.location.href='i18n.html?user.locale=' + lang;
+	      }
+	    }
+	    var loadI18N = function(root){
+		    I18N.load(root);
+	    };
+	    function i18n(){
+		  var get = I18N.load;
+	      alert(I18N.get($('someText').value, 'messages'));
+		}
+    </script>     
+    <p>
+      <select onChange="selectLang(this)">
+        <option value="">--- select language ---</option>
+        <option value="en">english</option>      
+        <option value="fr">french</option>
+      </select>
+    </p>
+    <p>
+     <input type="button" value="Reload Catalogues" onClick="evalJSON('catalogues.json', 'response', loadI18N);"/>
+    </p>
+    <input type="text" id="someText" />
+    <input type="button" value="Translate" onClick="i18n()" />
+    
+    <p><a href="home.html">back to home</a></p>
+  </div>

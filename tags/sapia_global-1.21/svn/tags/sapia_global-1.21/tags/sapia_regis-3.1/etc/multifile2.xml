@@ -1,0 +1,11 @@
+<registry>
+  <node name="databaseInclude">
+    <include path="databases@" />
+  </node>
+  <node name="userLink">
+    <link path="users/account1" />
+  </node>  
+  <node name="userInclude">
+    <include path="users/account1" />
+  </node>   
+</registry>

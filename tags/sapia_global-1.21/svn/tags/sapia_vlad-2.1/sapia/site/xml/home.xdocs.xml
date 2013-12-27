@@ -1,0 +1,631 @@
+<sapia:page title="Vlad" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+    <sapia:vsection name="Project Home" href="home.html"/>
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Mailing List" href="list.html"/>
+    <sapia:vsection name="Maven" href="maven/index.html"/>
+  </sapia:vmenu>
+  <sapia:sect1 title="Vlad">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="vlad" />
+    </sapia:section>
+    <toc/>
+    <sapia:sect2 title="Overview">
+    
+      <p>Vlad stands for "validation". This projects indeed aims at offering 
+      a simple, high-level, extensible, generic validation framework that
+      can easily be integrated into existing applications.</p>
+
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Features">
+    
+      <p>Vlad sports the following features:</p>
+      
+        <ul>
+          <li>Based on the command pattern: a validation rule is a command that performs a
+          specific validation task - given a "validation context"</li>;
+          <li>validation rules configurable through XML;</li>
+          <li>extensibility through implementation of additional rules - facilitates community
+          efforts by potentially allowing people to use other people's rules;</li>
+          <li>complex validation supported through rulesets and nested rules;</li>
+          <li>whole object graphs can be validated, not only the values corresponding to
+          the getters of a bean...;</li>
+          <li>localization support (error messages in different languages can be provided);</li>          
+          <li>etc.</li>
+        </ul>
+        
+    </sapia:sect2>
+
+    <sapia:sect2 title="Architecture">
+    
+      <sapia:sect3 title="Patterns">
+        <p>Vlad's architecture is based on the following main design patterns:</p>
+        
+          <ul>
+            <li><b>Composite</b>: rules and rulesets are instances of the 
+            <sapia:class><a href="maven/api/org/sapia/validator/Validatable.html">Validatable</a></sapia:class> interface. This allows
+            rules and rulesets to contain other rules and other rulesets, thus implementing validation flows. In addition,
+            the framework supports ruleset and rule "references" - which are also "validatable"
+            instances to the Vlad runtime. Ruleset and rule references, as their name implies,
+            are not rulesets and rules themselves, but rather refer to defined rules and rulesets.</li>
+            
+            <li><b>Command</b>: The <sapia:class>Validatable</sapia:class> interface defines a 
+            single <sapia:class>validate()</sapia:class> method, which takes a 
+            <sapia:class><a href="maven/api/org/sapia/validator/ValidationContext.html">ValidationContext</a></sapia:class>
+            as an argument. This context is in fact the execution context of a given validation "flow" - a validation
+            flow consists of one to many validation rules that are sequentially applied to an object (or object graph).</li>
+          </ul>
+      </sapia:sect3>
+      <sapia:sect3 title="Concepts">
+        <p>The framework relies on a few core concepts and entities, which are summarized below:</p>
+        <ul>
+          <li><b>Validation Engine</b>: the validation engine encapsulates the validation rules. The rules are
+          triggered by the client application at runtime.</li>
+          <li><b>Validation Rules (and Rulesets)</b>: a validation rule performs an atomic unit of validation work. Rules
+          can be grouped in "rulesets": a ruleset aggregates one-to-many rules that are sequentially evaluated</li>
+          <li><b>Validation Context</b>: the validation context holds the object (or object graph) to validate; it is
+          passed to the validation rules, which perform their work on the object/graph contained in the context.</li>
+          <li><b>Validation Status</b>: the validation status, as its name implies, holds the status of the current
+          validation. Validation rules are responsible for signaling validation errors to the Vlad runtime through
+          the current context's status.</li>
+        </ul>
+        <p>So what does the above correspond to, concretely? Well, the validation engine is represented by the 
+        <sapia:class><a href="maven/api/org/sapia/validator/Vlad.html">Vlad</a></sapia:class> class. It is instantiated by the client 
+        application, and initialized with one or more XML configuration file(s) of a predefined format. The file contains the rule 
+        definitions, and the various possible validation flows. A validation flow's entry point is a <sapia:class>
+        <a href="maven/api/org/sapia/validator/RuleSet.html">RuleSet</a></sapia:class>; a validation can contain many rulesets, which 
+        are given a unique identifier (if defined at the root level of the configuration). These rulesets can themselves contain 
+        other rules and rulesets. The <sapia:class> <a href="maven/api/org/sapia/validator/Rule.html">Rule</a></sapia:class> class 
+        models a validation rule and represents an atomic unit of work. Yet there is a special subclass of the Rule class: the 
+        <sapia:class> <a href="maven/api/org/sapia/validator/CompositeRule.html">CompositeRule</a></sapia:class> class. It can contain other 
+        rules and rulesets (or, more precisely, other "validatables"...). The <sapia:class>CompositeRule</sapia:class> can be 
+        inherited by rules that "need" to contain other rules/rulesets. The framework has such a class currently implemented: 
+        <sapia:class><a href="maven/api/org/sapia/validator/rules/ForEach.html">ForEach</a></sapia:class>.</p>
+      </sapia:sect3>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Usage">
+      <sapia:sect3 title="At a Glance">
+        <p>An image is worth a thousand words, they say. Before digging into the details, going through the major
+        steps of dealing with Vlad is probably the best introduction; these steps are the following:</p>
+        
+        <sapia:sect4 title="1. Configuration">
+          <p>This step involves the creation of a configuration file that defines the rules that will be used (of which
+          instances will be created), and the rulesets consisting of the different validation flows. The example below
+          illustrates a typical configuration file:</p>
+          <sapia:code>
+&lt;vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules"&gt;
+  &lt;namespace prefix="vlad"&gt;
+    &lt;ruleDef name="forEach"   
+                class="org.sapia.validator.rules.ForEach"/&gt;
+    &lt;ruleDef name="mandatory" 
+                class="org.sapia.validator.rules.Mandatory"/&gt;
+    &lt;ruleDef name="maxSize"       
+                class="org.sapia.validator.rules.MaxSize"/&gt;
+    &lt;ruleDef name="minSize"       
+                class="org.sapia.validator.rules.MinSize"/&gt;
+    &lt;ruleDef name="select"    
+                class="org.sapia.validator.rules.Select"/&gt;    
+  &lt;/namespace&gt;
+  
+  &lt;ruleSet id="checkCompany"&gt;
+    &lt;vlad:minSize attribute="employees" 
+                 size="1" 
+                 id="numberEmployees"&gt;
+     &lt;message value="Company should have at least 1 employee"/&gt;
+    &lt;/vlad:minSize&gt;        
+    &lt;vlad:forEach attribute="employees" &gt;
+      &lt;vlad:mandatory attribute="name" id="employeeName"&gt;
+        &lt;message value="Employee does not have a name"/&gt;
+      &lt;/vlad:mandatory&gt;
+    &lt;/vlad:forEach&gt;
+  &lt;/ruleSet&gt;
+&lt;/vlad&gt;</sapia:code>
+          
+          <sapia:sect5 title="The Root and the XML Namespaces">
+            <p>The configuration starts with the <sapia:command>vlad</sapia:command> element. An XML namespace is also
+            defined: <sapia:command>xmlns:vlad="http://www.sapia-oss.org/vlad/rules"</sapia:command>. This namespace specifies
+            a prefix that will be used to create instances of validation rules from existing rule definitions.</p>
+          </sapia:sect5>
+          
+          <sapia:sect5 title="Define your Rules">
+            <p>The <sapia:command>vlad</sapia:command> element takes one-to-many <sapia:command>namespace</sapia:command> element(s).
+            Such elements are used to hold rule definitions (represented by <sapia:command>ruleDef</sapia:command> elements). Why such
+            a categorization? Why not define the rules straight under the root element of the configuration? Well, imagine that multiple
+            contributors implement rules on their own, and later decide to make these rules available as part of a community effort;
+            without the notion of namespace, "name collisions" could occur: rules implemented by different parties could have the same name.
+            The notion of namespace is analoguous to the one of packages in Java.</p>
+            <p>As can be seen, the <sapia:command>namespace</sapia:command> element must specify a <sapia:command>prefix</sapia:command>
+            attribute; this is necessary to refer to rule definitions later on in the configuration. An instance of a rule is created
+            through the <sapia:command>prefix:ruleName</sapia:command> combination. For this to be possible (from the underlying
+            XML parser's perspective), the prefix must be defined as part of an XML namespace declaration (hence the "vlad" prefix in the
+            XML namespace that appears at the beginning of the configuration). Rules are defined with <sapia:command>ruleDef</sapia:command>
+            elements. A <sapia:command>ruleDef</sapia:command> element must specify the <sapia:command>name</sapia:command> and
+            <sapia:command>class</sapia:command> attributes, which respectively specify the name of the defined rule, and its Java class. The
+            name of the rule is later on used in conjonction with its namespace's prefix to create instances of that rule.
+            </p>
+            <p>Rule definitions need not being declared in the Vlad configuration. When creating a 
+            <sapia:class>Vlad</sapia:class> instance, the latter will look for a file named <sapia:command>vlad_rules.xml</sapia:command>
+            in its classpath. This file contains global rule definitions that can be used directly in applications (sparing the declaration of
+            repetitive rule definitions every time a configuration is written). As part of a community effort, other rules can be
+            added, categorized by namespace. Thus, the <sapia:command>vlad_rules.xml</sapia:command> file in fact defines a library of
+            reusable rules. This is exactly what has been done with the rules defined in the example configuration above. The Vlad distribution
+            contains these rules in its global definition file, so applications need not declaring them in their specific Vlad configurations</p>
+            
+            <sapia:note>A rule with a given name, defined in a given namespace, cannot be defined twice in the same namespace,
+            with the same name. This results in an error.</sapia:note>
+            
+            <p>The global definition file, with our rule definitions exported in it, is given below:</p>
+            <sapia:code>
+&lt;defs&gt;
+  &lt;namespace prefix="vlad"&gt;
+    &lt;ruleDef name="forEach"   
+                class="org.sapia.validator.rules.ForEach"/&gt;
+    &lt;ruleDef name="mandatory" 
+                class="org.sapia.validator.rules.Mandatory"/&gt;
+    &lt;ruleDef name="maxSize"       
+                class="org.sapia.validator.rules.MaxSize"/&gt;
+    &lt;ruleDef name="minSize"       
+                class="org.sapia.validator.rules.MinSize"/&gt;
+    &lt;ruleDef name="select"    
+                 class="org.sapia.validator.rules.Select"/&gt;    
+  &lt;/namespace&gt;
+&lt;/defs&gt;</sapia:code>            
+            
+            <p>Our new configuration - stripped from the rule definitions that are now part of the global definitions, is the following:</p>
+            
+          <sapia:code>
+&lt;vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules"&gt;
+  
+  &lt;ruleSet id="checkCompany"&gt;
+    &lt;vlad:minSize attribute="employees" 
+                 size="1" 
+                 id="numberEmployees"&gt;
+     &lt;message value="Company should have at least 1 employee"/&gt;
+    &lt;/vlad:minSize&gt;        
+    &lt;vlad:forEach attribute="employees" &gt;
+      &lt;vlad:mandatory attribute="name" id="employeeName"&gt;
+        &lt;message value="Employee does not have a name"/&gt;
+      &lt;/vlad:mandatory&gt;
+    &lt;/vlad:forEach&gt;
+  &lt;/ruleSet&gt;
+  
+&lt;/vlad&gt;</sapia:code>
+          </sapia:sect5>            
+          </sapia:sect4>
+          
+        <sapia:sect4 title="2. Programming">
+          <p>Once you have created a Vlad configuration file, you are ready to rock; the following code creates a
+          <sapia:class>Vlad</sapia:class> instance, loads the rule configuration defined above, and validates 
+          <sapia:class>Company</sapia:class> instances that contains a collection of <sapia:class>Employee</sapia:class>s.
+          </p>
+          <sapia:code>
+package org.sapia.validator.examples;
+
+import org.sapia.validator.Vlad;
+import org.sapia.validator.Status;
+import org.sapia.validator.ValidationErr;
+
+import java.util.List;
+import java.util.Locale;
+import java.io.File;
+
+public class CompanyEg {
+
+  /**
+   * Constructor for CompanyEg.
+   */
+  public CompanyEg() {
+    super();
+  }
+
+  public static void main(String[] args) {
+    try {
+      Vlad v = new Vlad();
+      v.load(new File("vlad.xml"));
+      Status st = v.validate("checkCompany", 
+                             new Company(null), 
+                             Locale.getDefault());
+      List errs = st.getErrors();
+      ValidationErr err;
+      for(int i = 0; i &lt; errs.size(); i++){
+        err = (ValidationErr)errs.get(i);
+        if(err.isThrowable()){
+          System.out.println("id :" + err.getId());
+          err.getThrowable().printStackTrace();
+        }
+        else{
+          System.out.println("id :" + err.getId());
+          System.out.println(err.getMsg());
+        }
+      }
+      
+     Company comp = new Company(null);
+     Employee empl1 = new Employee("empl1");
+     Employee empl2 = new Employee(null);
+     comp.addEmployee(empl1);
+     comp.addEmployee(empl2);
+     
+     st = v.validate("checkCompany", 
+                     comp, 
+                     Locale.getDefault());
+     errs = st.getErrors();
+     for(int i = 0; i &lt; errs.size(); i++){
+       err = (ValidationErr)errs.get(i);
+       if(err.isThrowable()){
+         System.out.println("id :" + err.getId());
+         err.getThrowable().printStackTrace();
+       }
+       else{
+         System.out.println("id :" + err.getId());
+         System.out.println(err.getMsg());
+       }
+     }     
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+}</sapia:code>
+          
+          <sapia:sect5 title="Create and Initialize a Vlad instance">
+            <p>The following code creates the Vlad instance (the validation engine) and initializes it:</p>
+            <sapia:code>
+Vlad v = new Vlad();
+v.load(new File("vlad.xml"));</sapia:code>
+          </sapia:sect5>
+          
+          <sapia:sect5 title="Validate">
+            <p>Once a validation engine has been created, it can be used (<b>by multiple threads</b>) to
+            validate Java objects. The code excerpt below validates a <sapia:class>Company</sapia:class>:</p>
+            <sapia:code>
+Status st = v.validate("checkCompany", 
+                       new Company(null), 
+                       Locale.getDefault());</sapia:code>
+            <p>The first parameter of the <sapia:command>validate()</sapia:command> method is the name of the
+            ruleset to use for validation - it corresponds to the name of a ruleset in our configuration. In this
+            case, the "checkCompany" ruleset is used.</p>
+          </sapia:sect5>
+
+          <sapia:sect5 title="Handle the Validation Result">
+            <p>The <sapia:command>validate()</sapia:command> method returns a 
+            <sapia:class><a href="maven/api/org/sapia/validator/Status.html">Status</a></sapia:class> instance. The status
+            holds information about the validation, mainly: validation errors, if any. The class provides the
+            <sapia:command>isError()</sapia:command> method, which returns true if the validation flow resulted in
+            validation errors being generated. An application can handle validation errors in the following way:</p>
+            <sapia:code>
+...
+if(status.isError()){
+   List errs = st.getErrors();
+   // do something with errors.
+}
+...</sapia:code>
+            <p>Validation errors are represented by the 
+            <sapia:class><a href="maven/api/org/sapia/validator/ValidationErr.html">ValidationErr</a></sapia:class> 
+            class. The class provides a method (<sapia:command>getMsg()</sapia:command>) to retreive the error message 
+            corresponding to the validation rule that generated it. If a validation rule has signaled a "system" error
+            (in the form of a Java exception), the corresponding <sapia:class>ValidationErr</sapia:class> instance
+            will in that case hold a <sapia:class>Throwable</sapia:class> instance, rather then an error message in string
+            format. The <sapia:class>ValidationErr</sapia:class> class provides the <sapia:command>isThrowable()</sapia:command>
+            method. The latter returns true if the error instance holds a <sapia:command>Throwable</sapia:command> instance
+            rather then an error message. The following code illustrates how to manipulate a validation error:
+            </p>
+            <sapia:code>
+...
+if(error.isThrowable()){
+   error.getThrowable().printStackTrace();
+}
+else{
+   System.out.println(error.getMsg())
+}
+...</sapia:code>
+            
+            <p>Error messages are added through <sapia:command>message</sapia:command> elements when configuring rules; each message
+            is associated to a given Locale, which is specified through a <sapia:command>locale</sapia:command> attribute. The
+            attribute's value is a path of the form <sapia:command>language/country/variant</sapia:command>. The path can also consist 
+            of <sapia:command>language/country</sapia:command> and <sapia:command>language</sapia:command>. If no locale is specified, 
+            than the message becomes the default one - used for locales that have no matching messages. Messages are resolved according 
+            to the algorithm followed when using Java resource bundles: given a locale, they are searched in reverse hierarchichal 
+            order until a message is found that most corresponds to the locale. The hierarchy, in our case, is expressed through
+            the path notation.</p>
+            
+            <p>As was seen above, the <sapia:command>validate()</sapia:command> method specifies that a 
+            <sapia:class>Locale</sapia:class> be passed to it as a parameter; the instance is internally used to retrieve the proper 
+            message when a validation error occurs.</p>
+
+            <p>The rule below - taken from our example configuration - has been slightly modified with the addition of an
+            error message that would match all <sapia:class>Locale</sapia:class> with "fr" (French) as language indicator:</p>
+            
+            <sapia:code>
+&lt;vlad:minSize attribute="employees" 
+             size="1" 
+             id="numberEmployees"&gt;
+ &lt;message value="Company should have at least 1 employee"/&gt;
+ &lt;message 
+       value="La compagnie devrait avoir au moins un employe" 
+       locale="fr"/&gt; 
+&lt;/vlad:minSize&gt;</sapia:code>
+            
+            
+            <p>In addition, the <sapia:class>ValidationErr</sapia:class> has a <sapia:command>getId()</sapia:command> method. The 
+            latter returns the identifier of the rule that generated the error. This arbitrary identifier is assigned by the 
+            individual who is creating the rule configuration. It can for example be made to correspond to the name of a UI widget 
+            from which the validated information comes - you have probably seen forms on web sites that would be popped back to you 
+            when some data, in a specific form field, would prove erroneous. In such a case, the web site asks you to fill that 
+            specific field again - without having to refill the whole form.</p>
+            
+          </sapia:sect5>
+        </sapia:sect4>
+        
+      </sapia:sect3>
+      <sapia:sect3 title="Advanced Issues">
+        <sapia:sect4 title="Implement your Rules">
+          <p>Implementing your rules is quite straightforward, and is where the real power of Vlad lies. The steps below show
+          how this can be done, through the implementation of a rule that validates if a given number is positive - however 
+          useful that may be:</p>
+          
+          <sapia:sect5 title="Extend the Rule class">
+            <p>Have your rule class extend the <sapia:class>org.sapia.validator.Rule</sapia:class> class:</p>
+            <sapia:code>
+package org.sapia.validator.examples;
+
+import org.sapia.validator.Rule;
+import org.sapia.validator.ValidationContext;
+
+public class PositiveRule extends Rule{
+
+  /**
+   * Constructor for PositiveRule.
+   */
+  public PositiveRule() {
+    super();
+  }
+  
+  /**
+   * @see org.sapia.validator.Rule#validate(ValidationContext)
+   */
+  public void validate(ValidationContext context) {}
+}</sapia:code>
+          </sapia:sect5>
+          
+          <sapia:sect5 title="Implement the validate() Method">
+            <p>Now, provide and implementation for the <sapia:command>validate()</sapia:command> method:</p>
+            <sapia:code><![CDATA[
+public void validate(ValidationContext context) {
+  Integer intg = (Integer)context.get(); 
+  if(intg.intValue() < 0){
+    context.getStatus().error(this);
+  }
+}]]></sapia:code>
+          </sapia:sect5>         
+          
+          <sapia:sect5 title="Configure your Rule">
+            <p>Create a configuration that uses your rule:</p>
+            <sapia:code><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+  <namespace prefix="vlad">
+    <ruleDef name="positive"   
+       class="org.sapia.validator.examples.PositiveRule"/>
+  </namespace>
+
+  <ruleSet id="checkPositive">
+    <vlad:positive>
+        <message value="Value is not positive"/>
+    </vlad:positive>        
+  </ruleSet>
+
+</vlad>
+]]></sapia:code>
+          </sapia:sect5>
+          
+          <sapia:sect5 title="Test your Rule">
+            <p>The following code assumes that the configuration is contained in a file named
+            "positive.xml", placed in "user.dir":</p>
+            <sapia:code><![CDATA[
+public static void main(String[] args) {
+  try {
+    Vlad v = new Vlad().load(new File("positive.xml"));
+    Status s = v.validate("checkPositive", 
+               new Integer(-1),
+               java.util.Locale.getDefault());
+   
+    if(s.isError()){
+      List errs = s.getErrors();
+      ValidationErr err;
+      for(int i = 0; i < errs.size(); i++){
+        err = (ValidationErr)errs.get(i);
+        if(err.isThrowable()){
+          err.getThrowable().printStackTrace();
+        }
+        else{
+          System.out.println(err.getMsg());
+        }
+      }
+    }                 
+    else{
+      System.out.println("No validation error.");
+    }
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+}
+]]></sapia:code>
+            <p>When executing the above, our configured error message should appear.</p>
+          </sapia:sect5>
+          
+          <sapia:sect5 title="Share your Rule">
+            <p>Once your rule has been designed and tested, you are ready to share it with the
+            rest of the world. Packaging rule implementations involves:</p>
+            
+            <ul>
+              <li>Creating a rule definition file;</li>
+              <li>packaging the definition file, along with all the classes necessary to use your rules, in a Java archive (jar file);</li>
+              <li>specifying to the users of your rules how to initialize a <sapia:class>Vlad</sapia:class> instance with your
+              definition file (this will typically involve calling the <sapia:command>loadDefs()</sapia:command> method on
+              the <sapia:command>Vlad</sapia:command> instance passing the path to the definition file).</li>
+            </ul>
+            
+            <p>Given our <sapia:class>PositiveRule</sapia:class> (see further above), we create the following rule definition file:</p>
+            <sapia:code><![CDATA[
+<defs>
+  <namespace prefix="vlad">
+    <ruleDef name="positive"   
+      class="org.sapia.validator.examples.PositiveRule"/>
+  </namespace>
+</defs>]]></sapia:code>
+
+            <p>The rule class, together with the definition file, are packaged in a jar file with the following structure:</p>
+            <p>
+            <sapia:command><br>org/sapia/validator/examples/PositiveRule.class</br></sapia:command>
+            <sapia:command><br>org/sapia/validator/examples/positivedefs.xml</br></sapia:command>          
+            </p>
+            
+            <p>Packaging the definition in the jar file means that it will be loaded as a resource; do not put it at the root of
+            the jar (since it could be overriden by another resource with the same name in the classpath), but in a path that ensures
+            its unicity (preferrably in the path that corresponds to the package where your rule classes are defined).</p>
+            
+            <p>Once your rules have been cleanly packaged, users can use them in their applications (making sure they initialize their
+            validation engine properly with your rule definition file):</p>
+            
+            <sapia:code>Vlad v = new Vlad()
+ .loadDefs("org/sapia/validator/examples/positivedefs.xml");</sapia:code>
+            
+            <p>All <sapia:command>load()</sapia:command> methods support chained invocations. Multiple definitions can be loaded
+            conveniently like so - the last load call loads the actual rulesets that the application will use: </p>
+            
+            <sapia:code>Vlad v = new Vlad().loadDefs("someDefs.xml")
+ .loadDefs("someOtherDefs.xml").load("someRuleSets.xml");</sapia:code>
+            
+          </sapia:sect5>
+                  
+        </sapia:sect4>
+        <sapia:sect4 title="Rule Instantiation and Initialization">
+          <p>The validation engine uses dynamic class loading and instantiation to create instances of your rule 
+          classes - the latter must have a <b>public, no-args constructor</b>. Java's Reflection API is used to 
+          assign configuration attributes (and elements) to the rule instances. For example, given the 
+          following:</p>
+          
+          <sapia:code><![CDATA[
+<vlad:minSize attribute="employees" 
+              size="1" 
+              id="numberEmployees">
+    <message value="Company should have at least 1 employee"/>
+</vlad:minSize>]]></sapia:code>
+
+          <p>The above implies that the rule class corresponding to the "vlad:minSize" rule has 
+          <sapia:command>setAttribute()</sapia:command>, <sapia:command>setSize()</sapia:command> and
+          <sapia:command>setId()</sapia:command> methods. For sub-elements (like "message"), the existence
+          of a corresponding createXXXX or addXXXX is assumed, were XXXX corresponds to the name of the
+          sub-element. The creator or adder method must return the created/added instance, which is then
+          initialized in the same manner, and so on, recursively.</p>
+          
+          <sapia:note>
+          For those of you who have implemented Ant tasks, this pattern will ring a bell.
+          </sapia:note>
+          
+          <p>In the case of setters, the attribute values are coerced to the type that is specified by the
+          setters; for booleans, the "true" string will result in a true boolean. Attribute values must correspond
+          to Java's primitive types (including <sapia:class>java.lang.String</sapia:class>). The 
+          <sapia:class>Rule</sapia:class> class already implements the <sapia:command>setId()</sapia:command> and 
+          <sapia:command>createMessage()</sapia:command> methods - so inheriting classes all support the "id" and 
+          "message" attribute/element.</p>
+          
+          <p>If a rule must be able to contain other rules, then have its class extend the
+          <sapia:class><a href="maven/api/org/sapia/validator/CompositeRule.html">CompositeRule</a></sapia:class> class. 
+          It provides such support.</p>
+          
+        </sapia:sect4>
+        
+        <sapia:sect4 title="Rule and Ruleset References">
+          <p>A validation configuration can become quite complex. To strip it from repetitive rules and rulesets, Vlad
+          supports the notion of "reference": a rule or ruleset reference refers to a defined rule or ruleset 
+          respectively, yet appears to the validation engine as a <sapia:class>Validatable</sapia:class> instance.</p>
+          
+          <p>The following defines a "ruleRef":</p>
+          
+          <sapia:code><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <vlad:minSize attribute="employees" 
+            size="1" 
+            id="numberEmployees">
+    <message 
+      value="Company should have at least 1 employee"/>
+  </vlad:minSize>      
+
+
+  <ruleSet id="checkCompany">
+    
+    <!-- Refers to the rule defined above --> 
+    <ruleRef id="numberEmployees"/>
+    
+    <vlad:forEach attribute="employees">
+      <ruleSet id="checkEmployee">
+        <vlad:mandatory attribute="name" id="employeeName">
+          <message value="Employee does not have a name"/>
+        </vlad:mandatory>
+      </ruleSet>
+    </vlad:forEach>      
+        
+  </ruleSet>
+</vlad>]]></sapia:code>
+
+          <p>The following defines a "ruleSetRef":</p>
+          
+          <sapia:code><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <ruleSet id="checkEmployee">
+    <vlad:mandatory attribute="name" id="employeeName">
+      <message value="Employee does not have a name"/>
+    </vlad:mandatory>
+    
+    <!-- Here we could add other 
+        "employee validation" rules -->
+        
+  </ruleSet>
+
+
+  <ruleSet id="checkCompany">
+    <vlad:minSize attribute="employees" 
+              size="1" 
+              id="numberEmployees">
+      <message 
+         value="Company should have at least 1 employee"/>
+    </vlad:minSize>        
+    <vlad:forEach attribute="employees">
+    
+      <!-- Here we refer to a ruleset that 
+           validates employees -->
+      <ruleSetRef id="checkEmployee"/>
+      
+    </vlad:forEach>      
+    
+  </ruleSet>
+</vlad>]]></sapia:code>          
+            
+        <p>When using references, there are some constraints to keep in mind:</p>
+        
+        <ul>
+          <li>Only rules and rulesets defined under the <sapia:command>vlad</sapia:command>
+          element can be referred to;</li>
+          <li>in such a case, they must specify an <sapia:command>id</sapia:command> 
+          attribute, and must be referred to with the value of this attribute. By the same 
+          token, <sapia:command>ruleRef</sapia:command>s and 
+          <sapia:command>ruleSetRefs</sapia:command> must also provide an 
+          <sapia:command>id</sapia:command> attribute, which of course in this case maps
+          to the identifier of defined rule/ruleset.</li>
+        </ul>
+        
+        <sapia:note>The order of declaration does not matter; the rules and rulesets
+        that are referred to by references need not be declared before the latter.</sapia:note>
+          
+        </sapia:sect4>
+      </sapia:sect3>      
+    </sapia:sect2>    
+  </sapia:sect1>
+</sapia:page>

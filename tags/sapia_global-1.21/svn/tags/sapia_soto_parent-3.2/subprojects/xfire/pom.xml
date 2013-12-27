@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Soto XFire Integration</name>
+  <description>Integrates the XFire webservice framework</description>
+
+  <url>http://www.sapia-oss.org/projects/soto/subprojects/xfire/index.html</url>
+  <artifactId>sapia_soto_xfire</artifactId>
+
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_soto_parent</artifactId>
+    <version>3.2</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.xfire</groupId>
+      <artifactId>xfire-all</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.thoughtworks.qdox</groupId>
+        <artifactId>qdox</artifactId>
+        <version>1.12</version>
+    </dependency>
+    <dependency>
+        <groupId>freemarker</groupId>
+        <artifactId>freemarker</artifactId>	
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty</artifactId>
+       <optional>true</optional>
+    </dependency>
+  </dependencies>
+
+</project>

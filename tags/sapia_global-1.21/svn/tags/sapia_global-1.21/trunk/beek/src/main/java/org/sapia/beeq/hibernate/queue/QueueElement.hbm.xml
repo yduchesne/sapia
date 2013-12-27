@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.sapia.beeq.hibernate.queue">
+  <typedef class="org.sapia.beeq.hibernate.types.EnumUserType" name="status">
+    <param name="class">org.sapia.beeq.hibernate.queue.QueueElementStatus</param>
+  </typedef>
+  
+  <class name="QueueElement" table="QUEUE_ELEMENT">
+    <id name="id" type="long" >
+      <generator class="foreign">
+        <param name="property">message</param>
+      </generator>      
+    </id>
+
+    <property name="creationDate" column="creation_date" type="date" not-null="true" index="q_elem_cdate_idx"/>
+    
+	  <!-- associations -->
+        
+		<one-to-one name="message" class="org.sapia.beeq.hibernate.HibernateMessage" constrained="true" cascade="save-update"/>    
+		
+    <property name="status" type="status" index="queue_status" />
+    
+  </class>
+</hibernate-mapping>

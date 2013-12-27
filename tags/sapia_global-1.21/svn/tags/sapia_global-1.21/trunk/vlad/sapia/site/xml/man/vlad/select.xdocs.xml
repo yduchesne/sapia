@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><sapia:page cssPath="../../css/sapia.css" title="vlad:select" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform"><sapia:vmenu><sapia:vsection name="Project Home" href="../../home.html"/><sapia:vsection name="Javadoc" href="../../maven/api/index.html"/><sapia:vsection name="Download" href="../../download.html"/><sapia:vsection name="Mailing List" href="../../list.html"/><sapia:vsection name="Maven" href="../../maven/index.html"/></sapia:vmenu><sapia:sect1 title="vlad:select"><sapia:section><sapia:path name="home" href="../../../../home.html"/><sapia:path name="projects" href="../../../../projects.html"/><sapia:path name="vlad" href="../../index.html"/><sapia:path name="rule reference" href="../index.html"/><sapia:path name="vlad:select"/></sapia:section><sapia:sect-desc><sapia:sect-desc><p>
+    <p>
+    This rule is analoguous to XSL's "select". It pushes an object on the validation context's stack, 
+    passing the context to its nested rule. This is convenient when the nested rule expects a given object
+    on the stack. The pushed object is popped before the select rule returns; the current object on the
+    stack becomes the original one.
+    </p>
+    <p>
+    Note that the select rule takes a <b>single nested rule only</b>.
+    </p>
+  </p></sapia:sect-desc></sapia:sect-desc><sapia:sect2 title="Attributes"><sapia:table width="100%"><sapia:th>Name</sapia:th><sapia:th>Description</sapia:th><sapia:th>Mandatory</sapia:th><tr><td width="20%" align="center" valign="top">attribute</td><td width="75%" valign="top"><sapia:sect-desc><p>Specifies the name of the accessor whose return value is pushed on the validation context's 
+      stack.
+      <p>
+      This attribute's value must use the property access notation specified by the
+      <a href="http://jakarta.apache.org/commons/beanutils.html">BeanUtils</a> libary - see 
+      the library's <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/package-summary.html">
+      javadoc</a> for more information.</p>
+      </p></sapia:sect-desc></td><td width="5%" align="center" valign="top">yes</td></tr></sapia:table></sapia:sect2><sapia:sect2 title="Example(s)"><sapia:sect3 title="Using select to push an object on the stack"><sapia:sect-desc><p>The address of a all employees of a company is checked for a mandatory zip code.</p></sapia:sect-desc><sapia:code><content>
+&lt;vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules"&gt;
+
+  &lt;ruleSet id="checkCompany"&gt;
+    
+    &lt;vlad:forEach attribute="employees"&gt;
+      &lt;ruleSet id="checkEmployee"&gt;
+        &lt;vlad:select attribute="address"&gt;      
+          &lt;vlad:mandatory attribute="zipCode" id="zipCode"&gt;
+            &lt;message 
+             value="Zip code must be provided"/&gt;
+          &lt;/vlad:mandatory&gt;
+        &lt;/vlad:select&gt;
+      &lt;/ruleSet&gt;
+    &lt;/vlad:forEach&gt;      
+        
+  &lt;/ruleSet&gt;
+&lt;/vlad&gt;      
+      </content></sapia:code></sapia:sect3></sapia:sect2></sapia:sect1></sapia:page>

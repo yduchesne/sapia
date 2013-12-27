@@ -1,0 +1,46 @@
+  <div id="content">
+    <h1>This is an Ajax sample</h1>
+    
+    <p>
+    This pages uses the <a href="http://code.google.com/p/trimpath/wiki/JavaScriptTemplates">JST</a> Javascript template engine to evaluate templates on the client-side. The data
+    is acquired from the server, in JSON format (In fact, the data is kept in an XML file, which is converted to JSON
+    by a JSONSerializer, available as part of this project - see the <a href="data/addressbook.xml">XML</a> from which the JSON data is generated). 
+    </p>
+    
+    
+    <textarea id="displayContacts_jst" style="display:none;">
+      <table>
+        <th>First Name</th><th>Last Name</th>
+        {for c in addressBook.contact}
+        <tr>
+          <td>${c.firstName}</td><td>${c.lastName}</td>
+        </tr>
+        {/for}
+      </table>
+    </textarea>    
+    
+    <pre id="response">
+    </pre>
+
+    <div id="subtitle" style="font-size: 130%; opacity: 0">Contacts</div>
+    
+    <span id="contacts">
+    </span>
+    
+    <script>
+      coolStuff = function(){
+	    new Effect.Opacity(
+	       'subtitle',
+	       { 
+	         duration: 2.0, 
+             transition: Effect.Transitions.linear, 
+             from: 0, to: 1
+           }
+        )
+	  }
+    </script>    
+    
+    <input type="button" value="Load" onClick="evalTemplate('addressbook.ajx', 'displayContacts_jst', 'contacts', coolStuff);" />
+    
+    <p><a href="home.html">back to home</a></p>
+  </div>

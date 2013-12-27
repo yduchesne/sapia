@@ -1,0 +1,51 @@
+<descriptor namespace="vlad" 
+            name="groovy"
+            class="org.sapia.validator.rules.groovy.GroovyRule"
+            nested="no"
+            >
+
+  <description>
+    <p>
+    This rule implementation executes a user-specified <a href="http://groovy.codehaus.org/">Groovy</a>
+    script.
+    </p>
+    <p>
+    Note that the groovy script is specified as XML text within the rule's configuration element. In
+    addition, a status variable which corresponds to the current validation status object is passed 
+    to the script, and can thus be accessed automatically - see example below.
+    </p>
+  </description>
+  <elements>
+    <element name="import" mandatory="false">
+      <description>Specifies an import (as Java's import statement) that is used in the script.</description>
+    </element>
+  </elements>
+  <examples>
+    <example name="A basic Groovy rule">
+      <description>Checks an employee's role.</description>
+      <content><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <ruleSet id="checkCompany">
+    <vlad:forEach attribute="employees">
+      <ruleSet id="checkEmployeeRole">
+        <vlad:groovy>
+	  <import>org.acmecorp.role.Manager</import>
+          <message  
+           value="Operation restricted to managers" />
+             status = context.getStatus();
+             employee = context.get();
+	     if(!employee.getRole() instanceof Manager){
+	       status.error(this);
+	     }
+        </vlad:groovy>
+      </ruleSet>
+    </vlad:forEach>      
+  </ruleSet>
+</vlad>]]>      
+      </content>
+    </example>
+  </examples>
+
+
+</descriptor>

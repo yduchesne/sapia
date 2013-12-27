@@ -1,0 +1,29 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:aop="soto:aop"
+          xmlns:test="soto:test">
+  
+  <soto:namespace prefix="test">
+    <def class="org.sapia.soto.aop.TestService"      name="testService" />
+    <def class="org.sapia.soto.aop.TestThrowsAdvice" name="throws" />    
+  </soto:namespace>
+
+  <soto:service>
+    <test:testService/>
+
+    <aop:aspect>
+      <adviceDef class="org.sapia.soto.aop.TestAroundAdvice" id="around"/>
+      <adviceDef class="org.sapia.soto.aop.TestBeforeAdvice" id="before"/>
+      
+      <group id="group">
+        <adviceDef class="org.sapia.soto.aop.TestAfterAdvice"  id="after"/>
+        <adviceRef id="before" />
+        <test:throws/>
+      </group>
+
+      <method name="*">
+        <adviceRef id="around" />
+        <groupRef id="group" />
+      </method>
+    </aop:aspect>
+  </soto:service>
+</soto:app>

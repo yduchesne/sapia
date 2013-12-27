@@ -1,0 +1,60 @@
+<descriptor namespace="vlad" 
+            name="min&lt;Primitive&gt;"
+            class="org.sapia.validator.rules.Min&lt;Primitive&gt;"
+            nested="yes"
+            xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <description>
+    <p>Use this rule to ensure that a given primitive value is greater than or equal to 
+    a given specified value.</p>
+    <p>A corresponding "minimum" rule exists for the following Java primitive types - and
+    their object representation:
+      <center><sapia:table>
+        <sapia:th>Type</sapia:th><sapia:th>Rule</sapia:th>
+        <tr><td>int or java.lang.Integer</td><td>minInt</td></tr>
+        <tr><td>long or java.lang.Long</td><td>minLong</td></tr>
+        <tr><td>float or java.lang.Float</td><td>minFloat</td></tr>
+        <tr><td>double or java.lang.Double</td><td>minDouble</td></tr>        
+      </sapia:table></center> 
+
+    </p>
+    
+  </description>
+  <attributes>
+    <attribute name="attribute" mandatory="no">
+      <description>Specifies the name of the accessor whose return value must be a 
+      Java primitive, or the object representation of a Java primitive. The rule ensures that 
+      the validated value is greater than or equal to the one specified by the "value" attribute - see next.
+      <p>If the object to validate is a null reference, an error is generated.</p>      
+      <p>If this attribute is omitted, the current object on the validation context's
+      stack will be validated - and cast to the expected type.</p>
+      This attribute's value must use the property access notation specified by the
+      <a href="http://jakarta.apache.org/commons/beanutils.html">BeanUtils</a> libary - see 
+      the library's <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/package-summary.html">
+      javadoc</a> for more information.
+      </description>
+    </attribute>
+    <attribute name="value" mandatory="yes">
+      <description>A primitive value corresponding to the expected minimum.</description>
+    </attribute>    
+  </attributes>
+  
+  <examples>
+    <example name="Validating a money amount">
+      <content><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+ <ruleSet id="checkRebate">
+    
+  <vlad:minFloat attribute="total.amount" value="10.00">
+     <message 
+      value="Rebate given on purchases of $10 or more only."/>
+  </vlad:minFloat>
+
+ </ruleSet>
+</vlad>]]>      
+      </content>
+    </example>
+  </examples>
+
+</descriptor>

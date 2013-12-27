@@ -1,0 +1,66 @@
+<descriptor namespace="vlad" 
+            name="regEx"
+            class="org.sapia.validator.rules.RegEx"
+            nested="no"
+            >
+
+  <description>
+    Use this rule to ensure that a given object property/attribute matches a specified Perl5 regular expression. 
+  </description>
+  <attributes>
+    <attribute name="attribute" mandatory="no">
+      <description>Specifies the name of the accessor whose return value will be validated - the
+      return value must <b>not</b> be null.
+      <p>
+      If this attribute is omitted, the current object on the validation context's
+      stack will be validated.
+      </p>
+      <p>
+      The object's string representation is in fact validated (the toString() method is called on the object).
+      </p>
+      <p>This attribute's value must use the property access notation specified by the
+      <a href="http://jakarta.apache.org/commons/beanutils.html">BeanUtils</a> libary - see 
+      the library's <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/package-summary.html">
+      javadoc</a> for more information.</p>
+      </description>
+    </attribute>
+    <attribute name="pattern" mandatory="yes">
+      <description>
+        <p>The Perl5 regular expression specifying the pattern against which the validation
+        must be performed.
+        </p>
+        <p>This attribute's value must use the notation supported by the
+        <a href="http://jakarta.apache.org/oro/index.html">ORO</a> libary - see 
+        the library's <a href="http://jakarta.apache.org/oro/api/org/apache/oro/text/perl/Perl5Util.html">
+        javadoc</a> for more information.</p>
+        <p>A Perl regular expression tutorial can be found <a href="http://www.perldoc.com/perl5.8.0/pod/perlretut.html">here</a></p>        
+      </description>
+    </attribute>    
+  </attributes>
+  
+  <examples>
+    <example name="Ensuring that all employees have a valid phone number">
+      <content><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <ruleSet id="checkCompany">
+    
+    <vlad:forEach attribute="employees">
+      <ruleSet id="checkEmployee">
+        <vlad:regEx pattern="/(\d\d\d)-(\d\d\d)-(\d\d\d\d)/" 
+                    attribute="phoneNumber" 
+                    id="employeePhone">
+         <message
+          value="Employee does not have a valid phone number"/>
+        </vlad:regEx>
+      </ruleSet>
+    </vlad:forEach>
+    
+  </ruleSet>    
+  
+</vlad>]]>      
+      </content>
+    </example>
+  </examples>
+
+</descriptor>

@@ -1,0 +1,5 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="prevayler">                  
+    <def class="org.sapia.soto.prevayler.PrevaylerService"             name="system" />
+  </soto:namespace>
+</soto:defs>

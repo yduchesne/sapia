@@ -1,0 +1,5 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="mail">
+    <def class="org.sapia.soto.state.mail.MailStep"                    name="send" />
+  </soto:namespace>
+</soto:defs>  

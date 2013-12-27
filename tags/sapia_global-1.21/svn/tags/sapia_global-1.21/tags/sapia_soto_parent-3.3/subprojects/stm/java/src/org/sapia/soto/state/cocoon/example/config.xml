@@ -1,0 +1,15 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:stm="sapia:stm">
+  
+  <soto:service id="stateService">
+    <stm:cocoon>
+      <stm:states>
+        <stm:jelly id="helloWorld" src="cocoon:/jelly/helloWorld.xml">
+          <soto:if param="env-type" equals="standalone">
+            <stm:xsl src="cocoon:/xsl/sapia.xsl"/>
+          </soto:if>
+        </stm:jelly>
+      </stm:states>
+    </stm:cocoon>
+  </soto:service>
+</soto:app>

@@ -1,0 +1,6 @@
+<soto:defs xmlns:soto="sapia:soto">
+	<soto:namespace prefix="test-uri">
+	  <def class="org.sapia.soto.TestUriTag" name="testTag" />
+	</soto:namespace>
+</soto:defs>
+  

@@ -1,0 +1,37 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="stm">
+    <def class="org.sapia.soto.state.StateMachineService"              name="machine" />
+    <def class="org.sapia.soto.state.StateMachine"                     name="states" />    
+    <def class="org.sapia.soto.state.StepState"                        name="state" />  
+    <def class="org.sapia.soto.state.StateRef"                         name="stateRef" />      
+    <def class="org.sapia.soto.state.config.StateInterceptor"          name="interceptor" />
+    <def class="org.sapia.soto.state.config.Globals"                   name="globals" />    
+    <def class="org.sapia.soto.state.Module"                           name="module" />        
+    <def class="org.sapia.soto.state.MatchError"                       name="matchError" />
+    <def class="org.sapia.soto.state.helpers.ScopeKeyTag"              name="value" />                   
+    <def class="org.sapia.soto.state.util.ActionStep"                  name="action" />    
+    <def class="org.sapia.soto.state.util.EchoStep"                    name="echo" />    
+    <def class="org.sapia.soto.state.util.DebugStep"                   name="debug" />        
+    <def class="org.sapia.soto.state.util.Assert"                      name="assert" />  
+    <def class="org.sapia.soto.state.util.FormStep"                    name="form" />      
+    <def class="org.sapia.soto.state.util.Export"                      name="export" />
+    <def class="org.sapia.soto.state.util.Push"                        name="push" />    
+    <def class="org.sapia.soto.state.util.Pop"                         name="pop" />     
+    <def class="org.sapia.soto.state.util.Abort"                       name="abort" />
+    <def class="org.sapia.soto.state.util.VarStep"                     name="var" />
+    <def class="org.sapia.soto.state.util.ColStep"                     name="col" />       
+    <def class="org.sapia.soto.state.control.Choose"                   name="choose" />
+    <def class="org.sapia.soto.state.control.If"                       name="if" />
+    <def class="org.sapia.soto.state.code.BeanshellStep"               name="bsh" />          
+    <def class="org.sapia.soto.state.code.GroovyStep"                  name="groovy" />
+    <def class="org.sapia.soto.state.code.PnutsStep"                   name="pnuts" />    
+    <def class="org.sapia.soto.state.cocoon.view.DomifyView"           name="domify" />  
+    <def class="org.sapia.soto.state.cocoon.view.JellyView"            name="jelly" />      
+    <def class="org.sapia.soto.state.freemarker.FreemarkerStep"        name="freemarker" />
+    <def class="org.sapia.soto.jython.JythonStep"                      name="jython" />    
+    <def class="org.sapia.soto.state.xml.StyleStep"                    name="xsl" />    
+    <def class="org.sapia.soto.state.xml.XMLInclude"                   name="xml-include" />        
+    <def class="org.sapia.soto.state.dispatcher.DispatcherService"     name="dispatcher" />    
+    <def class="org.sapia.soto.state.control.BranchResult"     		   name="branch" />    
+  </soto:namespace>
+</soto:defs>  

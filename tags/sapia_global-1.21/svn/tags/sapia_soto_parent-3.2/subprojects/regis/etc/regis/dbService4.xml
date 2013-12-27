@@ -1,0 +1,15 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:regis="soto:regis"
+          xmlns:sample="soto:sample">
+  
+  <soto:service id="included/database/004">
+    <attribute name="sample:type" value="database" />
+    <sample:dbService 
+      username="${username}" 
+      password="${password}" 
+      url="${url}">
+    </sample:dbService>
+  </soto:service>
+
+  
+</soto:app>

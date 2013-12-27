@@ -1,0 +1,12 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:test="soto:test">
+  
+  <soto:namespace prefix="test">
+    <def class="org.sapia.soto.TestService" name="boot" />
+  </soto:namespace>
+
+  <soto:service id="bootstrapped"> 
+    <test:boot />
+  </soto:service>
+
+</soto:app>

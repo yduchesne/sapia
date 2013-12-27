@@ -1,0 +1,12 @@
+  <soto:service id="secondary" xmlns:soto="sapia:soto"
+                               xmlns:sample="soto:sample">
+
+    <sample:secondary>
+      <someService>
+        <soto:serviceRef id="master"/>
+      </someService>
+    </sample:secondary>
+
+    <soto:include uri="nestedInclude.xml"/>
+
+  </soto:service>

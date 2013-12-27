@@ -1,0 +1,13 @@
+THIS PROJECT IS MADE PUBLIC UNDER  THE SAPIA-OSS
+LICENSE. SEE LICENSE.txt THAT COMES  PACKAGED IN 
+THE ROOT OF THE DISTRIBUTION OR GO TO 
+
+http://www.sapia-oss.org/license.html 
+
+
+Archie Version 1.0.1 (2005/06/30)
+=================================
+
+Integrated Savant to build.
+
+
