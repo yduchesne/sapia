@@ -1,0 +1,33 @@
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <!-- min/max -->
+  <vlad:minSize id="1"/>
+  <vlad:maxSize id="2"/>
+  <vlad:minLen id="3"/>  
+  <vlad:maxLen id="4"/>
+  <vlad:minInt id="5"/>  
+  <vlad:maxInt id="6"/>
+  <vlad:minLong id="7"/>  
+  <vlad:maxLong id="8"/>  
+  <vlad:minFloat id="9"/>  
+  <vlad:maxFloat id="10"/>
+  <vlad:minDouble id="11"/>  
+  <vlad:maxDouble id="12"/>
+  
+  <!-- flow -->  
+  <vlad:ifDefined id="13">
+	  <vlad:minFloat id="13.1"/>    
+  </vlad:ifDefined>
+  <vlad:select id="14">
+ 	  <vlad:minFloat id="13.1"/>    
+  </vlad:select>
+  <vlad:forEach id="15">  
+ 	  <vlad:minFloat id="13.1"/>      
+  </vlad:forEach>
+
+  <!-- misc -->
+  <vlad:mandatory id="16"/>
+  <vlad:regEx id="17"/>  
+  
+        
+</vlad>

@@ -1,0 +1,14 @@
+<soto:app xmlns:soto="sapia:soto" xmlns:log="soto:log">
+
+  <soto:service id="log4j">
+      <log:log4j configPath="main.log4j.xml">
+          <log:loggerDef id="com" name="com" />
+      </log:log4j>
+  </soto:service>
+
+  <soto:service>
+      <log:serviceSingleton>
+          <log:loggerDef id="org" name="org" />
+      </log:serviceSingleton>
+  </soto:service>
+</soto:app>

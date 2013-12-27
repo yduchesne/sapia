@@ -1,0 +1,8 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="cocoon">
+    <def class="org.sapia.soto.state.cocoon.IfNotSession"              name="ifNotSession" />    
+    <def class="org.sapia.soto.state.cocoon.RedirectStep"              name="redirect" />        
+    <def class="org.sapia.soto.state.cocoon.ContentTypeStep"           name="contentType" />                 
+    <def class="org.sapia.soto.state.cocoon.RestChoose"                name="rest" />       
+  </soto:namespace>
+</soto:defs>

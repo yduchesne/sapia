@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Soto Internationalization Service</name>
+  <url>http://www.sapia-oss.org/projects/soto/subprojects/i18n/index.html</url>
+  <artifactId>sapia_soto_i18n</artifactId>
+  <version>3.4-SNAPSHOT</version>
+
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_soto_parent</artifactId>
+    <version>3.4-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>trove</groupId>
+        <artifactId>trove</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>

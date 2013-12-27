@@ -1,0 +1,16 @@
+<soto:app xmlns:soto="sapia:soto" xmlns:log="soto:log" xmlns:concurrent="soto:concurrent">
+
+  <soto:service id="log4j">
+      <log:log4j configPath="main.log4j.xml">
+          <log:loggerDef id="main" name="PerishableObjectMonitor.UnitTest" />
+      </log:log4j>
+  </soto:service>
+
+  <soto:service id="perishableObjectMonitor">
+      <concurrent:perishableObjectMonitor>
+          <logger>
+              <log:loggerRef type="commons" id="main" />
+          </logger>
+      </concurrent:perishableObjectMonitor>
+  </soto:service>
+</soto:app>

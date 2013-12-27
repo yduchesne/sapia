@@ -1,0 +1,27 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+  
+  <soto:namespace prefix="ubik">
+    <def class="org.sapia.soto.ubik.example.StatelessUbikServer" name="pingServer" />
+  </soto:namespace>
+  
+  <!-- instantiating the service that hooks to the remote Ubik JNDI -->
+  <soto:service id="ubik/naming">
+  
+    <ubik:naming jndiHost="localhost" 
+                 jndiPort="1099" 
+	         domain="default"/>
+                 
+  </soto:service>
+
+  <!-- our ping server... -->
+  <soto:service id="soto/example/ubikService">
+    
+    <!-- the server instance -->
+    <ubik:pingServer/>
+
+    <!-- the layer that binds it... -->
+    <ubik:bind jndiName="soto/example/ubikService" />
+
+  </soto:service>
+</soto:app>

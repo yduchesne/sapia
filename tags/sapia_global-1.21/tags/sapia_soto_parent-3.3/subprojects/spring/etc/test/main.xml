@@ -1,0 +1,30 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:spring="soto:spring"
+          xmlns:sample="soto:sample">
+          
+  <soto:registerLifeCycle type="spring">
+    <spring:lifeCycle />
+  </soto:registerLifeCycle>
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.spring.TestSpringService" name="testService" />
+  </soto:namespace>
+  
+  <soto:service type="spring">
+    <soto:new class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+      <basenames>
+        <soto:array type="java.lang.String">
+          <soto:string value="file:etc/test/i18n/messages" />
+        </soto:array>
+      </basenames>
+    </soto:new>
+  </soto:service>    
+  
+  <soto:service id="postProcessor">
+    <soto:new class="org.sapia.soto.spring.TestBeanPostProcessor" />
+  </soto:service>  
+
+  <soto:service id="test" type="spring">
+    <sample:testService/>
+  </soto:service>
+</soto:app>

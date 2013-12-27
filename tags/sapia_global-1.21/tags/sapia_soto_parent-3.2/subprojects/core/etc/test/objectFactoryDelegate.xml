@@ -1,0 +1,16 @@
+<soto:app xmlns:soto="sapia:soto" xmlns:sample="soto:sample">
+
+  <soto:service id="testDelegate">
+    <soto:new class="org.sapia.soto.TestObjectFactoryDelegate" />
+  </soto:service>
+
+  <soto:namespace prefix="sample" delegateId="testDelegate">
+    <def class="org.sapia.soto.TestPOJO" name="test" />          
+  </soto:namespace>
+
+  <soto:service id="pojo">
+    <sample:test />
+  </soto:service>
+  
+  
+</soto:app>

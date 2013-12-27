@@ -1,0 +1,14 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:ubik="soto:ubik">
+
+  <soto:service>
+    <ubik:domainMonitor>
+      <eventChannel>    
+        <soto:service>
+	      <ubik:eventChannel domain="default" />
+        </soto:service>
+      </eventChannel>        
+    </ubik:domainMonitor>
+  </soto:service>    
+  
+</soto:app>

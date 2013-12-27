@@ -1,0 +1,55 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:jmx="soto:jmx"
+          xmlns:sample="http://www.sapia-oss.org/soto/sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.jmx.example.CentralController" name="controller" />
+  </soto:namespace>
+  
+  
+  <!-- This exports the MBeanServer under the "sample" domain 
+       so that it can be administered remotely -->
+  <soto:service>
+    <jmx:mx4j />
+  </soto:service>
+
+  <soto:service id="mainController">
+    <attribute name="database:type" value="jdbc" />
+    <attribute name="database:name" value="MySql" />    
+    <sample:controller jndiName="application/main/controller"/>
+    
+    <!-- if not specified, domain is 'soto'; if not specified,
+         service name is the value of the 'id' attribute of
+         the parent 'soto:service' element. If service is
+         "anonymous" (no id specified), then class name + 
+         pseudo random number is used. -->
+    <jmx:mbean serviceName="contollerMBean">
+    
+      <attributes>
+        <include name="maxThreads" description="Max. number of concurrent threads" />
+        <include name="requestsPerSecond" description="Current approximate number of requests per second" />
+        <include name="jndiName" description="The JNDI name of this controller" writable="false" />
+      </attributes>
+      
+      <operations>
+        <include name="addUser" description="Adds a new user">
+          <param name="Username" description="A valid username"/>
+          <param name="Password" description="A valid password"/>          
+        </include>
+        <include name="removeUser" description="Removes an existing user">
+          <param name="Username" description="A valid username"/>
+          <param name="Password" description="A valid password"/>          
+        </include>        
+        <include name="login" description="Enter your login info to authentify yourself">
+          <param name="Username" description="A valid username"/>
+          <param name="Password" description="A valid password"/>          
+        </include>
+        
+        <!-- Excluding lifecyle methods -->
+        <exclude name="init" />
+        <exclude name="start" />
+        <exclude name="dispose" />        
+      </operations>
+    </jmx:mbean>
+  </soto:service>
+</soto:app>

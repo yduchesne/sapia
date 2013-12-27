@@ -1,0 +1,7 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:test="soto:test">
+  
+  <soto:resourceAlias uri="**/*.xml" 
+      redirect="resource:/org/sapia/soto/{1}.xml" />
+  
+</soto:app>

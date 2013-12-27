@@ -1,0 +1,11 @@
+<project name="doc_plugin" basedir="." >
+  
+    <xslt 
+      basedir="etc/xml"
+      destdir="etc/html" 
+      extension=".html" 
+      style="src/main/resources/org/sapia/site/style/sapia.xsl"/>
+
+    <mkdir dir="etc/html/css" />
+    <copy file="src/main/resources/org/sapia/site/style/sapia.css" todir="etc/html/css" />
+</project>

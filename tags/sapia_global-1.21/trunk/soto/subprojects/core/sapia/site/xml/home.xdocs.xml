@@ -1,0 +1,1664 @@
+<sapia:page title="Soto" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:vmenu>
+
+    <sapia:vsection name="Project Home" href="home.html"/>
+    <sapia:vsection name="Layers">  
+      <sapia:vitem name="AOP" href="projects/aop/home.html"/>  
+      <sapia:vitem name="JMX" href="projects/jmx/home.html"/>
+    </sapia:vsection>
+
+    <sapia:vsection name="Services">  
+      <sapia:vitem name="Properties" href="projects/properties/home.html"/>
+      <sapia:vitem name="i18n"       href="projects/i18n/home.html"/>
+      <sapia:vitem name="Datasource" href="projects/datasource/home.html"/>
+      <sapia:vitem name="Logging"    href="projects/log/home.html"/>
+    </sapia:vsection>
+    
+    <sapia:vsection name="Integration Projects">
+      <sapia:vitem name="Ubik"       href="projects/ubik/home.html"/>      
+      <sapia:vitem name="Registry"   href="projects/regis/home.html"/>    
+      <sapia:vitem name="Hibernate"  href="projects/hibernate/home.html"/>
+      <sapia:vitem name="ActiveMQ"   href="projects/activemq/home.html"/>
+      <sapia:vitem name="Jetty"      href="projects/jetty/home.html"/>    
+      <sapia:vitem name="XFire"      href="projects/xfire/home.html"/>            
+      <sapia:vitem name="LDAP"       href="projects/ldap/home.html"/>                
+      <sapia:vitem name="Freemarker" href="projects/freemarker/home.html"/>                    
+    </sapia:vsection>    
+    
+
+    <sapia:vsection name="Javadoc"      href="maven/api/index.html"/>  
+    <sapia:vsection name="Download"     href="download.html"/>  
+    <sapia:vsection name="Mailing List" href="list.html"/>  
+    <sapia:vsection name="Maven"        href="maven/index.html"/>  
+  </sapia:vmenu>
+
+  <sapia:sect1 title="Soto 3">
+    <sapia:section>
+      <sapia:path name="home" href="../../../../home.html" />
+      <sapia:path name="projects" />
+    </sapia:section>
+    <toc/>
+    <sapia:sect2 title="Overview">
+    
+      <p>Soto stands for "service oriented technology"; it will offer various tools/frameworks intented
+      to provide building blocks for service-oriented architectures. Soto's core is a lightweigth container 
+      framework allowing to "wire" services through a convenient XML format. Soto 
+      in addition supports a "layered" logic approach: different "logic domains" 
+      (known as "layers") can be mapped on top of service instances, sparing the developer 
+      from aggregating various types of logic into unmanageable blobs - this is similar 
+      to what AOP attempts to solve, but at a higher-level: the "layer" concept needs 
+      not being implemented with byte code manipulation, advices, pointcuts, and the likes.</p>
+
+  <sapia:note>The Soto distribution comes with demos. Instructions pertaining to these
+      demos are available in the README.txt file in the root of the distribution.</sapia:note>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Features">
+    
+      <p>More concretely, here are Soto's main features:</p>
+      
+      <ul>
+        <li>Service implementations are configured through XML, and instantiated
+        using the <a href="http://www.sapia-oss.org/projects/utils/confix/index.html">Confix</a> API:
+        this spares developers from manipulating DOM-like structures to access a service's configuration.
+        The latter is rather directly assigned to service instances using Java Reflection.
+        </li>
+        <li>Service implementations are "dynamically" associated: if a service needs another service to 
+        accomplish its work, this association is materialized through the XML configuration - no lookup through
+        some naming service or "component manager".
+        </li>
+        <li>Embeddable: a so-called "soto container" can be instantiated directly by the developer; it
+        can be used in a servlet, in an EJB, in a main method, etc. Hence the "lightweight" container...
+        </li>
+        <li>Comes with built-in "layers": one that allows services to be automatically published as MMeans,
+        through simple configuration; another that implements a simple AOP framework - others are planned.
+        </li>
+        <li>Supports file "includes": configuration can be split into multiple configuration files that can be "included" in other
+          ones. This is very essential in cases where configuration becomes "large" and difficult to manage in text editors.</li>
+        <li>Pays special attention to configuration management.</li>
+        <li>Sports nifty features such as conditional instantiation, URI aliases, resource resolving...</li>      
+      </ul>
+        
+    </sapia:sect2>
+
+    <sapia:sect2 title="Architecture">
+         <sapia:sect3 title="What's in a Service?">
+           <p>From the Soto framework point of view, a service is simply a class that implements the
+           <sapia:class link="maven/api/org/sapia/soto/Service.html">Service</sapia:class> interface. The interface
+           goes as follows:
+           </p>
+<sapia:code>public interface Service {
+  
+  public void init() throws Exception;
+
+  public void start() throws Exception;
+  
+  public void dispose();
+  
+}</sapia:code>
+           <p>The above signature implies that services are initialized, then started, and eventually destroyed.
+           This is indeed the simple life-cycle that Soto imposes.</p>
+           
+           <p>A service can be anything you wish it to be; ideally, it should perform some specialized unit of
+           work; multiple services are associated to form an application.</p>
+         </sapia:sect3>
+         
+         <sapia:sect3 title="What's in a Layer?">
+           <p>A layer is meant to separate the core, specialized task that a service performs from the generic
+           behavior/characteristics/features that a given application might "need" the service to offer/implement. 
+           Layers have two goals: <b>code reuse</b> and <b>elegance</b>. The latter means that service developers 
+           are freed from reimplementing features that do not belong specifically to a given service, but that the 
+           latter might offer through a plug-in scheme, without fuss, as simply as possible, preferably through 
+           configuration. To use AOP's terminology, we could say that layers address "cross-cutting
+           concerns". The difference though is that layers need not being implemented through AOP - although
+           they could. Layers are destined to work "on top" of services, without interfering with the
+           latter's activities.</p>
+           
+           <sapia:note>AOP toolkits use byte-code manipulation to insert interceptors in classes at compile-time
+           or at runtime. The layer concept does not imply the use of byte code manipulation. In the case of the
+           JMX layer for example, MBeans are created dynamically, at runtime, using the Java Reflection API. No 
+           interception is made in this case. Thus, one could say that "AOP implements layer" - as pretentious
+           as this may sound.</sapia:note>
+           
+           <p>In Soto, layers implement the <sapia:class link="maven/api/org/sapia/soto/Layer.html">Layer</sapia:class> interface. 
+           The interface goes as follows:</p>
+           
+           <sapia:code>public interface Layer {
+  
+  public void init(ServiceMetaData meta) throws Exception;
+
+  public void dispose();
+
+}</sapia:code>
+           <p>A layer instance is associated to a service instance (as the <sapia:command>init()</sapia:command> method
+           suggests); this association is done through Soto's XML configuration format - as will be shown further below.
+           The above methods are called after their service counterparts are called.</p>
+         </sapia:sect3>
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Learning by Example">
+      <sapia:sect3 title="Implementing a Service">
+        <p>The following code shows a simple service implementation that displays
+        a message to stdout:</p>
+<sapia:code>package org.sapia.soto.examples;
+
+import org.sapia.soto.Service;
+
+public class MasterService implements Service {
+  
+  private String _msg;
+  
+  public MasterService() {
+  }
+  
+  public void init() throws Exception {
+    System.out.println("initializing " + getClass());
+  }
+
+  public void start() throws Exception {
+    System.out.println("starting " + getClass());
+  }
+  
+  public void dispose() {}
+  
+  public void setMessage(String msg){
+    _msg = msg;
+  }
+  
+  public void doSomething(){
+    System.out.println("This is a message: " + _msg);
+  }
+}</sapia:code>
+       <sapia:sect4 title="Life-Cycle">
+         <p>Upon startup, the service init() and start() methods are successively called; it is in the
+         init() method that a service should perform pre-startup checks (insuring that required instance members
+         are not null, etc.). The container that holds the services (the <sapia:command>SotoContainer</sapia:command>,
+         as we'll see further below) indeed proceeds to the following:
+         </p>
+         <ul>
+           <li>calls init() on service instances - once a service's init() method is
+           called, all its layers (if any) have their init() method also called. The init() procedure 
+           is aborted as soon as a service or layer throws an exception; otherwise the next step occurs.</li>
+           
+           <li>The container waits for its own start() method to be called; once this happens,
+           each service is also started.</li>
+         </ul>
+       </sapia:sect4>
+       
+       <sapia:sect4 title="Configuration">
+         <p>The above service is configured as follows:</p>
+
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.examples.MasterService" 
+         name="master" />
+  </soto:namespace>
+
+  <soto:service id="master"> 
+    <sample:master 
+     message="This is a simple useless service" />
+  </soto:service>]]>
+</sapia:code>
+
+        <p>The root element of a Soto configuration file is the <sapia:command>soto:app</sapia:command> - 
+        we will discuss the namespace declarations later on.</p>        
+
+        <p>Soto uses the <a href="http://www.sapia-oss.org/projects/utils/confix/" target="confix_window">Confix</a> API to instantiate objects from a XML representation. To
+          make a long story short, Confix spares developers from having to traverse a DOM-like configuration;
+          the latter is rather direclty assigned to the instantiated objects - through setter/adder methods on
+          these objects (see the Confix documentation for more details).
+        </p>
+        
+        <p>Then, in order for objects to be created dynamically by the configuration engine, their classes must 
+        be declared with <sapia:command>def</sapia:command> elements, categorized by namespace. This is the 
+        same pattern that is used by the <a href="http://www.sapia-oss.org/projects/vlad" target="vlad_window">Vlad</a> validation framework. 
+        Such a categorization allows for different object definitions to cohabitate without risking name collisions; 
+        it also allows to group object definitions by domain, or by contributor/vendor, etc.</p>
+        
+        <p>This definition-per-namespace scheme is materialized through the following:</p>
+
+<sapia:code>
+<![CDATA[<soto:namespace prefix="sample">
+    <def class="org.sapia.soto.examples.MasterService" 
+         name="master" />
+  </soto:namespace>]]></sapia:code>        
+        
+        <p>The <sapia:command>soto:namespace</sapia:command> element takes a mandatory <sapia:command>prefix</sapia:command>
+        attribute. This prefix must later be used when creating instances of our object definitions; if you
+        look at the <sapia:command>def</sapia:command> element, you see that our service implementation appears. In
+        fact, an object definition holds the name of the class from which to instantiate objects, and a "name", which
+        is a logical identifier allowing to refer to a single definition in a given namespace.</p>
+        
+        <p>Once object definitions have been configured in such a way, they can later on be referred to with the
+        prefix:name notation; upon encountering such a combination, Confix (Soto's underlying configuration engine) will  
+        create an instance of the class specified by the corresponding definition.</p>
+        
+        <p>For the XML parser to understand our prefix:name elements, the prefix part as to be mapped to an XML
+        namespace. Hence such namespaces at the top of the configuration file.</p>
+        
+        <p>The following excerpt shows how to create an instance of our service:</p>
+        
+<sapia:code>
+<![CDATA[<soto:service id="master"> 
+    <sample:master 
+     message="This is a simple useless service" />
+  </soto:service>]]>
+</sapia:code>
+        
+         <p>An important point to note is that <b>all</b> services are configured within a <sapia:command>soto:service</sapia:command>
+         element. The element can take an optional <sapia:command>id</sapia:command> attribute, that allows to refer to the
+         service later on in the configuration - to give you a hint: this is how service association is done.</p>
+         
+         <p>Then, the <sapia:command>sample:master</sapia:command> element is our actual service "instantiation"; upon encountering
+         this element, the configuration engine creates a <sapia:class>MasterService</sapia:class> instance. Then, following
+         Confix' processing rule, the <sapia:command>message</sapia:command> attribute is mapped to the 
+         <sapia:command>setMessage()</sapia:command> method in our service; the attribute's value will be passed to the
+         method.</p>
+         
+         <p>Of course, many services can be instantiated this way, and associated to each other, to form a whole application - as
+         we'll see later on.</p>
+         
+         <p>As a service is created, it is internally kept by the container (with which the configuration was loaded), for the application's
+         whole duration. </p>
+
+         <sapia:note>
+           For more on configuring your own implementations, have a look at the <a href="#objectdefs">Object Definitions</a> section
+           further below.
+         </sapia:note>
+       </sapia:sect4>
+
+       <sapia:sect4 title="POJO Support">
+         <p>As of version 3.0, Soto supports POJOs, meaning that services do not need implementing the <sapia:class>Service</sapia:class>
+         interface. The POJOs obey the same life-cycle as "standard" Soto services, provided that some special information is given at
+         configuration time. To make a long story short: you are responsible for indicating to Soto which are the <sapia:command>init</sapia:command>, 
+         <sapia:command>start</sapia:command> and <sapia:command>dispose</sapia:command> methods of your POJOs. The following illustrates how this is done:</p>
+
+<sapia:code>
+<![CDATA[<soto:service id="somePojo"> 
+    <initMethod name="initialize" />
+    <startMethod name="startup" />
+    <disposeMethod name="dispose" />
+    <sample:pojo />
+  </soto:service>]]>
+</sapia:code>
+         <p>Of course, not all tags need being specified.</p>
+       </sapia:sect4>
+       
+       <sapia:sect4 title="Loading and Starting the Application">
+       
+         <p>An instance of <sapia:class link="maven/api/org/sapia/soto/SotoContainer.html">SotoContainer</sapia:class> is used to load into 
+         memory the services that make up a given Soto application, start the application (i.e.: its services), and stop it. The example 
+         below shows how to load our single-service application:</p>
+         
+<sapia:code><![CDATA[SotoContainer container = new SotoContainer();
+container.load(new File("path_to_xml_config"));
+container.start();]]></sapia:code>
+         
+         <p>That's it; we have created our first (although not very useful) Soto application.</p>
+       
+       </sapia:sect4>
+       <sapia:sect4 title="Service Association/Composition">
+         <p>It is much recommended that an application be made of multiple, specialized services, rather then use a single service
+         instance. The multi-instance scenario suggests that some instances will rely on the capabilities of others to fulfill their
+         task; this further means, in concrete terms, that a given component A, requiring the service of a given component B, be provided
+         with the latter at some point. In EJB, association between components is done through the JNDI: in our case,
+         component A would be provided with the JNDI name of component B.</p>
+         
+         <p>A "naming service" indirection (such as JNDI) is suitable for distributed components, but can be tedious to use when developing
+         an application whose components will reside in the same memory space. With Soto, a given service can directly be provided
+         with an instance of another service dynamically; such an association is specified through configuration. Again, Confix comes to
+         the rescue and dynamically assigns service instances to one another. The following, an updated version of our application's
+         configuration file, shows how to link a service with another:
+         </p>
+         
+<sapia:code>
+<![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.examples.MasterService" 
+         name="master" />
+    <def class="org.sapia.soto.examples.SecondaryService" 
+         name="secondary" />         
+  </soto:namespace>
+
+  <soto:service id="master"> 
+    <sample:master 
+     message="This is a simple useless service" />
+  </soto:service>
+  
+  <soto:service id="secondary">
+    <sample:secondary>
+      <someService>
+        <soto:serviceRef id="master"/>
+      </someService>
+    </sample:secondary>
+  </soto:service>
+<soto:app>]]></sapia:code>
+
+         <p>To better understand what is happening here, the code of our "secondary" service 
+         is given below:</p>
+         
+<sapia:code>
+package org.sapia.soto.examples;
+
+import org.sapia.soto.Service;
+
+public class SecondaryService implements Service {
+  private MasterService _svc;
+
+  public SecondaryService() {}
+
+  public void setSomeService(MasterService svc) {
+    _svc = svc;
+  }
+
+  public MasterService getSomeService() {
+    return _svc;
+  }
+
+  public void init() throws Exception {
+    System.out.println("initializing " + getClass());   
+  }
+  
+  public void start() throws Exception {
+    System.out.println("starting " + getClass());   
+  }
+  
+  public void dispose() {}
+  
+  public void doSomethingElse(){
+    System.out.println("Calling master service...");
+    _svc.doSomething();
+  }
+}
+</sapia:code>
+      
+        <p>As you can see in the configuration, our new service is also configured in a <sapia:command>soto:service</sapia:command>
+        element. The most interesting part is the <sapia:command>soto:serviceRef</sapia:command> element; see how it is encapsulated
+        within a <sapia:command>someService</sapia:command> element? Now have a look at the <sapia:class>SecondaryService</sapia:class>;
+        see the <sapia:command>setSomeService()</sapia:command> method? See the type of the parameter that this method takes? Now
+        look back at the configuration; see the <sapia:command>soto:serviceRef</sapia:command> element's 
+        <sapia:command>id</sapia:command> attribute, and how the value of this attribute indeed maps to the identifier of
+        a <sapia:class>MasterService</sapia:class> instance?</p>
+        
+        <p>There you have it: a service can be associated to another through a <sapia:command>soto:serviceRef</sapia:command>. Note that
+        instead of a <sapia:command>setSomeService()</sapia:command> method, we could have add a <sapia:command>addSomeService()</sapia:command>
+        one; and then, the following would have been "legal":</p>
+    
+<sapia:code><![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.examples.MasterService" 
+         name="master" />
+    <def class="org.sapia.soto.examples.SecondaryService" 
+         name="secondary" />                 
+  </soto:namespace>
+
+  <soto:service id="secondary">
+    <sample:secondary>
+      <someService>
+        <soto:service> 
+          <sample:master 
+           message="This is the first one" />
+        </soto:service>
+      </someService>
+      <someService>
+        <soto:service> 
+          <sample:master 
+           message="This is the second one" />
+        </soto:service>
+      </someService>              
+    </sample:secondary>
+  </soto:service>
+<soto:app>]]></sapia:code>    
+         
+        <p>So, not only can we associate services, but we can also aggregate them. In addition, note that we did not use
+        service references in this case, but rather created specific instances of the <sapia:class>MasterService</sapia:class>
+        class. Service instances that are created in this way are considered "local" or "private" service instances: they
+        cannot be referred to - by using service references.</p>
+         
+      </sapia:sect4>
+      
+      <sapia:sect4 title="Constructor Dependency Injection">
+        <p>Soto supports instantiating objects through their constructor. In this case, the <sapia:command>soto:new</sapia:command>
+        element is used, as follows:</p>
+        
+<sapia:code><![CDATA[<soto:app xmlns:soto="sapia:soto">
+
+  <soto:service id="someService">
+    <soto:new class="org.sapia.soto.example.IOC3Service">
+      <arg>test</arg>
+      <arg><soto:int value="10" /></arg>
+      <arg type="int">100</arg>
+     
+      <property>test</property>
+    </soto:new>
+  </soto:service>
+  
+</soto:app>]]></sapia:code>    
+        
+        <p>The above demonstrates usage of the <sapia:command>soto:new</sapia:command>
+        element, which takes as an attribute the name of the class for which an instance should
+        be created. In addition, the element supports passing in constructor arguments, through
+        <sapia:command>arg</sapia:command> elements. The <sapia:command>arg</sapia:command> element
+        is configured as follows:
+        </p>
+        <ul>
+          <li>it takes an optional <sapia:command>type</sapia:command> attribute, which specifies the type
+          of the argument expected by the constructor. The type must correspond to the full-qualified name
+          of a class, or the name of a primitive(boolean, byte, short, int, long, float, double);</li>
+          <li>it takes a nested element that should evaluate to an object of the expected type.</li>
+        </ul>
+        
+        <p>The example shows that the type of the argument does not always have to be specified. In such a case, 
+        Soto attempts guessing the type from the value that is passed in. For example, the 
+        <sapia:command>soto:int</sapia:command> converts its value to a Java integer, which makes it
+        easy for Soto to guess the type of the argument. If no type is specified, and the value passed
+        in does not evaluate to a "precise" type, then the value is presumed to be an instance
+        of <sapia:class>java.lang.String</sapia:class>.</p>
+
+      </sapia:sect4>
+
+      <sapia:sect4 title="JNDI">
+        <p>Soto services (implementing the <sapia:class>Service</sapia:class> interface) need not exclusively be associated
+        with other Soto services. Through the configuration, any object can be associated to a Soto service.</p>
+        <p>To benefit from seamless integration with existing J2EE components deployed in the context of J2EE app servers, 
+        Soto supports assiociating objects looked up from the JNDI to Soto services. The example below illustrates this:</p>
+        
+<sapia:code><![CDATA[<soto:service id="myService">
+    <sample:customService>
+      <datasource>
+        <soto:jndiRef name="java:comp/env/jdbc/someDatasource" />
+      </datasource>              
+    </sample:customService>
+  </soto:service>
+<soto:app>]]></sapia:code>            
+      
+        <p>In the above case, the <sapia:command>jndiRef</sapia:command> tag implementation internally calls
+         <sapia:command>new InitialContext()</sapia:command> and then performs the lookup; but we can also specify
+         properties that will be passed to the <sapia:class>InitialContext</sapia:class> constructor:
+        </p>
+<sapia:code><![CDATA[<soto:service id="myService">
+    <sample:customService>
+      <datasource>
+        <soto:jndiRef name="java:comp/env/jdbc/someDatasource">
+          <property name="java.naming.factory.initial" 
+                    value="org.acme.jndi.MyInitialContextFactory" />
+        </soto:jndiRef>
+      </datasource>              
+    </sample:customService>
+  </soto:service>
+<soto:app>]]></sapia:code>
+
+          <p>In the above case, the tag implementation internally creates a <sapia:command>java.util.Properties</sapia:command>
+          object that is initialized with the properties that we have configured; then, the tag calls 
+          <sapia:command>new InitialContext(properties)</sapia:command> and performs the lookup.</p>
+
+        </sapia:sect4>
+       
+      </sapia:sect3>
+      <sapia:sect3 title="Layers">
+        <p>We've discussed layers a bit: they are intended to add transparent functionality to services, without interfering
+        with their activity. For example, imagine that you have this service that you'd like to administer remotely; then
+        you start thinking: "Hey, actually, what if I could just take any service and publish it as a JMX Mbean?". Instead
+        of hardwiring the remote administration code into your service, you'd rather have pluggable MBean behavior, on demand.</p>
+        
+        <p>In Soto's terminology, such "pluggable", reusable behavior that can be added to existing services is dubbed a "layer".
+        As we have seen, Soto comes with a JMX layer and an AOP layer; a layer is just an implementation
+        of the <sapia:class>Layer</sapia:class> interface that is intented to "decorate" service instances at runtime, 
+        adding additional characteristics/functionality to these services.</p>
+        
+        <p>The XML below shows how a JMX layer is added to our configuration:</p>
+        
+<sapia:code><![CDATA[<soto:app 
+  xmlns:soto="sapia:soto"
+  xmlns:jmx="soto:jmx"
+  xmlns:sample="soto:sample">
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.examples.MasterService" 
+         name="master" />
+    <def class="org.sapia.soto.examples.SecondaryService" 
+         name="secondary" />                 
+  </soto:namespace>
+
+  <soto:service id="master"> 
+    <sample:master 
+     message="This is a simple useless service" />
+  </soto:service>
+  
+  <soto:service id="secondary">
+  
+    <!-- service instance -->
+    
+    <sample:secondary>
+      <someService>
+        <soto:serviceRef id="master"/>
+      </someService>
+    </sample:secondary>
+    
+    <!-- applying JMX layer -->
+    
+    <jmx:mbean description="A Service that does not do much">
+      <operations>
+        <include name="doSomething*" 
+          description="This operation does something." />
+
+        <exclude name="init"/>
+        <exclude name="start"/>                 
+      </operations>
+    </jmx:mbeam>     
+  </soto:service>
+<soto:app>]]></sapia:code>    
+        
+        <p>As can be seen, the layer is "applied" to the service through configuration; upon encountering the
+        <sapia:command>jmx:mbean</sapia:command> combination, the underlying configuration engine instantiates
+        the appropriate layer instance. In this case, it is the layer that generates a MBean
+        for our service. As can be seen, the layer supports a convenient notation that allows us to:</p>
+        
+        <ul>
+          <li>Determine which setters/getters and methods of our service are "published" as MBean attributes
+          and operations.</li>
+          <li>Provide additional information (mainly, a description) to the available attributes/operations.</li>
+        </ul>
+        
+        <p>In our updated configuration, no object definition corresponds to the <sapia:command>jmx:mbean</sapia:command> element.
+        That is simply because the "jmx" namespace is part of Soto's default namespaces. - we will see further below
+        where that default configuration resides.</p>
+        
+        <p>Implementing your own layer is easy: write a class that implements the <sapia:class>Layer</sapia:class>
+        interface, create an object definition for it in your configuration file, and you're up.</p>
+        
+        <p>The life-cycle of a layer is related to the one of its service:</p>
+        
+        <ul>
+          <li>The <sapia:command>init()</sapia:command> method is called after the service's own
+          <sapia:command>init()</sapia:command>.</li>
+          <li>The <sapia:command>start()</sapia:command> method is called after the service's own
+          <sapia:command>start()</sapia:command>.</li>
+          <li>The <sapia:command>dispose()</sapia:command> method is called <b>before</b> the service's own
+          <sapia:command>dispose()</sapia:command>.</li>          
+        </ul>
+        
+        <p>One could think of many uses for layers: what about a "transaction" layer?; or a "web service" layer (that
+        transparently publishes your service as a web service). Your imagination is your only limit.</p>
+      </sapia:sect3>
+    </sapia:sect2>
+    <sapia:sect2 title="Advanced Issues">
+      <sapia:sect3 title="Attributes">
+        <p>Soto services can be configured with "attributes". Attributes provide runtime metadata about
+        services that can be used to help further differentiate service instances. For example, multiple
+        service instance could implement a given common interface in a different manner. From the application's
+        perspective, it might be necessary to be able to differentiate among those different service instances
+        depending on the intended usage. Using attributes to help the application choose the proper service
+        instance could be an efficient mechanism. One configures service attributes like so:
+        </p>
+<sapia:code><![CDATA[<soto:app
+  <soto:service id="secondary">
+    <!-- attributes -->
+    <attribute name="acme:type" value="jdbc" > 
+    <sample:databaseService />
+  </soto:service>
+</soto:app>]]></sapia:code>
+        <p>In the above example, an arbitrary attribute is configured to provide information about
+        the service's role or type. In this case, we identify that the service instance is of
+        "jdbc" type. Imagine a bit that we could have another service, abstracting another type
+        of repository (for example an XML one). We could have both service classes implement a common
+        repository interface, and discriminate among them by providing, as attributes, information
+        about the type of repository they represent. 
+        </p>
+        <p>This is of course not the end of the story; on their own, attributes do not help much. 
+        Used in combination with lookups (see next section), they show all their power.</p>
+        <p>Each attribute takes a name that is composed of a prefix and an actual "local" name. These
+        are <b>not</b> related to XML prefixes and namespaces, although the intent is analogous: this notation
+        helps prevent name collisions. At runtime, an attribute configuration is "transformed" into 
+        an <sapia:class link="maven/api/org/sapia/soto/Attribute.html">Attribute</sapia:class> instance. Such
+        an instance is encapsulate in a 
+        <sapia:class target="meta" link="maven/api/org/sapia/soto/ServiceMetaData.html">ServiceMetaData</sapia:class>.
+        </p>
+      </sapia:sect3>
+      <sapia:sect3 title="Implementation Details">
+        <sapia:sect4 title="Threading">
+          <p>Care must be taken when implementing services; as in the servlet model, services can potentially
+          be accessed by multiple simulteaneous threads. Therefore, state modifications should be synchronized - the
+          same applies to layers.</p>
+        </sapia:sect4>
+        <sapia:sect4 title="Looking up Services">
+          <p>Once the <sapia:command>start()</sapia:command> method on the <sapia:class>SotoContainer</sapia:class> has
+          been called, the <sapia:command>lookup()</sapia:command> methods can be used to retrieve specific
+          service instances.</p>
+          <sapia:sect5 title="By Identifier">
+            <p>The <sapia:class>SotoContainer</sapia:class> provides a method to lookup that allows finding services through
+             their identifiers (configured as part of their corresponding <sapia:command>soto:service</sapia:command> tag), 
+             as the example below illustrates:</p>
+<sapia:code>
+// 'container' is a SotoContainer instance
+// 'aServiceIdentifier' is a String
+SomeService svc = 
+(SomeService)container.lookup(aServiceIdentifier);
+</sapia:code>
+          </sapia:sect5>
+          <sapia:sect5 title="By Type">
+            <p>At times, it might be more convenient to lookup a given service based on a given interface that it
+            is expected to implement. For example, a service could implement the <sapia:class>javax.sql.DataSource</sapia:class>
+            interface, and your application might want such a datasource. Thus, the <sapia:class>SotoContainer</sapia:class> 
+            class allows making lookup based on an interface:</p>
+<sapia:code>
+DataSource svc = 
+  (DataSource)container.lookup(DataSource.class);
+</sapia:code>
+            <p>In this case, the container traverses all services (in the order in which they were added to it)
+            and returns the one that implements the given interface. If more than one service implements the interface,
+            an exception is thrown. Note that this method uses Java reflection and traverses all services at each invocation,
+            so it is suboptimal to call it every time you need a service that implements a given interface. In such cases,
+            you should make a single lookup at initialization time, and keep the instance that you have acquired from
+            then on.</p> 
+          </sapia:sect5>
+          <sapia:sect5 title="By Attributes">
+            <p>Soto allows looking up services based on their configured attributes. In such a case, you
+            use an <sapia:class link="maven/api/org/sapia/soto/AttributeServiceSelector.html">AttributeServiceSelector</sapia:class> as follows:
+            </p>
+<sapia:code>
+AttributeServiceSelector selector = 
+  new AttributeServiceSelector();
+selector
+    .addAttribute(
+      new Attribute().setName("attribute1")
+     )
+    .addAttribute(
+      new Attribute().setName("attribute2")
+                     .setValue("value2")
+     );
+   
+  List result = services.lookup(selector, false);
+</sapia:code>           
+            <p>Note that the lookup method in the above example allows specifying if one wishes to acquire 
+            <sapia:class>ServiceMetadata</sapia:class> (by passing <sapia:command>true</sapia:command>) or 
+            <sapia:class>Service</sapia:class> instances (by passing <sapia:command>false</sapia:command>).</p>
+          </sapia:sect5>
+          <sapia:sect5 title="With a Custom Selector">
+            <p>Soto provides an easy way to extend its lookup mechanism: you can implement 
+            <sapia:class target="selector" link="maven/api/org/sapia/soto/ServiceSelector.html">ServiceSelector</sapia:class>s.
+            A <sapia:class>ServiceSelector</sapia:class> only needs implementing a single <sapia:class>accept()</sapia:class> method,
+            that takes a <sapia:class>ServiceMetadata</sapia:class> as a parameter. That metadata encapsulates a 
+            <sapia:class>Service</sapia:class>, as well as its configuration information (such as its identifier and attributes, if any).
+            A service selector can instrospect the metada and/or the corresponding service to determine if it should "accept" it. If the 
+            selector's <sapia:command>accept()</sapia:command> call returns true, then the service or metadata is made part of the 
+            result that is eventually returned to the caller:</p>
+<sapia:code>
+List result = container.lookup(new MySelector(), false);
+</sapia:code>
+          </sapia:sect5>
+        </sapia:sect4>
+        
+        <sapia:sect4 title="Object Definitions" alias="objectdefs">
+          <p>The XML elements that map XML element names to Java class names are dubbed "object definitions". You can specify your own definitions
+          in one of two ways:</p>
+          
+          <ul>
+            <li>By loading definitions into the Soto container from a definition file.</li>
+            <li>By embedding <sapia:command>soto:namespace</sapia:command> elements in your Soto configuration.</li>
+            <li>By mapping the XML prefix that you use to an URI that actually corresponds to a real definition file.</li>
+          </ul>
+
+          <sapia:sect5 title="Loading Definitions into the Container">
+            <p>A file containing object definitions can be loaded into a <sapia:class>SotoContainer</sapia:class>
+               through one of its <sapia:command>load()</sapia:command> methods. The contents of such a file is as follows:</p>
+          
+<sapia:code><![CDATA[<soto:defs 
+xmlns:soto="sapia:soto">
+
+<soto:namespace prefix="myapp">
+  <def class="org.acmeapps.someapp.TransactionService" 
+       name="transactions" />  
+</soto:namespace>
+
+</soto:defs>]]></sapia:code>            
+            <p>Object definition files have a <sapia:command>soto:defs</sapia:command> element as a root; such an element
+            can take one to many <sapia:command>soto:namespace</sapia:command> elements. Each such element can take
+            one to many <sapia:command>def</sapia:command>, corresponding to an actual object definition: it maps the name
+            of a Java class to the name of an XML element.</p>
+            
+            <sapia:note>If you want to map a static inner class to a name using a <sapia:command>def</sapia:command>
+            element, YOU MUST follow Java notation and use the '$' separator charater between the class name and
+            the inner class name (ex: org.sapia.soto.examples.MyClass$InnerClass).</sapia:note>
+            
+          
+          <p>An application can load such definitions using the different <sapia:command>load()</sapia:command> methods on a
+          <sapia:class>SotoContainer</sapia:class>. The latter supports chained invocations, and multiple files
+          can be loaded sequentially:</p>
+          
+<sapia:code>
+container.load("org/dummy/myapp/someDefinitions.xml")
+        .load(new File("appConfig.xml"))
+        .start();
+</sapia:code>
+          <p>As is demonstrated above, object definitions must be loaded before the application configuration. Multiple
+          application configurations can be chained.</p>
+          
+            <p>
+              The <sapia:command>prefix</sapia:command> attribute of a <sapia:command>namespace</sapia:command> element corresponds
+              to the XML prefix that must be used when instantiation objects corresponding to given definitions. In such
+              cases, the <sapia:command>prefix:elementName</sapia:command> combination must be used; it tells the Soto
+              container which object should be instantiated. Going back to the example above, we would instantiate
+              an object corresponding to the given object definition as follows:
+            </p>
+            
+<sapia:code><![CDATA[<soto:app 
+  xmlns:soto="sapia:soto" xmlns:myapp="www.acmeapps.org/someapp">
+...  
+  <soto:service>
+    <myapp:transactions />
+  </soto:service>
+...
+</soto:app>]]></sapia:code>            
+            
+          </sapia:sect5>
+          
+          <sapia:sect5 title="Embedding Object Definitions into a Soto Configuration">
+            <p>As a convenience, Soto allows embedding <sapia:command>soto:namespace</sapia:command> elements
+            into configuration files. Thus, the following would be perfectly "legal":</p>
+<sapia:code><![CDATA[<soto:app 
+  xmlns:soto="sapia:soto" xmlns:myapp="www.acmeapps.org/someapp">
+
+  <soto:namespace prefix="myapp">
+    <def class="org.acmeapps.someapp.TransactionService" 
+         name="transactions" />  
+  </soto:namespace>
+  
+  <soto:service>
+    <myapp:transactions />
+  </soto:service>
+  
+</soto:app>]]></sapia:code>            
+            
+          </sapia:sect5>
+          <sapia:sect5 title="URI-based Object Definitions">
+            <p>Both loading object definitions explicitely or declaring them as part of your configuration file
+            is cumbersome; in this case, the application must be "aware" of the definitions. A more convenient
+            approach is to have the container load object definitions using the XML URI to which they are bound. As an example, look
+            at the XML namespace declarations of our modified configuration:</p>
+
+<sapia:code><![CDATA[<soto:app 
+  xmlns:soto="sapia:soto" xmlns:myapp="resource:/org/acmeapps/someapp">
+
+  <soto:namespace prefix="myapp">
+    <def class="org.acmeapps.someapp.TransactionService" 
+         name="transactions" />  
+  </soto:namespace>
+  
+  <soto:service>
+    <myapp:transactions />
+  </soto:service>
+  
+</soto:app>]]></sapia:code>             
+            <p>You can see that the URI of our XML namespace declaration has changed: this URI corresponds to an actual file in
+            the classpath. One thing to know is that for each namespace URIs the container encounters, it attempts loading an object 
+            definition file (such the one we have explained previously); it internally keeps a cache of the URIs that have been 
+            searched, so that it does not attempt loading the same file twice. In the above case, no file is specified at the end of the URI; a
+            file name is optional, since the container attempts loading a <sapia:command>defs.xml</sapia:command> file at that
+            URI, by default. This is to say that for the above to be consistent, a file having the path 
+            <sapia:command>resource:/org/acmeapps/someapp/defs.xml</sapia:command> must exist in the classpath. If a file containing object definitions is named
+            otherwise, it should be explicitely provided as part of the URI.</p>
+            
+            <p>If the container cannot load a file for a given URI, it simply ignores it and goes on. Therefore, make sure you
+            are using URIs that correspond to the actual files you want to load.</p>
+            
+            <sapia:note>Soto's built-in services are configured with URIs that start with the <sapia:command>soto</sapia:command>
+            scheme. For example: <sapia:command>soto:properties</sapia:command>, <sapia:command>soto:jmx</sapia:command>, etc.
+            These URIs are shortcuts, so to speak, that are resolved by a Soto container through a special hack: they are
+            mapped to the <sapia:command>org/sapia/soto/defs</sapia:command> package. In the case of the 
+            <sapia:command>soto:jmx</sapia:command> URI, for example, the <sapia:command>org/sapia/soto/defs/jmx.xml</sapia:command>
+            file is loaded - and so on.</sapia:note>
+            
+            <p>URI-based loading of object definitions is much more powerful than the other methods, since developpers are shielded
+            from having to load object definitions explicitely - they only need knowing about your tags and the configuration these
+            tags "accept".</p>
+            
+          </sapia:sect5>
+          
+          <sapia:sect5 title="Package Mapping" alias="packageMapping">
+            <p>Object definitions can make use of Soto's package mapping feature:</p>
+
+<sapia:code><![CDATA[<soto:app 
+  xmlns:soto="sapia:soto" xmlns:myapp="resource:/org/acmeapps/someapp">
+
+  <soto:namespace prefix="myapp">
+    <package>org.acmeapps.someapp</package>
+  </soto:namespace>
+  
+  <soto:service>
+    <myapp:transactionService />
+  </soto:service>
+  
+</soto:app>]]></sapia:code>             
+            <p>In the above case, upon encountering an element name with the <sapia:command>myapp</sapia:command> prefix, Soto will
+            attempt resolving the <sapia:command>transactionService</sapia:command> local name to the fully-qualified name of 
+            a class, using the package mapping(s) in the corresponding namespace. Indeed, the <sapia:command>soto:namespace</sapia:command>
+            element can take one to many <sapia:command>package</sapia:command> nested elements, of which each should correspond to a
+            Java package. In the above example, Soto will try converting the <sapia:command>transactionService</sapia:command> local name
+            part to the <sapia:class>org.acmeapps.someapp.TransactionService</sapia:class> class, if it can be found.</p>
+            
+            <p>
+            Thus, the local name should correspond to the "short class name" (name of the class without the package). As a convenience, Soto
+            will automatically capitalize the first letter of the local name if needed.
+            </p>
+            
+            <sapia:note>
+              Note that any class explicit object definition will have precedence over package mapping.
+            </sapia:note>
+            
+          </sapia:sect5>
+
+          <sapia:sect5 title="Class Matching">
+            <p>As an additional feature, Soto can match "any" element name to a given specific class:</p>
+
+<sapia:code><![CDATA[<soto:app 
+  xmlns:soto="sapia:soto" xmlns:myapp="resource:/org/acmeapps/someapp">
+
+  <soto:namespace prefix="myapp">
+    <def class="org.acmeapps.someapp.xml.XMLTag" 
+         name="*" />  
+  </soto:namespace>
+  
+</soto:app>]]></sapia:code>
+
+            <p>In the above case, the "*" character that sits in place of a "real" name in the <sapia:command>def</sapia:command> element
+            indicates that the corresponding class should be used when attempting to find a match for elements with the <sapia:command>myapp</sapia:command> 
+            XML prefix. Meaning that for any element with the <sapia:command>myapp</sapia:command> prefix, an instance of <sapia:class>XMLTag</sapia:class>
+            will be created. This feature can be useful in conjunction with the <a href="#xmlaware">use of the XmlAware interface</a>.</p>
+            
+            <sapia:note>
+              Note that class matching follows explicit object definitions and <a href="#packageMapping">package mapping</a> in the resolution order.
+            </sapia:note>
+            
+          </sapia:sect5>                    
+        </sapia:sect4>
+        
+        <sapia:sect4 title="Instantiation/Initialization/Start Order">
+          <p>Services are instantiated when their corresponding XML element is encountered; the init() method is called
+          as soon as a service is instantiated. The start() method is called sequentially on each service once the container's
+          own start() method is called.</p>
+
+      <p>Once a service's init() method has been called, its layer instances (if any) also have their init() method called.</p>
+          
+          <p>Since objects are loaded as their corresponding XML is encountered, services that depend on other services should be 
+          configured <b>after</b> the latter. More precisely, this means that service references should refer to already configured
+          services. Of course, this model proscribes circular dependencies, which are not a good practice anyway.</p>
+
+      <p>Once a service's init() method has been called (and that, subsequently, all its layers have been initialized), the
+          service is assumed to be in "ready" state; it is important for service implementations to respect this contract:
+      indeed, services that use other services are "counting" on the latter to be ready when assigned to them.</p>
+
+          <p>So, then, why a start() method? The start() method is only provided in order for services to "publish" themselves,
+           making their interface available for "external" use. What does that mean? Well, for example, let's say that
+           you implement a RMI server; you would bind your service to a registry in the start() method - but that would not
+           spare your service instance from needing to be available for "internal" use at init() time.</p>
+        </sapia:sect4>
+        
+      </sapia:sect3>
+
+      <sapia:sect3 title="File Includes" alias="file_includes">
+          <p>Configuration files can grow rapidly. For ease of management, Soto provides an "include" mechanism that
+          allows a configuration to be made of multiple configuration files. You start with one file (the "root" file),
+          and then include other files through a special tag in that root file. Of course, a file can include other files
+          and so on. The following sample shows a file that includes another file:</p>
+
+<sapia:code>
+<![CDATA[
+<soto:service id="secondary" 
+    xmlns:soto="sapia:soto"
+    xmlns:sample="soto:sample">
+
+    <sample:secondary>
+      <someService>
+        <soto:serviceRef id="master"/>
+      </someService>
+    </sample:secondary>
+
+    <soto:include uri="nestedInclude.xml"/>
+
+</soto:service>]]>
+</sapia:code>
+
+    <p>The file includes another file, whose path is resolved <b>relatively</b> to the parent (the 
+            including file). Indeed, look at the value of the <sapia:command>uri</sapia:command> attribute; 
+    it does not have any protocol scheme, such as in the following:</p>
+
+<sapia:code>
+<![CDATA[<soto:service id="secondary" 
+    xmlns:soto="sapia:soto"
+    xmlns:sample="soto:sample">
+
+    <sample:secondary>
+      <someService>
+        <soto:serviceRef id="master"/>
+      </someService>
+    </sample:secondary>
+
+    <soto:include 
+     uri="resource:/com/acme/myapp/nestedInclude.xml"/>
+     
+    <!-- this could also be valid; Soto supports 
+         accessing system properties.
+    
+    <soto:include 
+     uri="${user.dir}/config/nestedInclude.xml"/>
+
+    -->     
+
+</soto:service>]]>
+</sapia:code>
+
+
+    <p>This time, the path is absolute: it is resolved using the full path that is given. In this case,
+            the path corresponds to a resource in the classpath. And now, what if that included file resource
+            itself had includes? Depending on the uri, these includes would be resolved a) relatively to their
+            parent; or b) in an absolute manner. For example, for the above resource, all relative includes would
+            be resolved with <sapia:command>resource:/com/acme/myapp/</sapia:command> as a base path. The same
+            rule would apply if the URI scheme would be http, file, etc. - see next section for the supported
+            schemes. In general, the following is true:</p>
+      
+    <sapia:note>Relative includes are solved relatively to their parent include.</sapia:note>
+
+    <p>There is, of course, one exception: you will notice that one of 
+            <sapia:command>SotoContainer</sapia:command>'s <sapia:command>load()</sapia:command> methods takes an
+    <sapia:command>InputStream</sapia:command> as an argument. If the configuration corresponding to this stream
+            has relative includes, how are the latter resolved? Well, clearly, there is no way to extract path
+            information from that stream; thus, in such a case, relative includes are not resolved relatively. What Soto
+            does internally is to create a <sapia:command>File</sapia:command> object with the given path, and attempts to load
+            that file's content. If the latter does not exist, an exception is thrown. So if you want to use relative includes
+            in your initial config file, load that file using a <sapia:command>load()</sapia:command> method that takes the
+            path to a classpath resource or a <sapia:command>File</sapia:command> instance has an argument.
+    </p>
+                
+                <p>It is also possible to pass parameters in the context of an include; the included file will be rendered
+                with these parameters. See the <a href="#interpolation">variable interpolation</a> section for more details.</p>
+                
+                <sapia:note>The <sapia:command>soto:include</sapia:command> element takes a <b>single</b> nested XML element
+                that must correspond to an object definition.</sapia:note>
+                
+      </sapia:sect3>
+
+  <sapia:sect3 title="Resource Handlers" alias="resource_handler">
+    <p>As illustrated above, Soto has built-in support for specifying file resources in various "locations",
+            through "well-known" URIs. Soto supports the <b>file</b>, <b>resource</b> and <b>http</b> protocols
+    natively. The "file" and "http" protocols are probably not new to you. But what about the "resource"
+            protocol? Well, the class that handles this protocol is the 
+    <sapia:class link="http://www.sapia-oss.org/projects/resource/maven/api/org/sapia/resource/ClasspathResourceHandler.html">ClasspathResourceHandler</sapia:class> class, 
+    that implements the <sapia:class link="http://www.sapia-oss.org/projects/resource/maven/api/org/sapia/resource/ResourceHandler.html">ResourceHandler</sapia:class> 
+    interface. Implementations thereof have a simple contract: they must retrieve a 
+    <sapia:class link="http://www.sapia-oss.org/projects/resource/maven/api/org/sapia/resource/Resource.html">Resource</sapia:class>, given a path.</p>
+    
+    <p>Custom resource handlers can be registered with the 
+      <sapia:class target="target_window" link="http://www.sapia-oss.org/projects/resource/maven/api/org/sapia/resource/ResourceHandlerChain.html">ResourceHandlerChain</sapia:class> 
+      that a SotoContainer keeps internally. The <sapia:command>registerResourceHandler()</sapia:command> method on the SotoContainer appends
+      a given resource handler that the chain - see the <a href="maven/api/org/sapia/soto/SotoContainer.html">javadoc</a> for more details.</p>
+      
+    <p>In addition, objects instantiated through Soto that implement the <sapia:class link="maven/api/org/sapia/soto/EnvAware.html">EnvAware</sapia:class> are passed an
+    <sapia:class link="maven/api/org/sapia/soto/Env.html">Env</sapia:class> instance that can be used to resolve URIs.</p>
+  </sapia:sect3>
+  
+  <sapia:sect3 title="Resource Aliasing" alias="res_aliases">
+    <p>Resource aliasing is a useful feature that allows redirecting URIs to other ones. Imagine, for example, that a prepackaged
+    application expects a configuration file under a given URI; under some conditions, you might want the application to use the 
+    content of another file (this could be the case for example when working under different deployment environments). Heres
+    how we use the <sapia:command>soto:resourceAlias</sapia:command> to redirect all URIs that match a given pattern to a different 
+    target URI:
+    </p>
+    
+<sapia:code>
+<![CDATA[
+  <soto:resourceAlias uri="**/my.properties" 
+      redirect="resource:/org/acmeapps/dev/{1}/my.properties" />]]>
+</sapia:code>    
+
+    <p>The above redirects all URIs that match the given pattern (specified by the <sapia:command>uri</sapia:command>
+    attribute) to the URI specified by the <sapia:command>redirect</sapia:command> attribute. The following should be noted:</p>
+    
+    <ul>
+      <li>the pattern accepted by the <sapia:command>uri</sapia:command> attribute takes optional <sapia:command>*</sapia:command>
+      or <sapia:command>**</sapia:command>, matching a single token or multiple tokens of the processed URIs.</li>
+      <li>the <sapia:command>redirect</sapia:command> attribute takes one to many special "pattern result" sections, each
+      taking a number corresponding to the position of the matched token(s) in the original URI. Note that positions start at 1,
+      with 0 corresponding to the original URI.</li>
+    </ul>
+
+    <p>
+      Resource aliases are kept in the container and traversed sequentially every time a URI is resolved. Thus, this implies a certain
+      performance overhead. Note that resource aliasing is single-pass only: URIs are aliased once (already aliased URIs are not further aliased). This limitation
+    was meant to reduce overhead and avoid infinite loops.
+    </p>
+    
+    <sapia:note>
+      Resource aliasing is very useful when combined with <a href="#boostrapping">bootstrapping</a>. 
+    </sapia:note>
+  </sapia:sect3>
+  
+  <sapia:sect3 title="Bootstrapping" alias="bootstrapping">
+    <p>
+      Upon being loaded, a Soto container will look for a <sapia:command>soto.bootstrap</sapia:command> property passed through one of its
+      <sapia:command>load()</sapia:command> methods that takes a <sapia:class>Map</sapia:class> as an argument (the property will be searched
+      in that Map), or as a Java system property.
+    </p>
+    <p>
+      The value of the property is expected to hold a list of URIs, separated by semicolons. The container will load the configurations corresponding
+      to these URIs prior to loading anything else. This can be useful when wishing to preload services without the application "knowing" it, or 
+      in conjunction with <a href="#res_aliases">resource aliases</a> (you could configure resource aliases in the bootstrap configuration, therefore redirecting URIs
+      for the rest of the application).
+    </p>
+  </sapia:sect3>
+
+  <sapia:sect3 title="Variable Interpolation" alias="interpolation">
+        
+            <p>If you look carefully, the <sapia:class link="maven/api/org/sapia/soto/SotoContainer.html">SotoContainer</sapia:class>
+            class has <sapia:command>load()</sapia:command> methods that also take a <sapia:class>Map</sapia:class> instance as an
+            argument. This instance can hold arbitratry name/value bindings that can be recuperated in the configuration
+            through the <b><sapia:command>${name}</sapia:command></b> notation. To resolve these variables, Soto
+            a) looks up in the given <sapia:command>Map</sapia:command> and, if no value is found there, falls back to
+            the system properties. If still no value is found, the <sapia:command>${name}</sapia:command> - as configured -
+            an exception is thrown.</p>
+            
+            <p>Interpolation values can also be specified within <sapia:command>soto:include</sapia:command> elements. This
+            allows to reuse a single included file that this configured with variables, and pass the values for these variable
+            on a per-include basis. The example below demonstrates this:
+            </p>
+                
+<sapia:code>
+<![CDATA[<soto:service id="secondary" 
+    xmlns:soto="sapia:soto"
+    xmlns:jmx="soto:jmx"
+    xmlns:sample="soto:sample">
+
+    <sample:secondary>
+      <someService>
+        <soto:serviceRef id="master"/>
+      </someService>
+    </sample:secondary>
+
+    <soto:include uri="nestedInclude.xml">
+      <param name="foo" value="bar" />
+      <param name="sna" value="fu" />                      
+    </soto:include>
+
+</soto:service>]]>
+</sapia:code>
+               
+
+            <p>Parameters defined at a given include scope will only exist for the given include - and any nested one. If
+            no value is found at the nested levels for the expected variables, the parent scopes are searched, up to the 
+            system properties.</p>
+
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Post-Injection">
+        <p>As you know by now, Soto allows dynamically calling methods of objects at configuration time in order to
+        set dependencies. It might be required, in addition, to call methods on objects after the instantiation-time injection
+        has been done. For example, a given Soto service might have been already instantiated and "injected", and
+        yet some more dependencies may need to be injected later on. This case can be seen when including (through Soto's include
+        mechanism) generic, predefined configuration files, that may need additional configuration, depending on the context.</p>
+        
+        <p>To take a more concrete example, imagine the following Hibernate service configuration:</p>
+        
+<sapia:code>
+<![CDATA[<hb8:hibernate id="petDB" 
+  xmlns:hb8="soto:hibernate">
+  <class>org.acmepetstore.Dog</class>
+  <class>org.acmepetstore.Cat</class>
+</hb8:hibernate>]]>
+</sapia:code>
+
+        <p>Now imagine that the above is saved in a file that is meant to be included in applications that share the
+        Petstore data model, and corresponding Hibernate service. Yet, depending on the context, some applications may
+        wish to add their own class mappings upon including that file. Here's how this is done:</p>
+        
+        
+<sapia:code>
+<![CDATA[<soto:app xmlns:soto="sapia:soto">
+  
+  <soto:service id="hibernate">
+    <soto:inject>
+      <object>
+        <soto:include uri="resource:/org/acmepetstore/hibernateService.xml" />
+      </object>
+      <class>org.acmepetstore.Shark</class>
+      <class>org.acmepetstore.Dolphin</class>
+    </soto:inject>
+  </soto:service>
+  
+</soto:app>]]></sapia:code>
+
+        <p>In order to perform "post-injection", the <sapia:command>soto:inject</sapia:command> element is used. This element takes
+        the following:</p>
+        
+        <ul>
+          <li>First, an <b><sapia:command>object</sapia:command></b> element is specified, that is meant to hold another element 
+          evaluating to the target object that will be injected with additional properties.</li>
+          <li>Second, a list of arbitrary elements, expected by the target object.</li>
+        </ul>
+        
+        <p>The <sapia:command>soto:inject</sapia:command> element in turn "returns" the target object - it thus acts as some sort of temporary
+        proxy, from a configuration point of view.</p>
+        
+        <p>In addition, the element may be configured directly under the <sapia:command>soto:app</sapia:command> element. For example,
+        the sample below has the same effect has the previous one:</p>
+
+<sapia:code>        
+<![CDATA[<soto:app xmlns:soto="sapia:soto">
+  
+  <soto:service id="hibernate">
+    <soto:inject>
+      <object>
+        <soto:include uri="resource:/org/acmepetstore/hibernateService.xml" />
+      </object>
+    </soto:inject>
+  </soto:service>
+  
+  
+  <soto:inject>
+    <object><soto:serviceRef id="hibernate" /></object>
+    <class>org.acmepetstore.Shark</class>
+    <class>org.acmepetstore.Dolphin</class>
+  </soto:inject>
+  
+</soto:app>]]></sapia:code>        
+
+        <p>Note in the above how the <sapia:command>soto:serviceRef</sapia:command> element is used to set the target object.</p>
+        
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Conditional Instantiation">
+        <p>Imagine that you want to instantiate objects in your configuration only if certain conditions are verified. 
+        Soto allows you to do this: objects can be created (or not created at all) according to runtime parameters, 
+        using <sapia:command>soto:if</sapia:command> or <sapia:command>soto:choose</sapia:command> elements.
+        </p>
+        
+        <p>Remember that you can pass runtime parameters to a Soto configuration and eventually recuperate the values
+        corresponding to these parameters using the <sapia:command>${param_name}</sapia:command> notation. Soto further allows
+        you to perform tests on the values of these parameters, through elements that implement conditional branching.</p>
+        
+        <sapia:sect4 title="If">
+          <p>The <sapia:command>soto:if</sapia:command> performs an "if" test on a given runtime parameter. The XML nested
+          within the "if" is "executed" only if the specified condition is true; otherwise, the end result is as if no XML
+          had been specified (and thus amounts to a "noop"). The example below demonstrates the use of the "if":</p>
+          
+<sapia:code>&lt;soto:service id="secondary"&gt; 
+  &lt;sample:secondary&gt;
+    &lt;someService&gt;
+      &lt;soto:if param="set.master.service" 
+               equals="true"&gt;
+        &lt;sample:master/&gt;
+      &lt;/soto:if&gt;
+    &lt;/someService&gt;
+  &lt;/sample:secondary&gt;
+&lt;/soto:service&gt;</sapia:code>
+
+        <p>If no <sapia:command>equals</sapia:command> attribute is specified, then the "if" evaluates to true if
+        the specified runtime parameter exists (i.e.: a value is present for it).</p>
+
+        <sapia:note>The <sapia:command>soto:if</sapia:command> element takes a <b>single</b> nested XML element
+        that must correspond to an object definition.</sapia:note>
+
+        </sapia:sect4>
+        
+        <sapia:sect4 title="Unless">
+          <p>The <sapia:command>soto:unless</sapia:command> is the opposite of the  <sapia:command>soto:if</sapia:command>.
+          It in fact performs an "if not" test on a given runtime parameter. The example below demonstrates the use of "unless":</p>
+          
+<sapia:code>&lt;soto:service id="secondary"&gt; 
+  &lt;sample:secondary&gt;
+    &lt;someService&gt;
+      &lt;soto:unless param="set.master.service" 
+               equals="false"&gt;
+        &lt;sample:master/&gt;
+      &lt;/soto:unless&gt;
+    &lt;/someService&gt;
+  &lt;/sample:secondary&gt;
+&lt;/soto:service&gt;</sapia:code>
+
+        <p>The above means: "unless the set.master.service property is specified and its value is false, execute the nested XML".</p>
+
+        <sapia:note>The <sapia:command>soto:unless</sapia:command> element takes a <b>single</b> nested XML element
+        that must correspond to an object definition.</sapia:note>
+
+        </sapia:sect4>        
+        
+        <sapia:sect4 title="Choose">
+          <p>The <sapia:command>soto:choose</sapia:command> is pretty similar to the "if", except that it can
+          take multiple conditions; the first one that matches will see its nested XML being executed. If nothing
+          matches and no <sapia:command>otherwise</sapia:command> is specified, then no nested XML is executed
+          and the corresonding configuration amounts to a "noop". The example below demonstrates how to use the
+          "choose". As you can see, a "choose" is one-to-many "case" elements (that follow the syntax of the "if"),
+          followed by an optional "otherwise" element. The example is pretty useless, but you can probably 
+          imagine more interesting possibilities:</p>
+        
+<sapia:code>&lt;soto:service id="secondary"&gt; 
+  &lt;sample:secondary&gt;
+    &lt;someService&gt;
+      &lt;soto:choose&gt;
+        &lt;when param="set.master.service" 
+              equals="1"&gt;
+          &lt;sample:master message="1" /&gt;
+        &lt;/when&gt;
+         
+        &lt;when param="set.master.service" 
+              equals="2"&gt;
+          &lt;sample:master message="2" /&gt;
+        &lt;/when&gt;
+         
+        &lt;otherwise&gt;
+          &lt;sample:master message="3" /&gt;
+        &lt;/otherwise&gt;
+      &lt;/soto:choose&gt;
+    &lt;/someService&gt;
+  &lt;/sample:secondary&gt;
+&lt;/soto:service&gt;</sapia:code>
+
+        <p/>
+
+        <sapia:note>The <sapia:command>case</sapia:command> and <sapia:command>otherwise</sapia:command> elements 
+        takes a <b>single</b> nested XML element that must correspond to an object definition.</sapia:note>
+        
+        </sapia:sect4>
+        
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Accessing the Environment">
+        <p>Quite often, it is convenient to have access to container-related state/behavior from within
+        service instance. All objects that are instantiated through object definitions 
+        (not only services) can potentially have access to container functionality by implementing the 
+        <sapia:class link="maven/api/org/sapia/soto/EnvAware.html">EnvAware</sapia:class> interface. The interface
+        specifies a single <sapia:command>setEnv()</sapia:command> method, that takes an 
+        <sapia:class link="maven/api/org/sapia/soto/Env.html">Env</sapia:class> instance as an argument. The
+        example below gives an example - the <sapia:class>Env</sapia:class> instance is used to resolve
+        a configuration URL:
+        </p>
+<sapia:code>
+public class MyService implements EnvAware, Service{
+
+  private Env _env;
+  private String _configUrl;
+
+  public void setEnv(Env env){
+    _env = env;
+  }
+  
+  public void setConfigUrl(String urlStr){
+    _configUrl = urlStr;
+  }
+  
+  public void init() throws Exception{
+  InputStream is = _env.resolveStream(_configUrl);
+  ...
+  }
+  
+  ...
+
+}</sapia:code>
+
+        <p/>
+        
+        <p>An <sapia:class>Env</sapia:class> instance gives access to very useful functionality,
+        not only for retrieving resources (as shown above), but also for looking up services - various
+        lookup methods are provided. One common pattern is to implement an <sapia:class>EnvAware</sapia:class> 
+        instance that will lookup a required service based on its type:
+        </p>
+
+<sapia:code>
+  ...
+  
+  public void setEnv(Env env) throws Exception{
+    datasource = env.lookup(DataSource.class);
+  }
+  
+  ...
+</sapia:code>
+        <p>The above can spare extra configuration (associating the above to a <sapia:class>DataSource</sapia:class> would indeed
+        normally be done through configuration). Of course, this approach holds true only if a single instance
+        of the specified interface exists within the container (if that is not the case, the <sapia:command>lookup()</sapia:command>
+        method throws an exception).
+        </p>
+
+        <sapia:note>An <sapia:class>Env</sapia:class> instance can be retrieved directly from
+  a <sapia:class>SotoContainer</sapia:class>, using the <sapia:command>toEnv()</sapia:command> method
+  on the container instance.</sapia:note>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Accessing Naming Information" alias="xmlaware">
+        <p>In some cases, it might be usefull for instances to have access to their XML naming information (such as
+        specified in the corresponding object definitions). All objects that are instantiated through object definitions 
+        (not only services) can have access to their corresponding XML naming information by implementing the 
+        <sapia:class link="maven/api/org/sapia/soto/XmlAware.html">XmlAware</sapia:class> interface. The interface
+        specifies a single <sapia:command>setNameInfo()</sapia:command> method, that takes the 
+        local name, namespace URI and namespace prefix of the corresponding object definition.
+        </p>
+      </sapia:sect3>      
+      
+    <sapia:sect3 title="Type Coercion">
+      <sapia:sect4 title="Basics">
+
+      <p>When assigning configuration to objects, Soto tries to coerce the data in the configuration to the type that
+      is specified in the corresponding accessor on the configured object, meaning: if a "maxPoolSize" XML attribute is
+      found to be corresponding to a <sapia:command>setMaxPoolSize(int)</sapia:command> method, that attribute's value is converted
+      to an <sapia:command>int</sapia:command>. But what if, for an obscure reason, the method's signature is <sapia:command>setMaxPoolSize(Object)</sapia:command>?
+      This use-case is rather absurd, but it can make sense other times. When that occurs, Soto provides special tags corresponding to Java's primitive types
+      (and to the <sapia:class>java.util.Date</sapia:class> class as well) that can be used to convert strings to the appropriate types. These tags are:
+      </p>
+      <ul>
+        <li><sapia:command>soto:boolean</sapia:command></li>
+        <li><sapia:command>soto:short</sapia:command></li>
+        <li><sapia:command>soto:int</sapia:command></li>
+        <li><sapia:command>soto:long</sapia:command></li>
+        <li><sapia:command>soto:float</sapia:command></li>
+        <li><sapia:command>soto:double</sapia:command></li>
+        <li><sapia:command>soto:date</sapia:command></li> 
+      </ul>
+      
+      <p>
+      In addition, Soto supports more exotic types:
+      </p>
+      <ul>
+        <li><sapia:command>soto:class</sapia:command></li>
+        <li><sapia:command>soto:file</sapia:command></li>
+        <li><sapia:command>soto:resource</sapia:command></li>
+        <li><sapia:command>soto:map</sapia:command></li>
+        <li><sapia:command>soto:list</sapia:command></li>        
+        <li><sapia:command>soto:array</sapia:command></li>        
+        <li><sapia:command>soto:properties</sapia:command></li>
+        <li><sapia:command>soto:uri</sapia:command></li>
+      </ul>
+      
+      <p>To better illustrate usage of these tags, let us give you a concrete example; suppose that we have the following classes:</p>
+<sapia:code>
+
+public class SomePool extends Parametrizable{
+
+  private int _maxPoolSize;
+  
+  public void init(){
+    Param p = super.getParam("maxPoolSize");
+    _maxPoolSize = ((Integer)p.getValue()).intValue();
+  }
+
+}
+
+public class Config{
+
+  private List params = new ArrayList();
+
+  public Param createParam(){
+    Param p = new Param();
+    params.add(p);
+    return p;
+  }
+  
+  public List getParams(){
+    return params;
+  }
+
+}
+
+public class Param{
+
+  private String name;
+  private Object value;
+  
+  public void setName(String name){
+    this.name = name;
+  }
+  
+  public void setValue(Object value){
+    this.value = value;
+  }
+  
+  public String getName(){
+    return name;
+  }
+  
+  public Object getValue(){
+    return value;
+  }
+}
+
+</sapia:code>
+
+      <p>This use case makes sense: the pool instance expects a <sapia:command>maxPoolSize</sapia:command> of type <sapia:command>int</sapia:command>.
+      How would we handle this in configuration? Well, as follows:</p>
+      
+<sapia:code>
+<![CDATA[
+<soto:app  
+    xmlns:soto="sapia:soto"
+    xmlns:sample="soto:sample">
+
+    <soto:service id="somePool">
+      <sample:somePool>
+        <config>
+          <param name="maxPoolSize">
+            <value>
+              <soto:int value="10" />
+            </value>
+          </param>
+        </config>
+      </sample:somePool>
+    </soto:service>
+</soto:app>]]>
+</sapia:code>
+
+      <p>As you can see, it quite straightforward, and nothing stops you from implementing your own tags that perform custom-coercion -
+      look at the source for inspiration. All Soto tags accept a <sapia:command>value</sapia:command> as an attribute (or as an nested XML child element). The 
+      <sapia:command>soto:date</sapia:command> tag in addition supports a <sapia:command>pattern</sapia:command>, whose value should correspond to
+      a date parsing pattern as specified in the <sapia:class link="http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html" target="javadoc_window">SimpleDateFormat</sapia:class> class. The resulting date is thus parsed according to
+      the given pattern, such as in the following:</p>
+      
+<sapia:code>
+<![CDATA[
+<soto:app  
+    xmlns:soto="sapia:soto"
+    xmlns:sample="soto:sample">
+
+    <soto:service id="someService">
+      <sample:someService>
+        <config>
+          <param name="nextShutDownDate">
+            <value>
+              <soto:date value="2005/31/12" pattern="yyyy/MM/dd" />
+            </value>
+          </param>
+        </config>
+      </sample:someService>
+    </soto:service>
+</soto:app>]]>
+</sapia:code>      
+      <p>In addition to having elements for specifying primitive or common values,
+      Soto has some other elements for more "complex" types, as the examples below demonstrate:
+      </p>
+      </sapia:sect4>
+
+      <sapia:sect4 title="Classes">
+        <p>Configuring a <sapia:class>java.lang.Class</sapia:class>:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+
+    ...
+    <soto:class name="com.acme.app.SomeClass" />
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>      
+
+      <sapia:sect4 title="URIs">
+        <p>Configuring a <sapia:class>java.net.URI</sapia:class>:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+
+    ...
+    <soto:uri value="file:config/application.xml" />
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>      
+
+      <sapia:sect4 title="Resources">
+        <p>Configuring a <sapia:class>org.sapia.soto.util.Resource</sapia:class>
+        (resolved through Soto's resource-resolving mechanism):</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+
+    ...
+    <soto:resource uri="resource:config/application.xml" />
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>      
+      
+      <sapia:sect4 title="Lists">
+        <p>Configuring a <sapia:class>java.util.List</sapia:class>:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+
+    ...
+    <soto:list>
+      <soto:int value="1" />
+      <soto:int value="2" />
+      <soto:int value="3" />
+    </soto:list>
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>
+      
+      <sapia:sect4 title="Maps">
+        <p>Configuring a <sapia:class>java.util.Map</sapia:class>:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+
+    ...
+    <soto:map>
+      <entry key="first">
+        <soto:int value="1" />
+      </entry>
+      <entry key="second">
+        <soto:int value="2" />
+      </entry>
+      <entry key="third">
+        <soto:int value="3" />
+      </entry>
+    </soto:map>
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>       
+      
+      <sapia:sect4 title="Arrays">
+        <p>Configuring an array of <sapia:class>java.lang.String</sapia:class>s:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+
+    ...
+    <soto:array type="java.lang.String">
+      <soto:string value="string_1" />
+      <soto:string value="string_2" />     
+      <soto:string value="string_3" />     
+    </soto:array>
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>             
+      
+      <sapia:sect4 title="Properties">
+        <p>Configuring <sapia:class>java.util.Properties</sapia:class>:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+
+    ...
+    <!-- one explicitly, through XML -->
+    <soto:properties>
+      <property name="first" value="one" />
+      <property name="second" value="two" />
+    </soto:properties>
+    
+    <!-- through a Soto URI -->
+    <soto:properties 
+      uri="resource:/com/acme/app/someProperties.xml" />
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>
+
+      <sapia:sect4 title="Files">
+        <p>Configuring <sapia:class>java.io.File</sapia:class>s:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+    
+    ...
+    <soto:file name="someDir" create="true" />
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>      
+      
+      <sapia:sect4 title="Constants">
+        <p>Configuring constants:</p>
+
+<sapia:code>
+<![CDATA[<soto:app  
+    xmlns:soto="sapia:soto">
+    
+    ...
+    <soto:constant name="TYPE" class="java.lang.Integer" />
+    ...
+    
+</soto:app>]]></sapia:code>
+      </sapia:sect4>      
+            
+      
+    </sapia:sect3>      
+
+      <sapia:sect3 title="Best Practices">
+        <sapia:sect4 title="Use Interfaces">
+          <p>Needless to say, specify service behavior through interfaces. This makes replacing an implementation with another
+          seamless, and offers a lot of other advantages that you are certainly aware of.</p>
+        </sapia:sect4>
+        
+        <sapia:sect4 title="Decompose">
+          <p>Have your services perform specific, targeted tasks. This favors team development, makes code so much easier to
+          maintain, and offers a lot of other advantages that you are certainly aware of ;-).</p>
+        </sapia:sect4>        
+        
+      </sapia:sect3>
+      
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Conclusion">
+      <p>Use Soto as an embeddable application framework. The reflection-bases configuration handling approach spares
+      you from tedious manipulations, and the layer concept allows you to separate your core business logic from
+      "generic" features.</p>
+    </sapia:sect2>
+    
+  </sapia:sect1>
+</sapia:page>

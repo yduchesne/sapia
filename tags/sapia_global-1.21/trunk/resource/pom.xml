@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Resource</name>
+  <description>A file resource framework, providing 'include' support</description>
+  <url>http://www.sapia-oss.org/projects/resource/index.html</url>
+  <groupId>org.sapia</groupId>
+  <artifactId>sapia_resource</artifactId>
+  <version>1.4-SNAPSHOT</version>
+
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_global</artifactId>
+    <version>1.14</version>
+  </parent>
+
+  <scm>
+    <connection>scm:svn:http://sapia.googlecode.com/svn/tags/sapia_resource-1.2</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_resource-1.2</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_resource-1.2</url>
+  </scm>
+
+  <packaging>jar</packaging>
+
+  <mailingLists>
+    <mailingList>
+      <name>User List</name>
+      <subscribe>http://groups.google.com/group/sapia-tools-users</subscribe>
+      <unsubscribe>http://groups.google.com/group/sapia-tools-users</unsubscribe>
+      <post>sapia-tools-users@googlegroups.com</post>
+      <archive>http://groups.google.com/group/sapia-tools-users/topics</archive>
+    </mailingList>
+  </mailingLists>
+
+  <build>
+    <directory>target</directory>
+    <outputDirectory>target/classes</outputDirectory>
+    <finalName>${artifactId}-${version}</finalName>
+    <testOutputDirectory>target/test-classes</testOutputDirectory>
+  </build>
+  
+</project>

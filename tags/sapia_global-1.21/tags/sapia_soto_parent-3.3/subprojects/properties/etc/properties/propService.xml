@@ -1,0 +1,69 @@
+<soto:app xmlns:soto="sapia:soto" xmlns:props="soto:properties">
+
+  <soto:namespace prefix="props">
+    <def class="org.sapia.soto.properties.example.PropertyExample"
+      name="bean" />
+  </soto:namespace>
+
+  <soto:service id="properties">
+    <props:configuration>
+      <properties name="main" uri="main.properties" />
+      <properties name="secondary" depends="main"
+        uri="secondary.properties" />
+    </props:configuration>
+  </soto:service>
+
+  <soto:service id="bean">
+    <props:bean uri="props:/properties/secondary?content.xml">
+      <property>
+        <props:property path="properties/main, secondary/foo" />
+      </property>
+      <properties>
+        <props:properties path="properties/main, secondary" />
+      </properties>
+    </props:bean>
+  </soto:service>
+
+  <soto:service id="bean2">
+    <props:if path="properties/main, secondary/foo" value="sna">
+      <props:bean uri="props:/properties/main?content.xml">
+        <properties>
+          <soto:properties uri="props:/properties/main" />
+        </properties>
+      </props:bean>
+    </props:if>
+  </soto:service>
+
+  <soto:service id="bean3">
+    <props:if path="properties/main, secondary/foo" value="fu">
+      <props:bean uri="props:/properties/main?content.xml" />
+    </props:if>
+  </soto:service>
+
+  <soto:service id="bean4">
+    <props:choose>
+      <when path="properties/main, secondary/foo" value="fu">
+        <props:bean uri="props:/properties/main?content.xml">
+          <property>test1</property>
+        </props:bean>
+      </when>
+      <otherwise>
+        <props:bean uri="props:/properties/main?content.xml">
+          <property>test2</property>
+        </props:bean>
+      </otherwise>
+    </props:choose>
+  </soto:service>
+
+  <soto:service id="bean6">
+    <props:unless path="properties/main, secondary/foo" value="sna">
+      <props:bean uri="props:/properties/main?content.xml" />
+    </props:unless>
+  </soto:service>
+
+  <props:include path="properties/main, secondary"
+    uri="includedService.xml">
+    <param name="some.property" value="test" />
+  </props:include>
+
+</soto:app>

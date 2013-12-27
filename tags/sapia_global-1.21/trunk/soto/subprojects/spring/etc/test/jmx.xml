@@ -1,0 +1,20 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:spring="soto:spring"
+          xmlns:sample="soto:sample">
+          
+  <soto:registerLifeCycle type="spring">
+    <spring:lifeCycle />
+  </soto:registerLifeCycle>
+  
+  <soto:namespace prefix="sample">
+    <def class="org.sapia.soto.spring.TestJmxBean" name="testService" />
+  </soto:namespace>
+  
+  <!-- Our JMX-enabled service -->
+  <soto:service id="test" type="spring">
+    <sample:testService name="TEST" age="100" />
+  </soto:service>
+  
+  <soto:include uri="jmxAutodetect.xml" />
+  
+</soto:app>

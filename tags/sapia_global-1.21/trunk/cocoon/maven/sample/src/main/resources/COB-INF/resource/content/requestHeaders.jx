@@ -1,0 +1,9 @@
+<jx:template xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+    <ul>
+		<jx:forEach var="key" items="${cocoon.request.headers}" >
+	         <ul>
+	         	<li>${key}</li>
+	         </ul>
+	    </jx:forEach>
+    </ul>
+</jx:template>

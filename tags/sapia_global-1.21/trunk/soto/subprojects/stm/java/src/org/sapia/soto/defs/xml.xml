@@ -1,0 +1,15 @@
+<soto:defs xmlns:soto="sapia:soto">
+  <soto:namespace prefix="xml">
+    <def class="org.sapia.soto.state.xml.StyleStep"                    name="style" />    
+    <def class="org.sapia.soto.state.xml.StyleStep"                    name="xsl" />    
+    <def class="org.sapia.soto.state.xml.XMLInclude"                   name="include" />        
+    <def class="org.sapia.soto.state.xml.XMLAggregate"                 name="aggregate" />            
+    <def class="org.sapia.soto.state.xml.XMLResourceStep"              name="resource" />
+    <def class="org.sapia.soto.state.xml.xpath.Choose"                 name="choose" />
+    <def class="org.sapia.soto.state.xml.xpath.If"                     name="if" />
+    <def class="org.sapia.soto.state.xml.xpath.Select"                 name="select" />            
+    <def class="org.sapia.soto.state.cocoon.view.DomifyView"           name="domify" />  
+    <def class="org.sapia.soto.state.cocoon.view.JellyView"            name="jelly" />    
+    <def class="org.sapia.soto.state.xml.DOMStep"                      name="dom" />      
+  </soto:namespace>
+</soto:defs>

@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Freemarker Integration</name>
+  <description>Integrates the Freemarker templating engine</description>
+  <url>http://www.sapia-oss.org/projects/soto/subprojects/freemarker/index.html</url>
+
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_soto_parent</artifactId>
+    <version>3.4-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>sapia_soto_freemarker</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto_stm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sapia</groupId>
+      <artifactId>sapia_soto</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.python</groupId>
+        <artifactId>jython</artifactId>
+    </dependency>
+
+  </dependencies>
+
+</project>

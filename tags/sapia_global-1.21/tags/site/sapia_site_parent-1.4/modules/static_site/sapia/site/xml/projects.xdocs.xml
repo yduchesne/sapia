@@ -1,0 +1,86 @@
+<sapia:page 
+  title="Projects" 
+  xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:sect1 title="Projects">
+    <sapia:sect-desc>
+      
+      <p>We've developed quite a few libraries, frameworks, applications over the years, 
+      that we're making available to the developer community.</p>
+    
+      <table class="rich_table gradient" style="padding: 20px">
+
+        <tbody>
+
+          <!-- =========== ROW 1 =========== -->
+          <tr>
+            <td>
+              <a href="projects/corus/index.html">Corus</a>: 
+              Corus is used to collectively manage processes distributed on multiple hosts. Deploy plain-vanilla Java apps 
+              on a large-scale without forcing yourself into a heavyweight programming model. In short: dump your app server.
+            </td>
+            <td>
+              <a href="projects/ubik/index.html">Ubik</a>: 
+              A RMI-like distributed objects framework providing built-in advanced features such as client-side discovery, 
+              replicated JNDI tree, smart stubs with transparent fail-over and load-balancing.
+            </td>
+            <td>
+              <a href="projects/magnet/index.html">Magnet</a>: 
+              A tool to ease the startup of plain Java apps from the command-line - rid yourself of the shell script nightmare.
+            </td>
+          </tr>
+
+
+          <!-- =========== ROW 2 =========== -->
+          <tr>
+            <td>
+              <a href="projects/regis/index.html">Regis</a>: 
+              A framework easing the pain of managing application configuration. Includes a code generation facility
+              that generates classes based on your configuration tree - inject configuration into your code programmatically.
+            </td>
+            <td>
+              <a href="projects/clazzy/index.html">Clazzy</a>: 
+              A simple classloading framework.
+            </td>
+            <td>
+              <a href="projects/resource/index.html">Resource</a>: 
+              Provides support for absolute and relative file includes based on the "resource" abstraction.
+            </td>
+          </tr>
+
+
+          <!-- =========== ROW 3 =========== -->
+          <tr>
+            <td>
+              <a href="projects/archie/index.html">Archie</a>: 
+              A generic tree-like datastructure comprising an in-memory JNDI implementation.
+            </td>
+            <td>
+              <a href="projects/console/index.html">Console</a>: 
+              A command-line interface framework.
+            </td>
+            <td>
+              <a href="projects/config/index.html">Confix</a>: 
+              Flexible framework supporting automatic mapping of XML to objects based on predefined conventions.
+            </td>
+          </tr>        
+       
+
+          <!-- =========== ROW 4 =========== -->
+          <tr>
+            <td>
+              <a href="projects/utils/index.html">Utils</a>: 
+              Miscellaneous utilities.
+            </td>
+            <td>
+              <a href="projects/vlad/index.html">Vlad</a>: 
+              A lightweight validation framework.
+            </td>
+            <td></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </sapia:sect-desc>
+  </sapia:sect1>
+</sapia:page>

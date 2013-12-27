@@ -1,0 +1,28 @@
+<classpath>
+  <classpathentry kind="src" path="java/test" output="target/test-classes"/>
+  <classpathentry kind="src" path="java/src"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.7/junit-4.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.16/log4j-1.2.16.jar"/>
+  <classpathentry kind="var" path="M2_REPO/piccolo/piccolo/1.0.3/piccolo-1.0.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/sapia/sapia_regis/3.1/sapia_regis-3.1.jar" sourcepath="M2_REPO/org/sapia/sapia_regis/3.1/sapia_regis-3.1-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/yduchesne/.m2/repository/org/sapia/sapia_regis/3.1/sapia_regis-3.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/sapia/sapia_resource/1.2/sapia_resource-1.2.jar" sourcepath="M2_REPO/org/sapia/sapia_resource/1.2/sapia_resource-1.2-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/yduchesne/.m2/repository/org/sapia/sapia_resource/1.2/sapia_resource-1.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="src" path="/sapia_soto"/>
+  <classpathentry kind="var" path="M2_REPO/org/sapia/sapia_utils/1.7/sapia_utils-1.7.jar" sourcepath="M2_REPO/org/sapia/sapia_utils/1.7/sapia_utils-1.7-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/yduchesne/.m2/repository/org/sapia/sapia_utils/1.7/sapia_utils-1.7-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+</classpath>

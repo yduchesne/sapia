@@ -1,0 +1,9 @@
+<soto:app xmlns:soto="sapia:soto"
+          xmlns:vlad="soto:vlad">
+  
+  <soto:service>
+    <vlad:configuration>
+      <vlad:validator name="main" uri="etc/validation/config.xml" />
+    </vlad:configuration>
+  </soto:service>
+</soto:app>

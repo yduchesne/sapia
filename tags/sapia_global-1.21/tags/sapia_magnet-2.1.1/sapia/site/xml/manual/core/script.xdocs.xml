@@ -1,0 +1,148 @@
+<sapia:page title="core:script" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform" cssPath="../../css/sapia.css">
+  <sapia:sect1 title="script">
+    <sapia:section>
+      <sapia:path name="home" href="../../../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="magnet" href="../../home.html" />
+      <sapia:path name="reference" href="../home.html#Core%20Elements" />
+      <sapia:path name="core" />
+      <sapia:path name="script" />
+    </sapia:section>
+    <toc />
+        
+    <sapia:sect2 title="Overview">
+	    <p>The <sapia:command>&lt;script&gt;</sapia:command> element can be used to define any 
+        type of processing Magnet has to do before starting the process(es) it contains. The
+        content of this element holds a snippet to be interpreted by a scripting
+        engine - Magnet can potentially support any type of scripting language that can run in 
+        the JVM: Python  (rather, Jython), Javascript (Rhino), Ruby (JRuby)...
+        Since Magnet is a Java application, it was only natural to have built-in support for 
+        <a href="http://www.beanshell.org/" target="beanshell">BeanShell</a> -
+        a scripting language that can be considered an interpreted Java.
+        </p>
+      
+        <p>To execute a script, you need to specify in the <sapia:command>&lt;script&gt;</sapia:command>
+        element what type of scripting engine should be used to process the content. To use the
+        BeanShell engine, you need to use the <sapia:command>bsh</sapia:command> type. The
+        <sapia:command>&lt;script&gt;</sapia:command> element is <b>profile-aware</b>. Using that element's
+        <sapia:command>profile</sapia:command> attribute, you can specify for which profile a given 
+        <sapia:command>&lt;script&gt;</sapia:command> element must be rendered and executed. If the 
+        profile attribute is not assigned, then the script will be executed if there is no other 
+        <sapia:command>&lt;script&gt;</sapia:command> element for the
+        specified profile at runtime. Finally, you can control the behavior of the script when an error occurs
+        during its interpretation by the scripting engine. Using the <sapia:command>isAbortingOnError</sapia:command> boolean attribute, you
+        can stop Magnet's execution (the attribute's value must then be <sapia:command>true</sapia:command>), or you can tell Magnet to simply log a
+        warning message and resume its execution (by specifying <sapia:command>false </sapia:command> as the value).
+	    </p>
+    </sapia:sect2>
+        
+    <sapia:sect2 title="Attributes">
+		  <sapia:table>
+		    <sapia:th>Name</sapia:th>
+		    <sapia:th>Description</sapia:th>
+		    <sapia:th>Required</sapia:th>
+		    <sapia:th>Interpolation</sapia:th>
+		    <tr>
+		      <td>type</td>
+		      <td>The type of scripting engine to use to process the script. Use <sapia:command>bsh</sapia:command> 
+		      for BeanShell,or any other type of value for which a script handler was registered.</td>
+		      <td>yes</td>
+		      <td>no</td>
+		    </tr>
+		    <tr>
+		      <td>profile</td>
+		      <td>The name of the profile for which the script must be executed. If the attribute is not provided, the
+          script becomes the "default" script that is executed only if no other script exists that matches the execution profile.</td>
+		      <td>no</td>
+		      <td>no</td>
+		    </tr>
+		    <tr>
+		      <td>isAbortingOnError</td>
+		      <td>This attribute defines how Magnet behaves when an error occurs executing the script. If the value
+              is <sapia:command>false</sapia:command>, Magnet logs an error and stops the execution. If the value is <sapia:command>false</sapia:command> Magnet logs a warning
+              message and resumes its execution. By default the value is <sapia:command>false</sapia:command>.</td>
+		      <td>no</td>
+		      <td>yes</td>
+		    </tr>
+		  </sapia:table>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Rendering Operations">
+		  <p>When a <sapia:command>&lt;script&gt;</sapia:command> element is rendered, it performs the following
+		  operations in order:
+		    <ol>
+		      <li>Renders the <sapia:command>isAbortingOnError</sapia:command> attribute (using variable interpolation).</li>
+		      <li>Renders the text of the <sapia:command>&lt;script&gt;</sapia:command> element
+              (using variable interpolation). This allows one to put variables within the script itself
+              and let Magnet render these variables before the scripting engine encounters them.</li>
+		      <li>Executes the script using the appropriate script handler (based on the type).</li>
+		    </ol>
+		  </p>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Examples">
+      <p>This first example uses BeanShell to print a simple message to standard output:
+      </p>
+      <sapia:code><![CDATA[
+<magnet xmlns:magnet="http://schemas.sapia-oss.org/magnet/"
+        name="ScriptExample1"
+        description="This is a first script example.">
+...
+    <script type="bsh">
+        System.out.println("A message from BeanShell");
+    </script>
+...
+</magnet>]]></sapia:code>
+
+      <p>This second example uses BeanShell to create a new directory at startup. It shows how
+        you can use the profile attribute to perform conditionnal execution. If the "test" profile
+        is executed, then the second script element will create a new directory using the current time
+        with the prefix "test", otherwise the first script element will create a new directory 
+        using the current time. In both cases, Magnet will stop its execution if an error
+        occurs creating the new directory beacause the attribute <sapia:command>isAbortingOnError</sapia:command> is set to true.
+      </p>
+      <sapia:code><![CDATA[
+<magnet xmlns:magnet="http://schemas.sapia-oss.org/magnet/"
+        name="ScriptExample2"
+        description="This is a second script example.">
+...
+    <script type="bsh" isAbortingOnError="true">
+        File aFile = new File(System.getProperty("user.dir"),
+             String.valueOf(System.currentTimeMillis()));
+        aFile.mkdirs();
+    </script>
+
+    <script type="bsh" profile="test" isAbortingOnError="true">
+        File aFile = new File(System.getProperty("user.dir"),
+             "test" + System.currentTimeMillis());
+        aFile.mkdirs();
+    </script>
+...
+</magnet>]]></sapia:code>
+
+      <p>This third example shows how you can use the variable replacement feature of magnet within
+      a script. It's a variation of the previous example were the explicit calls to System.getProperty()
+      are replaced by variables.
+      </p>
+      
+      <sapia:code><![CDATA[
+<magnet xmlns:magnet="http://schemas.sapia-oss.org/magnet/"
+        name="ScriptExample2"
+        description="This is a second script example.">
+...
+    <script type="bsh" isAbortingOnError="true">
+        File aFile = new File("${user.dir}"), String.valueOf(System.currentTimeMillis()));
+        aFile.mkdirs();
+    </script>
+
+    <script type="bsh" profile="test" isAbortingOnError="true">
+        File aFile = new File("${user.dir}"), "test" + System.currentTimeMillis());
+        aFile.mkdirs();
+    </script>
+...
+</magnet>]]></sapia:code>
+    </sapia:sect2>
+    
+  </sapia:sect1>
+</sapia:page>
+  

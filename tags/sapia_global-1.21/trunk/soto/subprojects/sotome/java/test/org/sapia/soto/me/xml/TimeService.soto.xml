@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<soto:app xmlns:soto="sapia:soto" xmlns:junit="resource:/org/sapia/soto/me/sotome_defs.xml">
+
+
+    <soto:choose>
+        <soto:when param="param.serviceId">
+            <soto:service id="time">
+                <junit:time timezone="${param.timezone}" />
+            </soto:service>
+        </soto:when>
+        <soto:otherwise>
+            <soto:service id="${param.serviceId}">
+                <junit:time timezone="${param.timezone}" />
+            </soto:service>
+        </soto:otherwise>
+    </soto:choose>
+
+</soto:app>

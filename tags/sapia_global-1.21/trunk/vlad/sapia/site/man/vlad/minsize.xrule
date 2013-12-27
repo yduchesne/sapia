@@ -1,0 +1,49 @@
+<descriptor namespace="vlad" 
+            name="minSize"
+            class="org.sapia.validator.rules.MinSize"
+            nested="yes"
+            >
+
+  <description>
+    Use this rule to ensure that a given collection/array is of a given
+    minimal size (whose size is greater or equal than a given size). 
+  </description>
+  <attributes>
+    <attribute name="attribute" mandatory="no">
+      <description>Specifies the name of the accessor whose return value must be a 
+      java collection (instance of java.util.Collection) or array. The rule ensures that 
+      the collection/array is at least of the size specified by the "size" attribute - see next.
+      <p>If the object to validate is a null reference, an error is generated.</p>      
+      <p>If this attribute is omitted, the current object on the validation context's
+      stack will be validated.</p>
+      This attribute's value must use the property access notation specified by the
+      <a href="http://jakarta.apache.org/commons/beanutils.html">BeanUtils</a> libary - see 
+      the library's <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/package-summary.html">
+      javadoc</a> for more information.
+      </description>
+    </attribute>
+    <attribute name="size" mandatory="yes">
+      <description>An integer value corresponding to the minimal size expected from the
+      validated collections/arrays.</description>
+    </attribute>    
+  </attributes>
+  
+  <examples>
+    <example name="Enforcing the minimal size of a collection or array">
+      <content><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <ruleSet id="checkCompany">
+    
+    <vlad:minSize attribute="employees" size="1">
+       <message 
+        value="Company must have at least one employee."/>
+    </vlad:minSize>
+    
+  </ruleSet>
+</vlad>]]>      
+      </content>
+    </example>
+  </examples>
+
+</descriptor>

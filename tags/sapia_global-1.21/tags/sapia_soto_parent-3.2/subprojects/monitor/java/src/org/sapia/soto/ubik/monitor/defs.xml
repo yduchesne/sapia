@@ -1,0 +1,14 @@
+<soto:defs xmlns:soto="sapia:soto"
+           xmlns:monitor="resource:/org/sapia/soto/ubik/monitor">
+  <soto:namespace prefix="monitor">
+    <def class="org.sapia.soto.ubik.monitor.Dashboard"                name="dashboard" />    
+    <def class="org.sapia.soto.ubik.monitor.DashboardSection"         name="dashboardSection" />        
+    <def class="org.sapia.soto.ubik.monitor.StatusWatchdog"           name="watchdog" />  
+    <def class="org.sapia.soto.ubik.monitor.stm.AssertExists"         name="assertExists" />    
+    <def class="org.sapia.soto.ubik.monitor.stm.AssertBound"          name="assertBound" />
+    <def class="org.sapia.soto.ubik.monitor.stm.AssertStatus"         name="assertStatus" />    
+    <def class="org.sapia.soto.ubik.monitor.stm.FilterResults"        name="filterResults" />    
+    <def class="org.sapia.soto.ubik.monitor.stm.ForEachStatus"        name="forEachStatus" />        
+    <def class="org.sapia.soto.ubik.monitor.stm.EmailAlert"           name="emailAlert" />    
+  </soto:namespace>
+</soto:defs>  
