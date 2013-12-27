@@ -1,9 +1,0 @@
-{ 
-  "corus": {
-    
-    "server": {
-    
-      "tags": [ "tag1", "tag2"]    
-    }
-  }
-}

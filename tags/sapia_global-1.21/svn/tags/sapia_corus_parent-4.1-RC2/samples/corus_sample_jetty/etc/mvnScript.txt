@@ -1,3 +1,0 @@
-kill -d * -v * -w
-undeploy -d * -v *
-deploy ${project.build.directory}/*-${distType}.zip
