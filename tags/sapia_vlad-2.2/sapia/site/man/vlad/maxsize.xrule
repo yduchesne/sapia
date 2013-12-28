@@ -1,0 +1,51 @@
+<descriptor namespace="vlad" 
+            name="maxSize"
+            class="org.sapia.validator.rules.MaxSize"
+            nested="yes"
+            >
+
+  <description>
+    Use this rule to ensure that a given collection/array is of a given
+    maximum size (whose size is lower or equal than a given size). 
+  </description>
+  <attributes>
+    <attribute name="attribute" mandatory="no">
+      <description>Specifies the name of the accessor whose return value must be a java 
+      collection (an instance of java.util.Collection) or an array. The rule ensures that 
+      the collection/array is at most of the size specified by the "size" attribute - see next.
+      <p>
+      If this attribute is omitted, the current object on the validation context's
+      stack will be validated.
+      </p>
+      <p>If the object to validate is a null reference, an error is generated.</p>
+      <p>This attribute's value must use the property access notation specified by the
+      <a href="http://jakarta.apache.org/commons/beanutils.html">BeanUtils</a> libary - see 
+      the library's <a href="http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/package-summary.html">
+      javadoc</a> for more information.</p>
+      </description>
+    </attribute>
+    <attribute name="size" mandatory="yes">
+      <description>An integer value corresponding to the maximum size expected from the
+      validated collections/arrays.</description>
+    </attribute>    
+  </attributes>
+  
+  <examples>
+    <example name="Enforcing the maximum size of a collection or array">
+      <content><![CDATA[
+<vlad xmlns:vlad="http://www.sapia-oss.org/vlad/rules">
+
+  <ruleSet id="checkCompany">
+    
+    <vlad:maxSize attribute="employees" size="10">
+       <message 
+        value="Company must have at most ten employees."/>
+    </vlad:maxSize>
+    
+  </ruleSet>
+</vlad>]]>      
+      </content>
+    </example>
+  </examples>
+
+</descriptor>
