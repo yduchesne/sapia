@@ -4,7 +4,7 @@
   <description>A validation framework</description>
   <url>http://www.sapia-oss.org/projects/vlad/index.html</url>
   <artifactId>sapia_vlad</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
 
   <parent>
     <groupId>org.sapia</groupId>
@@ -65,4 +65,10 @@
     </plugins>
 
   </build>
+
+  <scm>
+    <connection>scm:svn:https://sapia.googlecode.com/sapia_vlad-1.2</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_vlad-1.2</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_vlad-1.2</url>
+  </scm>
 </project>
