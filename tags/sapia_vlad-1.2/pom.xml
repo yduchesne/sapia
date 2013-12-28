@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <name>Vlad</name>
+  <description>A validation framework</description>
+  <url>http://www.sapia-oss.org/projects/vlad/index.html</url>
+  <artifactId>sapia_vlad</artifactId>
+  <version>1.2</version>
+
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_global</artifactId>
+    <version>1.21</version>
+  </parent>
+
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+        <groupId>org.sapia</groupId>
+        <artifactId>sapia_utils</artifactId>
+        <version>2.3</version>
+    </dependency>
+    <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.8.3</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all-minimal</artifactId>
+        <version>1.5.8</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <directory>target</directory>
+    <outputDirectory>target/classes</outputDirectory>
+    <finalName>${artifactId}-${version}</finalName>
+    <testOutputDirectory>target/test-classes</testOutputDirectory>
+    <sourceDirectory>java/src</sourceDirectory>
+    <testSourceDirectory>java/test</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>java/src</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>java/test</directory>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/Test**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <scm>
+    <connection>scm:svn:https://sapia.googlecode.com/sapia_vlad-1.2</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_vlad-1.2</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_vlad-1.2</url>
+  </scm>
+</project>
