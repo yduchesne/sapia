@@ -1,5 +1,0 @@
-<registry>
-  <node name="test">
-    <property name="prop" value="value" />
-  </node>
-</registry>
