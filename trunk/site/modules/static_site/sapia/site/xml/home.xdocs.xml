@@ -14,7 +14,7 @@
       </ul>
       
       <table class="rich_table gradient; padding-bottom: 30px">
-        <thead><th>What is it ?</th><th>How is it used ?</th><th>Recent</th></thead>
+        <thead><th>What is it ?</th><th>How is it used ?</th><th>Updates</th></thead>
         <tbody><tr>
           <td>
               <ul>
@@ -32,7 +32,7 @@
           </td> 
           <td>
             <ul>
-              <li>Corus 4.1.2 (currently <a href="http://code.google.com/p/sapia/downloads/list">available</a>)</li>
+              <li>Corus 4.1.1 (currently <a href="http://code.google.com/p/sapia/downloads/list">available</a>)</li>
               <li>Repository functionality: auto-deployment and execution of applications to new nodes in cluster</li>
               <li>Ripple: target command execution to cluster subset (minimize downtime when deploying over large clusters)</li>
             </ul>            
