@@ -14,12 +14,10 @@
 
   <build>
 	  <plugins>
-
 	    <plugin>
 	      <groupId>org.sapia</groupId>
 	      <artifactId>sapia_site_doc_plugin</artifactId>
 	      <version>${project.version}</version>
-
         <executions>
           <execution>
             <phase>site</phase>
@@ -33,25 +31,6 @@
           <generateMailingListPage>false</generateMailingListPage>
         </configuration>
 	    </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-         <executions>
-           <execution>
-             <phase>site</phase>
-             <goals>
-               <goal>site</goal>
-             </goals>
-           </execution>
-         </executions>
-        <configuration>
-          <outputDirectory>${basedir}/target/site/maven</outputDirectory>
-          <generatedSiteDirectory>${basedir}/target/site/maven</generatedSiteDirectory>
-          <siteDirectory>${basedir}/src/site</siteDirectory>
-        </configuration>
-      </plugin>
-
 	  </plugins>
   </build>
 

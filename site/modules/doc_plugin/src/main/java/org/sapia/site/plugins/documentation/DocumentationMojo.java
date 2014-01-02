@@ -93,7 +93,7 @@ public class DocumentationMojo extends AbstractMojo{
   /**
    * @parameter
    */
-  private boolean deleteDestdir = true;
+  private boolean deleteDestdir = false;
   
   /**
    * @parameter
