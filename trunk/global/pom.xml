@@ -5,7 +5,7 @@
 	<url>http://www.sapia-oss.org</url>
 	<groupId>org.sapia</groupId>
 	<artifactId>sapia_global</artifactId>
-	<version>1.21</version>
+	<version>1.22-SNAPSHOT</version>
 
 	<organization>
 		<name>Sapia OSS</name>
@@ -91,9 +91,9 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:svn:https://sapia.googlecode.com/sapia_global-1.21</connection>
-		<developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_global-1.21</developerConnection>
-		<url>scm:svn:https://sapia.googlecode.com/svn/sapia_global-1.21</url>
+		<connection>scm:svn:https://sapia.googlecode.com</connection>
+		<developerConnection>scm:svn:https://sapia.googlecode.com/svn</developerConnection>
+		<url>scm:svn:https://sapia.googlecode.com/svn</url>
 	</scm>
 
 	<packaging>pom</packaging>
