@@ -3,8 +3,8 @@
 
   <skin>
     <groupId>org.sapia</groupId>
-    <artifactId>skin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>sapia_site_skin</artifactId>
+    <version>1.22-SNAPSHOT</version>
   </skin>
   <!--bannerLeft>
     <name>Maven</name>
