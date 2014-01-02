@@ -8,9 +8,9 @@ Typically, you'll "interact" with Sapia projects to:
 
 1) and 2) are the typical use cases (they only require read access to the Maven repository where the Sapia libs are published).
 
-3) Is a bit more involving: it requires an account at Java.net.
+3) Is a bit more involving: it requires an account at Bintray.
 
-*Note*: You can find more details [https://maven2-repository.dev.java.net/ on Java.net]
+*Note*: You can find more details on the [https://bintray.com/ Bintray] web site.
 
 = 1) and 2) Using Maven to acquire dependencies =
 
@@ -25,10 +25,25 @@ If you want to include Sapia libraries as dependencies in your projects, you mus
     </activation>
     <repositories>
       <repository>
-        <id>java.net-m2-repository</id>
-        <name>Java.net Repository for Maven</name>
-        <url>http://download.java.net/maven/2/</url>
-      </repository>    
+        <id>central</id>
+        <name>Central</name>
+        <url>http://repo1.maven.org/maven2</url>
+      </repository>
+      <repository>
+        <id>bintray-sapia</id>
+        <url>http://dl.bintray.com/sapiaoss/main</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </repository>
+      <repository>
+        <id>sapia-old-repo</id>
+        <name>Old Sapia Maven Repo</name>
+        <url>http://www.sapia-oss.org/maven2</url>
+      </repository>   
     </repositories> 
   </profile>
 </profiles>
@@ -38,32 +53,12 @@ If you are building the Sapia projects from source, these already include the ab
 
 = 3) Publishing releases =
 
-To publish releases, you'll need the following:
-
-  # An account at Java.net, in order to upload the releases to their Maven 2 repository.
-  # An account at Google code, and write-access to the Sapia projects (meaning you need to be a committer).
-
-More concretely:
-
-== Configure the Google Code Credentials ==
-
-In your `settings.xml` file, add the following within the `servers` element:
+To publish releases, you'll need an account at Bintray, in order to upload the releases to their Maven repository. You have to configure your Bintray username and API key as part of your Maven settings: in your `settings.xml` file, add the following within the `servers` element:
 
 {{{
   <server>
-	<id>sapia.googlecode.com</id>
-	<username>johnsmith</username>
-	<password>hhje7298ska</password>
+    <id>bintray-sapia</id>
+    <username>johnsmith</username>    
+    <password>your-bintray-api-key</password>
   </server>
 }}}
-
-== Configure the Java.net Credentials ==
-
-The Java.net wagon expects your credentials to be present in this file: `~/.java.net` - i.e.: note that the file is under your home directory. The content should be as follows:
-
-{{{
-userName=jsmith
-password=mysecretpass
-}}}
-
-More information is available [https://javanettasks.dev.java.net/nonav/maven/config.html here]
