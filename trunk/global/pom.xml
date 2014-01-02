@@ -5,7 +5,7 @@
 	<url>http://www.sapia-oss.org</url>
 	<groupId>org.sapia</groupId>
 	<artifactId>sapia_global</artifactId>
-	<version>1.22-SNAPSHOT</version>
+	<version>1.21-SNAPSHOT</version>
 
 	<organization>
 		<name>Sapia OSS</name>
@@ -97,63 +97,65 @@
 	</scm>
 
 	<packaging>pom</packaging>
-
+	
 	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<destDir>api</destDir>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <configuration>
+            <outputDirectory>${basedir}/target/site/maven/api</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>	
 
 	<build>
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<configuration>
-					<outputDirectory>${basedir}/target/site/maven</outputDirectory>
-					<generatedSiteDirectory>${basedir}/target/site/maven</generatedSiteDirectory>
-					<siteDirectory>${basedir}/src/site</siteDirectory>
-				</configuration>
-			</plugin>			
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.0-beta-7</version>
-				<configuration>
-					<tagBase>https://sapia.googlecode.com/svn/tags</tagBase>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.sapia</groupId>
-				<artifactId>sapia_site_doc_plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>site</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+	  <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.7</source>
+            <target>1.7</target>
+          </configuration>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <outputDirectory>${basedir}/target/site/maven</outputDirectory>
+            <generatedSiteDirectory>${basedir}/target/site/maven</generatedSiteDirectory>
+            <siteDirectory>${basedir}/src/site</siteDirectory>
+          </configuration>
+        </plugin>			
+  
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.0-beta-7</version>
+          <configuration>
+            <tagBase>https://sapia.googlecode.com/svn/tags</tagBase>
+          </configuration>
+        </plugin>
+  
+        <plugin>
+          <groupId>org.sapia</groupId>
+          <artifactId>sapia_site_doc_plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>site</phase>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 	</build>
 
 	<distributionManagement>
@@ -164,6 +166,28 @@
 	</distributionManagement>
 
 	<profiles>
+	  <profile>
+			<id>clean-site</id>	
+			<build>
+			  <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-clean-plugin</artifactId>
+              <configuration>
+                  <filesets>
+                      <fileset>
+                          <directory>${basedir}/target/site</directory>
+                          <includes>
+                              <include>**/*</include>
+                          </includes>
+                          <followSymlinks>false</followSymlinks>
+                      </fileset>
+                  </filesets>
+              </configuration>
+          </plugin>			  
+        </plugins>
+			</build>
+	  </profile>
 		<profile>
 			<id>release-sign-artifacts</id>
 			<activation>
@@ -174,7 +198,6 @@
 			</activation>
 			<build>
 				<plugins>
-
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
