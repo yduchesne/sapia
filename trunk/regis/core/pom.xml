@@ -76,6 +76,10 @@
       </exclusions> 
     </dependency>
     <dependency>
+      <groupId>org.simpleframework</groupId>
+      <artifactId>simple</artifactId>
+    </dependency>      
+    <dependency>
       <groupId>prevayler</groupId>
       <artifactId>prevayler</artifactId>
       <optional>true</optional>
