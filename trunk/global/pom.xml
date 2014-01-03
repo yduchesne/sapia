@@ -5,7 +5,7 @@
 	<url>http://www.sapia-oss.org</url>
 	<groupId>org.sapia</groupId>
 	<artifactId>sapia_global</artifactId>
-	<version>1.22-SNAPSHOT</version>
+	<version>1.21-SNAPSHOT</version>
 
 	<organization>
 		<name>Sapia OSS</name>
@@ -106,6 +106,7 @@
         <version>2.9.1</version>
         <configuration>
             <outputDirectory>${basedir}/target/site/maven/api</outputDirectory>
+            <destDir>api</destDir>
         </configuration>
       </plugin>
     </plugins>
