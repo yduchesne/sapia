@@ -14,10 +14,4 @@
 
   <packaging>jar</packaging>
   
-
-  <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/sapia_resource-1.4</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_resource-1.4</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_resource-1.4</url>
-  </scm>
 </project>
