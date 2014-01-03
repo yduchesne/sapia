@@ -5,7 +5,7 @@
 
   <groupId>org.sapia</groupId>
   <artifactId>sapia_regis_global</artifactId>
-  <version>3.7-SNAPSHOT</version>
+  <version>3.7</version>
 
   <parent>
     <groupId>org.sapia</groupId>
@@ -135,4 +135,10 @@
     </dependencies> 
   </dependencyManagement> 
 
+
+  <scm>
+    <connection>scm:svn:https://sapia.googlecode.com/sapia_regis_global-3.7</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_regis_global-3.7</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_regis_global-3.7</url>
+  </scm>
 </project>
