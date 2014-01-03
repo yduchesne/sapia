@@ -16,6 +16,7 @@ import org.sapia.ubik.mcast.RemoteEvent;
 import org.sapia.ubik.rmi.Consts;
 import org.sapia.ubik.rmi.naming.remote.RemoteInitialContextFactory;
 import org.sapia.ubik.rmi.server.Hub;
+import org.sapia.ubik.rmi.server.ServerRuntime;
 import org.sapia.ubik.rmi.server.invocation.ServerPostInvokeEvent;
 import org.sapia.ubik.rmi.server.invocation.ServerPreInvokeEvent;
 
@@ -108,8 +109,9 @@ public class RegistryExporter implements RemoteConsts, AsyncEventListener{
   public void bind(int port) throws Exception{
     SessionInterceptor interceptor = new SessionInterceptor(_reg);
     System.out.println("Binding server to port: " + port);
-    Hub.serverRuntime.addInterceptor(ServerPreInvokeEvent.class, interceptor);
-    Hub.serverRuntime.addInterceptor(ServerPostInvokeEvent.class, interceptor);
+    ServerRuntime rt = Hub.getModules().getServerRuntime();
+    rt.addInterceptor(ServerPreInvokeEvent.class, interceptor);
+    rt.addInterceptor(ServerPostInvokeEvent.class, interceptor);
     _stub = Hub.exportObject(_reg, port);
     publish(System.getProperties());
   }
@@ -151,8 +153,9 @@ public class RegistryExporter implements RemoteConsts, AsyncEventListener{
    */
   public void bind(String jndiName, Properties props) throws Exception{
     SessionInterceptor interceptor = new SessionInterceptor(_reg); 
-    Hub.serverRuntime.addInterceptor(ServerPreInvokeEvent.class, interceptor);
-    Hub.serverRuntime.addInterceptor(ServerPostInvokeEvent.class, interceptor);      
+    ServerRuntime rt = Hub.getModules().getServerRuntime();
+    rt.addInterceptor(ServerPreInvokeEvent.class, interceptor);
+    rt.addInterceptor(ServerPostInvokeEvent.class, interceptor);      
     props.setProperty(InitialContext.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
     InitialContext ctx = new InitialContext(props);
     _stub = Hub.exportObject(_reg);
