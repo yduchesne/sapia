@@ -1,0 +1,14 @@
+<registry>
+  <node name="global" id="gb">
+    <property name="globalProp" value="globalValue" />
+  </node>
+  <node name="secondary" id="sec">
+    <property name="prop3" value="value3" />
+  </node>  
+  <node name="properties">
+    <property name="prop1"  value="value1" />
+    <property name="prop2"  value="value2" />
+    <link type="prepend" ref="gb" />
+    <link type="append" ref="sec" />    
+  </node>
+</registry>
