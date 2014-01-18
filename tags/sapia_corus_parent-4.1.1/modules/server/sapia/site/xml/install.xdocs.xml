@@ -21,8 +21,11 @@
     <sapia:sect-desc>
       <sapia:note>
       	<b>IMPORTANT</b>: given the upload service on Google Code has been discontinued, the latest Corus packages are
-      	uploaded to <a href="https://www.mediafire.com/folder/v55q0gaqvvbda/corus">Mediafire</a>, from which you can
-      	download them. You can still get the earlier packages from Google code.
+      	uploaded to <a href="https://www.mediafire.com/folder/v55q0gaqvvbda/corus">Mediafire</a>, from where they can
+      	be downloaded. You can still get the earlier packages from Google code.
+      	<p/>
+      	Please see the Corus wiki for <a href="http://code.google.com/p/sapia/wiki/CorusInstallationProcedure">complete installation instructions</a> - 
+      	this page only provides an overview.
       </sapia:note>
       <p/>
       <p>We've packaged a Corus distribution for most of the popular operating systems out there: Linux (main flavors thereof), Mac, Windows.
