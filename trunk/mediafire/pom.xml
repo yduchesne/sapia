@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>sapia_mediafire_plugin_parent</artifactId>
 	<packaging>pom</packaging>
 	<name>Sapia Mediafire Maven Plugin parent POM</name>
 	<url>http://www.sapia-oss.org</url>
 
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,4 +58,10 @@
 		</dependencies>
 	</dependencyManagement>
 	
+
+  <scm>
+    <connection>scm:svn:https://sapia.googlecode.com/sapia_mediafire_plugin_parent-1.0</connection>
+    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_mediafire_plugin_parent-1.0</developerConnection>
+    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_mediafire_plugin_parent-1.0</url>
+  </scm>
 </project>
