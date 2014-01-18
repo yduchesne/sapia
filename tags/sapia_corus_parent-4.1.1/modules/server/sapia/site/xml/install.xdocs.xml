@@ -19,6 +19,12 @@
     </sapia:section>
     
     <sapia:sect-desc>
+      <sapia:note>
+      	<b>IMPORTANT</b>: given the upload service on Google Code has been discontinued, the latest Corus packages are
+      	uploaded to <a href="https://www.mediafire.com/folder/v55q0gaqvvbda/corus">Mediafire</a>, from which you can
+      	download them. You can still get the earlier packages from Google code.
+      </sapia:note>
+      <p/>
       <p>We've packaged a Corus distribution for most of the popular operating systems out there: Linux (main flavors thereof), Mac, Windows.
       </p>
     </sapia:sect-desc>
