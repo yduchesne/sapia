@@ -1,9 +1,0 @@
-<help>
-  <section title="Description">
-   <p>Displays the CLI's base directory</p>
-  </section>
-  <section title="Syntax">
-    <p>pwd</p>
-    <p/>    
-  </section>
-</help>
