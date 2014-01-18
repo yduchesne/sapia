@@ -6,6 +6,11 @@
 This wiki section provides detailed information on how to install Corus, on all the
 major OSes (Linux, Solaris, Mac, Windows).
 
+*IMPORTANT - READ THE FOLLOWING*
+
+* Since the Google Code upload service has been discontinued, the latest Corus package can be downloaded from [https://www.mediafire.com/folder/v55q0gaqvvbda/corus Mediafire]
+* The Corus installation based on the Java Service Wrapper does not work in JDK7 due to an [http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7181721 obscure bug] that remains to be fixed.
+
 = Supported Operating Systems =
 
 Corus should run on any platform that supports Java. That being said, a native hook is required to be able to run Corus as an OS process or service (so that it starts automatically at OS boot time), and native scripts are required to start the various tools (the command-line interface, etc.).
