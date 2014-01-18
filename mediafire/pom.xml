@@ -5,7 +5,7 @@
 	<name>Sapia Mediafire Maven Plugin parent POM</name>
 	<url>http://www.sapia-oss.org</url>
 
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -57,11 +57,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
-
-  <scm>
-    <connection>scm:svn:https://sapia.googlecode.com/sapia_mediafire_plugin_parent-1.0</connection>
-    <developerConnection>scm:svn:https://sapia.googlecode.com/svn/tags/sapia_mediafire_plugin_parent-1.0</developerConnection>
-    <url>scm:svn:https://sapia.googlecode.com/svn/sapia_mediafire_plugin_parent-1.0</url>
-  </scm>
 </project>
