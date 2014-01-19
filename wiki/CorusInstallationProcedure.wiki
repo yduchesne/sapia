@@ -8,8 +8,8 @@ major OSes (Linux, Solaris, Mac, Windows).
 
 *IMPORTANT - READ THE FOLLOWING*
 
-  * Since the Google Code upload service has been discontinued, the latest Corus package can be downloaded from [https://www.mediafire.com/folder/v55q0gaqvvbda/corus Mediafire]
-  * The Corus installation based on the Java Service Wrapper does not work in JDK7 due to an [http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7181721 obscure bug] under Linux which remains to be fixed. Use the plain-vanilla init.d-based installation as a workaround (explained in the [CorusGenericInstallationProcedure generic installation procedure])
+  * Since the Google Code upload service has been discontinued, the latest Corus package can be downloaded from [https://www.mediafire.com/folder/v55q0gaqvvbda/corus Mediafire].
+  * The Corus installation based on the Java Service Wrapper does not work in JDK7 due to an [http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7181721 obscure bug] under Linux which remains to be fixed. Use the plain-vanilla init.d-based installation as a workaround (explained in the [CorusGenericInstallationProcedure generic installation procedure]).
 
 = Supported Operating Systems =
 
