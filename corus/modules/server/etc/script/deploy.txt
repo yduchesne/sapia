@@ -1,2 +1,0 @@
-deploy target/sapia*demo.zip -cluster
-deploy etc/exec/testConf.xml -cluster

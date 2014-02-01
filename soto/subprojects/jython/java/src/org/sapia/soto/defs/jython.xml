@@ -1,8 +1,0 @@
-<soto:defs xmlns:soto="sapia:soto">
-  <soto:namespace prefix="jython">
-    <def class="org.sapia.soto.jython.JythonServiceImpl"               name="configuration" />
-    <def class="org.sapia.soto.jython.JythonAdapter"                   name="adapter" />
-    <def class="org.sapia.soto.jython.JythonAdapterLayer"              name="layer" />
-    <def class="org.sapia.soto.jython.stm.JythonStep"                  name="script" />        
-  </soto:namespace>  
-</soto:defs>
