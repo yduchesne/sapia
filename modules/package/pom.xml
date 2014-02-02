@@ -376,7 +376,7 @@
 								    <folder>sapiaoss/packages/corus</folder>
 									<files>
 										<file>${project.build.directory}/sapia_corus_server_package-${project.version}-bin.zip</file>
-										<!-- file>${project.build.directory}/sapia_corus_server_package-${project.version}-win32.zip</file-->
+										<file>${project.build.directory}/sapia_corus_server_package-${project.version}-demo.zip</file>
 									</files>
 								</configuration>
 							</execution>
