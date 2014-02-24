@@ -123,6 +123,15 @@ public class DefaultColumnSet implements ColumnSet {
   }
   
   @Override
+  public ColumnSet detach() {
+    List<Column> newColumns = new ArrayList<>(columns.size());
+    for (Column c : columns) {
+      newColumns.add(new DefaultColumn(newColumns.size(), c.getType(), c.getName()));
+    }
+    return new DefaultColumnSet(newColumns);
+  }
+  
+  @Override
   public boolean contains(List<String> names) {
     return contains(names.toArray(new String[names.size()]));
   }

@@ -17,7 +17,7 @@ import org.sapia.dataset.impl.DefaultVector;
 import org.sapia.dataset.util.Data;
 import org.sapia.dataset.util.Numbers;
 
-public class MergedDatasetTest {
+public class MergedRowsDatasetTest {
   
   private Dataset d1, d2;
   private Dataset merged;
@@ -51,7 +51,7 @@ public class MergedDatasetTest {
         )
     );
     
-    merged = new MergedDataset(d1.getColumnSet(), Data.list(d1, d2));
+    merged = new MergedRowsDataset(d1.getColumnSet(), Data.list(d1, d2));
   }
 
   @Test

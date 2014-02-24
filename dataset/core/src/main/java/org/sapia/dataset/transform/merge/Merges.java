@@ -35,6 +35,6 @@ public class Merges {
   @Doc("Merges one or more datasets into one")
   public static Dataset merge(List<Dataset> datasets) {
     Checks.isFalse(datasets.isEmpty(), "Dataset list cannot be empty (one or more dataset(s) to merge must be provided)");
-    return new MergedDataset(datasets.get(0).getColumnSet(), datasets);
+    return new MergedRowsDataset(datasets.get(0).getColumnSet(), datasets);
   }
 }

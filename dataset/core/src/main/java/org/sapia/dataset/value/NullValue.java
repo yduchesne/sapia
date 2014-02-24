@@ -53,6 +53,6 @@ public final class NullValue implements Value {
   
   @Override
   public String toString() {
-    return "N/A";
+    return "?";
   }
 }
