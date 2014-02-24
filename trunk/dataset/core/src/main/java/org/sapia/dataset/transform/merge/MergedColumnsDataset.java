@@ -27,6 +27,15 @@ import org.sapia.dataset.impl.IndexDatasetAdapter;
 import org.sapia.dataset.transform.slice.Slices;
 import org.sapia.dataset.util.Checks;
 
+/**
+ * A {@link Dataset} implementation that merges the columns of multiple datasets into
+ * a single dataset.
+ * <p>
+ * Column names must be unique across all datasets.
+ * 
+ * @author yduchesne
+ *
+ */
 class MergedColumnsDataset implements Dataset {
 
   private static class ColumnRef {
@@ -38,6 +47,8 @@ class MergedColumnsDataset implements Dataset {
       this.dataset = dataset;
     }
   }
+  
+  // --------------------------------------------------------------------------
   
   private class InternalVector implements Vector {
     
