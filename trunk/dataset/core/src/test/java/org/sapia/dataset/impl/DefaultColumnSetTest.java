@@ -75,7 +75,14 @@ public class DefaultColumnSetTest {
     assertEquals("col0", subset.get(0).getName());
     assertEquals("col2", subset.get(1).getName());
   }
-
+  
+  @Test
+  public void testDetach() {
+    ColumnSet subset = columnSet.excludes("col0").detach();
+    assertEquals(0, subset.get(0).getIndex());
+    assertEquals(1, subset.get(1).getIndex());
+  }
+  
   @Test
   public void testIterator() {
     List<Column> columns = Data.list(columnSet.iterator());

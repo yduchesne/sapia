@@ -99,5 +99,11 @@ public interface ColumnSet extends Iterable<Column> {
    */
   public List<String> getColumnNames();
   
+  /**
+   * @return a copy of this instance, but with the column indices reset to reflect their real order,
+   * independently of the original dataset from which this instance comes.
+   */
+  public ColumnSet detach();
+  
 }
 

@@ -28,7 +28,7 @@ import org.sapia.dataset.util.Checks;
  * @author yduchesne
  *
  */
-class MergedDataset implements Dataset {
+class MergedRowsDataset implements Dataset {
 
   /**
    * Holds a dataset and its start offset.
@@ -51,11 +51,11 @@ class MergedDataset implements Dataset {
   private int                           size;
   private TreeMap<Integer, DatasetInfo> datasetsByOffset = new TreeMap<>();
  
-  MergedDataset(ColumnSet columns, List<Dataset> datasets) {
+  MergedRowsDataset(ColumnSet columns, List<Dataset> datasets) {
     this.columns  = columns;
     this.datasets = datasets;
     for (Dataset ds : datasets) {
-      Checks.isTrue(columns.equals(ds.getColumnSet()), "Datasets must save same column (same name and same type, in same order)");
+      Checks.isTrue(columns.equals(ds.getColumnSet()), "Datasets must have same column (same name and same type, in same order)");
       datasetsByOffset.put(size, new DatasetInfo(size, ds));
       size += ds.size();
     } 
@@ -98,7 +98,7 @@ class MergedDataset implements Dataset {
       toReturn.add(ds.getColumnSubset(colIndex, filter));
     }
     ColumnSet copy = new DefaultColumnSet(columns.get(colIndex).copy(0));
-    return new MergedDataset(copy, toReturn);
+    return new MergedRowsDataset(copy, toReturn);
   }
   
   @Override
@@ -109,7 +109,7 @@ class MergedDataset implements Dataset {
       toReturn.add(ds.getColumnSubset(colName, filter));
     }
     ColumnSet copy = new DefaultColumnSet(columns.get(colName).copy(0));
-    return new MergedDataset(copy, toReturn);
+    return new MergedRowsDataset(copy, toReturn);
   }
   
   @Override
@@ -126,7 +126,7 @@ class MergedDataset implements Dataset {
     for (Dataset ds : datasets) {
       toReturn.add(ds.getSubset(filter));
     }
-    return new MergedDataset(columns, toReturn);
+    return new MergedRowsDataset(columns, toReturn);
   }
   
   @Override
