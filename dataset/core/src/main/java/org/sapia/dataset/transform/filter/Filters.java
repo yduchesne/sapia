@@ -1,6 +1,7 @@
 package org.sapia.dataset.transform.filter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,14 +10,22 @@ import java.util.Map;
 import java.util.Set;
 
 import org.mvel2.MVEL;
+import org.sapia.dataset.Column;
 import org.sapia.dataset.Dataset;
+import org.sapia.dataset.Datatype;
 import org.sapia.dataset.RowResult;
+import org.sapia.dataset.Vector;
 import org.sapia.dataset.algo.Criteria;
+import org.sapia.dataset.func.ArgFunction;
 import org.sapia.dataset.help.Doc;
 import org.sapia.dataset.help.Example;
+import org.sapia.dataset.impl.DefaultColumn;
+import org.sapia.dataset.impl.DefaultDataset;
+import org.sapia.dataset.impl.DefaultVector;
 import org.sapia.dataset.transform.slice.Slices;
 import org.sapia.dataset.util.Checks;
 import org.sapia.dataset.value.NullValue;
+import org.sapia.dataset.value.Value;
 
 /**
  * Provides methods for filtering data.
@@ -56,6 +65,46 @@ public class Filters {
       }
     });
   }
+  
+  @Doc("Applies the given replacement function to the values of the specified column")
+  public static Dataset replace(      
+      @Doc("a dataset") Dataset dataset, 
+      @Doc("the name of the column to process") String colName,
+      @Doc("the datatype of the new values in the processed column") Datatype datatype,
+      @Doc("the replacement function to use") ArgFunction<Object, Object> function) {
+    
+    List<Vector> newRows = new ArrayList<>();
+    
+    int colIndex = dataset.getColumnSet().get(colName).getIndex();
+    for (Vector row : dataset) {
+      Object[] newValues = new Object[row.size()];
+      for (int i = 0; i < row.size(); i++) {
+        if (i == colIndex) {
+          Object val = function.call(row.get(i));
+          if (datatype.strategy().isAssignableFrom(val)) {
+            newValues[i] = val;
+          } else {
+            throw new IllegalArgumentException(String.format("Value %s cannot be assigned to new column type %s", datatype));
+          }
+        } else {
+          newValues[i] = row.get(i);
+        }
+      }
+      newRows.add(new DefaultVector(newValues));     
+    }
+    
+    List<Column> newColumns = new ArrayList<>();
+    for (int i = 0; i < dataset.getColumnSet().size(); i++) {
+      if (i == colIndex) {
+        newColumns.add(new DefaultColumn(i, datatype, colName));
+      } else {
+        newColumns.add(dataset.getColumnSet().get(i));
+      }
+    }
+    
+    return new DefaultDataset(newColumns, newRows);
+  }
+  
   
   /**
    * Removes <code>null</code> values from the given dataset, for the specified columns.

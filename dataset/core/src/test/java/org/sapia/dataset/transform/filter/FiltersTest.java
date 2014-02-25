@@ -13,9 +13,11 @@ import org.sapia.dataset.Dataset;
 import org.sapia.dataset.Datatype;
 import org.sapia.dataset.Vector;
 import org.sapia.dataset.Vectors;
+import org.sapia.dataset.func.ArgFunction;
 import org.sapia.dataset.impl.DefaultDataset;
 import org.sapia.dataset.util.Data;
 import org.sapia.dataset.util.Numbers;
+import org.sapia.dataset.value.Value;
 
 public class FiltersTest {
   
@@ -90,6 +92,29 @@ public class FiltersTest {
     assertEquals(1, dataset.size());
     assertEquals("s0", dataset.getRow(0).get(0));
     assertEquals("s1", dataset.getRow(0).get(1));
+  }
+  
+  @Test
+  public void testReplace() {
+    ColumnSet columns = ColumnSets.columnSet("col0", Datatype.NUMERIC);
+    List<Vector> rows = Data.list(
+      Vectors.vector(0),
+      Vectors.vector(1),
+      Vectors.vector(2)
+    );    
+    
+    dataset = new DefaultDataset(columns, rows);
+    
+    dataset = Filters.replace(dataset, "col0", Datatype.STRING, new ArgFunction<Object, Object>() {
+      @Override
+      public Object call(Object arg) {
+        return ((Number) arg).toString();
+      }
+    });
+    
+    for (int i : Numbers.range(3)) {
+      assertEquals(""+i, dataset.getRow(i).get(0));
+    }
   }
 
   @Test
