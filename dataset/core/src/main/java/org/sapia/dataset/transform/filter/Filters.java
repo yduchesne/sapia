@@ -25,7 +25,6 @@ import org.sapia.dataset.impl.DefaultVector;
 import org.sapia.dataset.transform.slice.Slices;
 import org.sapia.dataset.util.Checks;
 import org.sapia.dataset.value.NullValue;
-import org.sapia.dataset.value.Value;
 
 /**
  * Provides methods for filtering data.
@@ -66,6 +65,20 @@ public class Filters {
     });
   }
   
+  /**
+   * Applies the given replacement function to the values of the specified column. The
+   * function takes the given value of a column row as input, and returns the replacement value.
+   * <p>
+   * The new values must all be of the same data type (which also must be provided to this method).
+   * That data type will be assigned to the column that's been processed, in the returned
+   * dataset.
+   * 
+   * @param dataset the {@link Dataset} to process.
+   * @param colName the name of the column to process.
+   * @param datatype the {@link Datatype} of the new values.
+   * @param function the {@link ArgFunction} instance to call for performing the replacement.
+   * @return a new {@link Dataset}, with the relevant values replaced.
+   */
   @Doc("Applies the given replacement function to the values of the specified column")
   public static Dataset replace(      
       @Doc("a dataset") Dataset dataset, 
@@ -104,7 +117,6 @@ public class Filters {
     
     return new DefaultDataset(newColumns, newRows);
   }
-  
   
   /**
    * Removes <code>null</code> values from the given dataset, for the specified columns.
