@@ -16,6 +16,13 @@ public interface DatatypeStrategy {
   public boolean isAssignableFrom(Object value);
   
   /**
+   * @param currentValue the current value.
+   * 
+   * @return
+   */
+  public Object add(Object currentValue, Object toAdd);
+  
+  /**
    * @param value the value whose type corresponds to this instance's {@link Datatype}.
    * @param operand the operand with which to compare the given value.
    * @return 0 if the both parameters are deemed equal, a number less than 0 if <code>value</code> is deemed

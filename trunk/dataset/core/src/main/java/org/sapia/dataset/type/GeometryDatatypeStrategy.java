@@ -14,4 +14,8 @@ public class GeometryDatatypeStrategy implements DatatypeStrategy {
     throw new UnsupportedOperationException();
   }
 
+  @Override
+  public Object add(Object currentValue, Object toAdd) {
+    throw new UnsupportedOperationException();
+  }
 }

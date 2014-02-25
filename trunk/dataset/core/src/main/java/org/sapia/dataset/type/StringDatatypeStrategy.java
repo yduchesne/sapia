@@ -1,5 +1,8 @@
 package org.sapia.dataset.type;
 
+import java.util.Date;
+
+import org.sapia.dataset.Datatype;
 import org.sapia.dataset.DatatypeStrategy;
 import org.sapia.dataset.util.Checks;
 import org.sapia.dataset.value.NullValue;
@@ -12,6 +15,33 @@ public class StringDatatypeStrategy implements DatatypeStrategy {
   @Override
   public boolean isAssignableFrom(Object value) {
     return value instanceof String || NullValue.isNull(value);
+  }
+  
+  @Override
+  public Object add(Object currentValue, Object toAdd) {
+    if (NullValue.isNull(toAdd)) {
+      return currentValue;
+    } else if (NullValue.isNull(currentValue)) {
+      if (isAssignableFrom(toAdd)) {
+        return (String) toAdd ;
+      } else if (Datatype.NUMERIC.strategy().isAssignableFrom(toAdd)) {
+        return ((Number) toAdd).toString() ;
+      } else if (Datatype.DATE.strategy().isAssignableFrom(toAdd)) {
+        String toAddStr = ((Date) toAdd).toString();
+        return toAddStr;
+      } else {
+        throw new IllegalArgumentException(String.format("Cannot convert %s to type %s", toAdd, Datatype.NUMERIC));
+      } 
+    } else if (isAssignableFrom(toAdd)) {
+      return ((String) currentValue) + ((String) toAdd) ;
+    } else if (Datatype.NUMERIC.strategy().isAssignableFrom(toAdd)) {
+      return ((String) currentValue) + ((Number) toAdd).toString() ;
+    } else if (Datatype.DATE.strategy().isAssignableFrom(toAdd)) {
+      String toAddStr = ((Date) toAdd).toString();
+      return ((String) currentValue) + toAddStr;
+    } else {
+      throw new IllegalArgumentException(String.format("Cannot add %s to %s", toAdd, currentValue));
+    }
   }
 
   @Override
