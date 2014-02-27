@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements the chain-of-responsability design pattern in a generic way: an instance
+ * Implements the chain-of-responsibility design pattern in a generic way: an instance
  * of this class is composed of {@link Link} instances. A link is provided with an
  * application-provided context. The link is expected to indicate if it accepts the context
  * or not. The first link that accepts the context is returned to the caller.

@@ -2,10 +2,11 @@ package org.sapia.dataset.impl;
 
 import org.sapia.dataset.Column;
 import org.sapia.dataset.Datatype;
+import org.sapia.dataset.Nominal;
+import org.sapia.dataset.NominalSet;
 import org.sapia.dataset.format.DefaultFormat;
 import org.sapia.dataset.format.Format;
 import org.sapia.dataset.parser.Parser;
-import org.sapia.dataset.parser.Parsers;
 import org.sapia.dataset.util.Objects;
 
 /**
@@ -16,17 +17,27 @@ import org.sapia.dataset.util.Objects;
  */
 public class DefaultColumn implements Column {
  
-  private Parser   parser;
-  private Format   format = DefaultFormat.getInstance();
-  private int      index;
-  private Datatype type;
-  private String   name;
-  
-  public DefaultColumn(int index, Datatype type, String name) {
+  private NominalSet  nominalValues;
+  private Parser      parser;
+  private Format      format = DefaultFormat.getInstance();
+  private int         index;
+  private Datatype    type;
+  private String      name;
+ 
+  public DefaultColumn(NominalSet nominalValues, int index, Datatype type, String name) {
+    this.nominalValues = nominalValues;
     this.index = index;
     this.name = name;
     this.type = type;
-    this.parser = Parsers.getParserFor(type);
+  }
+  
+  public DefaultColumn(int index, Datatype type, String name) {
+    this(NominalSet.newInstance(new Nominal[0]), index, type, name);
+  }
+  
+  @Override
+  public NominalSet getNominalValues() {
+    return nominalValues;
   }
   
   @Override

@@ -12,6 +12,12 @@ import org.sapia.dataset.parser.Parser;
 public interface Column {
   
   /**
+   * @return this instance {@link NominalSet} - which will be empty if this instance does not support
+   * nominal values.
+   */
+ public NominalSet getNominalValues();
+  
+  /**
    * @return this instance's {@link Parser}.
    */
   public Parser getParser();

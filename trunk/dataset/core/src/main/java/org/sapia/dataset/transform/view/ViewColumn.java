@@ -3,6 +3,7 @@ package org.sapia.dataset.transform.view;
 import org.sapia.dataset.Column;
 import org.sapia.dataset.Dataset;
 import org.sapia.dataset.Datatype;
+import org.sapia.dataset.NominalSet;
 import org.sapia.dataset.format.Format;
 import org.sapia.dataset.parser.Parser;
 
@@ -27,6 +28,11 @@ class ViewColumn implements Column {
     this.index    = index;
     this.name     = name;
     this.delegate = delegate;
+  }
+  
+  @Override
+  public NominalSet getNominalValues() {
+    return delegate.getNominalValues();
   }
 
   @Override

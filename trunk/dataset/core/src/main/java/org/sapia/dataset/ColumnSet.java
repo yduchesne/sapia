@@ -20,6 +20,19 @@ public interface ColumnSet extends Iterable<Column> {
    * @return the indices of associated to this instance's {@link Column}s.
    */
   public int[] getColumnIndices();
+  
+  /**
+   * @param columnNames one or more column name(s).
+   * @return the indices of the column(s) corresponding to the given column name(s),
+   * in the order in which these are specified.
+   */
+  public int[] getColumnIndices(String...columnNames);
+  
+  /**
+   * @param columnNames one or more column name(s).
+   * @return the {@link Datatype} of the column(s) whose name(s) is (are) specified.
+   */
+  public Datatype[] getColumnTypes(String...columnNames);
 
   /**
    * @return the number of {@link Column}s that this instance holds.

@@ -15,6 +15,7 @@ import org.sapia.dataset.Vector;
 import org.sapia.dataset.Vectors;
 import org.sapia.dataset.func.ArgFunction;
 import org.sapia.dataset.impl.DefaultDataset;
+import org.sapia.dataset.impl.DefaultVector;
 import org.sapia.dataset.util.Data;
 import org.sapia.dataset.util.Numbers;
 import org.sapia.dataset.value.Value;
@@ -105,7 +106,7 @@ public class FiltersTest {
     
     dataset = new DefaultDataset(columns, rows);
     
-    dataset = Filters.replace(dataset, "col0", Datatype.STRING, new ArgFunction<Object, Object>() {
+    dataset = Filters.replace(dataset, Data.array("col0"), Datatype.STRING, new ArgFunction<Object, Object>() {
       @Override
       public Object call(Object arg) {
         return ((Number) arg).toString();
@@ -114,6 +115,24 @@ public class FiltersTest {
     
     for (int i : Numbers.range(3)) {
       assertEquals(""+i, dataset.getRow(i).get(0));
+    }
+  }
+  
+  @Test
+  public void testReplaceWithNominal() {
+    ColumnSet columns = ColumnSets.columnSet("col0", Datatype.STRING);
+    List<Vector> rows = Data.list(
+      Vectors.vector("VAL0"),
+      Vectors.vector("VAL1"),
+      Vectors.vector("VAL2")
+    );    
+    
+    dataset = new DefaultDataset(columns, rows);
+    
+    dataset = Filters.replaceWithNominal(dataset, "col0");
+    
+    for (int i : Numbers.range(3)) {
+      assertEquals(i, dataset.getRow(i).get(0));
     }
   }
 
@@ -153,6 +172,18 @@ public class FiltersTest {
   public void testSelect() {
     Dataset subset = Filters.select(dataset, "col0 >= 10 && col1 == 's1'");
     assertEquals(new Integer(10), subset.getRow(0).get(0));
+  }
+  
+  @Test
+  public void testSelectWithNullValue() {
+    ColumnSet columns = ColumnSets.columnSet("col0", Datatype.STRING);
+    List<Vector> rows = new ArrayList<>();
+    rows.add(Vectors.vector("val0"));
+    rows.add(new DefaultVector(new Object[] { null }));
+    Dataset ds = new DefaultDataset(columns, rows);
+    Dataset subset = Filters.select(ds, "col0 != null");
+    assertEquals(1, subset.size());
+    
   }
 
 }

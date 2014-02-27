@@ -37,6 +37,18 @@ public class Strings {
   }
   
   /**
+   * @param objects the objects to concatenate as a string.
+   * @return the {@link String} resulting from the concatenation.
+   */
+  public static String concat(Object...objects) {
+    StringBuilder s = new StringBuilder();
+    for (Object o : objects) {
+      s.append(o == null ? "null" : o);
+    }
+    return s.toString();
+  }
+  
+  /**
    * @param collection a {@link Collection} to convert to a {@link String}.
    * @param func the {@link ArgFunction} that acts as the converter for each item 
    * in the collection.
