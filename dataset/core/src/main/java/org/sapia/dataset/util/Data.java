@@ -332,6 +332,23 @@ public class Data {
   
   /**
    * 
+   * @param criteria the object to use as a criterion.
+   * @param collection the {@link Collection} to check.
+   * @return <code>true</code> if all the objects in the collection are equal to the
+   * given one.
+   */
+  @Doc("Tests if all element in collection are the same as the provided one")
+  public static <C> boolean containsOnly(C criterion, Collection<C> collection) {
+    for (C c : collection) {
+      if (!c.equals(criterion)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  /**
+   * 
    * @param args the arguments, consisting of a sequence of key/value pairs.
    * @return the {@link Map} corresponding to the given arguments.
    */

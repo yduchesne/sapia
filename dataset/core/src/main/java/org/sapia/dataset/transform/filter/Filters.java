@@ -13,6 +13,7 @@ import org.mvel2.MVEL;
 import org.sapia.dataset.Column;
 import org.sapia.dataset.Dataset;
 import org.sapia.dataset.Datatype;
+import org.sapia.dataset.NominalSet;
 import org.sapia.dataset.RowResult;
 import org.sapia.dataset.Vector;
 import org.sapia.dataset.algo.Criteria;
@@ -24,6 +25,9 @@ import org.sapia.dataset.impl.DefaultDataset;
 import org.sapia.dataset.impl.DefaultVector;
 import org.sapia.dataset.transform.slice.Slices;
 import org.sapia.dataset.util.Checks;
+import org.sapia.dataset.util.Data;
+import org.sapia.dataset.util.MultiMap;
+import org.sapia.dataset.util.SetMultiMap;
 import org.sapia.dataset.value.NullValue;
 
 /**
@@ -82,17 +86,17 @@ public class Filters {
   @Doc("Applies the given replacement function to the values of the specified column")
   public static Dataset replace(      
       @Doc("a dataset") Dataset dataset, 
-      @Doc("the name of the column to process") String colName,
+      @Doc("an array holding the name(s) of the column(s) to process") String[] colNames,
       @Doc("the datatype of the new values in the processed column") Datatype datatype,
       @Doc("the replacement function to use") ArgFunction<Object, Object> function) {
     
     List<Vector> newRows = new ArrayList<>();
     
-    int colIndex = dataset.getColumnSet().get(colName).getIndex();
+    Set<Integer> indices = Data.setOfInts(dataset.getColumnSet().getColumnIndices(colNames));
     for (Vector row : dataset) {
       Object[] newValues = new Object[row.size()];
       for (int i = 0; i < row.size(); i++) {
-        if (i == colIndex) {
+        if (indices.contains(i)) {
           Object val = function.call(row.get(i));
           if (datatype.strategy().isAssignableFrom(val)) {
             newValues[i] = val;
@@ -108,14 +112,79 @@ public class Filters {
     
     List<Column> newColumns = new ArrayList<>();
     for (int i = 0; i < dataset.getColumnSet().size(); i++) {
-      if (i == colIndex) {
-        newColumns.add(new DefaultColumn(i, datatype, colName));
+      if (indices.contains(i)) {
+        newColumns.add(new DefaultColumn(i, datatype, dataset.getColumnSet().get(i).getName()));
       } else {
         newColumns.add(dataset.getColumnSet().get(i));
       }
     }
     
     return new DefaultDataset(newColumns, newRows);
+  }
+  
+  /**
+   * @param dataset a dataset for which to convert certain columns to nominals.
+   * @param columnNames the array of column names from.
+   * @return the {@link Dataset}.
+   */
+  @Doc("Transform the values in the given columns to nominal values")
+  public static Dataset replaceWithNominal(
+      @Doc("the dataset to process") Dataset dataset, 
+      @Doc("the names of the columns whose values should be converted to nominal values") String...columnNames) {
+    
+    List<Datatype> datatypes = Data.list(dataset.getColumnSet().getColumnTypes(columnNames));
+    Checks.isTrue(
+        Data.containsOnly(Datatype.STRING, datatypes), 
+        "The type of the given columns should be %s. Got: %s for the respective columns",
+        Datatype.STRING, datatypes
+    );
+    
+    MultiMap<String, String> nominalsByColumn = SetMultiMap.createTreeSetMultiMap();
+    
+    // extracting set of all values for each column
+    for (Vector r : dataset) {
+      for (String n : columnNames) {
+        Column c     = dataset.getColumnSet().get(n);
+        Object value = r.get(c.getIndex());
+        if (!NullValue.isNull(value)) {
+          nominalsByColumn.put(c.getName(), (String) value); 
+        }
+      }
+    }
+    
+    // creating map on nominal sets - on a per-column basis
+    Map<String, NominalSet> nominals = new HashMap<>();
+    for (String colName : nominalsByColumn.keySet()) {
+      NominalSet nominalSet = NominalSet.newInstance(nominalsByColumn.get(colName));
+      nominals.put(colName, nominalSet);
+    }
+    
+    // creating new colums
+    List<Column> cols = new ArrayList<>();
+    for (Column c : dataset.getColumnSet()) {
+      if (nominals.containsKey(c.getName())) {
+        cols.add(new DefaultColumn(nominals.get(c.getName()), c.getIndex(), Datatype.NUMERIC, c.getName()));
+      } else {
+        cols.add(c);
+      }
+    }
+    
+    // creating list of rows
+    List<Vector> rows = new ArrayList<>();
+    for (Vector r : dataset) {
+      Object[] values = new Object[r.size()];
+      for (Column c : cols) {
+        if (!c.getNominalValues().isEmpty()) {
+          String nominal = (String) r.get(c.getIndex());
+          values[c.getIndex()] = c.getNominalValues().getByName(nominal).getValue();
+        } else {
+          values[c.getIndex()] = r.get(c.getIndex());
+        }
+      }
+      rows.add(new DefaultVector(values));
+    }
+    
+    return new DefaultDataset(cols, rows);
   }
   
   /**
@@ -227,9 +296,7 @@ public class Filters {
       public boolean matches(RowResult v) {
         context.clear();
         for (String colName : dataset.getColumnSet().getColumnNames()) {
-          if (v.get(colName) != null) {
-            context.put(colName, v);      
-          } 
+          context.put(colName, v.get(colName));      
         }
         Object returnValue = MVEL.executeExpression(compiled, context);
         if (returnValue == null || !(returnValue instanceof Boolean)) {

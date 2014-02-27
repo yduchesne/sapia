@@ -2,6 +2,7 @@ package org.sapia.dataset.transform.join;
 
 import org.sapia.dataset.Column;
 import org.sapia.dataset.Datatype;
+import org.sapia.dataset.NominalSet;
 import org.sapia.dataset.format.Format;
 import org.sapia.dataset.parser.Parser;
 
@@ -19,6 +20,11 @@ class JoinColumn implements Column {
   JoinColumn(int index, Column delegate) {
     this.index = index;
     this.delegate = delegate;
+  }
+  
+  @Override
+  public NominalSet getNominalValues() {
+    return delegate.getNominalValues();
   }
 
   @Override

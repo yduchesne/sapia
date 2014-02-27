@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.sapia.dataset.Column;
 import org.sapia.dataset.ColumnSet;
+import org.sapia.dataset.Datatype;
 import org.sapia.dataset.conf.Conf;
 import org.sapia.dataset.io.table.Table;
 import org.sapia.dataset.util.Checks;
@@ -54,6 +55,24 @@ public class DefaultColumnSet implements ColumnSet {
       indices[i] = columns.get(i).getIndex();
     }
     return indices;
+  }
+  
+  @Override
+  public int[] getColumnIndices(String... columnNames) {
+    int[] indices = new int[columnNames.length];
+    for (int i = 0; i < columnNames.length; i++) {
+      indices[i] = get(columnNames[i]).getIndex();
+    }
+    return indices;
+  }
+  
+  @Override
+  public Datatype[] getColumnTypes(String... columnNames) {
+    Datatype[] types = new Datatype[columnNames.length];
+    for (int i = 0; i < columnNames.length; i++) {
+      types[i] = get(columnNames[i]).getType();
+    }
+    return types;
   }
 
   @Override

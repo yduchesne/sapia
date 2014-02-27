@@ -45,5 +45,9 @@ public class StringsTest {
     assertEquals("C", Strings.capitalizeFirst("c"));
     assertEquals("Cc", Strings.capitalizeFirst("cc"));
   }
-
+  
+  @Test
+  public void testConcat() {
+    assertEquals("123", Strings.concat("1", "2", "3"));
+  }
 }
