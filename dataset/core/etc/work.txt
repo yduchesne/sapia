@@ -1,6 +1,0 @@
-ds = Csv.read(settings("file_name", "etc/worldbank.csv", "guess_columns", true));
-ds2 = Views.rename(ds);
-ds3 = Pivots.pivot(ds2, "yea", ["cou", "co2_emi"]);
-ds4 = Pivots.pivot(ds2, "yea", ["cou", "ene_use"]);
-ds5 = Pivots.merge(ds3, ds4);
-Texts.save(ds5, "country_energy_per_year.txt");
