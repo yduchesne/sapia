@@ -30,6 +30,9 @@ input, textarea {
 h1, h2, h3, h4, h5, h6 {
   color: #31363B;
   letter-spacing: -1px;
+  margin: 0;
+  padding: 10px 20px 10px 0px;
+  border-bottom: 1px dotted #D6C9BF;
 }
 
 h1, h1 a, h2, h2 a {
@@ -477,6 +480,14 @@ hr {
 
 .snippet{
   font-family: courier, courier new;
+  color: black;
+  background: #efefef;
+  overflow: auto;
+  padding: 20px;
+}
+
+pre code {
+	font-family: courier, courier new;
   color: black;
   background: #efefef;
   overflow: auto;
