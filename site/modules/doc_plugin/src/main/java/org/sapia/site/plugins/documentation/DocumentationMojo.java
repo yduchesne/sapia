@@ -8,7 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.maven.model.MailingList;
@@ -26,6 +28,7 @@ import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.resources.FileResource;
 import org.apache.tools.ant.types.resources.JavaResource;
 import org.apache.tools.ant.util.FileNameMapper;
+import org.sapia.site.plugins.documentation.template.TemplateContext;
 
 /**
  * Processes Sapia documentation. This plugin expects the documentation 
@@ -148,8 +151,9 @@ public class DocumentationMojo extends AbstractMojo{
    * @parameter expression="${project}"
    * @readonly
    */
-   private MavenProject project;
+  private MavenProject project;
 
+  private Map<String, String> params = new HashMap<String, String>();
 
   public void execute() throws MojoExecutionException{
     
@@ -198,6 +202,7 @@ public class DocumentationMojo extends AbstractMojo{
     log("transforming xdocs files");
     File xsltFile = getXsltFile(); 
     XSLTProcess mainTransform = createXslt(proj, xsltFile, new File(basedir), this.includes);
+    TemplateContext.set(params);
     mainTransform.execute();
  
     File downloadPage = new File(basedir, "download.xdocs.xml");
@@ -217,6 +222,7 @@ public class DocumentationMojo extends AbstractMojo{
     builtInPageResource.setName("org/sapia/site/content/"+builtInXdocName);
     copyResource(builtInPageResource, tmpBuiltinPageFile);
     XSLTProcess downloadPageTransform = createXslt(proj, xsltFile, TEMP_DIR, tmpBuiltinPageFile.getName());
+    TemplateContext.set(params);
     downloadPageTransform.execute();
   }
   
@@ -443,7 +449,7 @@ public class DocumentationMojo extends AbstractMojo{
     Param p = transform.createParam();
     p.setName(key);
     p.setExpression(aValue);
-   
+    params.put(key, aValue);
   }
   
   private void createMailingListParams(MailingList list, String index, XSLTProcess transform){

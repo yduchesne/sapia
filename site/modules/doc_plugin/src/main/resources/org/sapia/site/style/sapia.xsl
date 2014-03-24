@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+<xsl:stylesheet version="1.0" 
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform"
+xmlns:template="http://xml.apache.org/xalan/java/org.sapia.site.plugins.documentation.template.Templater"
+xmlns:functions="http://xml.apache.org/xalan/java/org.sapia.site.plugins.documentation.Functions">
 
 
   <xsl:output method="html" indent="yes" encoding="US-ASCII" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
@@ -154,6 +158,7 @@
         <xsl:call-template name="toc2"/>
       </ul>
     </xsl:if>
+    <xsl:apply-templates select="sapia:template"/>
     <xsl:apply-templates select="sapia:sect2"/>
   </xsl:template>
 
@@ -287,7 +292,12 @@
       </xsl:choose>
     </font>
   </xsl:template>
+  
+<!-- =======================================     MARKDOWN     ========================================= -->
 
+  <xsl:template match="sapia:template">
+    <xsl:value-of select="template:render(text())" disable-output-escaping="yes"/>
+  </xsl:template>          
   
 <!-- =====================================      SECTION PATH     ====================================== -->
 
@@ -479,7 +489,22 @@
       </xsl:choose>
 
     </span>
-  </xsl:template>   
+  </xsl:template>
+  
+  <xsl:template match="sapia:classlink">
+    <span style="font-family: courier, courier new; color: black;">
+       <a>
+         <xsl:attribute name="href">
+           <xsl:text>maven/api/</xsl:text>
+           <xsl:value-of select="functions:javadocClassName(text())" disable-output-escaping="yes"/>
+         </xsl:attribute>
+         <xsl:attribute name="target">
+           <xsl:value-of select="text()"/>
+         </xsl:attribute>
+         <xsl:value-of select="text()"/>
+       </a>
+    </span>
+  </xsl:template>      
 
 <!-- =========================================      CODE     ========================================= -->
 
