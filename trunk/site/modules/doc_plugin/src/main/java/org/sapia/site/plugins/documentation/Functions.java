@@ -17,20 +17,12 @@ public class Functions {
     
   public static String javadocLink(String className, String base) {
 
-    int i;
-    String simpleClassName;
-    if ((i = className.lastIndexOf(".")) < 0) {
-      simpleClassName = className;
-    } else {
-      simpleClassName = className.substring(i + 1);
-    }
-
     StringBuilder out = new StringBuilder();
     out.append("<span style=\"font-family: courier, courier new; color: black;\">");
     out.append("<a href=\"");
     out.append(base).append("/").append(className.replace(".", "/")).append(".html").append("\"");
-    out.append(" target=\"").append(simpleClassName).append("\">");
-    out.append(simpleClassName).append("</a>");
+    out.append(" target=\"").append(className).append("\">");
+    out.append(className).append("</a>");
     out.append("</span>");  
   
     return out.toString();
