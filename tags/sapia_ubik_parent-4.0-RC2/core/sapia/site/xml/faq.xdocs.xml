@@ -1,0 +1,166 @@
+<sapia:page title="FAQ" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:vmenu>
+    <sapia:vsection name="Project Home" href="home.html"/>
+    <sapia:vsection name="Wiki" href="http://code.google.com/p/sapia/wiki/Ubik"/>
+    <sapia:vsection name="RMI" href="rmi.html">
+      <sapia:vitem name="For Dummies" href="rmi.html#dummies" />
+      <sapia:vitem name="Believing" href="rmi.html#believing" />
+      <sapia:vitem name="Architecture" href="architecture.html" />
+      <sapia:vitem name="Tutorial" href="tutorial.html" />    
+    </sapia:vsection>
+    
+    <sapia:vsection name="Naming" href="naming.html">
+      <sapia:vitem name="Robust Naming" href="naming.html#robust" />
+      <sapia:vitem name="Usage" href="naming.html#usage" />
+      <sapia:vitem name="Advanced" href="naming.html#advanced" />    
+    </sapia:vsection>
+    
+    <sapia:vsection name="Transports">
+      <sapia:vitem name="NIO/TCP" href="transport/nio_tcp.html" />
+      <sapia:vitem name="HTTP" href="transport/http.html" />
+	  <sapia:vitem name="Standard/TCP" href="transport/standard_tcp.html" />
+    </sapia:vsection>  
+    
+    <sapia:vsection name="Group Comm" href="group_communication.html">
+      <sapia:vitem name="Event Channel" href="group_communication.html#eventchannel" />
+      <sapia:vitem name="Protocol" href="group_communication.html#control_protocol" />    
+      <sapia:vitem name="Avis" href="group_communication.html#using_avis" />
+      <sapia:vitem name="UDP Unicast" href="group_communication.html#udp_unicast" />
+    </sapia:vsection>  
+    
+    <sapia:vsection name="Customization" href="customization.html">
+      <sapia:vitem name="Logging" href="customization.html#logging" />    
+      <sapia:vitem name="Stats" href="customization.html#stats" />
+      <!--sapia:vitem name="JMX" href="customization.html#jmx" /-->
+      <sapia:vitem name="Stubs" href="customization.html#stubs" />
+      <sapia:vitem name="Callbacks" href="customization.html#callbacks" />    
+    </sapia:vsection>                 
+    
+    <sapia:vsection name="FAQ" href="faq.html">
+      <sapia:vitem name="Licensing" href="faq.html#licensing" />    
+      <sapia:vitem name="Scalability" href="faq.html#perf" />    
+      <sapia:vitem name="Networking" href="faq.html#networking" />
+    </sapia:vsection>          
+    
+    <sapia:vsection name="Javadoc" href="maven/api/index.html"/>
+    <sapia:vsection name="Download" href="download.html"/>
+    <sapia:vsection name="Mailing List" href="list.html"/>
+  </sapia:vmenu>
+
+  <sapia:sect1 title="FAQ">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="ubik" href="home.html" />      
+      <sapia:path name="faq" />
+    </sapia:section>
+    
+    <toc/>
+
+    <sapia:sect2 title="What's Ubik's License?" alias="licensing">
+    
+      <p>Ubik is distributed under the Apache 2.0 license, although it optionally uses libraries that are themselves 
+      licensed under the LGPL:</p>
+      
+      <ul>
+      	<li>If you are <a href="group_communication#using_avis">using Avis</a> for broadcast, you will the Avis client libraries
+      	in your classpath.</li>
+      	<li>By default, Ubik attempts using the <a href="http://www.jboss.org/serialization">JBoss Serialization</a> library if it's found in the classpath. If you do not want to use
+      	it, make sure it's not in the classpath.</li>
+      </ul>
+      
+      <p>Our take on the LGPL libraries is that they will have no impact on the application you are developing if you do not distribute
+      that application with modified versions of the LGPL'd libraries.</p>
+    </sapia:sect2>
+
+    <sapia:sect2 title="Performance and Scalability" alias="perf">
+      <sapia:sect-desc>
+        We've grouped in this section the questions pertaining to performance and scalability.
+      </sapia:sect-desc>
+      
+      <sapia:sect3 title="Is Ubik fast?">
+  	    <p>We've taken precautions to ensure that Ubik is fast: Ubik relies on <a href="http://www.jboss.org/serialization/">JBoss Serialization</a> by default - rather than Java's own serialization. 
+  	    Also, most if not all of Ubik built-in serializable objects implement the <sapia:class>java.io.Externalizable</sapia:class> interface.</p>
+      </sapia:sect3>
+      
+      <sapia:sect3 title="Is Ubik scalable?">
+        <p>Yes. Ubik has features that allow it to scale across the board (from the system and administration standpoints): distributed JNDI tree that guarantees 
+        availabity in case one node fails; smart stubs supporting failover, load balancing and dynamic discovery; an extremely performant 
+        <a href="transport/nio_tcp.html">NIO transport</a> that scales to thousands of concurrent connections; and support for <a href="tutorial.html#callbacks">callbacks</a>.</p>       
+      </sapia:sect3>      
+
+    </sapia:sect2>
+    
+    <sapia:sect2 title="Networking" alias="networking">
+      <sapia:sect-desc>
+        This section addresses questions pertaining to Ubik networking.
+      </sapia:sect-desc>
+
+	  <sapia:sect3 title="My client can't seem to be able to connect to my server. What's happening?">
+	  	<p>
+	  	 	This often is observed when you server is running on a machine with multiple network interfaces: by default, Ubik will bind to all 
+	  	 	interfaces, but then only one of these addresses will be chosen to be returned as part of stubs sent back to clients. It might be that Ubik's
+	  	 	best attempt at picking such an address is not good enough, and that the address that's returned is one to which some clients cannot connect.
+	  	 	In such a case, you need to configure the <tt>ubik.rmi.address-pattern</tt> JVM property, which specifies (through a regexp), which address
+	  	 	to select. Here are a few example regexps:
+	  	</p>
+	  
+	  	<sapia:code>\\d{3}\\.\\d{3}\\.\\d{3}\\.\\d{3}
+10\\.10\\.\\d+\\.\\d+
+192\\.168\\.\\d+\\.\\d+</sapia:code>
+
+		<p>Note the double backslashes: in Java the backslash is an escape character, therefore it must be doubled in order to be treated as a normal
+		character.</p>
+	  
+	  </sapia:sect3>
+      <sapia:sect3 title="Multicast does not seem to work. Any workaround?">
+        <p>
+           The explanation that comes to mind is that your network is not set up to support IP multicast - or that multicast is not supported
+           across subnets. You can set JVM properties that will configure the event channel to use the Avis <sapia:class>BroadcastDispatcher</sapia:class>. 
+           See the <a href="group_communication.html#using_avis">relevant documentation</a>  for more info.
+        </p>
+
+        <p>
+           Second, it may be that you're experiencing UDP packet loss. That's also network relevant and at the Ubik level, the surest way to avoid that
+           is to avoid completely. This is done by going through the workaround suggested above, and in addition make sure you're using the TCP 
+           <sapia:class>UnicastDispatcher</sapia:class> - which should be the case since it's the one that's set up by default. Check out the 
+           <a href="group_communication.html#tcp_unicast">documentation</a> for more details.
+        </p>
+        
+        <p>Lastly, another cause might be that the configured packet size is not large enough. You can configure it with the <sapia:command>ubik.rmi.naming.mcast.bufsize</sapia:command>
+        JVM property (3072 bytes is assumed by default).</p>
+      </sapia:sect3>
+
+      <sapia:sect3 title="How is the state of an EventChannel domain maintained?">
+        <p>
+           The master triggers the heartbeat requests that are sent to each slave, as part of the control protocol. The master keeps track of the nodes that
+           respond to the requests. After a given timeout (configurable through the <sapia:command>ubik.rmi.naming.mcast.heartbeat.timeout</sapia:command> JVM property), for the nodes that did 
+           not respond, the master will notify all slave nodes still alive about the missing nodes, so that all nodes can update their view of the domain accordingly. 
+        </p>
+        <p>In addition, upon shutting down, nodes broadcast a "shutdown event" to the domain so that the other nodes can update their state in "real time". This reduces the possibility
+        for nodes to have an inconsistent view of the domain.</p>
+      </sapia:sect3>
+
+      <sapia:sect3 title="What if the master disappears?">
+        <p>
+           The remaining nodes will go through the "challenge" part of the protocol, in the context of which a new master is detected. After a given amount
+           of time during which no heartbeat request has been received, a slave node will determine if it should attempt becoming the new master (the slave
+           node compares its identifier against the identifiers of other nodes, and will deem itself a candidate to become the master if its own identifier
+           comes first in alphabetical order). 
+        </p>
+        <p>
+           A master candidate will send a challenge request to the other nodes. These other nodes will then themselves determine if they "accept" the challenging node
+           as the new master or not. The challenging node should become the master in most cases, but we can't guarantee 100% that another slave node has not determined
+           it should be candidate. If another slave node is also currently a candidate and receives a challenge request, it will compare it's identifier against the
+           one of the node from which the request emanates: if it comes first alphabetically, it will deny the request - else it will grant it and remain slave itself.
+        </p>
+        <p>
+           Since node identifiers are 128 bit UUIDs, there's a very <a href="http://en.wikipedia.org/wiki/Universally_unique_identifier#Random_UUID_probability_of_duplicates">infinitesimal probability</a> 
+           of having two such identifiers that are the same.
+        </p>
+      </sapia:sect3>
+    </sapia:sect2>
+    
+  </sapia:sect1>
+</sapia:page>
