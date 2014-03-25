@@ -1,7 +1,6 @@
 package org.sapia.site.plugins.documentation.template;
 
 import org.sapia.site.plugins.documentation.template.jmte.JmteSubstitutionRule;
-import org.sapia.site.plugins.documentation.template.markdown.MarkdownSubstitutionRule;
 
 public class SubstitutionRuleFactory {
 
@@ -13,7 +12,7 @@ public class SubstitutionRuleFactory {
    */
   public static SubstitutionRule getDefault() {
     CompositeSubstitutionRule r = new CompositeSubstitutionRule();
-    r.add(new MarkdownSubstitutionRule());
+    //r.add(new MarkdownSubstitutionRule());
     r.add(new JmteSubstitutionRule());
     return r;
   }
