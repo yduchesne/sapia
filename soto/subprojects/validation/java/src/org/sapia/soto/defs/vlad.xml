@@ -1,7 +1,0 @@
-<soto:defs xmlns:soto="sapia:soto">
-  <soto:namespace prefix="vlad">
-    <def class="org.sapia.soto.validation.ValidationServiceImpl"       name="configuration" />
-    <def class="org.sapia.soto.validation.VladConfig"                  name="validator" />
-    <def class="org.sapia.soto.validation.ValidateStep"                name="validate" />
-  </soto:namespace>
-</soto:defs>  
