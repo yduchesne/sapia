@@ -27,8 +27,8 @@ import org.sapia.archie.ProcessingException;
  */
 public class JndiContext implements Context{
   
-  private Archie _archie;
-  private Hashtable _env = new Hashtable();
+  private Archie     _archie;
+  private Hashtable  _env       = new Hashtable();
   private NameParser _parser;
   
   public JndiContext(Node node){
@@ -36,6 +36,12 @@ public class JndiContext implements Context{
     _parser = new JndiNameParser(node.getNameParser());
   }
   
+  /**
+   * @param create will create missing intermediary nodes if not found on lookup.
+   */
+  public void setCreateMissingNodesOnLookup(boolean create) {
+    _archie.setCreateMissingNodesOnLookup(create);
+  }
 
   /**
    * @see javax.naming.Context#addToEnvironment(java.lang.String, java.lang.Object)
@@ -415,6 +421,10 @@ public class JndiContext implements Context{
   
   protected Context newChildContext(Node node){
     return new JndiContext(node);
+  }
+  
+  protected Archie getArchie() {
+    return _archie;
   }
   
   /**

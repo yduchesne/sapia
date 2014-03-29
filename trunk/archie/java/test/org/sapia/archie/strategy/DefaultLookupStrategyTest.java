@@ -2,6 +2,7 @@ package org.sapia.archie.strategy;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.sapia.archie.*;
 import org.sapia.archie.impl.*;
 
@@ -27,7 +28,7 @@ public class DefaultLookupStrategyTest extends TestCase {
     Node        child = (Node) new DefaultLookupNodeStrategy(true).lookup(name,
                                                                           root);
     child.putValue(part, "SomeObject", false);
-    new DefaultLookupStrategy().lookup(name.add(part), root);
+    new DefaultLookupStrategy(false).lookup(name.add(part), root);
   }
 
   public void testAbsoluteLookup() throws Exception {
@@ -39,6 +40,17 @@ public class DefaultLookupStrategyTest extends TestCase {
     child.putValue(part, "SomeObject", false);
 
     Name rootName = root.getNameParser().parse("/some/path/name");
-    new DefaultLookupStrategy().lookup(rootName, child);
+    new DefaultLookupStrategy(false).lookup(rootName, child);
+  }
+  
+  public void testLookupCreateMissingNodes() throws Exception {
+    DefaultNode root  = new DefaultNode();
+    Name        name  = root.getNameParser().parse("some/path/name");
+    try {
+      new DefaultLookupStrategy(true).lookup(name, root);
+      fail("Expected failure");
+    } catch (NotFoundException e) {
+      //ok
+    }
   }
 }
