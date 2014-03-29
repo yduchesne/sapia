@@ -20,8 +20,8 @@ import org.sapia.archie.ProcessingException;
  * </dl>
  */
 public class DefaultLookupStrategy extends DefaultLookupNodeStrategy {
-  public DefaultLookupStrategy() {
-    super(false);
+  public DefaultLookupStrategy(boolean createMissingNodes) {
+    super(createMissingNodes);
   }
 
   /**
@@ -35,7 +35,7 @@ public class DefaultLookupStrategy extends DefaultLookupNodeStrategy {
     Object   value = node.getValue(last);
 
     if (value == null) {
-      throw new NotFoundException(n.toString());
+      throw new NotFoundException(n.toString() + ". Not resolved: " + last);
     }
 
     return value;

@@ -19,6 +19,7 @@ import org.sapia.archie.strategy.DefaultLookupStrategy;
  */
 public class Archie {
   private Node _root;
+  private boolean createMissingNodes;
 
   public Archie() throws ProcessingException{
     _root = new DefaultNode();
@@ -26,6 +27,13 @@ public class Archie {
 
   public Archie(Node root) {
     _root = root;
+  }
+  
+  /**
+   * @param createMissingNodes <code>true</code> if missing nodes should be created on lookup.
+   */
+  public void setCreateMissingNodesOnLookup(boolean createMissingNodes) {
+    this.createMissingNodes = createMissingNodes;
   }
 
   /**
@@ -51,7 +59,7 @@ public class Archie {
    */
   public Object lookup(Name n) throws NotFoundException, ProcessingException {
     n = (Name)n.clone();    
-    DefaultLookupStrategy strat = new DefaultLookupStrategy();
+    DefaultLookupStrategy strat = new DefaultLookupStrategy(createMissingNodes);
     return strat.lookup(n, _root);
   }
   
