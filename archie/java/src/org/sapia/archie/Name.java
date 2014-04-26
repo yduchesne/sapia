@@ -6,27 +6,25 @@ import java.util.List;
 
 
 /**
- * This interface provides an object reprentation of a "name". A <code>Name</code> is composed
- * of potentially multiple <code>NamePart</code>s.
+ * This interface provides an object reprentation of a "name". A {@link Name} is composed
+ * of potentially multiple {@link NamePart}s.
  * <p>
- * A <code>Name</code> instance is typically obtained from a string representation, using a
- * <code>NameParser</code>.
+ * An instance of this class is typically obtained from a string representation, using a
+ * {@link NameParser}.
  * 
  * @see org.sapia.archie.NamePart
  * @see org.sapia.archie.NameParser
  * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class Name implements Serializable{
-  private List _parts        = new ArrayList();
+  
+  static final long serialVersionUID = 1L;
+  
+  private List<NamePart> _parts        = new ArrayList<>();
   private int  _currentIndex;
 
-  protected Name(List parts) {
+  protected Name(List<NamePart> parts) {
     _parts.addAll(parts);
   }
   
@@ -34,7 +32,7 @@ public class Name implements Serializable{
   }
 
   /**
-   * Returns the number of <code>NamePart</code>s in this name.
+   * Returns the number of {@link NamePart}s in this name.
    *
    * @return a count.
    */
@@ -90,7 +88,7 @@ public class Name implements Serializable{
   }
 
   /**
-   * Iterates on the next <code>NamePart</code>.
+   * Iterates on the next {@link NamePart}.
    *
    * @see #hasNextPart()
    */
@@ -99,18 +97,18 @@ public class Name implements Serializable{
   }
 
   /**
-   * Returns the <code>NamePart</code> at the given index.
+   * Returns the {@link NamePart} at the given index.
    *
-   * @return a <code>NamePart</code>.
+   * @return a {@link NamePart}.
    */
   public NamePart get(int i) {
     return (NamePart) _parts.get(i);
   }
 
   /**
-   * Adds a <code>NamePart</code> to this instance.
+   * Adds a {@link NamePart} to this instance.
    * 
-   * @param part a <code>NamePart</code>
+   * @param part a {@link NamePart}
    * @return this instance (to allow chained invocations).
    */
   public Name add(NamePart part) {
@@ -119,16 +117,29 @@ public class Name implements Serializable{
     return this;
   }
   
+  /**
+   * @param pos the index at which to add the given {@link NamePart}.
+   * @param part a {@link NamePart} to add to this instance.
+   * @return this instance.
+   */
   public Name addAt(int pos, NamePart part){
     assertPos(pos);
     _parts.add(pos, part);
     return this;
   }
   
+  /**
+   * @param pos the index of the part to remove.
+   * @return the {@link NamePart} that was removed.
+   */
   public NamePart removeAt(int pos){
     return (NamePart)_parts.remove(pos);
   }
   
+  /**
+   * @param other another {@link Name}.
+   * @return <code>true</code> if this instance ends with the given {@link Name}.
+   */
   public boolean endsWith(Name other){
     if(count() < other.count()) return false;
     for(int i = other.count() - 1; i > 0; i--){
@@ -139,6 +150,10 @@ public class Name implements Serializable{
     return true;
   }
   
+  /**
+   * @param other another {@link Name}.
+   * @return <code>true</code> if this instance starts with the given {@link Name}.
+   */
   public boolean startsWith(Name other){
     if(count() < other.count()) return false;
     for(int i = 0; i < other.count(); i++){
@@ -150,8 +165,8 @@ public class Name implements Serializable{
   }  
 
   /**
-   * @param n adds the given <code>Name</code> to this instance (actually
-   * appends the <code>NamePart</code>s of the given name to this instance).
+   * @param n adds the given {@link Name} to this instance (actually
+   * appends the {@link NamePart}s of the given name to this instance).
    * 
    * @return this instance.
    */
@@ -162,12 +177,12 @@ public class Name implements Serializable{
   }
 
   /**
-   * Returns all the <code>NamePart</code>s that this name holds, up to the
-   * given index (exclusively). Returns the <code>NamePart</code>s in a <code>Name</code>
+   * Returns all the {@link NamePart}s that this name holds, up to the
+   * given index (exclusively). Returns the {@link NamePart}s in a {@link Name}
    * instance.
    * 
    * @param to an upperbound index.
-   * @return a <code>Name</code>.
+   * @return a {@link Name}.
    */
   public Name getTo(int to) {
     Name     n       = new Name();
@@ -182,12 +197,12 @@ public class Name implements Serializable{
   }
   
   /**
-   * Returns all the <code>NamePart</code>s that this name holds, starting from the
-   * given index (inclusively). Returns the <code>NamePart</code>s in a <code>Name</code>
+   * Returns all the {@link NamePart}s that this name holds, starting from the
+   * given index (inclusively). Returns the {@link NamePart}s in a {@link Name}
    * instance.
    * 
    * @param from a lowerbound index.
-   * @return a <code>Name</code>.
+   * @return a {@link Name}.
    */
 
   public Name getFrom(int from) {
@@ -205,7 +220,7 @@ public class Name implements Serializable{
   /**
    * Returns the first part in this name.
    *
-   * @return a <code>NamePart</code>.
+   * @return a {@link NamePart}.
    */
   public NamePart first() {
     return (NamePart) _parts.get(0);
@@ -214,7 +229,7 @@ public class Name implements Serializable{
   /**
    * Returns the last part in this name.
    *
-   * @return a <code>NamePart</code>.
+   * @return a {@link NamePart}.
    */
   public NamePart last() {
     return (NamePart) _parts.get(_parts.size() - 1);
@@ -223,7 +238,7 @@ public class Name implements Serializable{
   /**
    * Chops the last part from this instance and returns it.
    *
-   * @return a <code>NamePart</code>.
+   * @return a {@link NamePart}.
    */
   public NamePart chopLast() {
     return (NamePart) _parts.remove(_parts.size() - 1);
@@ -232,7 +247,7 @@ public class Name implements Serializable{
   /**
    * Chops the first part from this instance and returns it.
    *
-   * @return a <code>NamePart</code>.
+   * @return a {@link NamePart}.
    */
   public NamePart chopFirst() {
     return (NamePart) _parts.remove(0);
@@ -265,8 +280,6 @@ public class Name implements Serializable{
       return false;
     }
   }
-  
-  
   
   private void assertPos(int pos){
     if(pos < 0){

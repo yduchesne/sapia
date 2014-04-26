@@ -4,7 +4,9 @@ import org.sapia.archie.impl.*;
 
 import junit.framework.TestCase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -74,6 +76,52 @@ public class SingleValueNodeTest extends TestCase {
     node.createChild(new DefaultNamePart("child2")); 
     super.assertEquals(2, node.getChildrenCount());
        
+  }  
+  
+  public void testAccept() throws Exception{
+    SingleValueNode     node = new SingleValueNode(new HashMap(), new HashMap(), new DefaultNodeFactory());
+    Node child1 = node.createChild(new DefaultNamePart("child1"));    
+    Node child2 = node.createChild(new DefaultNamePart("child2")); 
+    child1.createChild(new DefaultNamePart("child11"));
+    child2.createChild(new DefaultNamePart("child21"));
+    
+    final List<Node> children = new ArrayList<>();
+    
+    node.accept(new NodeVisitor() {
+      
+      @Override
+      public boolean visit(Node node) {
+        if (node.getParent() != null) {
+          children.add(node);
+        }
+        return true;
+      }
+    });
+    
+    assertEquals(4, children.size());
+  }  
+  
+  public void testAcceptAborted() throws Exception{
+    SingleValueNode     node = new SingleValueNode(new HashMap(), new HashMap(), new DefaultNodeFactory());
+    Node child1 = node.createChild(new DefaultNamePart("child1"));    
+    Node child2 = node.createChild(new DefaultNamePart("child2")); 
+    child1.createChild(new DefaultNamePart("child11"));
+    child2.createChild(new DefaultNamePart("child21"));
+    
+    final List<Node> children = new ArrayList<>();
+    
+    node.accept(new NodeVisitor() {
+      
+      @Override
+      public boolean visit(Node node) {
+        if (node.getParent() != null) {
+          children.add(node);
+        }
+        return false;
+      }
+    });
+    
+    assertEquals(0, children.size());
   }  
   
   static class TestSingeValueNode extends SingleValueNode{

@@ -3,19 +3,16 @@ package org.sapia.archie.sync;
 import java.util.Iterator;
 
 import org.sapia.archie.DuplicateException;
+import org.sapia.archie.Entry;
 import org.sapia.archie.Name;
 import org.sapia.archie.NameParser;
 import org.sapia.archie.NamePart;
 import org.sapia.archie.Node;
+import org.sapia.archie.NodeVisitor;
 import org.sapia.archie.ProcessingException;
 
 /**
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class SynchronizedNode implements Node{
   
@@ -43,6 +40,13 @@ public class SynchronizedNode implements Node{
     return _sync;
   }
   
+  @Override
+  public boolean accept(NodeVisitor visitor) {
+    synchronized (_node) {
+      return _node.accept(visitor);
+    }
+  }
+  
   /**
    * This method should be called when needing to synchronize the
    * content of this node with a "putValue" that occurred at another
@@ -54,7 +58,9 @@ public class SynchronizedNode implements Node{
    * 
    */
   public void synchronizePut(NamePart valueName, Object toSync, boolean overwrite){
-    _node.putValue(valueName, toSync, overwrite);
+    synchronized (_node) {
+      _node.putValue(valueName, toSync, overwrite);
+    }
   }
 
   /**
@@ -67,7 +73,9 @@ public class SynchronizedNode implements Node{
    * 
    */
   public void synchronizeRemove(NamePart valueName){
-    _node.removeValue(valueName);
+    synchronized (_node) {
+      _node.removeValue(valueName);
+    }
   }
   
   /**
@@ -81,7 +89,9 @@ public class SynchronizedNode implements Node{
    * <code>null</code> if no object exists for that name.
    */
   public Object synchronizeGet(NamePart valueName){
-    return _node.getValue(valueName);
+    synchronized (_node) {
+      return _node.getValue(valueName);
+    }
   }
   
   /**
@@ -89,43 +99,57 @@ public class SynchronizedNode implements Node{
    */
   public Node createChild(NamePart name) throws DuplicateException,
       ProcessingException {
-    return _node.createChild(name);
+    synchronized (_node) {
+      return _node.createChild(name);
+    }
   }
   /**
    * @see org.sapia.archie.Node#getAbsolutePath()
    */
   public Name getAbsolutePath() {
-    return _node.getAbsolutePath();
+    synchronized (_node) {
+      return _node.getAbsolutePath();
+    }
   }
   /**
    * @see org.sapia.archie.Node#getChild(org.sapia.archie.NamePart)
    */
   public Node getChild(NamePart name) {
-    return _node.getChild(name);
+    synchronized (_node) {
+      return _node.getChild(name);
+    }
   }
   /**
    * @see org.sapia.archie.Node#getChildren()
    */
-  public Iterator getChildren() {
-    return _node.getChildren();
+  public Iterator<Node> getChildren() {
+    synchronized (_node) {
+      return _node.getChildren();
+    }
   }
   /**
    * @see org.sapia.archie.Node#getChildrenCount()
    */
   public int getChildrenCount() {
-    return _node.getChildrenCount();
+    synchronized (_node) {
+      return _node.getChildrenCount();
+    }
   }
   /**
    * @see org.sapia.archie.Node#getChildrenNames()
    */
-  public Iterator getChildrenNames() {
-    return _node.getChildrenNames();
+  public Iterator<NamePart> getChildrenNames() {
+    synchronized (_node) {
+      return _node.getChildrenNames();
+    }
   }
   /**
    * @see org.sapia.archie.Node#getEntries()
    */
-  public Iterator getEntries() {
-    return _node.getEntries();
+  public Iterator<Entry> getEntries() {
+    synchronized (_node) {
+      return _node.getEntries();
+    }
   }
   /**
    * @see org.sapia.archie.Node#getName()
@@ -149,50 +173,64 @@ public class SynchronizedNode implements Node{
    * @see org.sapia.archie.Node#getValue(org.sapia.archie.NamePart)
    */
   public Object getValue(NamePart name) {
-    Object toReturn = _node.getValue(name);
-    if(toReturn == null){
-      toReturn = _sync.onGetValue((Name)getAbsolutePath().clone(), name);
+    synchronized (_node) {
+      Object toReturn = _node.getValue(name);
+      if(toReturn == null){
+        toReturn = _sync.onGetValue((Name)getAbsolutePath().clone(), name);
+      }
+      return toReturn;
     }
-    return toReturn;
   }
   /**
    * @see org.sapia.archie.Node#getValueCount()
    */
   public int getValueCount() {
-    return _node.getValueCount();
+    synchronized (_node) {
+      return _node.getValueCount();
+    }
   }
   /**
    * @see org.sapia.archie.Node#getValueNames()
    */
-  public Iterator getValueNames() {
-    return _node.getValueNames();
+  public Iterator<NamePart> getValueNames() {
+    synchronized (_node) {
+      return _node.getValueNames();
+    }
   }
   /**
    * @see org.sapia.archie.Node#putValue(org.sapia.archie.NamePart, java.lang.Object, boolean)
    */
   public boolean putValue(NamePart name, Object value, boolean overwrite) {
-    boolean put =  _node.putValue(name, value, overwrite);
-    _sync.onPutValue((Name)getAbsolutePath().clone(), name, value, overwrite);
-    return put;
+    synchronized (_node) {
+      boolean put =  _node.putValue(name, value, overwrite);
+      _sync.onPutValue((Name)getAbsolutePath().clone(), name, value, overwrite);
+      return put;
+    }
   }
   /**
    * @see org.sapia.archie.Node#removeChild(org.sapia.archie.NamePart)
    */
   public Node removeChild(NamePart name) {
-    return _node.removeChild(name);
+    synchronized (_node) {
+      return _node.removeChild(name);
+    }
   }
   /**
    * @see org.sapia.archie.Node#removeValue(org.sapia.archie.NamePart)
    */
   public Object removeValue(NamePart name) {
-    Object toReturn = _node.removeValue(name);
-    _sync.onRemoveValue((Name)getAbsolutePath().clone(), name);
-    return toReturn;
+    synchronized (_node) {
+      Object toReturn = _node.removeValue(name);
+      _sync.onRemoveValue((Name)getAbsolutePath().clone(), name);
+      return toReturn;
+    }
   }
   /**
    * @see org.sapia.archie.Node#setUp(org.sapia.archie.Node, org.sapia.archie.NamePart)
    */
   public void setUp(Node parent, NamePart nodeName) {
-    _node.setUp(parent, nodeName);
+    synchronized (_node) {
+      _node.setUp(parent, nodeName);
+    }
   }
 }

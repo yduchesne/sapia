@@ -2,20 +2,19 @@ package org.sapia.archie;
 
 
 /**
- * Thrown when a <code>Node</code> could not be created.
+ * Thrown when a {@link Node} could not be created.
  * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class NodeCreationException extends ProcessingException {
-  /**
-   * Constructor for NodeCreationException.
-   */
+  
+  static final long serialVersionUID = 1L;
+  
   public NodeCreationException(String msg) {
     super(msg);
+  }
+  
+  public NodeCreationException(String msg, Throwable cause) {
+    super(msg, cause);
   }
 }

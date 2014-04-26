@@ -7,18 +7,13 @@ import org.sapia.archie.ProcessingException;
 
 
 /**
- * Implements the <code>NameParser</code> interface. Parses names whose parts are
+ * Implements the {@link NameParser} interface. Parses names whose parts are
  * delimited by '/', such as in: some/object/name, where "some/object/name" is
- * a <code>Name</code>, and "some", "object" and "name" are <code>NamePart</code>s.
+ * a {@link Name}, and "some", "object" and "name" are {@link NamePart}s.
  * 
  * @see org.sapia.archie.impl.DefaultNamePart
  * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class DefaultNameParser implements NameParser {
   public static final char SEPARATOR = '/';

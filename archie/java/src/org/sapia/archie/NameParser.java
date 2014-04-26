@@ -8,15 +8,26 @@ package org.sapia.archie;
  * Understood name representations are implementation specific.
  * 
  * @author Yanick Duchesne
- *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public interface NameParser extends java.io.Serializable{
+  
+  /**
+   * @param name a name literal.
+   * @return the {@link Name} corresponding to the given literal.
+   * @throws ProcessingException if the given literal could not be processed.
+   */
   public Name parse(String name) throws ProcessingException;
+  
+  /**
+   * @param name a {@link Name}.
+   * @return the literal for the given {@link Name}.
+   */
   public String asString(Name name);
+  
+  /**
+   * @param namePart a {@link NamePart} literal.
+   * @return the {@link NamePart} corresponding to the given literal.
+   * @throws ProcessingException if the given literal could not be processed.
+   */
   public NamePart parseNamePart(String namePart) throws ProcessingException;
 }
