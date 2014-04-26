@@ -3,12 +3,12 @@ package org.sapia.archie;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sapia.archie.impl.*;
+import org.sapia.archie.impl.DefaultNameParser;
 
 
 /**
  * Abstract implementation of the <code>Node</code> interface.
- * 
+ *
  * @author Yanick Duchesne
  * <dl>
  * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
@@ -29,7 +29,7 @@ public abstract class AbstractNode implements Node {
     _children = children;
     _fac      = fac;
     _parser   = parser;
-    
+
     // TODO: this is a hack... Maybe name should be passed in ctor
     _name     = parser.parse("/").first();
     _absolutePath.add(_name);
@@ -43,6 +43,7 @@ public abstract class AbstractNode implements Node {
   /**
    * @see org.sapia.archie.Node#createChild(NamePart)
    */
+  @Override
   public Node createChild(NamePart name)
                    throws DuplicateException, ProcessingException {
     if (_children.containsKey(name)) {
@@ -54,17 +55,19 @@ public abstract class AbstractNode implements Node {
     _children.put(name, n);
     return n;
   }
-  
+
   /**
    * @see org.sapia.archie.Node#getChild(NamePart)
    */
+  @Override
   public Node getChild(NamePart name) {
     return (Node)_children.get(name);
   }
-  
+
   /**
    * @see org.sapia.archie.Node#removeChild(org.sapia.archie.NamePart)
    */
+  @Override
   public Node removeChild(NamePart name) {
     return (Node)_children.remove(name);
   }
@@ -72,6 +75,7 @@ public abstract class AbstractNode implements Node {
   /**
    * @see org.sapia.archie.Node#getChildren()
    */
+  @Override
   public Iterator getChildren() {
     return _children.values().iterator();
   }
@@ -79,6 +83,7 @@ public abstract class AbstractNode implements Node {
   /**
    * @see org.sapia.archie.Node#getName()
    */
+  @Override
   public NamePart getName() {
     return _name;
   }
@@ -86,6 +91,7 @@ public abstract class AbstractNode implements Node {
   /**
    * @see Node#getAbsolutePath()
    */
+  @Override
   public Name getAbsolutePath() {
     return (Name)_absolutePath.clone();
   }
@@ -93,6 +99,7 @@ public abstract class AbstractNode implements Node {
   /**
    * @see Node#getChildrenCount()
    */
+  @Override
   public int getChildrenCount() {
     return _children.size();
   }
@@ -100,6 +107,7 @@ public abstract class AbstractNode implements Node {
   /**
    * @see Node#getChildrenNames()
    */
+  @Override
   public Iterator getChildrenNames() {
     return _children.keySet().iterator();
   }
@@ -107,6 +115,7 @@ public abstract class AbstractNode implements Node {
   /**
    * @see Node#getParent()
    */
+  @Override
   public Node getParent() {
     return _parent;
   }
@@ -114,13 +123,34 @@ public abstract class AbstractNode implements Node {
   /**
    * @see Node#getNameParser()
    */
+  @Override
   public NameParser getNameParser() {
     return _parser;
   }
-  
+
+  /**
+   * @see Node#accept(NodeVisitor).
+   */
+  @Override
+  public boolean accept(NodeVisitor visitor) {
+    if (visitor.visit(this)) {
+      Iterator childrenNames = getChildrenNames();
+      while (childrenNames.hasNext()) {
+        Node child = getChild((NamePart) childrenNames.next());
+        if (!child.accept(visitor)) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * @see Node#setUp(Node, NamePart)
    */
+  @Override
   public void setUp(Node parent, NamePart name) {
     _parent       = parent;
     _absolutePath = new Name().add(parent.getAbsolutePath());
@@ -128,6 +158,7 @@ public abstract class AbstractNode implements Node {
     _absolutePath.add(name);
   }
 
+  @Override
   public String toString() {
     return _name.toString();
   }
