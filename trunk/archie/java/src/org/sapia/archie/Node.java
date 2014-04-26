@@ -9,17 +9,12 @@ import java.util.Iterator;
  * also bound to their parent node using a given name.
  *
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public interface Node {
   /**
    * Returns this node's value.
    *
-   * @return an <code>Object</code>, or <code>null</code> if this node has
+   * @return an {@link Object}, or <code>null</code> if this node has
    * no value.
    */
   public Object getValue(NamePart name);
@@ -28,7 +23,7 @@ public interface Node {
    * Internally removes the value that this node holds
    * and returns it.
    *
-   * @return an <code>Object</code>, or <code>null</code> if this node has
+   * @return an {@link Object}, or <code>null</code> if this node has
    * no value.
    */
   public Object removeValue(NamePart name);
@@ -37,7 +32,7 @@ public interface Node {
    * Put a value into this node; overwrites the existing value - if any.
    *
    * @param name the name under which to bind the given value.
-   * @param value an <code>Object</code>.
+   * @param value an {@link Object}.
    * @param overwrite if <code>true</code>, overwrites the already existing value
    * for the given name - it such is the case.
    *
@@ -50,13 +45,11 @@ public interface Node {
   /**
    * Returns the names of this instance's values.
    *
-   * @return an <code>Iterator</code> of <code>NamePart</code>s.
+   * @return an {@link Iterator} of {@link NamePart}s.
    */
-  public Iterator getValueNames();
+  public Iterator<NamePart> getValueNames();
 
   /**
-   * Returns the number of values that this instance contains.
-   *
    * @return the number of values that this instance contains.
    */
   public int getValueCount();
@@ -65,37 +58,37 @@ public interface Node {
    * Sets this node's name and parent node. Client applications <b>must not</b>
    * use this method - unless they know what they are doing.
    *
-   * @param parent this instance's parent <code>Node</code>
-   * @param nodeName a <code>NamePart</code>.
+   * @param parent this instance's parent {@link Node}.
+   * @param nodeName a {@link NamePart}.
    */
   public void setUp(Node parent, NamePart nodeName);
 
   /**
    * Returns the full path to this node, starting from the root.
    *
-   * @return a <code>Name</code>.
+   * @return a {@link Name}.
    */
   public Name getAbsolutePath();
 
   /**
    * Returns this instance's parent.
    *
-   * @return a <code>Node</code>.
+   * @return a {@link Node}.
    */
   public Node getParent();
 
   /**
    * Return this instance's name.
    *
-   * @return a <code>NamePart</code>.
+   * @return a {@link NamePart}.
    */
   public NamePart getName();
 
   /**
    * Creates the node corresponding to the given name and returns it.
    *
-   * @param name a <code>NamePart</code>
-   * @return a <code>Node</code>.
+   * @param name a {@link NamePart}.
+   * @return a {@link Node}.
    * @throws DuplicateException if a node exists for the given name.
    */
   public Node createChild(NamePart name)
@@ -104,10 +97,10 @@ public interface Node {
   /**
    * Returns the node with the given name.
    *
-   * @param name a <code>NamePart</code> corresponding to the name of an
+   * @param name a {@link NamePart} corresponding to the name of an
    * existing child node.
    *
-   * @return a <code>Node</code> or <code>null</code> if not child exists
+   * @return a {@link Node} or <code>null</code> if not child exists
    * for the given name.
    */
   public Node getChild(NamePart name);
@@ -115,10 +108,10 @@ public interface Node {
   /**
    * Removes the node with the given name.
    *
-   * @param name a <code>NamePart</code> corresponding to the name of an
+   * @param name a {@link NamePart} corresponding to the name of an
    * existing child node.
    *
-   * @return a <code>Node</code> or <code>null</code> if not child exists
+   * @return a {@link Node} or <code>null</code> if not child exists
    * for the given name.
    */
   public Node removeChild(NamePart name);
@@ -126,34 +119,32 @@ public interface Node {
   /**
    * Returns this instance's child nodes.
    *
-   * @return a <code>Iterator</code> of <code>Node</code>s.
+   * @return a {@link Iterator} of {@link Node}s.
    */
-  public Iterator getChildren();
+  public Iterator<Node> getChildren();
 
   /**
-   * Returns the number of children that this instance contains.
-   *
    * @return the number of children that this instance contains.
    */
   public int getChildrenCount();
 
   /**
-   * @return an <code>Iterator</code> of <code>Entry</code> instances,
+   * @return an {@link Iterator} of {@link Entry} instances,
    * corresponding to the bindings that this instance holds.
    */
-  public Iterator getEntries();
+  public Iterator<Entry> getEntries();
 
   /**
    * Returns the names of this instance's nodes.
    *
-   * @return an <code>Iterator</code> of <code>NamePart</code>s.
+   * @return an {@link Iterator} of {@link NamePart} s.
    */
-  public Iterator getChildrenNames();
+  public Iterator<NamePart> getChildrenNames();
 
   /**
    * Returns this implementation's name parser.
    *
-   * @return a <code>NameParser</code>.
+   * @return a {@link NameParser}.
    */
   public NameParser getNameParser();
 
@@ -161,7 +152,7 @@ public interface Node {
    * Traverses this instance starting from the root - notifies the given
    * visitor as nodes are encountered.
    *
-   * @param visitor a <code>NodeVisitor</code> to notify.
+   * @param visitor a {@link NodeVisitor} to notify.
    * @return <code>false</code> if traversal should be aborted.
    */
   public boolean accept(NodeVisitor visitor);

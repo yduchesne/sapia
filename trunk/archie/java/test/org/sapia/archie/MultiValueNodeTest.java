@@ -3,12 +3,15 @@
  */
 package org.sapia.archie;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.sapia.archie.impl.DefaultNameParser;
+import org.sapia.archie.impl.DefaultNamePart;
 import org.sapia.archie.impl.DefaultNodeFactory;
 import org.sapia.archie.impl.MultiValueNode;
+import org.sapia.archie.impl.SingleValueNode;
 
 import junit.framework.TestCase;
 
@@ -64,6 +67,52 @@ public class MultiValueNodeTest extends TestCase {
     node.getValue(name);
     super.assertTrue(node.read && node.select);
   }
+  
+  public void testAccept() throws Exception{
+    TestMultiValueNode  node = new TestMultiValueNode();
+    Node child1 = node.createChild(new DefaultNamePart("child1"));    
+    Node child2 = node.createChild(new DefaultNamePart("child2")); 
+    child1.createChild(new DefaultNamePart("child11"));
+    child2.createChild(new DefaultNamePart("child21"));
+    
+    final List<Node> children = new ArrayList<>();
+    
+    node.accept(new NodeVisitor() {
+      
+      @Override
+      public boolean visit(Node node) {
+        if (node.getParent() != null) {
+          children.add(node);
+        }
+        return true;
+      }
+    });
+    
+    assertEquals(4, children.size());
+  }  
+  
+  public void testAcceptAborted() throws Exception{
+    TestMultiValueNode  node = new TestMultiValueNode();
+    Node child1 = node.createChild(new DefaultNamePart("child1"));    
+    Node child2 = node.createChild(new DefaultNamePart("child2")); 
+    child1.createChild(new DefaultNamePart("child11"));
+    child2.createChild(new DefaultNamePart("child21"));
+    
+    final List<Node> children = new ArrayList<>();
+    
+    node.accept(new NodeVisitor() {
+      
+      @Override
+      public boolean visit(Node node) {
+        if (node.getParent() != null) {
+          children.add(node);
+        }
+        return false;
+      }
+    });
+    
+    assertEquals(0, children.size());
+  }  
   
   static class TestMultiValueNode extends MultiValueNode{
     

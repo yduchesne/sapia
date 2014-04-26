@@ -2,15 +2,15 @@ package org.sapia.archie;
 
 
 /**
- * Specifies the behavior of a factory of <code>Node</code>s.
+ * Specifies the behavior of a factory of {@link Node}s.
  * 
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public interface NodeFactory {
+  
+  /**
+   * @return a new {@link Node}.
+   * @throws ProcessingException if a new node could not be created.
+   */
   public Node newNode() throws ProcessingException;
 }

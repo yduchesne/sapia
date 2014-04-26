@@ -7,24 +7,19 @@ import org.sapia.archie.impl.DefaultNameParser;
 
 
 /**
- * Abstract implementation of the <code>Node</code> interface.
+ * Abstract implementation of the {@link Node} interface.
  *
  * @author Yanick Duchesne
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public abstract class AbstractNode implements Node {
-  protected Map         _children;
+  protected Map<NamePart, Node> _children;
   protected NodeFactory _fac;
   private NamePart      _name;
   private Name          _absolutePath = new Name();
   private Node          _parent;
   private NameParser    _parser;
 
-  protected AbstractNode(NameParser parser, Map children, NodeFactory fac)
+  protected AbstractNode(NameParser parser, Map<NamePart, Node> children, NodeFactory fac)
                   throws ProcessingException {
     _children = children;
     _fac      = fac;
@@ -35,7 +30,7 @@ public abstract class AbstractNode implements Node {
     _absolutePath.add(_name);
   }
 
-  protected AbstractNode(Map children, NodeFactory fac)
+  protected AbstractNode(Map<NamePart, Node> children, NodeFactory fac)
                   throws ProcessingException {
     this(new DefaultNameParser(), children, fac);
   }
@@ -61,7 +56,7 @@ public abstract class AbstractNode implements Node {
    */
   @Override
   public Node getChild(NamePart name) {
-    return (Node)_children.get(name);
+    return _children.get(name);
   }
 
   /**
@@ -69,14 +64,14 @@ public abstract class AbstractNode implements Node {
    */
   @Override
   public Node removeChild(NamePart name) {
-    return (Node)_children.remove(name);
+    return _children.remove(name);
   }
 
   /**
    * @see org.sapia.archie.Node#getChildren()
    */
   @Override
-  public Iterator getChildren() {
+  public Iterator<Node> getChildren() {
     return _children.values().iterator();
   }
 
@@ -108,7 +103,7 @@ public abstract class AbstractNode implements Node {
    * @see Node#getChildrenNames()
    */
   @Override
-  public Iterator getChildrenNames() {
+  public Iterator<NamePart> getChildrenNames() {
     return _children.keySet().iterator();
   }
 
@@ -134,9 +129,9 @@ public abstract class AbstractNode implements Node {
   @Override
   public boolean accept(NodeVisitor visitor) {
     if (visitor.visit(this)) {
-      Iterator childrenNames = getChildrenNames();
+      Iterator<NamePart> childrenNames = _children.keySet().iterator();
       while (childrenNames.hasNext()) {
-        Node child = getChild((NamePart) childrenNames.next());
+        Node child = getChild(childrenNames.next());
         if (!child.accept(visitor)) {
           return false;
         }
