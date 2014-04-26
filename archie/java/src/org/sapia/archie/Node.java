@@ -6,8 +6,8 @@ import java.util.Iterator;
 /**
  * This interface specifies the behavior of "nodes". Nodes hold child nodes that are bound
  * to their parent with a given name. Nodes also hold values, that are arbitrary objects
- * also bound to their parent node using a given name. 
- * 
+ * also bound to their parent node using a given name.
+ *
  * @author Yanick Duchesne
  * <dl>
  * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
@@ -23,11 +23,11 @@ public interface Node {
    * no value.
    */
   public Object getValue(NamePart name);
-  
+
   /**
    * Internally removes the value that this node holds
    * and returns it.
-   *  
+   *
    * @return an <code>Object</code>, or <code>null</code> if this node has
    * no value.
    */
@@ -111,7 +111,7 @@ public interface Node {
    * for the given name.
    */
   public Node getChild(NamePart name);
-  
+
   /**
    * Removes the node with the given name.
    *
@@ -121,7 +121,7 @@ public interface Node {
    * @return a <code>Node</code> or <code>null</code> if not child exists
    * for the given name.
    */
-  public Node removeChild(NamePart name);  
+  public Node removeChild(NamePart name);
 
   /**
    * Returns this instance's child nodes.
@@ -136,7 +136,7 @@ public interface Node {
    * @return the number of children that this instance contains.
    */
   public int getChildrenCount();
-  
+
   /**
    * @return an <code>Iterator</code> of <code>Entry</code> instances,
    * corresponding to the bindings that this instance holds.
@@ -156,4 +156,13 @@ public interface Node {
    * @return a <code>NameParser</code>.
    */
   public NameParser getNameParser();
+
+  /**
+   * Traverses this instance starting from the root - notifies the given
+   * visitor as nodes are encountered.
+   *
+   * @param visitor a <code>NodeVisitor</code> to notify.
+   * @return <code>false</code> if traversal should be aborted.
+   */
+  public boolean accept(NodeVisitor visitor);
 }
