@@ -19,7 +19,7 @@ This page will guide you through the necessary steps to install Corus on Windows
 = 2. Extract the Corus distribution =
  * Extract the Corus distribution zip file into the Corus installation directory created above.
  * Rename the created root directory of the archive if you need.
- * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus-2.0`.
+ * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus_package-<version>`.
 
 <table boder="0" width="50%">
 <tr><td>
@@ -30,7 +30,7 @@ This page will guide you through the necessary steps to install Corus on Windows
 
 = 3. Configure the Environment =
  * To run properly, Corus requires the presence of another environment variable: CORUS_HOME
- * The variable must point to the home directory of the Corus installation, which in our case is the `C:\opt\sapia-corus\sapia_corus-2.0` directory
+ * The variable must point to the home directory of the Corus installation, which in our case is the `C:\opt\sapia-corus\sapia_corus_package-<version>` directory
  * To define an environment variable on Windows XP, follow these simple steps:
   # Go in Control Panel -> System
   # In the System Properties window, select the Advanced tab and click on the Environment Variables button (at the bottom)
