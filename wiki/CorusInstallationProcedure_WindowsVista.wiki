@@ -18,7 +18,7 @@ This page will guide you through the necessary steps to install Corus on Windows
 = 2. Extract the Corus Distribution =
  * Extract the Corus distribution zip file into the Corus installation directory created above.
  * Rename the created root directory of the archive if you need.
- * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus-2.0`
+ * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus-<version>`
 
 <table boder="0" width="50%">
 <tr><td>
