@@ -1,0 +1,53 @@
+<help>
+  <section title="Description">
+   <p>Displays help about commands.</p>
+  </section>
+  <section title="Syntax">
+    <p>man command_name</p>
+  </section>
+  <section title="Notes">
+    <p>- If no command name is given, this help is displayed.</p>
+  </section>
+  <section title="Available Commands">
+    <p>Distribution Management:</p>
+    <p/>
+    <p>- ls</p>    
+    <p>- deploy</p>
+    <p>- undeploy</p>    
+    <p/>  
+    <p>Process Management:</p>
+    <p/>
+    <p>- ps</p>    
+    <p>- status</p>        
+    <p>- exec</p>
+    <p>- kill</p>    
+    <p>- restart</p>
+    <p>- suspend</p>    
+    <p>- resume</p>    
+    <p>- cron</p>        
+    <p/>
+    <p>Configuration:</p>
+    <p/>
+    <p>- conf</p>    
+    <p>- port</p>
+    <p/>
+    <p>Misc:</p>
+    <p/>
+    <p>- cd</p>
+    <p>- cluster</p>
+    <p>- cmd</p>
+    <p>- connect</p>
+    <p>- err</p>
+    <p>- exit</p>    
+    <p>- host</p>
+    <p>- hosts</p>
+    <p>- http</p>
+    <p>- man</p>
+    <p>- pull</p>
+    <p>- pwd</p>
+    <p>- quit</p>
+    <p>- ripple</p>
+    <p>- ver</p>
+    <p/>    
+  </section>
+</help>
