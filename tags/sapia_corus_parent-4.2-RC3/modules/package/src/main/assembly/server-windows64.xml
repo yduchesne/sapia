@@ -1,0 +1,100 @@
+<assembly>
+  <id>win64</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>true</includeBaseDirectory>
+  <fileSets>
+    
+    <!-- bin -->
+    <fileSet>
+       <directory>bin</directory>
+       <includes>
+          <include>*.bat</include>
+       </includes>
+       <fileMode>0777</fileMode>
+       <lineEnding>dos</lineEnding>
+    </fileSet>
+    <fileSet>
+       <directory>bin/win64</directory>
+       <outputDirectory>bin/win64</outputDirectory>
+       <includes>
+          <include>*.bat</include>
+       </includes>
+       <fileMode>0777</fileMode>
+       <lineEnding>dos</lineEnding>
+    </fileSet>
+    <fileSet>
+       <directory>bin/win64</directory>
+       <outputDirectory>bin/win64</outputDirectory>
+       <includes>
+          <include>*.*</include>
+       </includes>
+       <excludes>
+          <exclude>*.bat</exclude>
+       </excludes>
+       <fileMode>0777</fileMode>
+    </fileSet>
+    
+    <fileSet>
+       <directory>bin/win</directory>
+       <includes>
+          <include>pv.exe</include>
+       </includes>
+       <fileMode>0777</fileMode>
+    </fileSet>
+    
+    <!-- config -->
+    <fileSet>
+       <directory>config</directory>
+       <includes>
+          <include>*.*</include>
+       </includes>
+       <excludes>
+          <exclude>*win32.properties</exclude>
+          <exclude>*wrapper.properties</exclude>
+       </excludes>
+       <lineEnding>dos</lineEnding>
+    </fileSet>
+
+    <!-- doc -->
+    <fileSet>
+       <directory>doc/text</directory>
+       <includes>
+          <include>*.pdf</include>
+       </includes>
+    </fileSet>
+    
+    <!-- lib -->
+    <fileSet>
+       <directory>lib</directory>
+       <includes>
+          <include>**/*</include>
+       </includes>
+    </fileSet>
+    
+    <!-- SIGAR -->
+    
+    <fileSet>
+       <directory>extra-lib/sigar/hyperic-sigar-1.6.3/sigar-bin/lib</directory>
+       <outputDirectory>extra-lib/sigar/win-x86</outputDirectory>
+       <includes>
+          <include>sigar-x86*</include>
+       </includes>
+       <fileMode>0777</fileMode>
+    </fileSet>
+
+    
+    <fileSet>
+       <directory>extra-lib/sigar/hyperic-sigar-1.6.3/sigar-bin/lib</directory>
+       <outputDirectory>extra-lib/sigar/win-amd64</outputDirectory>
+       <includes>
+          <include>sigar-amd64*</include>
+       </includes>
+       <fileMode>0777</fileMode>
+    </fileSet>
+
+
+  </fileSets>
+  
+</assembly>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+      xmlns="http://www.springframework.org/schema/beans"
+      xmlns:p="http://www.springframework.org/schema/p"
+      xmlns:context="http://www.springframework.org/schema/context"
+
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+				  http://www.springframework.org/schema/context 
+				  http://www.springframework.org/schema/context/spring-context.xsd">
+				  
+  <!-- Register Annotation-based Post Processing Beans -->
+  <context:annotation-config />
+  <bean name="coreModulePostProcessor" class="org.sapia.corus.core.ModulePostProcessor" />
+                  
+  <!-- ============ DB ============ -->
+
+  <bean name="org.sapia.corus.client.services.db.DbModule" 
+        class="org.sapia.corus.db.DbModuleImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+  
+  <!-- ============ OS ============ -->
+
+  <bean name="org.sapia.corus.client.services.os.OsModule" 
+        class="org.sapia.corus.os.OsModuleImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+  
+  <!-- ============ SIGAR ============ -->
+
+  <bean name="org.sapia.corus.sigar.SigarModule" 
+        class="org.sapia.corus.sigar.SigarModuleImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+  
+  <!-- ============ FileSystem ============ -->
+
+  <bean name="org.sapia.corus.client.services.file.FileSystemModule" 
+        class="org.sapia.corus.file.FileSystemModuleImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>   
+
+  <!-- ============ CONFIGURATOR ============ -->
+
+  <bean name="org.sapia.corus.client.services.configurator.Configurator" 
+        class="org.sapia.corus.configurator.ConfiguratorImpl"
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+  
+  <!-- ============ TASK MANAGER ============ -->
+  
+
+  <bean name="org.sapia.corus.taskmanager.core.TaskManager" 
+        class="org.sapia.corus.taskmanager.CorusTaskManagerImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+
+  <!-- ============ EVENT DISPATCHER ============ -->
+
+  <bean name="org.sapia.corus.client.services.event.EventDispatcher" 
+        class="org.sapia.corus.event.EventDispatcherImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+
+  <!-- ============ HTTP ============ -->
+
+  <bean name="org.sapia.corus.client.services.http.HttpModule" 
+        class="org.sapia.corus.http.HttpModuleImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+
+  <!-- ============ PORTS ============ -->
+  
+  <bean name="org.sapia.corus.client.services.port.PortManager" 
+        class="org.sapia.corus.port.PortManagerImpl" 
+        scope="singleton"
+        autowire="autodetect">
+  </bean>
+
+</beans>
