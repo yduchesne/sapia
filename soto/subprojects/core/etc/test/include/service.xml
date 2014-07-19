@@ -1,4 +1,0 @@
-  <soto:service id="include" xmlns:soto="sapia:soto"
-                             xmlns:sample="soto:sample">
-    <sample:include />
-  </soto:service>
