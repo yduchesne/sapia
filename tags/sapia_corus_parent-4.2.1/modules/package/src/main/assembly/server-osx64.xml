@@ -1,0 +1,87 @@
+<assembly>
+  <id>osx64</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <includeBaseDirectory>true</includeBaseDirectory>
+  <fileSets>
+    
+    <!-- bin -->
+    <fileSet>
+       <directory>bin</directory>
+       <includes>
+          <include>*</include>
+       </includes>
+       <excludes>
+          <exclude>*.bat</exclude>
+          <exclude>*/linux*</exclude>
+          <exclude>*/osx*</exclude>
+          <exclude>*/solaris*</exclude>
+          <exclude>*/win*</exclude>
+       </excludes>
+       <fileMode>0777</fileMode>
+       <lineEnding>unix</lineEnding>
+    </fileSet>
+    <fileSet>
+       <directory>bin/osx64</directory>
+       <outputDirectory>bin</outputDirectory>
+       <includes>
+          <include>wrapper</include>
+       </includes>
+       <fileMode>0777</fileMode>
+    </fileSet>
+    
+    <!-- config -->
+    <fileSet>
+       <directory>config</directory>
+       <includes>
+          <include>*.*</include>
+       </includes>
+       <excludes>
+          <exclude>*win32.properties</exclude>
+          <exclude>*win64.properties</exclude>
+          <exclude>*base.wrapper.properties</exclude>
+       </excludes>
+       <lineEnding>unix</lineEnding>
+    </fileSet>
+    <fileSet>
+       <directory>config/osx</directory>
+       <outputDirectory>config</outputDirectory>
+       <includes>
+          <include>*.*</include>
+       </includes>
+    </fileSet>
+
+    <!-- doc -->
+    <fileSet>
+       <directory>doc/text</directory>
+       <includes>
+          <include>*.pdf</include>
+       </includes>
+    </fileSet>
+    
+    <!-- lib -->
+    <fileSet>
+       <directory>lib</directory>
+       <includes>
+          <include>**/*</include>
+       </includes>
+    </fileSet>
+    <fileSet>
+       <directory>extra-lib/wrapper</directory>
+       <includes>
+          <include>wrapper*.jar</include>
+       </includes>
+    </fileSet>
+    <fileSet>
+       <directory>bin/osx64</directory>
+       <outputDirectory>extra-lib/wrapper</outputDirectory>
+       <includes>
+          <include>libwrapper.jnilib</include>
+       </includes>
+       <fileMode>0777</fileMode>
+    </fileSet>
+
+  </fileSets>
+  
+</assembly>
