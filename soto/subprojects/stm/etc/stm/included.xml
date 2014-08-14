@@ -1,7 +1,0 @@
-<stm:states xmlns:soto="sapia:soto"
-          xmlns:stm="soto:stm">
-  
-  <stm:state id="test">
-    <stm:debug msg="test..." />
-  </stm:state>      
-</stm:states>
