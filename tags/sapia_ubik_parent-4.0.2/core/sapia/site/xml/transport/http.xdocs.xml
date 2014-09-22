@@ -1,0 +1,115 @@
+<sapia:page title="HTTP Transport" cssPath="../css/sapia.css" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+  <sapia:sect1 title="HTTP Transport" alias="http-transport">
+  
+    <sapia:section>
+      <sapia:path name="home" href="../../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="ubik" href="../home.html" />
+      <sapia:path name="transport" />
+      <sapia:path name="http" />
+    </sapia:section>  
+  
+    <toc/>
+    
+    <sapia:sect-desc>
+      <p>The HTTP transport layer conveniently adds support for receiving remote method invocations over the
+      internet. It opens the door to rich-client interfaces that can from now on use an object-oriented approach
+      to communicating with servers over the WAN, something that is usually implemented with XML. Of course, this does 
+      not invalidate XML for such use, but provides an alternative if clients are in Java, and if getting up and running fast
+      is a must.</p>    
+      
+      <p>Ubik's HTTP Tranport layer is implemented on top of the <a href="http://www.simpleframework.org/">Simple</a> HTTP server.</p>
+    </sapia:sect-desc>
+    
+   
+    <sapia:sect2 title="Usage">
+      <p>The <sapia:class link="../maven/api/org/sapia/ubik/rmi/server/transport/http/HttpTransportProvider.html">
+      HttpTransportProvider</sapia:class> can be used when wishing to export objects over HTTP using
+      an underlying stand-alone HTTP server. In this case, you do not embed Ubik in a servlet, but rather
+      use it as you would normally - to the exception that you must register the appropriate transport
+      provider with the Hub.</p>
+      
+      <sapia:sect3 title="Server-Side">
+            
+        <p>The code below (again taken from Ubik's examples) demonstrates how a remote object is exported
+        over HTTP:</p>
+      
+<sapia:code>
+public class HttpFoo {
+  public static void main(String[] args) {
+    try {
+      TransportManager.registerProvider(
+        new HttpTransportProvider());
+
+      Properties props = new Properties();
+      props.setProperty(Consts.TRANSPORT_TYPE, 
+                        HttpConsts.DEFAULT_HTTP_TRANSPORT_TYPE);
+      props.setProperty(HttpConsts.HTTP_PORT_KEY, "8080");
+      Hub.exportObject(new UbikFoo(), props);
+
+      while (true) {
+        Thread.sleep(100000);
+      }
+    } catch (Throwable t) {
+      t.printStackTrace();
+    }
+  }
+}
+</sapia:code>
+
+        <p>See the <sapia:class link="../maven/api/org/sapia/ubik/rmi/server/transport/http/HttpConsts.html">
+          HttpConsts</sapia:class> interface for the constants that are used in the code.</p>
+
+        <p>Note that in the above example, the URL of the server is not specified; the URL that is used then 
+        is of the format <b>http://<i>local_ip_address</i>:<i>port</i>/ubik</b>. The port is
+        in this case expected through a property (as shown in the code above); if not specified, the underlying
+        HTTP server will be listening on the default port: 8080. The URL will eventually be used by stubs on the
+        client-side; if this is not what you want (because your server might be behind a firewall/load-balancer, and
+        stubs in this case cannot connect to your server directly), you can specify the URL to which stubs will 
+        connect:</p>
+
+<sapia:code>
+  // Do not forget the trailing "/ubik" path
+  // when using Ubik HTTP in standalone (not in a
+  // servlet container)
+  props.setProperty(HttpConsts.SERVER_URL_KEY, 
+                    "http://www.somedomain.com/ubik");
+</sapia:code>
+        <p></p>
+
+        <sapia:note>Note that the above feature really makes sense only if your HTTP-remoted object 
+        hides behind some proxy, and that all clients are expected to originate from beyond such a proxy.</sapia:note>
+        
+        <p>If you wish that the path to which the exported object corresponds be mapped to something else then
+        "/ubik" (the default), and that you are not using the URL substitution scheme - explained previously, then you 
+        can specify a different path:
+        </p>
+        
+<sapia:code>
+  props.setProperty(HttpConsts.PATH_KEY, "/somePath");
+</sapia:code>
+
+      </sapia:sect3> 
+      <sapia:sect3 title="Client-Side">
+    
+        <p>The client corresponding to the above server would look like this:</p>
+    
+<sapia:code>
+public class HttpFooClient {
+  public static void main(String[] args) {
+    try {
+      TransportManager.registerProvider(new HttpTransportProvider());
+
+      Foo foo = (Foo) Hub.connect(new HttpAddress(Uri.parse(
+              "http://localhost:8080/ubik")));
+      System.out.println(foo.getBar().getMsg());
+    } catch (Throwable t) {
+      t.printStackTrace();
+    }
+  }
+}    
+</sapia:code>
+      </sapia:sect3>
+    </sapia:sect2>
+  </sapia:sect1>
+</sapia:page>
