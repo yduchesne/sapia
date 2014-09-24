@@ -1,8 +1,0 @@
-<soto:app xmlns:soto="sapia:soto"
-          xmlns:ldap="soto:ldap">
-  
-  <soto:service>
-    <ldap:server />
-  </soto:service>  
-  
-</soto:app>
