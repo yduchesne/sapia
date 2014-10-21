@@ -21,6 +21,13 @@
       <artifactId>sapia_corus_iop_api</artifactId>
       <version>2.4-SNAPSHOT</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.8.5</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>log4j</groupId>

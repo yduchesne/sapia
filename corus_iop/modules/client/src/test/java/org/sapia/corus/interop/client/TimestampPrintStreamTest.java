@@ -13,14 +13,14 @@ import org.junit.Test;
 public class TimestampPrintStreamTest {
 
   private ByteArrayOutputStream delegate;
-  private TimestampPrintStream stream;
+  private TimestampPrintWriter stream;
 
   private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
   @Before
   public void setUp() throws Exception {
     delegate = new ByteArrayOutputStream();
-    stream = new TimestampPrintStream(delegate);
+    stream = new TimestampPrintWriter(delegate);
   }
 
   @Test

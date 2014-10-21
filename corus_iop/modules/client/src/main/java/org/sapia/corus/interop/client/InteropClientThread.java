@@ -1,27 +1,19 @@
 package org.sapia.corus.interop.client;
 
-import org.sapia.corus.interop.AbstractCommand;
-import org.sapia.corus.interop.Ack;
-import org.sapia.corus.interop.api.Consts;
-import org.sapia.corus.interop.Shutdown;
-import org.sapia.corus.interop.Status;
-import org.sapia.corus.interop.soap.FaultException;
-
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.sapia.corus.interop.AbstractCommand;
+import org.sapia.corus.interop.Ack;
+import org.sapia.corus.interop.Shutdown;
+import org.sapia.corus.interop.Status;
+import org.sapia.corus.interop.api.Consts;
+import org.sapia.corus.interop.soap.FaultException;
 
 
 /**
  * @author Yanick Duchesne
  * @author <a href="mailto:jc@sapia-oss.org">Jean-Cedric Desrochers</a>
- *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 class InteropClientThread extends Thread {
 

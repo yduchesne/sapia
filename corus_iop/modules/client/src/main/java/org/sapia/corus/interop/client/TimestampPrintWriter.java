@@ -1,21 +1,26 @@
 package org.sapia.corus.interop.client;
 
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * A {@link PrintStream} that writes a timestamp at the beginning of each line.
+ * A {@link PrintWriter} that writes a timestamp at the beginning of each line.
  * @author yduchesne
  *
  */
-public class TimestampPrintStream extends PrintStream {
+class TimestampPrintWriter extends PrintWriter {
 
   private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
-  public TimestampPrintStream(OutputStream delegate) {
+  TimestampPrintWriter(OutputStream delegate) {
+    super(delegate, true);
+  }
+  
+  public TimestampPrintWriter(Writer delegate) {
     super(delegate, true);
   }
 
