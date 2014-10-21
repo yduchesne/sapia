@@ -1,9 +1,0 @@
-<soto:app xmlns:soto="sapia:soto"
-          xmlns:regis="soto:regis"
-          xmlns:sample="soto:sample">
-
-  <soto:service id="stream1">
-  	<soto:include uri="regis:/registry/databases/002?${user.dir}/etc/regis/dbService4.xml" />
-  </soto:service>
-
-</soto:app>
