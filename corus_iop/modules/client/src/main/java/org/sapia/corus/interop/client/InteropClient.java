@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -411,14 +410,14 @@ public class InteropClient implements Consts, Implementation {
       
       if(System.getProperty(CORUS_PROCESS_DIR) != null){
         File procDir = new File(System.getProperty(CORUS_PROCESS_DIR).replace("\"", ""));
+        PrintStream outStream = new PrintStreamLogOutputAdapter(new StdoutFileLogOutput(procDir)); 
+        outStream.println("Redirected stdout to this file");
         PrintStream errStream = new PrintStreamLogOutputAdapter(new StderrFileLogOutput(procDir));
-        PrintStream outStream = new PrintStreamLogOutputAdapter(new StdoutFileLogOutput(procDir));        
-        _log.debug("Creating stdout and stderr logs to --> " + procDir.getAbsolutePath());        
-        System.setErr(errStream);
+        errStream.println("Redirected stderr to this file");
+        _log.debug("Creating stdout and stderr logs to --> " + procDir.getAbsolutePath()); 
         System.setOut(outStream);
-        Date date = new Date();
-        String header = "[" + getClass().getName() + " : " + date.toString() + "]";
-        _log.info(header + " starting interop client");
+        System.setErr(errStream);
+        _log.info("starting interop client");
       }
       else{
         _log.warn("System property not set: " + CORUS_PROCESS_DIR + 

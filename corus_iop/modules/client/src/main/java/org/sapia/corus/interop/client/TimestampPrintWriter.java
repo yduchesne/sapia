@@ -31,57 +31,66 @@ class TimestampPrintWriter extends PrintWriter {
   }
 
   @Override
-  public void println(boolean arg0) {
+  public void println(boolean x) {
     timestamp();
-    super.println(arg0);
+    super.print(x);
+    super.println();
   }
 
   @Override
   public void println(char x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();
   }
 
   @Override
   public void println(char[] x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();
   }
 
   @Override
   public void println(double x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();
   }
 
   @Override
   public void println(float x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();
   }
 
   @Override
   public void println(int x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();;
   }
 
   @Override
   public void println(long x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();;
   }
 
   @Override
   public void println(Object x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();
   }
 
   @Override
   public void println(String x) {
     timestamp();
-    super.println(x);
+    super.print(x);
+    super.println();
   }
 
   private synchronized void timestamp() {
