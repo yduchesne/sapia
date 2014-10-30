@@ -32,6 +32,20 @@ public interface Configurator extends java.rmi.Remote, Module {
 
   public enum PropertyScope {
     PROCESS, SERVER;
+
+    /**
+     * @param name a scope name.
+     * @return the {@link PropertyScope} corresponding to the given name.
+     */
+    public static final PropertyScope forName(String name) {
+      if (name.startsWith("p")) {
+        return PROCESS;
+      } else if (name.startsWith("s")) {
+        return SERVER;
+      } else {
+        throw new IllegalArgumentException("Expected either p or s, got: " + name);
+      }
+    }
   }
 
   /**
@@ -136,10 +150,10 @@ public interface Configurator extends java.rmi.Remote, Module {
   public void removeTag(Arg tag);
 
   /**
-   * @return a {@link Set} of {@link String}s corresponding to the tags held by
+   * @return a {@link Set} of {@link Tag}s corresponding to the tags held by
    *         this instance.
    */
-  public Set<String> getTags();
+  public Set<Tag> getTags();
 
   /**
    * Clears all the tags held by this instance.

@@ -2,6 +2,8 @@ package org.sapia.corus.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.sapia.corus.client.services.http.HttpRequestFacade;
 import org.simpleframework.http.Request;
@@ -29,6 +31,21 @@ public class DefaultHttpRequestFacade implements HttpRequestFacade {
   @Override
   public String getHeader(String name) {
     return request.getValue(name);
+  }
+  
+  @Override
+  public Set<String> getAccepts() {
+    return new HashSet<String>(request.getValues("Accept"));
+  }
+  
+  @Override
+  public String getContentType() {
+    return request.getContentType() == null ? null : request.getContentType().getType();
+  }
+  
+  @Override
+  public String getMethod() {
+    return request.getMethod();
   }
 
   @Override
