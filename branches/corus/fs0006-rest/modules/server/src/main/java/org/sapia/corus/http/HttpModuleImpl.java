@@ -8,6 +8,7 @@ import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.http.filesystem.FileSystemExtension;
 import org.sapia.corus.http.interop.SoapExtension;
 import org.sapia.corus.http.jmx.JmxExtension;
+import org.sapia.corus.http.rest.RestExtension;
 import org.sapia.ubik.rmi.server.transport.http.HttpTransportProvider;
 
 /**
@@ -47,13 +48,10 @@ public class HttpModuleImpl extends ModuleHelper implements HttpModule {
    * @see Service#start()
    */
   public void start() throws Exception {
-
-    // ////////// adding default extensions ///////////
-
-    addHttpExtension(new FileSystemExtension(serverContext()));
-    addHttpExtension(new JmxExtension(serverContext()));
-    SoapExtension ext = new SoapExtension(serverContext());
-    addHttpExtension(ext);
+    addHttpExtension(new FileSystemExtension(serverContext));
+    addHttpExtension(new JmxExtension(serverContext));
+    addHttpExtension(new RestExtension(serverContext));
+    addHttpExtension(new SoapExtension(serverContext));
   }
 
   /**

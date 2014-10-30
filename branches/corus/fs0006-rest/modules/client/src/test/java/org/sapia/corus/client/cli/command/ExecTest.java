@@ -21,7 +21,7 @@ public class ExecTest {
   public void testValidateOption_cluster() {
     exec.validate(CmdLine.parse("-cluster"));
   }
-
+  
   @Test
   public void testValidateOption_e() {
     exec.validate(CmdLine.parse("-e e"));

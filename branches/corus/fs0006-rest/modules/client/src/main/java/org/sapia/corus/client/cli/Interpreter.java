@@ -3,6 +3,7 @@ package org.sapia.corus.client.cli;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.text.StrLookup;
@@ -10,18 +11,26 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.sapia.console.AbortException;
+import org.sapia.console.CmdElement;
 import org.sapia.console.CmdLine;
 import org.sapia.console.Command;
 import org.sapia.console.CommandNotFoundException;
 import org.sapia.console.Console;
 import org.sapia.console.ConsoleInput;
 import org.sapia.console.ConsoleOutput;
-import org.sapia.console.TerminalFacade;
 import org.sapia.console.ConsoleOutput.DefaultConsoleOutput;
 import org.sapia.console.InputException;
+import org.sapia.console.Option;
+import org.sapia.console.TerminalFacade;
+import org.sapia.corus.client.ClientDebug;
+import org.sapia.corus.client.ClusterInfo;
+import org.sapia.corus.client.cli.command.CorusCliCommand;
+import org.sapia.corus.client.cli.command.CorusCliCommand.OptionDef;
 import org.sapia.corus.client.facade.CorusConnector;
 import org.sapia.corus.client.facade.FacadeInvocationContext;
 import org.sapia.corus.client.sort.SortSwitchInfo;
+import org.sapia.ubik.net.ServerAddress;
+import org.sapia.ubik.net.TCPAddress;
 
 /**
  * This class implements a {@link Console} that may be embedded in applications
@@ -35,7 +44,8 @@ public class Interpreter extends Console {
   private static final String COMMENT_MARKER = "#";
 
   private CorusCommandFactory commandFactory = new CorusCommandFactory();
-  private CorusConnector corus;
+  private CorusConnector      corus;
+  private ClusterInfo         clusterInfo;
 
   /**
    * Creates an instance of this class that sends command output to the console.
@@ -51,7 +61,7 @@ public class Interpreter extends Console {
         corus
     );
   }
-
+  
   /**
    * @param output
    *          the {@link ConsoleOutput} to which command output will be sent.
@@ -62,6 +72,14 @@ public class Interpreter extends Console {
     super(new InterpreterConsoleInput(), output);
     this.corus = corus;
   }
+  
+  /**
+   * @param info the {@link ClusterInfo} instance to use.
+   */
+  public void setAutoCluster(ClusterInfo info) {
+    this.clusterInfo = info;
+  }
+  
   
   /**
    * @param parent
@@ -160,7 +178,7 @@ public class Interpreter extends Console {
         AtomicReference<SortSwitchInfo[]> switches = new AtomicReference<SortSwitchInfo[]>();
         switches.set(new SortSwitchInfo[]{});
         CliContextImpl ctx = new CliContextImpl(corus, new AutoFlushedBoundedList<CliError>(10), vars, switches);
-        ctx.setUp(this, cmdLine);
+        ctx.setUp(this, preprocess(cmd, cmdLine));
         ctx.setAbortOnError(true);
         try {
           cmd.execute(ctx);
@@ -189,7 +207,33 @@ public class Interpreter extends Console {
   public Object get() {
     return FacadeInvocationContext.get();
   }
-
+  
+  private CmdLine preprocess(Command command, CmdLine cmd) {
+    if (command instanceof CorusCliCommand && clusterInfo != null) {
+      CorusCliCommand cliCmd = (CorusCliCommand) command;
+      CmdLine newCmd = cmd;
+      for (OptionDef def : cliCmd.getAvailableOptions()) {
+        if (def.equals(CorusCliCommand.OPT_CLUSTER)) {
+          newCmd = new CmdLine();
+          for (int i = 0; i < cmd.size(); i++) {
+            CmdElement cmdElem = cmd.get(i);
+            if (cmdElem instanceof Option && ((Option) cmdElem).getName().equals(CorusCliCommand.OPT_CLUSTER.getName())) {
+              Option newOpt = new Option(CorusCliCommand.OPT_CLUSTER.getName(), clusterInfo.toString());
+              newCmd.addElement(newOpt);
+            } else {
+              newCmd.addElement(cmdElem);
+            }
+          }
+        }
+      }
+      if (newCmd != cmd) {
+        ClientDebug.get(getClass()).trace("Processed command: %s %s", cliCmd.getName(), newCmd);
+      }
+      return newCmd;
+    }
+    return cmd;
+  }
+  
   // ==========================================================================
 
   static class InterpreterConsoleInput implements ConsoleInput {

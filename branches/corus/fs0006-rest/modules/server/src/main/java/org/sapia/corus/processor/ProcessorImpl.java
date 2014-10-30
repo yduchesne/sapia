@@ -1,5 +1,6 @@
 package org.sapia.corus.processor;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,6 +23,8 @@ import org.sapia.corus.client.services.deployer.dist.ProcessConfig;
 import org.sapia.corus.client.services.deployer.event.UndeploymentEvent;
 import org.sapia.corus.client.services.event.EventDispatcher;
 import org.sapia.corus.client.services.http.HttpModule;
+import org.sapia.corus.client.services.os.OsModule;
+import org.sapia.corus.client.services.port.PortManager;
 import org.sapia.corus.client.services.processor.ExecConfig;
 import org.sapia.corus.client.services.processor.KillPreferences;
 import org.sapia.corus.client.services.processor.ProcStatus;
@@ -75,6 +78,10 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
   private EventDispatcher events;
   @Autowired
   private HttpModule http;
+  @Autowired
+  private PortManager portManager;
+  @Autowired
+  private OsModule os;
 
   private ProcessRepository processes;
   private ExecConfigDatabaseImpl execConfigs;
@@ -108,7 +115,7 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
     // of time that is longer then some process' tolerated idle delay).
     List<Process> processes = (List<Process>) active.getProcesses(ProcessCriteria.builder().all());
     Process proc;
-
+    
     for (int i = 0; i < processes.size(); i++) {
       proc = (Process) processes.get(i);
       if (proc.getStatus() == LifeCycleStatus.KILL_CONFIRMED) {
@@ -125,7 +132,16 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
         proc.save();
       }
     }
-
+    
+    // remove processes in auto-restart - put them back in active process list
+    // if process is down, it will not poll and enter the shutdown procedure, 
+    // eventually cleaning it up definitively
+    for (Process p : toRestart.getProcesses(ProcessCriteria.builder().all())) {
+      toRestart.removeProcess(p.getProcessID());
+      p.setStatus(LifeCycleStatus.ACTIVE);
+      active.addProcess(p);
+    }
+    
     if (!configuration.autoRestartStaleProcesses()) {
       log.warn("Process auto-restart is disabled. Stale processes will not automatically be restarted");
     }
@@ -188,6 +204,38 @@ public class ProcessorImpl extends ModuleHelper implements Processor {
 
     return progress;
 
+  }
+  
+  @Override
+  public void clean() {
+    for (Process p : processes.getProcessesToRestart().getProcesses(ProcessCriteria.builder().all())) {
+      processes.getProcessesToRestart().removeProcess(p.getProcessID());
+      p.releasePorts(portManager);
+    }
+
+    for (Process p : processes.getSuspendedProcesses().getProcesses(ProcessCriteria.builder().all())) {
+      processes.getSuspendedProcesses().removeProcess(p.getProcessID());
+      p.releasePorts(portManager);
+    }
+    
+    for (Process p : processes.getActiveProcesses().getProcesses(ProcessCriteria.builder().all())) {
+      // trying to kill stale process, just it case it is zombie
+      if (p.getStatus() == LifeCycleStatus.STALE) {
+        try {
+          os.killProcess(new OsModule.LogCallback() {
+            @Override
+            public void error(String error) {
+            }
+            @Override
+            public void debug(String msg) {
+            }
+          }, p.getOsPid());
+        } catch (IOException e) {
+        }
+        processes.getActiveProcesses().removeProcess(p.getProcessID());
+        p.releasePorts(portManager);
+      }
+    }
   }
 
   @Override
