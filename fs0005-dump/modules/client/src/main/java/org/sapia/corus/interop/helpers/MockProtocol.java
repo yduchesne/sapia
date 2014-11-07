@@ -1,5 +1,6 @@
 package org.sapia.corus.interop.helpers;
 
+import org.sapia.corus.interop.AbstractCommand;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.interop.soap.FaultException;
 
@@ -18,6 +19,7 @@ import java.util.List;
  * </dl>
  */
 class MockProtocol extends ClientStatelessSoapStreamHelper {
+  
   protected MockStreamListener _listener;
 
   protected MockProtocol(String corusPid, MockStreamListener listener) {
@@ -33,7 +35,7 @@ class MockProtocol extends ClientStatelessSoapStreamHelper {
     super.doSendConfirmShutdown();
   }
 
-  public List poll() throws FaultException, IOException {
+  public List<AbstractCommand> poll() throws FaultException, IOException {
     return super.doSendPoll();
   }
 
@@ -41,11 +43,17 @@ class MockProtocol extends ClientStatelessSoapStreamHelper {
     super.doSendRestart();
   }
 
-  public List sendStatus(Status stat) throws FaultException, IOException {
+  public List<AbstractCommand> sendStatus(Status stat) throws FaultException, IOException {
     return super.doSendStatus(stat, false);
   }
 
-  public List pollAndSendStatus(Status stat) throws FaultException, IOException {
+  public List<AbstractCommand> pollAndSendStatus(Status stat) throws FaultException, IOException {
     return super.doSendStatus(stat, true);
   }
+
+  @Override
+  public void confirmDump() throws FaultException, IOException {
+    super.doSendConfirmDump();
+  }
+  
 }

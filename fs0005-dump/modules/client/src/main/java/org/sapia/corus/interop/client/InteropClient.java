@@ -73,7 +73,6 @@ import org.sapia.corus.interop.soap.FaultException;
  * <b>IMPORTANT</b>: it is important that corus-aware applications terminate using the above approach -
  * and not <code>System.exit()</code>. This is to avoid an auto-restart by the corus server, that will then
  * not know about the VM's shutdown.
- *s   
  * </p>
  * 
  *
@@ -88,6 +87,7 @@ import org.sapia.corus.interop.soap.FaultException;
  * </dl>
  */
 public class InteropClient implements Consts, Implementation {
+  
   public static final int UNDEFINED_PORT = -1;
   static InteropClient    _instance;
   InteropProtocol         _proto;
@@ -458,8 +458,8 @@ public class InteropClient implements Consts, Implementation {
         File errFile  = new File(procDir, "stderr.txt");
         File outFile  = new File(procDir, "stdout.txt");
 
-        PrintStream errStream = new PrintStream(new FileOutputStream(errFile), true);
-        PrintStream outStream = new PrintStream(new FileOutputStream(outFile), true);        
+        PrintStream errStream = new PrintStream(new FileOutputStream(errFile, true), true);
+        PrintStream outStream = new PrintStream(new FileOutputStream(outFile, true), true);        
         _log.debug("stdout --> " + outFile.getAbsolutePath());        
         _log.debug("stderr --> " + errFile.getAbsolutePath());        
         System.setErr(errStream);

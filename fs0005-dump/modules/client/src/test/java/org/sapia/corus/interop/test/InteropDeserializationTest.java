@@ -6,6 +6,8 @@ import junit.textui.TestRunner;
 
 import org.sapia.corus.interop.Ack;
 import org.sapia.corus.interop.ConfirmShutdown;
+import org.sapia.corus.interop.Dump;
+import org.sapia.corus.interop.Dump.DumpType;
 import org.sapia.corus.interop.InteropProcessor;
 import org.sapia.corus.interop.Param;
 import org.sapia.corus.interop.Poll;
@@ -288,6 +290,34 @@ public class InteropDeserializationTest extends TestCase {
     assertEquals("val1", params.get("name1"));
     assertEquals("val2", params.get("name2"));
     
+  }
+
+  /**
+   *
+   */
+  public void testDumpRequest() throws Exception {
+    String anXmlBody =
+            "<CORUS-IOP:Dump xmlns:CORUS-IOP=\"http://schemas.sapia-oss.org/corus/interoperability/\"" +
+            " commandId=\"8765\"" +
+            " type=\"thread\"" +
+            " outputFile=\"somewhere.txt\" />";
+    String aDumpRequest = createSoapResponse(anXmlBody);
+
+    Object aResult = _theProcessor.deserialize(new ByteArrayInputStream(aDumpRequest.getBytes()));
+    assertNotNull("The result object should not be null", aResult);
+    assertTrue("The result object is not an Envelope", aResult instanceof Envelope);
+
+    Envelope anEnvelope = (Envelope) aResult;
+    assertResponse(anEnvelope);
+
+    Body aBody = anEnvelope.getBody();
+    assertEquals("The size of the object list of the body is invalid", 1, aBody.getObjects().size());
+    assertTrue("The object of the body is not a Dump", aBody.getObjects().get(0) instanceof Dump);
+
+    Dump aDump = (Dump) aBody.getObjects().get(0);
+    assertEquals("The command id of the dump request is invalid", "8765", aDump.getCommandId());
+    assertEquals("The type of the dump request is invalid", DumpType.THREAD, aDump.getType());
+    assertEquals("The output file of the dump request is invalid", "somewhere.txt", aDump.getOutputFile());
   }
 
   /**

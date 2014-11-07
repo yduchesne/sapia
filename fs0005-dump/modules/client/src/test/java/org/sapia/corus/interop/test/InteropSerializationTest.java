@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 import org.sapia.corus.interop.Ack;
+import org.sapia.corus.interop.ConfirmDump;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.InteropProcessor;
 import org.sapia.corus.interop.Param;
@@ -167,6 +168,30 @@ public class InteropSerializationTest extends TestCase {
     String aSoapBody =
             "<CORUS-IOP:ConfirmShutdown xmlns:CORUS-IOP=\"http://schemas.sapia-oss.org/corus/interoperability/\"" +
             " commandId=\"675434\" />";
+
+    assertRequest(aSoapBody, aResult);
+  }
+
+  /**
+   *
+   */
+  public void testConfirmDumpRequest() throws Exception {
+    ConfirmDump aConfirmCommand = new ConfirmDump();
+    aConfirmCommand.setCommandId("675544");
+
+    // Create the SOAP envelope
+    Envelope anEnveloppe = createSoapRequest();
+    anEnveloppe.getBody().addObject(aConfirmCommand);
+
+    // Serialize the envelope with the idefix processor
+    ByteArrayOutputStream anOutput = new ByteArrayOutputStream();
+    _theProcessor.serialize(anEnveloppe, anOutput);
+
+    String aResult = anOutput.toString("UTF-8");
+
+    String aSoapBody =
+            "<CORUS-IOP:ConfirmDump xmlns:CORUS-IOP=\"http://schemas.sapia-oss.org/corus/interoperability/\"" +
+            " commandId=\"675544\" />";
 
     assertRequest(aSoapBody, aResult);
   }

@@ -21,6 +21,7 @@ import org.sapia.util.xml.idefix.XmlBuffer;
  * </dl>
  */
 public class SoapSerializer implements SerializerIF {
+  
   /**
    * Serializes the Envelope passed in into XML.
    *
@@ -30,8 +31,7 @@ public class SoapSerializer implements SerializerIF {
    * @throws SerializationException If an error occurs while serializing the envelope.
    */
   public void serializeEnvelope(Envelope anEnvelope, Namespace aNamespace,
-                                SerializationContext aContext)
-                         throws SerializationException {
+                                SerializationContext aContext) throws SerializationException {
     try {
       XmlBuffer aBuffer = aContext.getXmlBuffer();
 
@@ -65,12 +65,12 @@ public class SoapSerializer implements SerializerIF {
 
       // End the Envelope Element
       aBuffer.endElement(aNamespace.getURI(), "Envelope").removeNamespace(aNamespace.getURI());
+      
     } catch (SerializerNotFoundException snfe) {
-      throw new SerializationException("Unable to get a serializer for the content of the Envelope",
-                                       snfe);
+      throw new SerializationException("Unable to get a serializer for the content of the Envelope", snfe);
+      
     } catch (SerializationException se) {
-      throw new SerializationException("Unable to serialize the content of the Envelope",
-                                       se);
+      throw new SerializationException("Unable to serialize the content of the Envelope", se);
     }
   }
 
@@ -83,8 +83,7 @@ public class SoapSerializer implements SerializerIF {
    * @throws SerializationException If an error occurs while serializing the fault.
    */
   public void serializeFault(Fault aFault, Namespace aNamespace,
-                             SerializationContext aContext)
-                      throws SerializationException {
+                             SerializationContext aContext) throws SerializationException {
     XmlBuffer aBuffer = aContext.getXmlBuffer();
 
     // Start the Fault element 
@@ -119,12 +118,12 @@ public class SoapSerializer implements SerializerIF {
         aBuffer.startElement("detail");
         aSerializer.serialize(aFault.getDetail(), aContext);
         aBuffer.endElement("detail");
+        
       } catch (SerializerNotFoundException snfe) {
-        throw new SerializationException("Unable to get a serializer for the detail of the Fault",
-                                         snfe);
+        throw new SerializationException("Unable to get a serializer for the detail of the Fault", snfe);
+        
       } catch (SerializationException se) {
-        throw new SerializationException("Unable to serialize the detail of the Fault",
-                                         se);
+        throw new SerializationException("Unable to serialize the detail of the Fault", se);
       }
     }
 
@@ -139,8 +138,7 @@ public class SoapSerializer implements SerializerIF {
    * @param aContext The serialization context to use.
    * @exception SerializationException If an error occurs serializing the object.
    */
-  public void serialize(Object anObject, SerializationContext aContext)
-                 throws SerializationException {
+  public void serialize(Object anObject, SerializationContext aContext) throws SerializationException {
     Namespace aNamespace = aContext.getNamespaceFactory().getNamespaceFor(anObject.getClass());
     serialize(anObject, aNamespace, "", aContext);
   }
@@ -156,15 +154,16 @@ public class SoapSerializer implements SerializerIF {
    * @exception SerializationException If an error occurs serializing the object.
    */
   public void serialize(Object anObject, Namespace aNamespace,
-                        String anObjectName, SerializationContext aContext)
-                 throws SerializationException {
+                        String anObjectName, SerializationContext aContext) throws SerializationException {
     if (anObject instanceof Envelope) {
       serializeEnvelope((Envelope) anObject, aNamespace, aContext);
+      
     } else if (anObject instanceof Fault) {
       serializeFault((Fault) anObject, aNamespace, aContext);
+      
     } else {
-      throw new SerializationException("Unable to serialize the object: " +
-                                       anObject);
+      throw new SerializationException("Unable to serialize the object: " + anObject);
     }
   }
+  
 }

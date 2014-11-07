@@ -85,22 +85,21 @@ class InteropClientThread extends Thread {
       _parent._log.debug("Starting interop client thread");
 
     while (true) {
-	  try {
-	    if(_parent._log.isDebugEnabled())
-	      _parent._log.debug(String.format("Sleeping for %s...", _analysisInterval));
-	    
-		  Thread.sleep(_analysisInterval);
-	  } catch (InterruptedException e) {
-	    _parent._log.warn("Interop thread was interrupted");
-		  break;
-	  }      
+  	  try {
+  	    if(_parent._log.isDebugEnabled())
+  	      _parent._log.debug(String.format("Sleeping for %s...", _analysisInterval));
+  	    
+  		  Thread.sleep(_analysisInterval);
+  	  } catch (InterruptedException e) {
+  	    _parent._log.warn("Interop thread was interrupted");
+  		  break;
+  	  }      
 	  
   	  if(_parent._proto == null){
   	    _parent._log.info("Protocol not set on InteropClient; will not be polling Corus");
-  	  }
-  	  else {
+  	  } else {
         try {
-          if(_parent._log.isDebugEnabled())
+          if (_parent._log.isDebugEnabled())
             _parent._log.debug("Checking if polling is due...");
           
           List<AbstractCommand> response = new ArrayList<AbstractCommand>();
@@ -136,8 +135,7 @@ class InteropClientThread extends Thread {
           for (int i = 0; i < response.size(); i++) {
             command = (AbstractCommand) response.get(i);
             if(_parent._log.isDebugEnabled())
-              _parent._log.debug("Command received from corus server; command ID is: " +
-                                 command.getCommandId());
+              _parent._log.debug("Command received from corus server; command ID is: " + command.getCommandId());
 
             if (command instanceof Ack) {
               if(_parent._log.isDebugEnabled())
@@ -149,8 +147,7 @@ class InteropClientThread extends Thread {
               break;
             } else if (command instanceof Shutdown) {
               Shutdown sh = (Shutdown) command;
-              _parent._log.info("Shutdown requested from: " +
-                                sh.getRequestor());
+              _parent._log.info("Shutdown requested from: " + sh.getRequestor());
               _parent.shutdown();
 
               break;
