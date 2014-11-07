@@ -14,6 +14,7 @@ import java.util.List;
  * communication between a dynamic VM and its corus server.
  *
  * @author Yanick Duchesne
+ * @author Jean-Cedric Desrochers
  *
  * <dl>
  * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
@@ -22,6 +23,7 @@ import java.util.List;
  * </dl>
  */
 public interface InteropProtocol {
+  
   /**
    * Sets this instance's <code>Log</code>.
    *
@@ -79,4 +81,14 @@ public interface InteropProtocol {
    * the corus server.
    */
   public void confirmShutdown() throws FaultException, IOException;
+
+  /**
+   * Sends a dump confirmation to the corus server.
+   *
+   * @throws FaultException if the corus server a generated a SOAP fault.
+   * @throws IOException if a problem occurs while internally sending the request to
+   * the corus server.
+   */
+  public void confirmDump() throws FaultException, IOException;
+  
 }

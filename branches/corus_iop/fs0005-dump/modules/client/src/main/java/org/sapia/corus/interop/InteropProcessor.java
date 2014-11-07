@@ -37,6 +37,7 @@ import java.io.OutputStream;
  * </dl>
  */
 public class InteropProcessor {
+  
   /** Defines the namespace URI of inerop */
   public static final String INTEROP_NAMESPACE_URI = "http://schemas.sapia-oss.org/corus/interoperability/";
 
@@ -103,8 +104,7 @@ public class InteropProcessor {
     aSerializerFactory.registerSerializer(Fault.class, aSoapSerializer);
 
     // Create the Idefix processor
-    _theIdefixProcessor = IdefixProcessorFactory.newFactory().createProcessor(aSerializerFactory,
-                                                                              aCompositeNSFactory);
+    _theIdefixProcessor = IdefixProcessorFactory.newFactory().createProcessor(aSerializerFactory, aCompositeNSFactory);
   }
 
   /**
@@ -138,8 +138,7 @@ public class InteropProcessor {
    * @throws ProcessingException If an error occurs while processing the envelope.
    * @throws IOException If an error occurs while writing to the output stream.
    */
-  public void serialize(Envelope anEnvelope, OutputStream anOutput)
-                 throws ProcessingException, IOException {
+  public void serialize(Envelope anEnvelope, OutputStream anOutput) throws ProcessingException, IOException {
     _theIdefixProcessor.process(anEnvelope, anOutput);
   }
 }

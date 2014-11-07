@@ -40,8 +40,14 @@ public class HelpersTest extends TestCase {
 
   public void testConfirmShutdown() throws Exception {
     _mock.confirmShutdown();
-    super.assertTrue(_listener.confirm);
+    super.assertTrue(_listener.confirmShutdown);
   }
+
+  public void testConfirmDump() throws Exception {
+    _mock.confirmDump();
+    super.assertTrue(_listener.confirmDump);
+  }
+
 
   public void testRestart() throws Exception {
     _mock.restart();

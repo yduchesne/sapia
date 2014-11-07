@@ -1,5 +1,7 @@
 package org.sapia.corus.interop.helpers;
 
+import org.sapia.corus.interop.AbstractCommand;
+import org.sapia.corus.interop.ConfirmDump;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.Poll;
 import org.sapia.corus.interop.Process;
@@ -20,29 +22,34 @@ import java.util.List;
  * </dl>
  */
 public class TestRequestListener implements RequestListener {
-  boolean confirm;
+  boolean confirmShutdown;
+  boolean confirmDump;
   boolean poll;
   boolean restart;
   boolean status;
 
-  public void onConfirmShutdown(Process proc, ConfirmShutdown confirm)
-                         throws Exception {
-    this.confirm = true;
+  public void onConfirmShutdown(Process proc, ConfirmShutdown confirm) throws Exception {
+    confirmShutdown = true;
   }
 
-  public List onPoll(Process proc, Poll poll) throws Exception {
+  public List<AbstractCommand> onPoll(Process proc, Poll poll) throws Exception {
     this.poll = true;
 
-    return new ArrayList();
+    return new ArrayList<AbstractCommand>();
   }
 
   public void onRestart(Process proc, Restart res) throws Exception {
     this.restart = true;
   }
 
-  public List onStatus(Process proc, Status stat) throws Exception {
+  public List<AbstractCommand> onStatus(Process proc, Status stat) throws Exception {
     this.status = true;
 
-    return new ArrayList();
+    return new ArrayList<AbstractCommand>();
+  }
+
+  @Override
+  public void onConfirmDump(Process proc, ConfirmDump confirm) throws Exception {
+    confirmDump = true;
   }
 }

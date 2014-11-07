@@ -24,13 +24,14 @@ public class TestProtocol implements InteropProtocol {
   int     pollCount;
   int     statCount;
   boolean restart;
-  boolean confirm;
+  boolean confirmShutdown;
+  boolean confirmDump;
 
   public void confirmShutdown() throws FaultException, IOException {
-    confirm = true;
+    confirmShutdown = true;
   }
 
-  public List poll() throws FaultException, IOException {
+  public List<AbstractCommand> poll() throws FaultException, IOException {
     pollCount++;
 
     return generateAck("POLL");
@@ -40,13 +41,13 @@ public class TestProtocol implements InteropProtocol {
     restart = true;
   }
 
-  public List sendStatus(Status stat) throws FaultException, IOException {
+  public List<AbstractCommand> sendStatus(Status stat) throws FaultException, IOException {
     statCount++;
 
     return generateAck("STATUS");
   }
 
-  public List pollAndSendStatus(Status stat) throws FaultException, IOException {
+  public List<AbstractCommand> pollAndSendStatus(Status stat) throws FaultException, IOException {
     pollCount++;
     statCount++;
 
@@ -57,11 +58,17 @@ public class TestProtocol implements InteropProtocol {
     this.log = log;
   }
   
-  private static List generateAck(String suffix) {
-    ArrayList list = new ArrayList(1);
+  private static List<AbstractCommand> generateAck(String suffix) {
+    ArrayList<AbstractCommand> list = new ArrayList<AbstractCommand>(1);
     Ack ack = new Ack();
     ack.setCommandId(++counter + suffix);
     list.add(ack);
     return list;
   }
+
+  @Override
+  public void confirmDump() throws FaultException, IOException {
+    confirmDump = true;
+  }
+  
 }

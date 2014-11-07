@@ -1,5 +1,7 @@
 package org.sapia.corus.interop.helpers;
 
+import org.sapia.corus.interop.AbstractCommand;
+import org.sapia.corus.interop.ConfirmDump;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.Poll;
 import org.sapia.corus.interop.Restart;
@@ -24,6 +26,7 @@ import java.util.List;
  * </dl>
  */
 public interface RequestListener {
+  
   /**
    * Called when a dynamic process confirms that it has proceeded to its own shutdown.
    *
@@ -32,9 +35,7 @@ public interface RequestListener {
    * @param confirm a <code>ConfirmShutdown</code> command instance.
    * @throws Exception if an error occurs when processing the given command.
    */
-  public void onConfirmShutdown(org.sapia.corus.interop.Process proc,
-                                ConfirmShutdown confirm)
-                         throws Exception;
+  public void onConfirmShutdown(org.sapia.corus.interop.Process proc, ConfirmShutdown confirm) throws Exception;
 
   /**
    * Called when a dynamic process notifies its corus server about its status.
@@ -46,8 +47,7 @@ public interface RequestListener {
    * @return the <code>List</code> of commands that were pending in the process queue, within the
    * corus server.
    */
-  public List onStatus(org.sapia.corus.interop.Process proc, Status stat)
-                throws Exception;
+  public List<AbstractCommand> onStatus(org.sapia.corus.interop.Process proc, Status stat) throws Exception;
 
   /**
    * Called when a dynamic process polls its corus server.
@@ -59,8 +59,7 @@ public interface RequestListener {
    * @return the <code>List</code> of commands that were pending in the process queue, within the
    * corus server.
    */
-  public List onPoll(org.sapia.corus.interop.Process proc, Poll poll)
-              throws Exception;
+  public List<AbstractCommand> onPoll(org.sapia.corus.interop.Process proc, Poll poll) throws Exception;
 
   /**
    * Called when a dynamic process notifies its corus server that it wishes to be restarted.
@@ -70,6 +69,16 @@ public interface RequestListener {
    * @param res a <code>Restart</code> command instance.
    * @throws Exception if an error occurs when processing the given command.
    */
-  public void onRestart(org.sapia.corus.interop.Process proc, Restart res)
-                 throws Exception;
+  public void onRestart(org.sapia.corus.interop.Process proc, Restart res) throws Exception;
+  
+  /**
+   * Called when a dynamic process confirms that it has proceeded to dump request.
+   *
+   * @param proc a <code>Process</code> object, encapsulating the corus process ID of the request's originator, and
+   * a request identifier.
+   * @param confirm a <code>ConfirmDump</code> command instance.
+   * @throws Exception if an error occurs when processing the given command.
+   */
+  public void onConfirmDump(org.sapia.corus.interop.Process proc, ConfirmDump confirm) throws Exception;
+  
 }

@@ -1,6 +1,8 @@
 package org.sapia.corus.interop.helpers;
 
+import org.sapia.corus.interop.AbstractCommand;
 import org.sapia.corus.interop.Ack;
+import org.sapia.corus.interop.ConfirmDump;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.InteropProcessor;
 import org.sapia.corus.interop.Poll;
@@ -49,6 +51,7 @@ import java.util.List;
  * </dl>
  */
 public class ServerStatelessSoapStreamHelper {
+  
   private RequestListener  _listener;
   private InteropProcessor _proc  = new InteropProcessor();
   private String           _actor;
@@ -76,8 +79,7 @@ public class ServerStatelessSoapStreamHelper {
    * @throws Exception if a problem occurs while processing the request, and if no SOAP
    * fault could be sent back to the client.
    */
-  public void processRequest(InputStream request, OutputStream response)
-                      throws Exception {
+  public void processRequest(InputStream request, OutputStream response) throws Exception {
     long start = System.currentTimeMillis();
 
     try {
@@ -119,24 +121,25 @@ public class ServerStatelessSoapStreamHelper {
       }
 
       // Process the commands
-      List commands = new ArrayList();
-      for (Iterator it = env.getBody().getObjects().iterator(); it.hasNext(); ) {
+      List<AbstractCommand> commands = new ArrayList<AbstractCommand>();
+      for (Iterator<Object> it = env.getBody().getObjects().iterator(); it.hasNext(); ) {
         Object command = it.next();
 
         if (command instanceof Poll) {
-          if (command instanceof Poll) {
-            List pollCommands = _listener.onPoll(proc, (Poll) command);
-            commands.addAll(pollCommands);
-          }
+          List<AbstractCommand> pollCommands = _listener.onPoll(proc, (Poll) command);
+          commands.addAll(pollCommands);
 
         } else if (command instanceof Status) {
           if (command instanceof Status) {
-            List statusCommands = _listener.onStatus(proc, (Status) command);
+            List<AbstractCommand> statusCommands = _listener.onStatus(proc, (Status) command);
             commands.addAll(statusCommands);
           }
 
         } else if (command instanceof ConfirmShutdown) {
           _listener.onConfirmShutdown(proc, (ConfirmShutdown) command);
+
+        } else if (command instanceof ConfirmDump) {
+          _listener.onConfirmDump(proc, (ConfirmDump) command);
 
         } else if (command instanceof Restart) {
           _listener.onRestart(proc, (Restart) command);
@@ -149,16 +152,17 @@ public class ServerStatelessSoapStreamHelper {
       } else {
         sendAck(response, System.currentTimeMillis() - start);
       }
+      
     } catch (Exception e) {
       sendFault(response, e, System.currentTimeMillis() - start);
+      
     } finally {
       request.close();
       response.close();
     }
   }
 
-  protected void sendFault(OutputStream out, Exception e, long processingTime)
-                    throws Exception {
+  protected void sendFault(OutputStream out, Exception e, long processingTime) throws Exception {
     Fault                 f   = new Fault();
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     PrintWriter           pw  = new PrintWriter(bos);
@@ -169,22 +173,21 @@ public class ServerStatelessSoapStreamHelper {
     f.setFaultactor(_actor);
     f.setFaultstring(e.getMessage());
     f.setFaultcode("500");
+    
     sendResponse(out, f, processingTime);
   }
 
-  protected void sendAck(OutputStream out, long processingTime)
-                  throws Exception {
+  protected void sendAck(OutputStream out, long processingTime) throws Exception {
     Ack ack = new Ack();
     ack.setCommandId(CyclicIdGenerator.newCommandId());
     sendResponse(out, ack, processingTime);
   }
 
-  protected void sendResponse(OutputStream out, Object toSend,
-                              long processingTime) throws Exception {
+  protected void sendResponse(OutputStream out, Object toSend, long processingTime) throws Exception {
     Envelope env = createSoapResponse(processingTime);
 
     if (toSend instanceof Collection) {
-      Iterator itr = ((Collection) toSend).iterator();
+      Iterator<?> itr = ((Collection<?>) toSend).iterator();
 
       while (itr.hasNext()) {
         env.getBody().addObject(itr.next());
@@ -211,4 +214,5 @@ public class ServerStatelessSoapStreamHelper {
 
     return env;
   }
+  
 }

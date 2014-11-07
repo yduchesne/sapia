@@ -1,5 +1,6 @@
 package org.sapia.corus.interop.http;
 
+import org.sapia.corus.interop.AbstractCommand;
 import org.sapia.corus.interop.Status;
 import org.sapia.corus.interop.client.InteropClient;
 import org.sapia.corus.interop.helpers.ClientStatelessSoapStreamHelper;
@@ -39,7 +40,7 @@ import java.util.List;
  * </dl>
  */
 public class HttpProtocol extends ClientStatelessSoapStreamHelper {
-  private static final List EMPTY_LST  = new ArrayList();
+  private static final List<AbstractCommand> EMPTY_LST  = new ArrayList<AbstractCommand>();
   private URL               _corusUrl;
 
   public HttpProtocol() throws MalformedURLException {
@@ -75,9 +76,19 @@ public class HttpProtocol extends ClientStatelessSoapStreamHelper {
   }
 
   /**
+   */
+  public void confirmDump() throws FaultException, IOException {
+    if (_corusUrl == null) {
+      return;
+    }
+
+    super.doSendConfirmDump();
+  }
+
+  /**
    * @see org.sapia.corus.interop.client.InteropProtocol#poll()
    */
-  public List poll() throws FaultException, IOException {
+  public List<AbstractCommand> poll() throws FaultException, IOException {
     if (_corusUrl == null) {
       return EMPTY_LST;
     }
@@ -99,7 +110,7 @@ public class HttpProtocol extends ClientStatelessSoapStreamHelper {
   /**
    * @see org.sapia.corus.interop.client.InteropProtocol#sendStatus(Status)
    */
-  public List sendStatus(Status stat) throws FaultException, IOException {
+  public List<AbstractCommand> sendStatus(Status stat) throws FaultException, IOException {
     if (_corusUrl == null) {
       return EMPTY_LST;
     }
@@ -110,7 +121,7 @@ public class HttpProtocol extends ClientStatelessSoapStreamHelper {
   /**
    * @see org.sapia.corus.interop.client.InteropProtocol#pollAndSendStatus(Status)
    */
-  public List pollAndSendStatus(Status stat) throws FaultException, IOException {
+  public List<AbstractCommand> pollAndSendStatus(Status stat) throws FaultException, IOException {
     if (_corusUrl == null) {
       return EMPTY_LST;
     }

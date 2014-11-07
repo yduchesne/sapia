@@ -11,6 +11,9 @@ package org.sapia.corus.interop.soap;
  * </dl>
  */
 public class FaultException extends Exception {
+  
+  private static final long serialVersionUID = -6378918465068539068L;
+  
   private Fault _fault;
 
   public FaultException(Fault f) {

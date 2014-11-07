@@ -2,6 +2,9 @@ package org.sapia.corus.interop.helpers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
+import org.sapia.corus.interop.AbstractCommand;
+import org.sapia.corus.interop.ConfirmDump;
 import org.sapia.corus.interop.ConfirmShutdown;
 import org.sapia.corus.interop.InteropProcessor;
 import org.sapia.corus.interop.Poll;
@@ -24,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,6 +52,7 @@ import java.util.List;
  * </dl>
  */
 public abstract class ClientStatelessSoapStreamHelper implements InteropProtocol {
+
   private String           _corusPid;
   private InteropProcessor _soap     = new InteropProcessor();
   protected Log            _log      = new StdoutLog();
@@ -71,8 +76,7 @@ public abstract class ClientStatelessSoapStreamHelper implements InteropProtocol
    * @return a <code>StreamConnection</code>.
    * @throws IOException
    */
-  protected abstract StreamConnection newStreamConnection()
-                                                   throws IOException;
+  protected abstract StreamConnection newStreamConnection() throws IOException;
 
   protected void doSendConfirmShutdown() throws FaultException, IOException {
     ConfirmShutdown confirm = new ConfirmShutdown();
@@ -80,7 +84,13 @@ public abstract class ClientStatelessSoapStreamHelper implements InteropProtocol
     doSendRequest(new Object[] { confirm });
   }
 
-  protected List doSendPoll() throws FaultException, IOException {
+  protected void doSendConfirmDump() throws FaultException, IOException {
+    ConfirmDump confirm = new ConfirmDump();
+    confirm.setCommandId(CyclicIdGenerator.newCommandId());
+    doSendRequest(new Object[] { confirm });
+  }
+
+  protected List<AbstractCommand> doSendPoll() throws FaultException, IOException {
     Poll poll = new Poll();
     poll.setCommandId(CyclicIdGenerator.newCommandId());
 
@@ -93,7 +103,7 @@ public abstract class ClientStatelessSoapStreamHelper implements InteropProtocol
     doSendRequest(new Object[] { res });
   }
 
-  protected List doSendStatus(Status stat, boolean isPoll) throws FaultException, IOException {
+  protected List<AbstractCommand> doSendStatus(Status stat, boolean isPoll) throws FaultException, IOException {
     if (isPoll) {
       Poll poll = new Poll();
       poll.setCommandId(CyclicIdGenerator.newCommandId());
@@ -106,8 +116,7 @@ public abstract class ClientStatelessSoapStreamHelper implements InteropProtocol
     }
   }
 
-  protected synchronized List doSendRequest(Object[] toSend)
-                        throws FaultException, IOException {
+  protected synchronized List<AbstractCommand> doSendRequest(Object[] toSend) throws FaultException, IOException {
     Envelope env = createSoapRequest();
     for (int i = 0; i < toSend.length; i++) {
       _log.debug("Sending request to corus: " + toSend[i]);
@@ -129,24 +138,31 @@ public abstract class ClientStatelessSoapStreamHelper implements InteropProtocol
         is           = conn.getInputStream();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int read = 0;
-        while((read = is.read(_buf, 0, _buf.length)) > 0){
+        while((read = is.read(_buf, 0, _buf.length)) > 0) {
           bos.write(_buf, 0, read); 
         }
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
         Object response = _soap.deserialize(bis);
         env = (Envelope) response;
 
-        List toReturn = env.getBody().getObjects();
+        List<Object> responseObjects = env.getBody().getObjects();
 
-        if (toReturn.get(0) instanceof Fault) {
-          throw new FaultException((Fault) toReturn.get(0));
+        if (responseObjects.get(0) instanceof Fault) {
+          throw new FaultException((Fault) responseObjects.get(0));
+        }
+        
+        List<AbstractCommand> toReturn = new ArrayList<AbstractCommand>();
+        for (Object o: responseObjects) {
+          toReturn.add((AbstractCommand) o);
         }
 
         return toReturn;
+        
       } catch (ProcessingException e) {
         _log.fatal("Error performing XML/Object transformations", e);
         throw new IOException(e.getMessage());
       }
+      
     } finally {
       if ((os != null) && !outputClosed) {
         os.close();
@@ -172,4 +188,5 @@ public abstract class ClientStatelessSoapStreamHelper implements InteropProtocol
 
     return env;
   }
+  
 }
