@@ -1,12 +1,10 @@
 package org.sapia.corus.interop.client;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -79,12 +77,6 @@ import org.sapia.corus.interop.soap.FaultException;
  * @see org.sapia.corus.interop.http.HttpProtocol
  *
  * @author Yanick Duchesne
- *
- * <dl>
- * <dt><b>Copyright:</b><dd>Copyright &#169; 2002-2003 <a href="http://www.sapia-oss.org">Sapia Open Source Software</a>. All Rights Reserved.</dd></dt>
- * <dt><b>License:</b><dd>Read the license.txt file of the jar or visit the
- *        <a href="http://www.sapia-oss.org/license.html">license page</a> at the Sapia OSS web site</dd></dt>
- * </dl>
  */
 public class InteropClient implements Consts, Implementation {
   
@@ -455,18 +447,14 @@ public class InteropClient implements Consts, Implementation {
       
       if(System.getProperty(CORUS_PROCESS_DIR) != null){
         File procDir = new File(System.getProperty(CORUS_PROCESS_DIR).replace("\"", ""));
-        File errFile  = new File(procDir, "stderr.txt");
-        File outFile  = new File(procDir, "stdout.txt");
-
-        PrintStream errStream = new PrintStream(new FileOutputStream(errFile, true), true);
-        PrintStream outStream = new PrintStream(new FileOutputStream(outFile, true), true);        
-        _log.debug("stdout --> " + outFile.getAbsolutePath());        
-        _log.debug("stderr --> " + errFile.getAbsolutePath());        
-        System.setErr(errStream);
+        PrintStream outStream = new PrintStreamLogOutputAdapter(new StdoutFileLogOutput(procDir)); 
+        outStream.println("Redirected stdout to this file");
+        PrintStream errStream = new PrintStreamLogOutputAdapter(new StderrFileLogOutput(procDir));
+        errStream.println("Redirected stderr to this file");
+        _log.debug("Creating stdout and stderr logs to --> " + procDir.getAbsolutePath()); 
         System.setOut(outStream);
-        Date date = new Date();
-        String header = "[" + getClass().getName() + " : " + date.toString() + "]";
-        _log.info(header + " starting interop client");
+        System.setErr(errStream);
+        _log.info("starting interop client");
       }
       else{
         _log.warn("System property not set: " + CORUS_PROCESS_DIR + 
