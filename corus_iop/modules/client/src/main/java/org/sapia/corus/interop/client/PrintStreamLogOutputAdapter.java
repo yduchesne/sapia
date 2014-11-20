@@ -16,6 +16,8 @@ class PrintStreamLogOutputAdapter extends PrintStream {
   
   private StdLogOutput delegate;
   
+  StringBuilder buffer = new StringBuilder();
+  
   /**
    * @param delegate the {@link StdLogOutput} to which to log.
    */
@@ -24,23 +26,15 @@ class PrintStreamLogOutputAdapter extends PrintStream {
     this.delegate = delegate;
   }
   
+  /**
+   * @return this instance's buffer, used for <code>print</code> calls.
+   */
+  StringBuilder getBuffer() {
+    return buffer;
+  }
+  
   // --------------------------------------------------------------------------
   // Empty implementation
-  
-  @Override
-  public PrintStream append(char c) {
-    return this;
-  }
-  
-  @Override
-  public PrintStream append(CharSequence csq) {
-    return this;
-  }
-  
-  @Override
-  public PrintStream append(CharSequence csq, int start, int end) {
-    return this;
-  }
   
   @Override
   public boolean checkError() {
@@ -61,116 +55,151 @@ class PrintStreamLogOutputAdapter extends PrintStream {
   }
   
   // --------------------------------------------------------------------------
-  // Actual implementation
+  // append + print methods
+
+  @Override
+  public PrintStream append(char c) {
+    buffer.append(c);
+    return this;
+  }
+  
+  @Override
+  public PrintStream append(CharSequence csq) {
+    buffer.append(csq);
+    return this;
+  }
+  
+  @Override
+  public PrintStream append(CharSequence csq, int start, int end) {
+    buffer.append(csq, start, end);
+    return this;
+  }
   
   @Override
   public void print(boolean b) {
+    buffer.append(b);
   }
   
   @Override
   public void print(char c) {
+    buffer.append(c);
   }
   
   @Override
   public void print(char[] s) {
+    buffer.append(s);
   }
   
   @Override
   public void print(double d) {
+    buffer.append(d);
   }
   
   @Override
   public void print(float f) {
+    buffer.append(f);
   }
   
   @Override
   public void print(int i) {
+    buffer.append(i);
   }
   
   @Override
   public void print(long l) {
+    buffer.append(l);
   }
   
   @Override
   public void print(Object obj) {
+    buffer.append(obj);
   }
   
   @Override
   public void print(String s) {
+    buffer.append(s);
   }
   
   // --------------------------------------------------------------------------
-  // Actual implementation
+  // println methods
   
   @Override
   public PrintStream format(Locale l, String format, Object... args) {
+    buffer.append(String.format(l, format, args));
     return this;
   }
 
   @Override
   public PrintStream format(String format, Object... args) {
+    buffer.append(String.format(format, args));
     return this;
   }
   
   @Override
   public PrintStream printf(Locale l, String format, Object... args) {
-    delegate.log(String.format(l, format, args));
+    delegate.log(buffer() + String.format(l, format, args));
     return this;
   }
   
   @Override
   public PrintStream printf(String format, Object... args) {
-    delegate.log(String.format(format, args));
+    delegate.log(buffer() + String.format(format, args));
     return this;
   }
   
   @Override
   public void println() {
-    delegate.log("");
+    delegate.log(buffer() + "");
   }
   
   @Override
   public void println(boolean x) {
-    delegate.log(Boolean.toString(x));
+    delegate.log(buffer() + Boolean.toString(x));
   }
   
   @Override
   public void println(char x) {
-    delegate.log(Character.toString(x));
+    delegate.log(buffer() + Character.toString(x));
   }
   
   @Override
   public void println(double x) {
-    delegate.log(Double.toString(x));
+    delegate.log(buffer() + Double.toString(x));
   }
   
   @Override
   public void println(char[] x) {
-    delegate.log(new StringBuilder().append(x).toString());
+    delegate.log(buffer() + new StringBuilder().append(x).toString());
   }
   
   @Override
   public void println(float x) {
-    delegate.log(Float.toString(x));
+    delegate.log(buffer() + Float.toString(x));
   }
   
   @Override
   public void println(int x) {
-    delegate.log(Integer.toString(x));
+    delegate.log(buffer() + Integer.toString(x));
   }
   
   @Override
   public void println(long x) {
-    delegate.log(Long.toString(x));
+    delegate.log(buffer() + Long.toString(x));
   }
   
   @Override
   public void println(Object x) {
-    delegate.log(x != null ? x.toString() : "null");
+    delegate.log(x != null ? buffer() + x.toString() : buffer() + "null");
   }
   
   @Override
   public void println(String x) {
-    delegate.log(x != null ? x.toString(): "null");
+    delegate.log(x != null ? buffer() + x.toString(): buffer() + "null");
+  }
+ 
+  private String buffer() {
+    String toReturn = buffer.toString();
+    buffer.delete(0, buffer.length());
+    return toReturn;
   }
 }
