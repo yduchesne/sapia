@@ -1,9 +1,0 @@
-<help>
-  <section title="Description">
-   <p>Exits from the client console.</p>
-  </section>
-  <section title="Syntax">
-    <p>quit</p>
-    <p/>    
-  </section>
-</help>
