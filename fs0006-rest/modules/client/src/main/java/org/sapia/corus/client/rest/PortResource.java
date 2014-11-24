@@ -17,29 +17,27 @@ import org.sapia.corus.client.services.port.PortRange;
  */
 public class PortResource {
 
-  @Path({"/clusters/ports/ranges", "/clusters/{corus:cluster}/ports/ranges"})
+  @Path({
+    "/clusters/ports/ranges", 
+    "/clusters/{corus:cluster}/ports/ranges",
+    "/clusters/hosts/ports/ranges", 
+    "/clusters/{corus:cluster}/hosts/ports/ranges"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getPortRangesForAllClusters(RequestContext context) {
+  public String getPortRangesForCluster(RequestContext context) {
     return doGetPortRanges(context, ClusterInfo.clustered());
   }
   
-  // --------------------------------------------------------------------------
-  
-  @Path({"/clusters/hosts/ports/ranges", "/clusters/{corus:cluster}/hosts/ports/ranges"})
+  @Path({
+    "/clusters/hosts/{corus:host}/ports/ranges", 
+    "/clusters/{corus:cluster}/hosts/{corus:host}/ports/ranges"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getPortRangesForAllClusters2(RequestContext context) {
-    return getPortRangesForAllClusters(context);
-  }  
-  
-  @Path({"/clusters/hosts/{corus:host}/ports/ranges", "/clusters/{corus:cluster}/hosts/{corus:host}/ports/ranges"})
-  @HttpMethod(HttpMethod.GET)
-  @Output(ContentTypes.APPLICATION_JSON)
-  @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getPortRangesForClusterAndHost(RequestContext context) {
+  public String getPortRangesForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     return doGetPortRanges(context, cluster);
   }

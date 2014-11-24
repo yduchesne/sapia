@@ -1,14 +1,18 @@
 package org.sapia.corus.client.rest;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.sapia.corus.client.ClusterInfo;
 import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ArgFactory;
 import org.sapia.corus.client.common.NameValuePair;
 import org.sapia.corus.client.common.json.WriterJsonStream;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
+import org.sapia.ubik.util.Func;
 
 /**
  * A REST resources that gives access to process and server properties.
@@ -18,34 +22,35 @@ import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
  */
 public class PropertiesResource {
   
+  private static final String SCOPE_SERVER  = "server";
+  private static final String SCOPE_PROCESS = "process";
+  
   private static final String PASSWORD_SUBSTR = "password";
   private static final String OBFUSCATION     = "********";
 
-  @Path({"/clusters/properties", "/clusters/{corus:cluster}/properties"})
+  @Path({
+    "/clusters/properties/{corus:scope}", 
+    "/clusters/{corus:cluster}/properties/{corus:scope}",
+    "/clusters/hosts/properties/{corus:scope}", 
+    "/clusters/{corus:cluster}/hosts/properties/{corus:scope}"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getPropertiesForAllClusters(RequestContext context) {
+  public String getPropertiesForCluster(RequestContext context) {
     return doGetProperties(context, ClusterInfo.clustered());
   }
   
   // --------------------------------------------------------------------------
   
-  @Path({"/clusters/hosts/properties", "/clusters/{corus:cluster}/hosts/properties"})
+  @Path({
+    "/clusters/hosts/{corus:host}/properties/{corus:scope}", 
+    "/clusters/{corus:cluster}/hosts/{corus:host}/properties/{corus:scope}"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getPropertiesForAllClusters2(RequestContext context) {
-    return getPropertiesForAllClusters(context);
-  }  
-  
-  // --------------------------------------------------------------------------
-  
-  @Path({"/clusters/hosts/{corus:host}/properties", "/clusters/{corus:cluster}/hosts/{corus:host}/properties"})
-  @HttpMethod(HttpMethod.GET)
-  @Output(ContentTypes.APPLICATION_JSON)
-  @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getPropertiesForClusterAndHost(RequestContext context) {
+  public String getPropertiesForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     return doGetProperties(context, cluster);
   }
@@ -54,10 +59,32 @@ public class PropertiesResource {
   // Restricted methods
   
   private String doGetProperties(RequestContext context, ClusterInfo cluster) {
-    PropertyScope scope = PropertyScope.forName(context.getRequest().getValue("s", "p").asString());
+    String scopeValue = context.getRequest().getValue("corus:scope").asString();
+    PropertyScope scope;
+    if (scopeValue.equals(SCOPE_PROCESS)) {
+      scope = PropertyScope.PROCESS;
+    } else if (scopeValue.equals(SCOPE_SERVER)) {
+      scope = PropertyScope.SERVER;
+    } else {
+      throw new IllegalArgumentException(String.format("Invalid scope %s. Use one of the supported scopes: [process, server]", scopeValue));
+    }
+    
+    final Arg filter = ArgFactory.parse(context.getRequest().getValue("p", "*").asString());
+    
     Results<List<NameValuePair>> results = context.getConnector()
         .getConfigFacade().getProperties(scope, cluster);
-    
+    results = results.filter(new Func<List<NameValuePair>, List<NameValuePair>>() {
+      @Override
+      public List<NameValuePair> call(List<NameValuePair> toFilter) {
+        List<NameValuePair> toReturn = new ArrayList<>();
+        for (NameValuePair nvp: toFilter) {
+          if (filter.matches(nvp.getName())) {
+            toReturn.add(nvp);
+          }
+        }
+        return toReturn;
+      }
+    });
     return doProcessResults(context, results);
   }
   

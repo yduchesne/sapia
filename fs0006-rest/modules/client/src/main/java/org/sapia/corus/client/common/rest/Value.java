@@ -1,5 +1,9 @@
 package org.sapia.corus.client.common.rest;
 
+import java.util.List;
+import java.util.Set;
+
+import org.sapia.ubik.util.Collects;
 import org.sapia.ubik.util.Strings;
 
 /**
@@ -74,6 +78,26 @@ public class Value {
       throw new NumberFormatException("Value not set for " + name);
     }
     return Integer.parseInt(value);
+  }
+  
+  /**
+   * @return this instance's value, parsed as {@link Set} (expecting a comma-delimited list).
+   */
+  public Set<String> asSet() {
+    if (value == null) {
+      throw new NumberFormatException("Value not set for " + name);
+    }
+    return Collects.arrayToSet(value.split(","));
+  }
+  
+  /**
+   * @return this instance's value, parsed as {@link List} (expecting a comma-delimited list).
+   */
+  public List<String> asList() {
+    if (value == null) {
+      throw new NumberFormatException("Value not set for " + name);
+    }
+    return Collects.arrayToList(value.split(","));
   }
   
   @Override

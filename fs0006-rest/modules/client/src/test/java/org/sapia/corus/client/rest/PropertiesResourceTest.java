@@ -81,12 +81,12 @@ public class PropertiesResourceTest {
       .thenReturn(results);
     when(connector.getContext()).thenReturn(connection);
     when(request.getValue("corus:host")).thenReturn(new Value("corus:host", "localhost:33000"));
-    when(request.getValue("s", "p")).thenReturn(new Value("s", "p"));
+    when(request.getValue("corus:scope")).thenReturn(new Value("corus:scope", "process"));
   }
   
   @Test
-  public void testGetPropertiesForAllClusters() {
-    String response = resource.getPropertiesForAllClusters(new RequestContext(request, connector));
+  public void testGetPropertiesForCluster() {
+    String response = resource.getPropertiesForCluster(new RequestContext(request, connector));
     JSONArray json = JSONArray.fromObject(response);
     int count = 0;
     for (int i = 0; i < json.size(); i++) {
@@ -98,21 +98,8 @@ public class PropertiesResourceTest {
   }
 
   @Test
-  public void testGetPropertiesForAllClusters2() {
-    String response = resource.getPropertiesForAllClusters2(new RequestContext(request, connector));
-    JSONArray json = JSONArray.fromObject(response);
-    int count = 0;
-    for (int i = 0; i < json.size(); i++) {
-      JSONArray properties = json.getJSONObject(i).getJSONArray("data");
-      for (int j = 0; j < properties.size(); j++) {
-        doCheckProperty(properties.getJSONObject(j), count++);
-      }
-    }
-  }
-
-  @Test
-  public void testGetPropertiesForClusterAndHost() {
-    String response = resource.getPropertiesForClusterAndHost(new RequestContext(request, connector));
+  public void testGetPropertiesForHost() {
+    String response = resource.getPropertiesForHost(new RequestContext(request, connector));
     JSONArray json = JSONArray.fromObject(response);
     int count = 0;
     for (int i = 0; i < json.size(); i++) {

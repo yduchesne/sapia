@@ -1,6 +1,9 @@
 package org.sapia.corus.client.rest;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,6 +99,21 @@ public class RequestContext {
     @Override
     public Value getValue(String name, String defaultVal) {
       return delegate.getValue(name, defaultVal);
+    }
+    
+    @Override
+    public List<Value> getValues() {
+      return delegate.getValues();
+    }
+    
+    @Override
+    public InputStream getContent() throws IOException {
+      return delegate.getContent();
+    }
+    
+    @Override
+    public long getContentLength() {
+      return delegate.getContentLength();
     }
     
   }

@@ -2,15 +2,13 @@ package org.sapia.corus.client.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,18 +20,18 @@ import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
 import org.sapia.corus.client.common.rest.RestRequest;
 import org.sapia.corus.client.common.rest.Value;
+import org.sapia.corus.client.facade.ConfiguratorFacade;
 import org.sapia.corus.client.facade.CorusConnectionContext;
 import org.sapia.corus.client.facade.CorusConnector;
-import org.sapia.corus.client.facade.PortManagementFacade;
 import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
 import org.sapia.corus.client.services.cluster.Endpoint;
-import org.sapia.corus.client.services.port.PortRange;
+import org.sapia.corus.client.services.configurator.Tag;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PortResourceTest {
+public class TagResourceTest {
   
   @Mock
   private CorusConnector           connector;
@@ -45,17 +43,17 @@ public class PortResourceTest {
   private RestRequest              request;
   
   @Mock
-  private PortManagementFacade     ports;
+  private ConfiguratorFacade       confs;
   
-  private PortResource             resource;
-  private Results<List<PortRange>> results;
+  private TagResource              resource;
+  private Results<Set<Tag>> results;
   
   @Before
   public void setUp() throws Exception {
-    resource = new PortResource();
+    resource = new TagResource();
     
-    results = new Results<List<PortRange>>();
-    int rangeCount = 0;
+    results = new Results<Set<Tag>>();
+    int count = 0;
     for (int i = 0; i < 5; i++) {
       CorusHost host = CorusHost.newInstance(
           new Endpoint(new TCPAddress("test", "host-" + i, i), mock(ServerAddress.class)), 
@@ -64,55 +62,52 @@ public class PortResourceTest {
       );
       host.setHostName("hostname-" + i);
       host.setRepoRole(RepoRole.CLIENT);
-      List<PortRange> ranges = new ArrayList<PortRange>();
+      Set<Tag> tags = new HashSet<Tag>();
       for (int j = 0; j < 5; j++) {
-        PortRange pr = new PortRange(String.format("range-%s", rangeCount), rangeCount + 1, rangeCount + 2);
-        pr.acquire();
-        ranges.add(pr);
-        rangeCount++;
+        tags.add(new Tag("tag-" + count));
+        count++;
       }
-      Result<List<PortRange>> result = new Result<List<PortRange>>(host, ranges, Result.Type.COLLECTION);
+      Result<Set<Tag>> result = new Result<Set<Tag>>(host, tags, Result.Type.COLLECTION);
       results.addResult(result);
     }
     
     when(connection.getDomain()).thenReturn("test-cluster");
     when(connection.getVersion()).thenReturn("test-version");
-    when(connector.getPortManagementFacade()).thenReturn(ports);
-    when(ports.getPortRanges(any(ClusterInfo.class)))
-      .thenReturn(results);
+    when(connector.getConfigFacade()).thenReturn(confs);
+    when(confs.getTags(any(ClusterInfo.class))).thenReturn(results);
     when(connector.getContext()).thenReturn(connection);
     when(request.getValue("corus:host")).thenReturn(new Value("corus:host", "localhost:33000"));
-    when(request.getValue("p")).thenReturn(new Value("p", "test-profile"));
-    when(request.getValue(anyString(), anyString())).thenReturn(new Value("test", "*"));
+    when(request.getValue("corus:scope")).thenReturn(new Value("corus:scope", "process"));
   }
-  
+
   @Test
-  public void testGetPortRangesForClusters() {
-    String response = resource.getPortRangesForCluster(new RequestContext(request, connector));
+  public void testGetTagsForCluster() {
+    String response = resource.getTagsForCluster(new RequestContext(request, connector));
     JSONArray json = JSONArray.fromObject(response);
     int count = 0;
     for (int i = 0; i < json.size(); i++) {
-      JSONObject r = json.getJSONObject(i).getJSONObject("data");
-      doCheckPortRange(r, count++);
+      JSONArray tags = json.getJSONObject(i).getJSONArray("data");
+      for (int j = 0; j < tags.size(); j++) {
+        doCheckTag(tags.getString(j), count++);
+      }
     }
   }
 
   @Test
-  public void testgetPortRangesForClusterAndHost() {
-    String response = resource.getPortRangesForHost(new RequestContext(request, connector));
+  public void testGetTagsForHost() {
+    String response = resource.getTagsForHost(new RequestContext(request, connector));
     JSONArray json = JSONArray.fromObject(response);
     int count = 0;
     for (int i = 0; i < json.size(); i++) {
-      JSONObject r = json.getJSONObject(i).getJSONObject("data");
-      doCheckPortRange(r, count++);
+      JSONArray tags = json.getJSONObject(i).getJSONArray("data");
+      for (int j = 0; j < tags.size(); j++) {
+        doCheckTag(tags.getString(j), count++);
+      }
     }
   }
-
   
-  private void doCheckPortRange(JSONObject range, int i) {
-    assertEquals("range-" + i, range.getString("name"));
-    assertEquals(i + 1, range.getInt("min"));
-    assertEquals(i + 2, range.getInt("max"));
+  private void doCheckTag(String value, int i) {
+    assertEquals("tag-" + i, value);
   }  
 
 }

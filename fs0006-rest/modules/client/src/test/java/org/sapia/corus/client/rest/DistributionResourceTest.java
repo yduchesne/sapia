@@ -98,19 +98,8 @@ public class DistributionResourceTest {
   }
 
   @Test
-  public void testGetDistributionsForAllClusters() {
-    String response = resource.getDistributionsForAllClusters(context);
-    JSONArray json = JSONArray.fromObject(response);
-    int count = 0;
-    for (int i = 0; i < json.size(); i++) {
-      JSONObject dist = json.getJSONObject(i).getJSONObject("data");
-      doCheckDistribution(dist, count++);
-    }
-  }
- 
-  @Test
-  public void testGetDistributionsForAllClusters2() {
-    String response = resource.getDistributionsForAllClusters2(context);
+  public void testGetDistributionsForCluster() {
+    String response = resource.getDistributionsForCluster(context);
     JSONArray json = JSONArray.fromObject(response);
     int count = 0;
     for (int i = 0; i < json.size(); i++) {

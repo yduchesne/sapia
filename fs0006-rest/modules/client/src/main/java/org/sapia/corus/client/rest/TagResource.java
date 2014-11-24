@@ -3,12 +3,15 @@ package org.sapia.corus.client.rest;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.sapia.corus.client.ClusterInfo;
 import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
+import org.sapia.corus.client.common.Arg;
+import org.sapia.corus.client.common.ArgFactory;
 import org.sapia.corus.client.common.json.WriterJsonStream;
 import org.sapia.corus.client.services.configurator.Tag;
 import org.sapia.ubik.util.Collects;
@@ -22,31 +25,29 @@ import org.sapia.ubik.util.Func;
  */
 public class TagResource {
   
-  @Path({"/clusters/tags", "/clusters/{corus:cluster}/tags"})
+  @Path({
+    "/clusters/tags", 
+    "/clusters/{corus:cluster}/tags",
+    "/clusters/hosts/tags", 
+    "/clusters/{corus:cluster}/hosts/tags"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getPropertiesForAllClusters(RequestContext context) {
+  public String getTagsForCluster(RequestContext context) {
     return doGetTags(context, ClusterInfo.clustered());
   }  
   
   // --------------------------------------------------------------------------
   
-  @Path({"/clusters/hosts/tags", "/clusters/{corus:cluster}/hosts/tags"})
+  @Path({
+    "/clusters/hosts/{corus:host}/tags", 
+    "/clusters/{corus:cluster}/hosts/{corus:host}/tags"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getDistributionsForAllClusters2(RequestContext context) {
-    return getPropertiesForAllClusters(context);
-  }  
-  
-  // --------------------------------------------------------------------------
-  
-  @Path({"/clusters/hosts/{corus:host}/tags", "/clusters/{corus:cluster}/hosts/{corus:host}/tags"})
-  @HttpMethod(HttpMethod.GET)
-  @Output(ContentTypes.APPLICATION_JSON)
-  @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getDistributionsForClusterAndHost(RequestContext context) {
+  public String getTagsForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     return doGetTags(context, cluster);
   }
@@ -57,6 +58,21 @@ public class TagResource {
   private String doGetTags(RequestContext context, ClusterInfo cluster) {
     Results<Set<Tag>> results = context.getConnector()
         .getConfigFacade().getTags(cluster);
+    
+    final Arg filter = ArgFactory.parse(context.getRequest().getValue("t", "*").asString());
+    
+    results = results.filter(new Func<Set<Tag>, Set<Tag>>() {
+      @Override
+      public Set<Tag> call(Set<Tag> toFilter) {
+        Set<Tag> toReturn = new HashSet<>();
+        for (Tag t : toFilter) {
+          if (filter.matches(t.getValue())) {
+            toReturn.add(t);
+          }
+        }
+        return toReturn;
+      }
+    });
     
     return doProcessResults(context, results);
   }
