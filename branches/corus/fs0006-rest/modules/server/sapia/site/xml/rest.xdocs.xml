@@ -60,10 +60,10 @@
         <p><b>Sample response</b></p>
 	      <sapia:code>[
   {
-    name: "app-01"
+    "name": "app-01"
   },
   {
-    name: "app-02"
+    "name": "app-02"
   }
 ]</sapia:code>
       </sapia:sect3>	      
