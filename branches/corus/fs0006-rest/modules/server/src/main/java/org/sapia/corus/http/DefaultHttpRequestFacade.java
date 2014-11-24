@@ -2,7 +2,9 @@ package org.sapia.corus.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.sapia.corus.client.services.http.HttpRequestFacade;
@@ -26,6 +28,22 @@ public class DefaultHttpRequestFacade implements HttpRequestFacade {
   @Override
   public String getParameter(String name) {
     return request.getParameter(name);
+  }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Map<String, String> getParameters() {
+    Map<String, String> toReturn = new HashMap<String, String>();
+    Map attributes = request.getAttributes();
+    for (Object k : attributes.keySet()) {
+      if (k instanceof String) {
+        Object v = attributes.get((String) k);
+        if (v instanceof String) {
+          toReturn.put((String) k, (String) v); 
+        }
+      }
+    }
+    return toReturn;
   }
 
   @Override

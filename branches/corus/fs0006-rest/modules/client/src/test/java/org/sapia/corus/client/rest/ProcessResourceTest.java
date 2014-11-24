@@ -92,19 +92,8 @@ public class ProcessResourceTest {
   }
 
   @Test
-  public void testGetProcessesForAllClusters() {
-    String response = resource.getProcessesForAllClusters(new RequestContext(request, connector));
-    JSONArray json = JSONArray.fromObject(response);
-    int count = 0;
-    for (int i = 0; i < json.size(); i++) {
-      JSONObject p = json.getJSONObject(i).getJSONObject("data");
-      doCheckProcess(p, count++);
-    }
-  }
-
-  @Test
-  public void testGetProcessesForAllClusters2() {
-    String response = resource.getProcessesForAllClusters(new RequestContext(request, connector));
+  public void testGetProcessesForCluster() {
+    String response = resource.getProcessesForCluster(new RequestContext(request, connector));
     JSONArray json = JSONArray.fromObject(response);
     int count = 0;
     for (int i = 0; i < json.size(); i++) {

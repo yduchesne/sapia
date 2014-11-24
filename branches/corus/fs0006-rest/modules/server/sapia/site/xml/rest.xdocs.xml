@@ -1,0 +1,342 @@
+<sapia:page title="REST API" xmlns:sapia="http://www.sapia-oss.org/2003/XSL/Transform">
+
+  <sapia:vmenu>
+    <sapia:vsection name="Corus Home"  href="index.html"/>
+    <sapia:vsection name="Corus Guide" href="CorusGuide.pdf"/>
+ 	  <sapia:vsection name="In 2 minutes" href="overview.html"/>    
+    <sapia:vsection name="Interop Spec" href="CorusInterop.pdf"/>    
+  </sapia:vmenu>
+  
+  <sapia:sect1 title="REST API">
+    <sapia:section>
+      <sapia:path name="home" href="../../home.html" />
+      <sapia:path name="projects" />
+      <sapia:path name="corus" href="home.html" />
+      <sapia:path name="rest" />
+    </sapia:section>
+  
+    <toc/>
+  
+    <sapia:sect-desc>
+      <p>
+        The Corus REST API provides a means to access functionality similar to the one offered 
+        by the command-line interface over HTTP/JSON. 
+      </p>
+      <p>
+        The design of the API takes into account the possibility of managing multiple Corus clusters (or domains)
+        through a single REST entry point. Such a design choice was made to allow for the introduction of a centralized
+        Corus management server.
+      </p>
+      <p>
+        Currently though, each individual Corus node publishes an implementation of the API which potentially allows managing
+        all the Corus peers in that node's cluster - that is to say: the API allows managing a Corus cluster indivually, by 
+        accessing one of its nodes through the REST API. This will become clearer in the API documentation below.
+      </p>
+      <p>
+        In summary, that is to say that the API currently allows performing operations on a cluster as a whole, 
+        or on a single node in the cluster.
+      </p>
+    </sapia:sect-desc>
+    
+    <!-- ====================== CLUSTERS AND HOSTS ====================== -->
+    
+    <sapia:sect2 title="Clusters and hosts">
+      <p>
+        The API allows accessing the different clusters, and obtaining information for each host in a cluster. When connecting to 
+        a Corus node in a given cluster, the only cluster information returned will be the one corresponding to that node's cluster.
+      </p>
+      
+      <sapia:sect3 title="Get clusters">
+        <p>
+        This call returns JSON objects (in an array) corresponding to the clusters that are available. When connecting to a given Corus node, 
+        it returns the cluster object for the cluster it is part of - still in an array, which will then hold a single object.
+        </p>
+        <p>
+        Obtaining cluster information is the first logical step when using the API: the cluster name is used to target against 
+        which cluster an operation should be performed - as explained later in this documentation.
+        </p>
+	      <sapia:note><pre>GET
+/clusters</pre></sapia:note>
+        <p><b>Sample response</b></p>
+	      <sapia:code>[
+  {
+    name: "app-01"
+  },
+  {
+    name: "app-02"
+  }
+]</sapia:code>
+      </sapia:sect3>	      
+      <sapia:sect3 title="Get hosts">
+        <p>
+        This call returns the JSON objects corresponding to each host in a given cluster.
+        </p>
+        <sapia:note><pre>GET
+/clusters/{clusterName}/hosts
+
+- path variables:
+  - clusterName: the name of the cluster to access.</pre></sapia:note>
+        <p><b>Sample response</b></p>
+        <sapia:code>[
+  {
+    "cluster": "app-01",
+    "corusVersion": "4.5",
+    "hostName": "saturn",
+    "hostAddress": "192.168.0.103",
+    "port": 33000,
+    "jvmInfo": "1.7.0_45 Java HotSpot(TM) 64-Bit Server VM",
+    "osInfo": "Mac OS X 10.9.5",
+    "repoRole": "SERVER"      
+  },
+  {
+    "cluster": "app-01",
+    "corusVersion": "4.5",
+    "hostName": "saturn",
+    "hostAddress": "192.168.0.104",
+    "port": 33000,
+    "jvmInfo": "1.7.0_45 Java HotSpot(TM) 64-Bit Server VM",
+    "osInfo": "Mac OS X 10.9.5",
+    "repoRole": "CLIENT"
+  }  
+]</sapia:code>
+      </sapia:sect3>        
+    </sapia:sect2>
+    
+    <!-- ====================== DISTRIBUTIONS ====================== -->
+    
+    <sapia:sect2 title="Distributions">
+      <p>
+      The REST API allows accessing distribution information.
+      </p>
+      <sapia:sect3 title="Get distributions">
+        <p>
+        This call is similar to the <tt>ls</tt> command in the Corus CLI. Not that it takes optional <tt>d</tt> and
+        <tt>v</tt> parameters for filtering distributions by name and version, just like the CLI.
+        </p>
+        <sapia:note><pre>GET
+/clusters/{clusterName}/distributions
+/clusters/{clusterName}/hosts/{host}/distributions
+
+- path variables:
+  - clusterName.: the name of the cluster to access.
+  - host........: a host literal (taking the form: ip_address:port)
+  
+- parameters:
+  - d (optional): a distribution name    (pattern matching supported)
+  - v (optional): a distribution version (pattern matching supported)</pre></sapia:note>
+        <p><b>Sample requests</b></p>
+        <sapia:code>http://saturn:33000/rest/clusters/app-01/distributions
+http://saturn:33000/rest/clusters/app-01/192.168.0.104:33000/distributions 
+http://saturn:33000/rest/clusters/app-01/distributions?d=demo&amp;v=*</sapia:code>
+        
+        <p><b>Sample response</b></p>
+        <sapia:code>[
+  {
+    "cluster": "app-01",
+    "host": "192.168.0.103:33000",
+    "data": {
+      "name": "demo",
+      "version": "1.0",
+      "processConfigs": [
+        {
+          "name": "httpServer",
+          "maxInstances": 0,
+          "maxKillRetry": 3,
+          "pollInterval": 10,
+          "shutdownTimeout": 30000,
+          "statusInterval": 30,
+          "deleteOnKill": false,
+          "invoke": true,
+          "ports": [
+              "http.server"
+          ],
+          "profiles": [
+              "test",
+              "prod"
+          ],
+          "tags": [
+              "http-server"
+          ]
+        }
+      ]
+    }
+  }
+]</sapia:code>      
+      </sapia:sect3>
+    </sapia:sect2>
+    
+    <!-- ====================== PROCESSES ====================== -->
+    
+    <sapia:sect2 title="Processes">
+      <p>
+      This section documents API calls pertaining to processes.
+      </p>
+      <sapia:sect3 title="Get processes">
+        <p>
+        This call returns an array of JSON objects corresponding to running processes. The command is similar to <tt>ps</tt>
+        command of the Corus CLI, in supports parameters corresponding to the same options of that command 
+        (<tt>d</tt>, <tt>v</tt>, <tt>n</tt>, <tt>p</tt>).
+        </p>
+      
+        <sapia:note><pre>GET
+/clusters/{clusterName}/processes
+/clusters/{clusterName}/hosts/{host}/processes
+/clusters/{clusterName}/hosts/{host}/processes/{process_id}
+
+- path variables:
+  - clusterName.: the name of the cluster to access.
+  - host:.......: a host literal (taking the form: ip_address:port)
+  - process_id..: the Corus-generated process identifier of a given process 
+                 (which will then restrict the response to that process) 
+- parameters:
+  - d (optional): a distribution name    (pattern matching supported)
+  - v (optional): a distribution version (pattern matching supported)
+  - n (optional): a process name         (pattern matching supported)
+  - p (optional): a profile name</pre></sapia:note>
+        
+        <p>
+        As the URI templates above illustrate, use of the <tt>process_id</tt> path variable is only supported when targeting a specific host.
+        </p>
+        
+        <p><b>Sample requests</b></p>
+        <sapia:code>http://saturn:33000/rest/clusters/app-01/processes
+http://saturn:33000/rest/clusters/app-01/192.168.0.104:33000/processes 
+http://saturn:33000/rest/clusters/app-01/processes?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod    
+http://saturn:33000/rest/clusters/app-01/192.168.0.104:33000/processes/143294992920</sapia:code>
+        
+        <p><b>Sample response</b></p>
+        <sapia:code>[
+  {
+    "cluster": "app-01",
+    "host": "192.168.0.103:33000",
+    "data": {
+      "id": "141123240721",
+      "name": "httpServer",
+      "pid": "76096",
+      "distribution": "demo",
+      "version": "1.0",
+      "profile": "test",
+      "creationTimeMillis": 1416796872842,
+      "creationTimestamp": "2014-11-24T02:41:12:012Z",
+      "lastAccessTimeMillis": 1416796923259,
+      "lastAccessTimestamp": "2014-11-24T02:42:03:003Z",
+      "status": "ACTIVE",
+      "maxKillRetry": 3,
+      "deleteOnKill": false,
+      "shutdownTimeout": 30000,
+      "staleDetectionCount": 0,
+      "activePorts": [ ]
+    }
+  }
+]</sapia:code>      
+      </sapia:sect3>
+    </sapia:sect2>
+    
+    <!-- ====================== PROPERTIES ====================== -->
+    
+    <sapia:sect2 title="Properties">
+      <p>
+      The API gives access to both server and process properties stored in Corus. 
+      </p>
+      <sapia:sect3 title="Get properties">
+        <p>
+        This call is similar to the CLI's <tt>conf ls -p</tt> command. Invoking with the the <tt>server</tt> scope is equivalent
+        to doing a <tt>conf ls -p -s s</tt>, while using the <tt>process</tt> command is equivalent to the CLI's <tt>conf ls -p -s p</tt>,
+        which is the default if the <tt>-s</tt> switch is not specified.
+        </p>
+        <p>
+        Note that the scope in the case of this call is provided as a path variable, as the documentation below explains.
+        </p>
+        <sapia:note><pre>GET
+/clusters/{clusterName}/properties/{scope}
+/clusters/{clusterName}/hosts/{host}/properties/{scope}
+
+- path variables:
+  - clusterName.: the name of the cluster to access.
+  - host:.......: a host literal (taking the form: ip_address:port)
+  - scope.......: indicates the scope of the properties to get 
+                  (must be 'process' to obtain process properties stored 
+                  in Corus, or 'server' for the server properties)
+   
+- parameters:
+  - p (optional): a property name (pattern matching supported)</pre></sapia:note>
+        
+        <p><b>Sample requests</b></p>
+        <sapia:code>http://saturn:33000/rest/clusters/app-01/properties/process
+http://saturn:33000/rest/clusters/app-01/192.168.0.104:33000/properties/process 
+http://saturn:33000/rest/clusters/app-01/192.168.0.104:33000/properties/process?p=corp.acme.*
+http://saturn:33000/rest/clusters/app-01/properties/server
+http://saturn:33000/rest/clusters/app-01/192.168.0.104:33000/properties/server</sapia:code>
+        
+        <p><b>Sample response</b></p>
+        
+        <p>
+        The properties are returned as part of the <tt>data</tt> field, in an array of name/value pairs 
+        (each such pair corresponding to a property).
+        </p>
+        
+        <sapia:code>[
+  {
+    "cluster": "app-01",
+    "host": "192.168.0.103:33000",
+    "data": [
+      {
+        "name": "corp.acme.connections.max",
+        "value": "200"
+      },
+      {
+        "name": "corp.acme.session.timeout",
+        "value": "10min"
+      }
+    ]
+  }
+]</sapia:code>      
+      </sapia:sect3>
+         
+    </sapia:sect2>    
+    
+    <!-- ====================== Tags ====================== -->
+    
+    <sapia:sect2 title="Tags">
+      <p>
+      The REST API allows managing tags.
+      </p>
+      <sapia:sect3 title="Get tags">
+        <p>
+        This call corresponds to the <tt>conf ls -t</tt> command in the Corus CLI.
+        </p>
+        <sapia:note><pre>GET
+/clusters/{clusterName}/tags
+/clusters/{clusterName}/hosts/{host}/tags
+
+- path variables:
+  - clusterName.: the name of the cluster to access.
+  - host:.......: a host literal (taking the form: ip_address:port)
+  
+- parameters:
+  - t (optional): a tag name (pattern matching supported)</pre></sapia:note>
+  
+        <p><b>Sample requests</b></p>
+        <sapia:code>http://saturn:33000/rest/clusters/app-01/tags
+http://saturn:33000/rest/clusters/app-01/tags?t=tag-*
+http://saturn:33000/rest/clusters/app-01/192.168.0.104:33000/tags</sapia:code>
+        
+        <p><b>Sample response</b></p>
+        <p>
+        The tags are returned in an array, as part of the <tt>data</tt> field.
+        </p>
+        <sapia:code>[
+  {
+    "cluster": "app-01",
+    "host": "192.168.0.103:33000",
+    "data": [
+      "tag-01", "tag-02"
+    ]
+  }
+]</sapia:code>      
+      </sapia:sect3>
+         
+    </sapia:sect2>    
+         
+  </sapia:sect1>
+</sapia:page>

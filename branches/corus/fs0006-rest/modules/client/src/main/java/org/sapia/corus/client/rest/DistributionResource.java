@@ -19,27 +19,25 @@ import org.sapia.corus.client.services.deployer.dist.Distribution;
  */
 public class DistributionResource {
 
-  @Path({"/clusters/distributions", "/clusters/{corus:cluster}/distributions"})
+  @Path({
+    "/clusters/distributions", 
+    "/clusters/{corus:cluster}/distributions",
+    "/clusters/hosts/distributions", 
+    "/clusters/{corus:cluster}/hosts/distributions"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getDistributionsForAllClusters(RequestContext context) {
+  public String getDistributionsForCluster(RequestContext context) {
     return doGetDistributions(context, ClusterInfo.clustered());
   }  
   
   // --------------------------------------------------------------------------
-
-  @Path({"/clusters/hosts/distributions", "/clusters/{corus:cluster}/hosts/distributions"})
-  @HttpMethod(HttpMethod.GET)
-  @Output(ContentTypes.APPLICATION_JSON)
-  @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getDistributionsForAllClusters2(RequestContext context) {
-    return getDistributionsForAllClusters(context);
-  } 
   
-  // --------------------------------------------------------------------------
-  
-  @Path({"/clusters/hosts/{corus:host}/distributions", "/clusters/{corus:cluster}/hosts/{corus:host}/distributions"})
+  @Path({
+    "/clusters/hosts/{corus:host}/distributions", 
+    "/clusters/{corus:cluster}/hosts/{corus:host}/distributions"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})

@@ -20,27 +20,25 @@ import org.sapia.corus.client.services.processor.ProcessCriteria;
  */
 public class ProcessResource {
 
-  @Path({"/clusters/processes", "/clusters/{corus:cluster}/processes"})
+  @Path({
+    "/clusters/processes", 
+    "/clusters/{corus:cluster}/processes",
+    "/clusters/hosts/processes", 
+    "/clusters/{corus:cluster}/hosts/processes"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getProcessesForAllClusters(RequestContext context) {
+  public String getProcessesForCluster(RequestContext context) {
     return doGetProcesses(context, ClusterInfo.clustered());
   }
   
   // --------------------------------------------------------------------------
   
-  @Path({"/clusters/hosts/processes", "/clusters/{corus:cluster}/hosts/processes"})
-  @HttpMethod(HttpMethod.GET)
-  @Output(ContentTypes.APPLICATION_JSON)
-  @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})  
-  public String getProcessesForAllClusters2(RequestContext context) {
-    return getProcessesForAllClusters(context);
-  }
-  
-  // --------------------------------------------------------------------------
-  
-  @Path({"/clusters/hosts/{corus:host}/processes", "/clusters/{corus:cluster}/hosts/{corus:host}/processes"})
+  @Path({
+    "/clusters/hosts/{corus:host}/processes", 
+    "/clusters/{corus:cluster}/hosts/{corus:host}/processes"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
@@ -51,7 +49,10 @@ public class ProcessResource {
   
   // --------------------------------------------------------------------------
   
-  @Path({"/clusters/hosts/{corus:host}/processes/{corus:process_id}", "/clusters/{corus:cluster}/hosts/{corus:host}/processes/{corus:process_id}"})
+  @Path({
+    "/clusters/hosts/{corus:host}/processes/{corus:process_id}", 
+    "/clusters/{corus:cluster}/hosts/{corus:host}/processes/{corus:process_id}"
+  })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})

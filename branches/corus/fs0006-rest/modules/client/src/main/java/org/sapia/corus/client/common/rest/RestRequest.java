@@ -1,5 +1,8 @@
 package org.sapia.corus.client.common.rest;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 
@@ -34,6 +37,12 @@ public interface RestRequest {
   public Value getValue(String name, String defaultVal);
   
   /**
+   * @return this instance's {@link List} of {@link Value}s that correspond to HTTP request
+   * parameters.
+   */
+  public List<Value> getValues();
+  
+  /**
    * @return the name of the HTTP method that is invoked.
    */
   public String getMethod();
@@ -47,6 +56,18 @@ public interface RestRequest {
    * @return this instance's content type.
    */
   public String getContentType();
+  
+  /**
+   * @return the content length of the request payload, in bytes.
+   */
+  public long getContentLength();
+  
+  /**
+   * @return the request's payload, as an {@link InputStream}.
+   * 
+   * @throws IOException if an I/O error occurs.
+   */
+  public InputStream getContent() throws IOException;
 
 }
  

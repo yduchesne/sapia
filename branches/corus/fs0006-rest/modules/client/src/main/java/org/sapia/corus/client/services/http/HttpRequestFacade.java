@@ -2,6 +2,7 @@ package org.sapia.corus.client.services.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -43,7 +44,12 @@ public interface HttpRequestFacade {
    *         value.
    */
   public String getParameter(String name);
-
+  
+  /**
+   * @return the {@link Map} of name/values corresponding to the request's parameters.
+   */
+  public Map<String, String> getParameters();
+  
   /**
    * @return this instance's {@link InputStream}.
    * @throws IOException

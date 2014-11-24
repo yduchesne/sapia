@@ -15,8 +15,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 public @interface HttpMethod {
   
-  public static final String GET = "GET";
-  public static final String POST = "POST";
+  public static final String GET    = "GET";
+  public static final String POST   = "POST";
+  public static final String PUT    = "PUT";
+  public static final String DELETE = "DELETE";
   
   public String value();
 

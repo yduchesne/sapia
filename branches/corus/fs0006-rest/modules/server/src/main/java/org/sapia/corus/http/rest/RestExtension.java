@@ -4,7 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log.Hierarchy;
@@ -174,6 +178,28 @@ public class RestExtension implements HttpExtension {
       return new Value(name, value);
     }
     
+    @Override
+    public List<Value> getValues() {
+      List<Value> toReturn = new ArrayList<>();
+      for (Map.Entry<String, String> entry : delegate.getRequest().getParameters().entrySet()) {
+        toReturn.add(new Value(entry.getKey(), entry.getValue()));
+      } 
+      return toReturn;
+    }
+    
+    @Override
+    public InputStream getContent() throws IOException {
+      return delegate.getRequest().getInputStream();
+    }
+     
+    @Override
+    public long getContentLength() {
+      String value = delegate.getRequest().getHeader("Content-Length");
+      if (value == null) {
+        return 0;
+      }
+      return Long.parseLong(value);
+    }
   }
 
 }
