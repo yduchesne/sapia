@@ -2,6 +2,7 @@ package org.sapia.corus.repository;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySet;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -35,8 +36,14 @@ import org.sapia.corus.client.services.repository.DistributionListResponse;
 import org.sapia.corus.client.services.repository.ExecConfigNotification;
 import org.sapia.corus.client.services.repository.FileDeploymentRequest;
 import org.sapia.corus.client.services.repository.FileListResponse;
+import org.sapia.corus.client.services.repository.SecurityConfigNotification;
 import org.sapia.corus.client.services.repository.ShellScriptDeploymentRequest;
 import org.sapia.corus.client.services.repository.ShellScriptListResponse;
+import org.sapia.corus.client.services.security.ApplicationKeyManager;
+import org.sapia.corus.client.services.security.Permission;
+import org.sapia.corus.client.services.security.SecurityModule;
+import org.sapia.corus.client.services.security.ApplicationKeyManager.AppKeyConfig;
+import org.sapia.corus.client.services.security.SecurityModule.RoleConfig;
 import org.sapia.corus.core.ServerContext;
 import org.sapia.corus.taskmanager.core.BackgroundTaskConfig;
 import org.sapia.corus.taskmanager.core.Task;
@@ -49,16 +56,18 @@ import org.springframework.context.ApplicationContext;
 
 public class RepositoryImplTest {
   
-  private ClusterManager     cluster;
-  private Configurator       config;
-  private EventDispatcher    dispatcher;
-  private Processor          processor;
-  private TaskManager        tasks;
-  private ApplicationContext appCtx;
-  private ServerContext      serverCtx;
-  private CorusHost          host;
-  private RepositoryImpl     repo;
-  private Set<CorusHost>     peers;
+  private ClusterManager        cluster;
+  private Configurator          config;
+  private EventDispatcher       dispatcher;
+  private Processor             processor;
+  private TaskManager           tasks;
+  private SecurityModule        security;
+  private ApplicationKeyManager appkeys;
+  private ApplicationContext    appCtx;
+  private ServerContext         serverCtx;
+  private CorusHost             host;
+  private RepositoryImpl        repo;
+  private Set<CorusHost>        peers;
   private Queue<ArtifactListRequest>       listRequestQueue;
   private Queue<ArtifactDeploymentRequest> deployRequestQueue;
   private RepositoryConfigurationImpl      repoConfig;
@@ -74,6 +83,8 @@ public class RepositoryImplTest {
     dispatcher = mock(EventDispatcher.class);
     processor  = mock(Processor.class);
     tasks      = mock(TaskManager.class);
+    security   = mock(SecurityModule.class);
+    appkeys    = mock(ApplicationKeyManager.class);
     appCtx     = mock(ApplicationContext.class);
     serverCtx  = mock(ServerContext.class);
     listRequestQueue   = mock(Queue.class);
@@ -90,6 +101,8 @@ public class RepositoryImplTest {
     repo.setConfigurator(config);
     repo.setDispatcher(dispatcher);
     repo.setTaskManager(tasks);
+    repo.setSecurityModule(security);
+    repo.setApplicationKeys(appkeys);
     repo.setApplicationContext(appCtx);
     repo.setServerContext(serverCtx);
     repo.setDeployRequestQueue(deployRequestQueue);
@@ -361,4 +374,57 @@ public class RepositoryImplTest {
     verify(cluster).send(any(ExecConfigNotification.class));
 
   }
+  
+  // --------------------------------------------------------------------------
+  // Security
+  
+  @Test
+  public void testHandleSecurityConfigNotification() throws Exception {
+    host.setRepoRole(RepoRole.CLIENT);
+    List<RoleConfig>   roles = Collects.arrayToList(new RoleConfig("admin", Collects.arrayToSet(Permission.values())));
+    List<AppKeyConfig> keys  = Collects.arrayToList(new AppKeyConfig("test-app", "test-role", "test-key"));
+    SecurityConfigNotification notif = new SecurityConfigNotification(roles, keys);
+    notif.addTarget(host.getEndpoint());
+    
+    RemoteEvent event = new RemoteEvent(SecurityConfigNotification.EVENT_TYPE, notif);
+    repo.onSyncEvent(event);
+    
+    verify(security).addOrUpdateRole(eq("admin"), anySetOf(Permission.class));
+    verify(appkeys).addOrUpdateApplicationKey(eq("test-app"), eq("test-key"), eq("test-role"));
+    verify(cluster).send(any(SecurityConfigNotification.class));
+  }
+  
+  @Test
+  public void testHandleSecurityConfigPullDisabled() throws Exception {
+    repoConfig.setPullSecurityConfigEnabled(false);
+    host.setRepoRole(RepoRole.CLIENT);
+    List<RoleConfig>   roles = Collects.arrayToList(new RoleConfig("admin", Collects.arrayToSet(Permission.values())));
+    List<AppKeyConfig> keys  = Collects.arrayToList(new AppKeyConfig("test-app", "test-role", "test-key"));
+    SecurityConfigNotification notif = new SecurityConfigNotification(roles, keys);
+    notif.addTarget(host.getEndpoint());
+    
+    RemoteEvent event = new RemoteEvent(SecurityConfigNotification.EVENT_TYPE, notif);
+    repo.onSyncEvent(event);
+    
+    verify(security, never()).addOrUpdateRole(eq("admin"), anySetOf(Permission.class));
+    verify(appkeys, never()).addOrUpdateApplicationKey(eq("test-app"), eq("test-key"), eq("test-role"));
+    verify(cluster).send(any(SecurityConfigNotification.class));
+  }
+  
+  @Test
+  public void testSecurityConfigNotificationHostNotTargeted() throws Exception {
+    host.setRepoRole(RepoRole.CLIENT);
+    List<RoleConfig>   roles = Collects.arrayToList(new RoleConfig("admin", Collects.arrayToSet(Permission.values())));
+    List<AppKeyConfig> keys  = Collects.arrayToList(new AppKeyConfig("test-app", "test-role", "test-key"));
+    SecurityConfigNotification notif = new SecurityConfigNotification(roles, keys);
+    notif.addTarget(createCorusHost(RepoRole.CLIENT).getEndpoint());
+    
+    RemoteEvent event = new RemoteEvent(SecurityConfigNotification.EVENT_TYPE, notif);
+    repo.onSyncEvent(event);
+    
+    verify(security, never()).addOrUpdateRole(eq("admin"), anySetOf(Permission.class));
+    verify(appkeys, never()).addOrUpdateApplicationKey(eq("test-app"), eq("test-key"), eq("test-role"));
+    verify(cluster).send(any(SecurityConfigNotification.class));
+  }  
+  
 }

@@ -50,20 +50,18 @@ public class TagWriteResourceTest {
     when(connector.getConfigFacade()).thenReturn(conf);
     when(request.getValue("corus:host")).thenReturn(new Value("corus:host", "localhost:33000"));
     when(request.getValue("corus:tag")).thenReturn(new Value("corus:tag", "test"));
-    when(request.getValue("values")).thenReturn(new Value("values", "t1,t2"));
-    
   }
 
   @Test
   public void testAddTagsForCluster() {
     resource.addTagsForCluster(context);
-    verify(conf).addTags(argThat(tagsMatcher(Collects.arrayToSet("t1", "t2"))), any(ClusterInfo.class));
+    verify(conf).addTags(argThat(tagsMatcher(Collects.arrayToSet("test"))), any(ClusterInfo.class));
   }
 
   @Test
   public void testAddTagsForHost() {
     resource.addTagsForCluster(context);
-    verify(conf).addTags(argThat(tagsMatcher(Collects.arrayToSet("t1", "t2"))), any(ClusterInfo.class));
+    verify(conf).addTags(argThat(tagsMatcher(Collects.arrayToSet("test"))), any(ClusterInfo.class));
   }
 
   @Test

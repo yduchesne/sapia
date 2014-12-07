@@ -1,6 +1,8 @@
 package org.sapia.corus.client.rest;
 
 import org.sapia.corus.client.ClusterInfo;
+import org.sapia.corus.client.annotations.Authorized;
+import org.sapia.corus.client.services.security.Permission;
 
 /**
  * Handles addition/deletion of tags.
@@ -17,22 +19,24 @@ public class TagWriteResource {
     "/clusters/tags", 
     "/clusters/{corus:cluster}/tags",
     "/clusters/hosts/tags", 
-    "/clusters/{corus:cluster}/hosts/tags"
+    "/clusters/{corus:cluster}/hosts/tags/{corus:tag}"
   })
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void addTagsForCluster(RequestContext context) {
     doAddTags(context, ClusterInfo.clustered());
   }  
   
   @Path({
     "/clusters/hosts/{corus:host}/tags", 
-    "/clusters/{corus:cluster}/hosts/{corus:host}/tags"
+    "/clusters/{corus:cluster}/hosts/{corus:host}/tags/{corus:tag}"
   })
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void addTagsForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     doAddTags(context, cluster);
@@ -50,6 +54,7 @@ public class TagWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void deleteTagForCluster(RequestContext context) {
     doDeleteTag(context, ClusterInfo.clustered());
   }  
@@ -61,6 +66,7 @@ public class TagWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void deleteTagForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     doDeleteTag(context, cluster);
@@ -71,7 +77,7 @@ public class TagWriteResource {
   
   private void doAddTags(RequestContext context, ClusterInfo cluster) {
     context.getConnector().getConfigFacade().addTags(
-        context.getRequest().getValue("values").asSet(), 
+        context.getRequest().getValue("corus:tag").asSet(), 
         cluster
     );
   }

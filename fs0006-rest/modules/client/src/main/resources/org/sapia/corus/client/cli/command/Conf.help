@@ -22,7 +22,7 @@
     <p>conf export -p -f &lt;file&gt;</p>
     <p/>
     <p>OR:</p>    
-    <p>conf del -t tag_name</p>
+    <p>conf del -t &lt;tag_name&gt;</p>
     <p>conf del [-s s | p] -p property_name</p>
     <p/>
     <p>OR:</p>    
@@ -66,37 +66,21 @@
   </section>
   <section title="Examples">
     <p>conf add -s s -p corus.process.timeout=25,corus.process.kill-interval=30</p>
-    <p/>
     <p>conf add -p myprop=myvalue</p>
-    <p/>
     <p>conf add -s s -p myServerProperties.properties</p>
-    <p/>
     <p>conf add myProcessProperties.properties</p>
-    <p/>            
     <p>conf add -t singletons</p>
-    <p/>
     <p>conf add -t /home/foo/mytags.txt</p>
-    <p/> 
     <p>conf export -p -f /home/foo/myProcessProperties.properties</p>
-    <p/>            
     <p>conf export -t -f /home/foo/mytags.txt</p>
-    <p/>
     <p>conf ls -t</p>
-    <p/>     
     <p>conf ls -p -s s</p>
-    <p/>
     <p>conf ls -p</p>
-    <p/>      
     <p>conf ls</p>
-    <p/>    
     <p>conf del -s s -p corus.process.timeout</p>
-    <p/> 
     <p>conf del -s s -p corus.process.*</p>
-    <p/> 
     <p>conf del -t singletons</p>
-    <p/> 
     <p>conf merge -b myBaseAppConfig.properties -f appConfig.properties</p>
-    <p/> 
     <p>conf ls -t</p>
     <p/>
   </section>

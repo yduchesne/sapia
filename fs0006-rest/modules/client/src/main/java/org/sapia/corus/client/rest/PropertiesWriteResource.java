@@ -3,8 +3,11 @@ package org.sapia.corus.client.rest;
 import java.util.Properties;
 
 import org.sapia.corus.client.ClusterInfo;
+import org.sapia.corus.client.annotations.Authorized;
 import org.sapia.corus.client.common.rest.Value;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.client.services.http.HttpExtension;
+import org.sapia.corus.client.services.security.Permission;
 
 /**
  * Handles the addition/deletion of properties.
@@ -26,6 +29,7 @@ public class PropertiesWriteResource {
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void addPropertiesForCluster(RequestContext context) {
     doAddProperties(context, ClusterInfo.clustered());
   }
@@ -39,6 +43,7 @@ public class PropertiesWriteResource {
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void addPropertiesForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     doAddProperties(context, cluster);
@@ -55,6 +60,7 @@ public class PropertiesWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void deletePropertyForCluster(RequestContext context) {
     doDeleteProperty(context, ClusterInfo.clustered());
   }
@@ -68,6 +74,7 @@ public class PropertiesWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void deletePropertyForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     doDeleteProperty(context, cluster);
@@ -79,7 +86,10 @@ public class PropertiesWriteResource {
   private void doAddProperties(RequestContext context, ClusterInfo cluster) {
     Properties props = new Properties();
     for (Value v : context.getRequest().getValues()) {
-      props.setProperty(v.getName(), v.asString());
+      if (!v.getName().equals(HttpExtension.CORUS_PARAM_APP_ID) 
+          && !v.getName().equals(HttpExtension.CORUS_PARAM_APP_KEY)) {
+        props.setProperty(v.getName(), v.asString());
+      }
     }    
     context.getConnector().getConfigFacade().addProperties(getScope(context), props, false, cluster);
   }

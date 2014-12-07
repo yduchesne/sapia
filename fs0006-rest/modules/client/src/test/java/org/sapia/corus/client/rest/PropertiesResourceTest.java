@@ -82,6 +82,7 @@ public class PropertiesResourceTest {
     when(connector.getContext()).thenReturn(connection);
     when(request.getValue("corus:host")).thenReturn(new Value("corus:host", "localhost:33000"));
     when(request.getValue("corus:scope")).thenReturn(new Value("corus:scope", "process"));
+    when(request.getValue("p", "*")).thenReturn(new Value("p", "*"));
   }
   
   @Test

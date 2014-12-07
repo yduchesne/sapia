@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.util.UUID;
 
 import org.sapia.corus.client.ClusterInfo;
+import org.sapia.corus.client.annotations.Authorized;
 import org.sapia.corus.client.common.ArgFactory;
 import org.sapia.corus.client.services.deployer.DistributionCriteria;
+import org.sapia.corus.client.services.security.Permission;
 
 /**
  * Handles deploy, undeploy.
@@ -31,7 +33,8 @@ public class DistributionWriteResource {
   })
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
-  @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Accepts({ContentTypes.APPLICATION_OCTET_STREAM, ContentTypes.ANY})
+  @Authorized(Permission.DEPLOY)
   public void deployDistributionForCluster(RequestContext context) throws Exception {
     ClusterInfo cluster = ClusterInfo.clustered();
     File        file    = transfer(context);
@@ -49,6 +52,7 @@ public class DistributionWriteResource {
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.DEPLOY)
   public void deployDistributionForHost(RequestContext context) throws Exception {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     File        file    = transfer(context);
@@ -71,6 +75,7 @@ public class DistributionWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.DEPLOY)
   public void undeployDistributionForCluster(RequestContext context) throws Exception {
     ClusterInfo cluster = ClusterInfo.clustered();
     DistributionCriteria criteria = DistributionCriteria.builder()
@@ -87,6 +92,7 @@ public class DistributionWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.DEPLOY)
   public void undeployDistributionForHost(RequestContext context) throws Exception {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     DistributionCriteria criteria = DistributionCriteria.builder()

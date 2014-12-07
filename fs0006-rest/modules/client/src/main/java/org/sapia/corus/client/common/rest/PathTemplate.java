@@ -191,8 +191,8 @@ public class PathTemplate implements Comparable<PathTemplate> {
           break;
         } 
       }
-      return c;
-    } 
+      return -c;
+    }
     return - (parts.size() - other.parts.size());
   }
   

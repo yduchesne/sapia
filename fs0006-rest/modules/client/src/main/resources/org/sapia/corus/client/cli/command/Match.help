@@ -21,12 +21,10 @@
     </p>
   </section>
   <section title="Examples">
-    <p>Outputs stale processes in the cluster:</p>
-    <p/>
+    <p>- Outputs stale processes in the cluster:</p>
     <p>match stal* ps -cluster</p>
     <p/>
-    <p>Executes the commands in the given script against each host for which the match occurred (in this case, for each host having a stale processes):</p>
-    <p/>
+    <p>- Executes the commands in the given script against each host for which the match occurred (in this case, for each host having a stale processes):</p>
     <p>match apply restart_stale.txt stal* ps -cluster</p>
     <p/>    
   </section>    
