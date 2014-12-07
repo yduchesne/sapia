@@ -1,9 +1,11 @@
 package org.sapia.corus.client.rest;
 
 import org.sapia.corus.client.ClusterInfo;
+import org.sapia.corus.client.annotations.Authorized;
 import org.sapia.corus.client.exceptions.port.PortActiveException;
 import org.sapia.corus.client.exceptions.port.PortRangeConflictException;
 import org.sapia.corus.client.exceptions.port.PortRangeInvalidException;
+import org.sapia.corus.client.services.security.Permission;
 
 /**
  * Handles addition/deletion of port ranges.
@@ -25,6 +27,7 @@ public class PortWriteResource {
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void addPortRangeForCluster(RequestContext context)
       throws PortRangeInvalidException, PortRangeConflictException {
     doAddPortRange(context, ClusterInfo.clustered());
@@ -37,6 +40,7 @@ public class PortWriteResource {
   @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void addPortRangeForHost(RequestContext context)
       throws PortRangeInvalidException, PortRangeConflictException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
@@ -55,6 +59,7 @@ public class PortWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void deletePortRangeForCluster(RequestContext context)
       throws PortActiveException {
     doDeletePortRange(context, ClusterInfo.clustered());
@@ -67,6 +72,7 @@ public class PortWriteResource {
   @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void deletePortRangeForHost(RequestContext context)
       throws PortActiveException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
@@ -85,6 +91,7 @@ public class PortWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void releasePortRangeForCluster(RequestContext context) {
     doReleasePortRange(context, ClusterInfo.clustered());
   }
@@ -96,6 +103,7 @@ public class PortWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.WRITE)
   public void releasePortRangeForHost(RequestContext context) {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     doReleasePortRange(context, cluster);

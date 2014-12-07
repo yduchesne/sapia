@@ -27,8 +27,13 @@ import org.sapia.corus.client.services.repository.ForceClientPullNotification;
 import org.sapia.corus.client.services.repository.PortRangeNotification;
 import org.sapia.corus.client.services.repository.Repository;
 import org.sapia.corus.client.services.repository.RepositoryConfiguration;
+import org.sapia.corus.client.services.repository.SecurityConfigNotification;
 import org.sapia.corus.client.services.repository.ShellScriptDeploymentRequest;
 import org.sapia.corus.client.services.repository.ShellScriptListResponse;
+import org.sapia.corus.client.services.security.ApplicationKeyManager;
+import org.sapia.corus.client.services.security.ApplicationKeyManager.AppKeyConfig;
+import org.sapia.corus.client.services.security.SecurityModule;
+import org.sapia.corus.client.services.security.SecurityModule.RoleConfig;
 import org.sapia.corus.core.ModuleHelper;
 import org.sapia.corus.core.ServerStartedEvent;
 import org.sapia.corus.repository.task.ArtifactDeploymentRequestHandlerTask;
@@ -90,6 +95,12 @@ public class RepositoryImpl extends ModuleHelper
 
   @Autowired
   private PortManager portManager;
+  
+  @Autowired
+  private SecurityModule securityModule;
+  
+  @Autowired
+  private ApplicationKeyManager applicationKeys;
 
   private Queue<ArtifactListRequest> listRequests = new Queue<ArtifactListRequest>();
   private Queue<ArtifactDeploymentRequest> deployRequests = new Queue<ArtifactDeploymentRequest>();
@@ -100,6 +111,9 @@ public class RepositoryImpl extends ModuleHelper
   public void setRepoConfig(RepositoryConfiguration repoConfig) {
     this.repoConfig = repoConfig;
   }
+  
+  // --------------------------------------------------------------------------
+  // Visible for testing
 
   void setClusterManager(ClusterManager clusterManager) {
     this.clusterManager = clusterManager;
@@ -117,8 +131,16 @@ public class RepositoryImpl extends ModuleHelper
     this.taskManager = taskManager;
   }
 
-  public void setPortManager(PortManager portManager) {
+  void setPortManager(PortManager portManager) {
     this.portManager = portManager;
+  }
+
+  void setSecurityModule(SecurityModule securityModule) {
+    this.securityModule = securityModule;
+  }
+
+  void setApplicationKeys(ApplicationKeyManager applicationKeys) {
+    this.applicationKeys = applicationKeys;
   }
 
   void setDeployRequestQueue(Queue<ArtifactDeploymentRequest> deployRequests) {
@@ -164,6 +186,8 @@ public class RepositoryImpl extends ModuleHelper
       clusterManager.getEventChannel().registerSyncListener(ConfigNotification.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(ExecConfigNotification.EVENT_TYPE, this);
       clusterManager.getEventChannel().registerSyncListener(PortRangeNotification.EVENT_TYPE, this);
+      clusterManager.getEventChannel().registerSyncListener(SecurityConfigNotification.EVENT_TYPE, this);
+
       if (!repoConfig.isPullPropertiesEnabled()) {
         logger().info("Properties pull is disabled");
       }
@@ -172,6 +196,9 @@ public class RepositoryImpl extends ModuleHelper
       }
       if (!repoConfig.isPullPortRangesEnabled()) {
         logger().info("Port range pull is disabled");
+      }
+      if (!repoConfig.isPullSecurityConfigEnabled()) {
+        logger().info("Security config pull is disabled");
       }
       if (!repoConfig.isBootExecEnabled()) {
         logger().info("This node is configured NOT to perform automatic startup of processes with 'startOnBoot' enabled upon pull");
@@ -315,6 +342,9 @@ public class RepositoryImpl extends ModuleHelper
       } else if (evt.getType().equals(PortRangeNotification.EVENT_TYPE)) {
         logger().debug("Got port range notification");
         handlePortRangeNotification((PortRangeNotification) evt.getData());
+      } else if (evt.getType().equals(SecurityConfigNotification.EVENT_TYPE)) {
+        logger().debug("Got security config notification");
+        handleSecurityConfigNotification((SecurityConfigNotification) evt.getData());
       }
     } catch (IOException e) {
       logger().error("IO Error caught trying to handle event: " + evt.getType(), e);
@@ -427,6 +457,35 @@ public class RepositoryImpl extends ModuleHelper
     }
 
   }
+  
+  void handleSecurityConfigNotification(SecurityConfigNotification notif) {
+    if (notif.isTargeted(serverContext().getCorusHost().getEndpoint()) 
+        && repoConfig.isPullSecurityConfigEnabled()) {
+      if (!notif.getRoleConfigurations().isEmpty()) {
+        logger().info("Adding roles");
+        for (RoleConfig rc : notif.getRoleConfigurations()) {
+          securityModule.addOrUpdateRole(rc.getRole(), rc.getPermissions());
+        }
+      }
+      
+      if (!notif.getAppKeyConfigurations().isEmpty()) {
+        logger().info("Adding application keys");
+        for (AppKeyConfig apk : notif.getAppKeyConfigurations()) {
+          applicationKeys.addOrUpdateApplicationKey(apk.getAppId(), apk.getApplicationKey(), apk.getRole());
+        }
+      }
+    }
+    
+    // cascading to next host
+    try {
+      clusterManager.send(notif);
+    } catch (Exception e) {
+      logger().error("Could not cascade notification to next host", e);
+    }
+  }
+  
+  // --------------------------------------------------------------------------
+  // Artifact list request
 
   void handleArtifactListRequest(ArtifactListRequest distsReq) {
     if (serverContext().getCorusHost().getRepoRole().isServer()) {

@@ -58,7 +58,7 @@ public class Value {
    */
   public String asString() {
     if (value == null) {
-      throw new IllegalStateException("Value not set");
+      throw new IllegalStateException("Value not set for: " + name);
     }
     return value;
   }

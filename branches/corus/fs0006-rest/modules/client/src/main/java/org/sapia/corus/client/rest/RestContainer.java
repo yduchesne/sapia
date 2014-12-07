@@ -12,8 +12,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.sapia.corus.client.annotations.Authorized;
 import org.sapia.corus.client.common.rest.PathTemplate;
 import org.sapia.corus.client.common.rest.PathTemplate.MatchResult;
+import org.sapia.corus.client.services.security.CorusSecurityException;
+import org.sapia.corus.client.services.security.CorusSecurityException.Type;
+import org.sapia.corus.client.services.security.Permission;
 import org.sapia.ubik.util.Assertions;
 import org.sapia.ubik.util.Collects;
 
@@ -71,11 +75,16 @@ public class RestContainer {
      */
     public RestContainer buildDefaultInstance() {
       resource(new DistributionResource())
+      .resource(new DistributionWriteResource())
       .resource(new HostResource())
       .resource(new PortResource())
+      .resource(new PortWriteResource())
       .resource(new ProcessResource())
+      .resource(new ProcessWriteResource())
       .resource(new PropertiesResource())
+      .resource(new ProcessWriteResource())
       .resource(new TagResource())
+      .resource(new TagWriteResource())
       .resource(new MetadataResource());
       return build();
     }
@@ -96,7 +105,7 @@ public class RestContainer {
             }
             
             Assertions.isTrue(Modifier.isPublic(m.getModifiers()), "REST resource method must be be public: %s", m);
-            Assertions.isTrue(m.getReturnType().equals(String.class), "REST resource method must return String value: %s", m);
+            Assertions.isTrue(m.getReturnType().equals(void.class) || m.getReturnType().equals(String.class), "REST resource method must return String or void: %s", m);
             Assertions.isTrue(m.getParameterTypes().length == 1, "REST resource method must have single parameter of type %s: %s", 
                 RequestContext.class.getName(), m);
             Assertions.isTrue(m.getParameterTypes()[0].equals(RequestContext.class), 
@@ -145,12 +154,13 @@ public class RestContainer {
   
   private static class RestResourceMetadata {
     
-    private Object       target;
-    private Method       method;
-    private PathTemplate template;
-    private Set<String>  acceptedContentTypes;
-    private String       httpMethodName;
-    private String       outputContentType;
+    private Object          target;
+    private Method          method;
+    private PathTemplate    template;
+    private Set<String>     acceptedContentTypes;
+    private String          httpMethodName;
+    private String          outputContentType;
+    private Set<Permission> permissions; 
     
     private RestResourceMetadata(
         Object target, 
@@ -165,13 +175,23 @@ public class RestContainer {
       this.acceptedContentTypes = Collects.arrayToSet(acceptedContentTypes);
       this.httpMethodName       = httpMethodName;
       this.outputContentType    = outputContentType;
+      if (method.isAnnotationPresent(Authorized.class)) {
+        permissions = Collects.arrayToSet(method.getAnnotation(Authorized.class).value());
+        // precaution
+        if (permissions.isEmpty()) {
+          permissions = Collects.arrayToSet(Permission.READ);
+        }
+      } else {
+        permissions = Collects.arrayToSet(Permission.READ);
+      }
     }
     
     private Map<String, String> matches(RequestContext context, String[] pathValues) {
       MatchResult result = template.matches(pathValues);
       boolean matched = result.matched() 
           && context.getRequest().getMethod().equals(httpMethodName) 
-          && (context.getRequest().getAccepts().contains(outputContentType) || context.getRequest().getAccepts().contains(ContentTypes.ANY))
+          && (context.getRequest().getAccepts().contains(outputContentType) || 
+              context.getRequest().getAccepts().contains(ContentTypes.ANY))
           && (acceptedContentTypes.isEmpty() || 
               context.getRequest().getContentType() == null || 
               acceptedContentTypes.contains(context.getRequest().getContentType()));
@@ -207,7 +227,10 @@ public class RestContainer {
       Map<String, String> values = r.matches(context, pathValues);
       if (values != null) {
         try {
-          context.addParams(values);
+          context.addParams(values);        
+          if (!context.getSubject().hasPermissions(r.permissions)) {
+            throw new CorusSecurityException("Subject does not have required permission(s)", Type.OPERATION_NOT_AUTHORIZED);
+          }
           String payload = (String) r.method.invoke(r.target, new Object[] { context });
           response.setContentType(r.outputContentType);
           return payload;

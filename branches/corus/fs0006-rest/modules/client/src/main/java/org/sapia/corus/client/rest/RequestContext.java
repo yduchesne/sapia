@@ -10,6 +10,8 @@ import java.util.Set;
 import org.sapia.corus.client.common.rest.RestRequest;
 import org.sapia.corus.client.common.rest.Value;
 import org.sapia.corus.client.facade.CorusConnector;
+import org.sapia.corus.client.services.security.Subject;
+import org.sapia.corus.client.services.security.Subject.Anonymous;
 
 /**
  * Holds data corresponding to in incoming REST request.
@@ -19,11 +21,25 @@ import org.sapia.corus.client.facade.CorusConnector;
  */
 public class RequestContext {
 
+  private Subject        subject;
   private RestRequest    request;
   private CorusConnector connector;
-  public RequestContext(RestRequest request, CorusConnector connector) {
-    this.request = request;
+  
+  public RequestContext(Subject subject, RestRequest request, CorusConnector connector) {
+    this.subject   = subject;
+    this.request   = request;
     this.connector = connector;
+  }
+  
+  public RequestContext(RestRequest request, CorusConnector connector) {
+    this(Anonymous.newInstance(), request, connector);
+  }
+  
+  /**
+   * @return this instance's {@link Subject}.
+   */
+  public Subject getSubject() {
+    return subject;
   }
   
   /**

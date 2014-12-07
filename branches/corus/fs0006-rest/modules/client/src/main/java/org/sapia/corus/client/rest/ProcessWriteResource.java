@@ -1,11 +1,13 @@
 package org.sapia.corus.client.rest;
 
 import org.sapia.corus.client.ClusterInfo;
+import org.sapia.corus.client.annotations.Authorized;
 import org.sapia.corus.client.common.ArgFactory;
 import org.sapia.corus.client.exceptions.processor.ProcessNotFoundException;
 import org.sapia.corus.client.exceptions.processor.TooManyProcessInstanceException;
 import org.sapia.corus.client.services.processor.KillPreferences;
 import org.sapia.corus.client.services.processor.ProcessCriteria;
+import org.sapia.corus.client.services.security.Permission;
 
 /**
  * Handles kill, suspend, restart.
@@ -24,9 +26,10 @@ public class ProcessWriteResource {
     "/clusters/hosts/processes/exec", 
     "/clusters/{corus:cluster}/hosts/processes/exec"
   })
-  @HttpMethod(HttpMethod.POST)
+  @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void execProcessesForCluster(RequestContext context) throws TooManyProcessInstanceException {
     ClusterInfo cluster = ClusterInfo.clustered();
     if (context.getRequest().getValue("e").isSet()) {
@@ -53,9 +56,10 @@ public class ProcessWriteResource {
     "/clusters/hosts/{corus:host}/processes/exec", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/exec"
   })
-  @HttpMethod(HttpMethod.POST)
+  @HttpMethod(HttpMethod.PUT)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void execProcessesForHost(RequestContext context) throws TooManyProcessInstanceException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     if (context.getRequest().getValue("e").isSet()) {
@@ -87,9 +91,10 @@ public class ProcessWriteResource {
     "/clusters/hosts/processes/kill", 
     "/clusters/{corus:cluster}/hosts/processes/kill"
   })
-  @HttpMethod(HttpMethod.POST)
+  @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void killProcessesForCluster(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.clustered();
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -108,9 +113,10 @@ public class ProcessWriteResource {
     "/clusters/hosts/{corus:host}/processes/kill", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/kill"
   })
-  @HttpMethod(HttpMethod.POST)
+  @HttpMethod(HttpMethod.DELETE)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void killProcessesForHost(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -132,6 +138,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void killProcessForId(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -155,6 +162,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void suspendProcessesForCluster(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.clustered();
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -176,6 +184,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void suspendProcessesForHost(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -197,6 +206,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void suspendProcessForId(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -220,6 +230,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void resumeProcessesForCluster(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.clustered();
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -240,6 +251,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void resumeProcessesForHost(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -260,6 +272,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void resumeProcessForId(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -282,6 +295,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void restartProcessesForCluster(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.clustered();
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -303,6 +317,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void restartProcessesForHost(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -324,6 +339,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void restartProcessForId(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     ProcessCriteria.Builder criteria = ProcessCriteria.builder();
@@ -347,6 +363,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void cleanProcessesForCluster(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.clustered();
     context.getConnector().getProcessorFacade().clean(cluster);
@@ -359,6 +376,7 @@ public class ProcessWriteResource {
   @HttpMethod(HttpMethod.POST)
   @Output(ContentTypes.APPLICATION_JSON)
   @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
+  @Authorized(Permission.EXECUTE)
   public void cleanProcessesForHost(RequestContext context) throws ProcessNotFoundException {
     ClusterInfo cluster = ClusterInfo.fromLiteralForm(context.getRequest().getValue("corus:host").asString());
     context.getConnector().getProcessorFacade().clean(cluster);
