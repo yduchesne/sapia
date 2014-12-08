@@ -49,7 +49,7 @@
         <p>
           Authentication and authorization require the creation of application keys. An application key is associated to an application
           ID, and together they  provide the credentials required by an application to be authenticated. In turn, such credentials are associated
-          to a role, which itself corresponds to a set of permissions.
+          to a role, which itself corresponds to a set of permissions. The association of an application key to a role thus allows for authorization.
         </p>
         <sapia:note>Each Corus node keeps role definitions and application keys in its own local database. The CLI commands allowing for the 
         administration of roles and application keys support the <tt>-cluster</tt> option, which allows replicating that data across a
@@ -67,7 +67,7 @@
             <li><tt>READ</tt>: this permission does not required authentication. All read resources in the API (those that do not modify the state
             of Corus - which are typically <tt>GET</tt> calls) are configured with such a permission.</li>
             
-            <li><tt>WRITE</tt>: this permission corresponds to <tt>PUT</tt> and <tt>POST</tt> resources that modify the state of Corus by adding or
+            <li><tt>WRITE</tt>: this permission corresponds to <tt>PUT</tt>, <tt>POST</tt> and <tt>DELETE</tt> resources that modify the state of Corus by adding or
             removing data (similary to the CLI's <tt>port add</tt>, <tt>conf del</tt>, etc.</li>
             
             <li><tt>EXECUTE</tt>: this permission corresponds to resources that affect process lifecycle, and correspond to the CLI's
@@ -160,7 +160,7 @@
         <p>
           The following configuration properties drive SSL support by Corus:
           <ul>
-            <li><b><tt>corus.server.ssl.enabled</tt></b>: enables/disables SSL (defaults to false).</li>
+            <li><b><tt>corus.server.ssl.enabled</tt></b>: enables/disables SSL (defaults to false, must of course be set to true for SSL to work).</li>
             <li><b><tt>corus.server.ssl.keystore.file</tt></b>: points to the keystore file (normally, 
             it corresponds to <tt>${user.home}/.keystore</tt>.</li>
             <li><b><tt>corus.server.ssl.key.password</tt></b>: the password used to access the SSL certificate in the keystore.</li>
@@ -170,6 +170,13 @@
             on 33001, the port will be set to 33444, and so on.</li>
           </ul>
         </p>
+        <p>Here's an example configuration for the above properties</p>
+        <sapia:code>corus.server.ssl.key.password=corus-ssl
+corus.server.ssl.keystore.password=corus-ssl
+corus.server.ssl.keystore.file=${user.home}/.keystore
+corus.server.ssl.port=0
+corus.server.ssl.enabled=true</sapia:code>
+        
         <p>
           Once the configuration is done, Corus must be restarted.
         </p>
@@ -505,9 +512,9 @@ http://saturn:33000/rest/clusters/app-01/processes/exec?d=demo&amp;v=*&amp;n=htt
   - p: a profile name</sapia:code>
           
           <p><b>Sample requests</b></p>
-          <sapia:code>http://saturn:33000/rest/clusters/app-01/processes/suspend?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
-http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/suspend?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
-http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/suspend?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod</sapia:code>
+          <sapia:code>http://saturn:33000/rest/clusters/app-01/processes/kill?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
+http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/kill?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
+http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/kill</sapia:code>
         </sapia:sect4>
         
         <sapia:sect4 title="Suspend processes">
@@ -537,7 +544,7 @@ http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/148
           <p><b>Sample requests</b></p>
           <sapia:code>http://saturn:33000/rest/clusters/app-01/processes/suspend?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
 http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/suspend?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
-http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/suspend?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod</sapia:code>
+http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/suspend</sapia:code>
         </sapia:sect4>
         
         <sapia:sect4 title="Resume processes">
@@ -567,7 +574,7 @@ http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/148
           <p><b>Sample requests</b></p>
           <sapia:code>http://saturn:33000/rest/clusters/app-01/processes/resume?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
 http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/resume?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
-http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/resume?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod</sapia:code>
+http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/resume</sapia:code>
         </sapia:sect4>
         
         <sapia:sect4 title="Restart processes">
@@ -597,7 +604,7 @@ http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/148
           <p><b>Sample requests</b></p>
           <sapia:code>http://saturn:33000/rest/clusters/app-01/processes/restart?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
 http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/restart?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
-http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/restart?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod</sapia:code>
+http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/restart</sapia:code>
         </sapia:sect4>
         
          <sapia:sect4 title="Clean processes">
@@ -627,7 +634,7 @@ http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/148
           <p><b>Sample requests</b></p>
           <sapia:code>http://saturn:33000/rest/clusters/app-01/processes/clean?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
 http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/clean?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod
-http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/clean?d=demo&amp;v=*&amp;n=httpServer&amp;p=prod</sapia:code>
+http://saturn:33000/rest/clusters/app-01/hosts/192.168.0.104:33000/processes/14893852530/clean</sapia:code>
         </sapia:sect4>
         
       </sapia:sect3>
