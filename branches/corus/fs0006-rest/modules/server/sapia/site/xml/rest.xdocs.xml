@@ -191,8 +191,9 @@ corus.server.ssl.enabled=true</sapia:code>
     <sapia:sect2 title="Using the API">
       <p>
         Using the API is straighforward. All <tt>GET</tt> resources described further below return a JSON response (for which a sample
-        is provided in the documentation).
+        is provided in the documentation). The API is accessible at any Corus node, under the following URI:
       </p>
+      <sapia:code>http://&lt;host&gt;:&lt;port&gt;/rest</sapia:code>
       <p>
         For other resources, they always return a JSON payload, which is the following in non-error situations:
       </p>
