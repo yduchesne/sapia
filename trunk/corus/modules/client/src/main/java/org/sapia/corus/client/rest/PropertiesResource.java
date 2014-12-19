@@ -9,9 +9,10 @@ import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
 import org.sapia.corus.client.common.Arg;
 import org.sapia.corus.client.common.ArgFactory;
-import org.sapia.corus.client.common.NameValuePair;
 import org.sapia.corus.client.common.json.WriterJsonStream;
+import org.sapia.corus.client.common.rest.Value;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.client.services.configurator.Property;
 import org.sapia.ubik.util.Func;
 
 /**
@@ -29,10 +30,11 @@ public class PropertiesResource {
   private static final String OBFUSCATION     = "********";
 
   @Path({
-    "/clusters/properties/{corus:scope}", 
     "/clusters/{corus:cluster}/properties/{corus:scope}",
-    "/clusters/hosts/properties/{corus:scope}", 
-    "/clusters/{corus:cluster}/hosts/properties/{corus:scope}"
+    "/clusters/{corus:cluster}/properties/{corus:scope}/{corus:category}",
+    "/clusters/{corus:cluster}/hosts/properties/{corus:scope}",
+    "/clusters/{corus:cluster}/hosts/properties/{corus:scope}/{corus:category}"
+    
   })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
@@ -44,8 +46,8 @@ public class PropertiesResource {
   // --------------------------------------------------------------------------
   
   @Path({
-    "/clusters/hosts/{corus:host}/properties/{corus:scope}", 
-    "/clusters/{corus:cluster}/hosts/{corus:host}/properties/{corus:scope}"
+    "/clusters/{corus:cluster}/hosts/{corus:host}/properties/{corus:scope}",
+    "/clusters/{corus:cluster}/hosts/{corus:host}/properties/{corus:scope}/{corus:category}"
   })
   @HttpMethod(HttpMethod.GET)
   @Output(ContentTypes.APPLICATION_JSON)
@@ -59,7 +61,8 @@ public class PropertiesResource {
   // Restricted methods
   
   private String doGetProperties(RequestContext context, ClusterInfo cluster) {
-    String scopeValue = context.getRequest().getValue("corus:scope").asString();
+    String        scopeValue = context.getRequest().getValue("corus:scope").asString();
+    final Value   category   = context.getRequest().getValue("corus:category");
     PropertyScope scope;
     if (scopeValue.equals(SCOPE_PROCESS)) {
       scope = PropertyScope.PROCESS;
@@ -69,17 +72,22 @@ public class PropertiesResource {
       throw new IllegalArgumentException(String.format("Invalid scope %s. Use one of the supported scopes: [process, server]", scopeValue));
     }
     
-    final Arg filter = ArgFactory.parse(context.getRequest().getValue("p", "*").asString());
+    final Arg propNameFilter = ArgFactory.parse(context.getRequest().getValue("p", "*").asString());
+    final Arg catFilter      = category.isNull() ? ArgFactory.any() : ArgFactory.parse(category.asString()); 
     
-    Results<List<NameValuePair>> results = context.getConnector()
-        .getConfigFacade().getProperties(scope, cluster);
-    results = results.filter(new Func<List<NameValuePair>, List<NameValuePair>>() {
+    Results<List<Property>> results = context.getConnector()
+        .getConfigFacade().getAllProperties(scope, cluster);
+    results = results.filter(new Func<List<Property>, List<Property>>() {
       @Override
-      public List<NameValuePair> call(List<NameValuePair> toFilter) {
-        List<NameValuePair> toReturn = new ArrayList<>();
-        for (NameValuePair nvp: toFilter) {
-          if (filter.matches(nvp.getName())) {
-            toReturn.add(nvp);
+      public List<Property> call(List<Property> toFilter) {
+        List<Property> toReturn = new ArrayList<>();
+        for (Property p : toFilter) {
+          if (category.isSet()) {
+            if (propNameFilter.matches(p.getName()) && p.getCategory().isSet() && catFilter.matches(p.getCategory().get()))  {
+              toReturn.add(p);
+            }
+          } else if (propNameFilter.matches(p.getName())) {
+            toReturn.add(p);
           }
         }
         return toReturn;
@@ -88,12 +96,12 @@ public class PropertiesResource {
     return doProcessResults(context, results);
   }
   
-  private String doProcessResults(RequestContext context, Results<List<NameValuePair>> results) {
+  private String doProcessResults(RequestContext context, Results<List<Property>> results) {
     StringWriter output = new StringWriter();
     WriterJsonStream stream = new WriterJsonStream(output);
     stream.beginArray();
     while (results.hasNext()) {
-      Result<List<NameValuePair>> result = results.next();
+      Result<List<Property>> result = results.next();
       stream.beginObject()
         .field("cluster").value(context.getConnector().getContext().getDomain())
         .field("host").value(
@@ -103,11 +111,14 @@ public class PropertiesResource {
         .field("data")
         .beginArray();
 
-      for (NameValuePair np : result.getData()) {
+      for (Property np : result.getData()) {
         stream.beginObject()
           .field("name").value(np.getName())
-          .field("value").value(obfuscate(np.getName(), np.getValue()))
-        .endObject();
+          .field("value").value(obfuscate(np.getName(), np.getValue()));
+        if (np.getCategory().isSet()) {
+          stream.field("category").value(np.getCategory().get());
+        }  
+        stream.endObject();
       }
       stream.endArray().endObject();
     }

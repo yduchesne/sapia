@@ -64,15 +64,6 @@ public class HostResourceTest {
     when(connection.getServerHost()).thenReturn(hosts.remove(0));
     when(connection.getOtherHosts()).thenReturn(hosts);
   }
-  
-  @Test
-  public void testGetHostsForAllClusters() {
-    String response = resource.getHostsForAllClusters(context);
-    JSONArray json = JSONArray.fromObject(response);
-    for (int i = 0; i < json.size(); i++) {
-      doAssertHost(json.getJSONObject(i), i);
-    }
-  }
 
   @Test
   public void testGetHostsForCluster() {

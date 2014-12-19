@@ -19,9 +19,7 @@ public class PortWriteResource {
   //  add
   
   @Path({
-    "/clusters/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/ports/ranges/{corus:rangeName}",
-    "/clusters/hosts/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/hosts/ports/ranges/{corus:rangeName}"
   })
   @HttpMethod(HttpMethod.PUT)
@@ -34,7 +32,6 @@ public class PortWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/ports/ranges/{corus:rangeName}"
   })
   @HttpMethod(HttpMethod.PUT)
@@ -51,9 +48,7 @@ public class PortWriteResource {
   //  delete
   
   @Path({
-    "/clusters/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/ports/ranges/{corus:rangeName}",
-    "/clusters/hosts/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/hosts/ports/ranges/{corus:rangeName}"
   })
   @HttpMethod(HttpMethod.DELETE)
@@ -66,7 +61,6 @@ public class PortWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/ports/ranges/{corus:rangeName}"
   })
   @HttpMethod(HttpMethod.DELETE)
@@ -83,9 +77,7 @@ public class PortWriteResource {
   // release 
   
   @Path({
-    "/clusters/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/ports/ranges/{corus:rangeName}",
-    "/clusters/hosts/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/hosts/ports/ranges/{corus:rangeName}"
   })
   @HttpMethod(HttpMethod.POST)
@@ -97,7 +89,6 @@ public class PortWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/ports/ranges/{corus:rangeName}", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/ports/ranges/{corus:rangeName}"
   })
   @HttpMethod(HttpMethod.POST)

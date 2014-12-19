@@ -16,9 +16,7 @@ public class TagWriteResource {
   //  add
 
   @Path({
-    "/clusters/tags", 
     "/clusters/{corus:cluster}/tags",
-    "/clusters/hosts/tags", 
     "/clusters/{corus:cluster}/hosts/tags/{corus:tag}"
   })
   @HttpMethod(HttpMethod.PUT)
@@ -30,7 +28,6 @@ public class TagWriteResource {
   }  
   
   @Path({
-    "/clusters/hosts/{corus:host}/tags", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/tags/{corus:tag}"
   })
   @HttpMethod(HttpMethod.PUT)
@@ -46,9 +43,7 @@ public class TagWriteResource {
   // delete
 
   @Path({
-    "/clusters/tags/{corus:tag}", 
     "/clusters/{corus:cluster}/tags/{corus:tag}",
-    "/clusters/hosts/tags/{corus:tag}", 
     "/clusters/{corus:cluster}/hosts/tags/{corus:tag}"
   })
   @HttpMethod(HttpMethod.DELETE)
@@ -60,7 +55,6 @@ public class TagWriteResource {
   }  
   
   @Path({
-    "/clusters/hosts/{corus:host}/tags/{corus:tag}", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/tags/{corus:tag}"
   })
   @HttpMethod(HttpMethod.DELETE)

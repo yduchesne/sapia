@@ -20,9 +20,7 @@ import org.sapia.corus.client.services.deployer.dist.Distribution;
 public class DistributionResource {
 
   @Path({
-    "/clusters/distributions", 
     "/clusters/{corus:cluster}/distributions",
-    "/clusters/hosts/distributions", 
     "/clusters/{corus:cluster}/hosts/distributions"
   })
   @HttpMethod(HttpMethod.GET)
@@ -35,7 +33,6 @@ public class DistributionResource {
   // --------------------------------------------------------------------------
   
   @Path({
-    "/clusters/hosts/{corus:host}/distributions", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/distributions"
   })
   @HttpMethod(HttpMethod.GET)

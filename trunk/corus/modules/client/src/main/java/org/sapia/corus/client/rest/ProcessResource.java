@@ -21,9 +21,7 @@ import org.sapia.corus.client.services.processor.ProcessCriteria;
 public class ProcessResource {
 
   @Path({
-    "/clusters/processes", 
     "/clusters/{corus:cluster}/processes",
-    "/clusters/hosts/processes", 
     "/clusters/{corus:cluster}/hosts/processes"
   })
   @HttpMethod(HttpMethod.GET)
@@ -36,7 +34,6 @@ public class ProcessResource {
   // --------------------------------------------------------------------------
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes"
   })
   @HttpMethod(HttpMethod.GET)
@@ -50,7 +47,6 @@ public class ProcessResource {
   // --------------------------------------------------------------------------
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/{corus:process_id}", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/{corus:process_id}"
   })
   @HttpMethod(HttpMethod.GET)

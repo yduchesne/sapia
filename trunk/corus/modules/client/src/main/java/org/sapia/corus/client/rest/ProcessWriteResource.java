@@ -21,9 +21,7 @@ public class ProcessWriteResource {
   // exec
   
   @Path({
-    "/clusters/processes/exec", 
     "/clusters/{corus:cluster}/processes/exec",
-    "/clusters/hosts/processes/exec", 
     "/clusters/{corus:cluster}/hosts/processes/exec"
   })
   @HttpMethod(HttpMethod.PUT)
@@ -53,7 +51,6 @@ public class ProcessWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/exec", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/exec"
   })
   @HttpMethod(HttpMethod.PUT)
@@ -86,9 +83,7 @@ public class ProcessWriteResource {
   // kill
   
   @Path({
-    "/clusters/processes/kill", 
     "/clusters/{corus:cluster}/processes/kill",
-    "/clusters/hosts/processes/kill", 
     "/clusters/{corus:cluster}/hosts/processes/kill"
   })
   @HttpMethod(HttpMethod.DELETE)
@@ -110,7 +105,6 @@ public class ProcessWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/kill", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/kill"
   })
   @HttpMethod(HttpMethod.DELETE)
@@ -132,7 +126,6 @@ public class ProcessWriteResource {
   }
  
   @Path({
-    "/clusters/hosts/{corus:host}/processes/{corus:process_id}/kill", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/{corus:process_id}/kill"
   })
   @HttpMethod(HttpMethod.POST)
@@ -154,9 +147,7 @@ public class ProcessWriteResource {
   // suspend
   
   @Path({
-    "/clusters/processes/suspend", 
     "/clusters/{corus:cluster}/processes/suspend",
-    "/clusters/hosts/processes/suspend", 
     "/clusters/{corus:cluster}/hosts/processes/suspend"
   })
   @HttpMethod(HttpMethod.POST)
@@ -178,7 +169,6 @@ public class ProcessWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/suspend", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/suspend"
   })
   @HttpMethod(HttpMethod.POST)
@@ -200,7 +190,6 @@ public class ProcessWriteResource {
   }
 
   @Path({
-    "/clusters/hosts/{corus:host}/processes/{corus:process_id}/suspend", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/{corus:process_id}/suspend"
   })
   @HttpMethod(HttpMethod.POST)
@@ -222,9 +211,7 @@ public class ProcessWriteResource {
   // resume
   
   @Path({
-    "/clusters/processes/resume", 
     "/clusters/{corus:cluster}/processes/resume",
-    "/clusters/hosts/processes/resume", 
     "/clusters/{corus:cluster}/hosts/processes/resume"
   })
   @HttpMethod(HttpMethod.POST)
@@ -266,7 +253,6 @@ public class ProcessWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/{corus:process_id}/resume", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/{corus:process_id}/resume"
   })
   @HttpMethod(HttpMethod.POST)
@@ -287,9 +273,7 @@ public class ProcessWriteResource {
   // restart
   
   @Path({
-    "/clusters/processes/restart", 
     "/clusters/{corus:cluster}/processes/restart",
-    "/clusters/hosts/processes/restart", 
     "/clusters/{corus:cluster}/hosts/processes/restart"
   })
   @HttpMethod(HttpMethod.POST)
@@ -311,7 +295,6 @@ public class ProcessWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/restart", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/restart"
   })
   @HttpMethod(HttpMethod.POST)
@@ -333,7 +316,6 @@ public class ProcessWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/{corus:process_id}/restart", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/{corus:process_id}/restart"
   })
   @HttpMethod(HttpMethod.POST)
@@ -355,9 +337,7 @@ public class ProcessWriteResource {
   // clean
   
   @Path({
-    "/clusters/processes/clean", 
     "/clusters/{corus:cluster}/processes/clean",
-    "/clusters/hosts/processes/clean", 
     "/clusters/{corus:cluster}/hosts/processes/clean"
   })
   @HttpMethod(HttpMethod.POST)
@@ -370,7 +350,6 @@ public class ProcessWriteResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/processes/clean", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/processes/clean"
   })
   @HttpMethod(HttpMethod.POST)
