@@ -45,14 +45,6 @@ public class HostResource {
     stream.endArray();
     return output.toString();   
   }
-  
-  @Path("/clusters/hosts")
-  @HttpMethod(HttpMethod.GET)
-  @Output(ContentTypes.APPLICATION_JSON)
-  @Accepts({ContentTypes.APPLICATION_JSON, ContentTypes.ANY})
-  public String getHostsForAllClusters(RequestContext context) {
-    return getHostsForCluster(context);
-  }
    
   // --------------------------------------------------------------------------
 

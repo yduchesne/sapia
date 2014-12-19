@@ -18,9 +18,7 @@ import org.sapia.corus.client.services.port.PortRange;
 public class PortResource {
 
   @Path({
-    "/clusters/ports/ranges", 
     "/clusters/{corus:cluster}/ports/ranges",
-    "/clusters/hosts/ports/ranges", 
     "/clusters/{corus:cluster}/hosts/ports/ranges"
   })
   @HttpMethod(HttpMethod.GET)
@@ -31,7 +29,6 @@ public class PortResource {
   }
   
   @Path({
-    "/clusters/hosts/{corus:host}/ports/ranges", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/ports/ranges"
   })
   @HttpMethod(HttpMethod.GET)

@@ -67,7 +67,10 @@ public class Value {
    * @return this instance's value, as a boolean.
    */
   public boolean asBoolean() {
-    return value != null || value.equals("true") || value.equals("1") || value.equals("on") || value.equals("yes");
+    return 
+        value != null && (!value.equals("false") 
+        || value.equals("true") || value.equals("1") 
+        || value.equals("on") || value.equals("yes"));
   }
 
   /**

@@ -1,6 +1,7 @@
 package org.sapia.corus.client.rest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,7 +20,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.sapia.corus.client.ClusterInfo;
 import org.sapia.corus.client.Result;
 import org.sapia.corus.client.Results;
-import org.sapia.corus.client.common.NameValuePair;
 import org.sapia.corus.client.common.rest.RestRequest;
 import org.sapia.corus.client.common.rest.Value;
 import org.sapia.corus.client.facade.ConfiguratorFacade;
@@ -29,6 +29,7 @@ import org.sapia.corus.client.services.cluster.CorusHost;
 import org.sapia.corus.client.services.cluster.CorusHost.RepoRole;
 import org.sapia.corus.client.services.cluster.Endpoint;
 import org.sapia.corus.client.services.configurator.Configurator.PropertyScope;
+import org.sapia.corus.client.services.configurator.Property;
 import org.sapia.ubik.net.ServerAddress;
 import org.sapia.ubik.net.TCPAddress;
 
@@ -48,13 +49,13 @@ public class PropertiesResourceTest {
   private ConfiguratorFacade       confs;
   
   private PropertiesResource       resource;
-  private Results<List<NameValuePair>> results;
+  private Results<List<Property>>  results;
   
   @Before
   public void setUp() throws Exception {
     resource = new PropertiesResource();
     
-    results = new Results<List<NameValuePair>>();
+    results = new Results<List<Property>>();
     int count = 0;
     for (int i = 0; i < 5; i++) {
       CorusHost host = CorusHost.newInstance(
@@ -64,24 +65,25 @@ public class PropertiesResourceTest {
       );
       host.setHostName("hostname-" + i);
       host.setRepoRole(RepoRole.CLIENT);
-      List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+      List<Property> props = new ArrayList<Property>();
       for (int j = 0; j < 5; j++) {
-        NameValuePair nvp = new NameValuePair("prop-key-" + count, "prop-value-" + count);
-        pairs.add(nvp);
+        Property p = new Property("prop-key-" + count, "prop-value-" + count, "cat-" + j);
+        props.add(p);
         count++;
       }
-      Result<List<NameValuePair>> result = new Result<List<NameValuePair>>(host, pairs, Result.Type.COLLECTION);
+      Result<List<Property>> result = new Result<List<Property>>(host, props, Result.Type.COLLECTION);
       results.addResult(result);
     }
     
     when(connection.getDomain()).thenReturn("test-cluster");
     when(connection.getVersion()).thenReturn("test-version");
     when(connector.getConfigFacade()).thenReturn(confs);
-    when(confs.getProperties(any(PropertyScope.class), any(ClusterInfo.class)))
+    when(confs.getAllProperties(any(PropertyScope.class), any(ClusterInfo.class)))
       .thenReturn(results);
     when(connector.getContext()).thenReturn(connection);
     when(request.getValue("corus:host")).thenReturn(new Value("corus:host", "localhost:33000"));
     when(request.getValue("corus:scope")).thenReturn(new Value("corus:scope", "process"));
+    when(request.getValue("corus:category")).thenReturn(new Value("corus:category", null));
     when(request.getValue("p", "*")).thenReturn(new Value("p", "*"));
   }
   
@@ -95,6 +97,18 @@ public class PropertiesResourceTest {
       for (int j = 0; j < properties.size(); j++) {
         doCheckProperty(properties.getJSONObject(j), count++);
       }
+    }
+  }
+  
+  @Test
+  public void testGetPropertiesForCluster_category() {
+    when(request.getValue("corus:category")).thenReturn(new Value("corus:category", "cat-0"));
+    String response = resource.getPropertiesForCluster(new RequestContext(request, connector));
+    JSONArray json = JSONArray.fromObject(response);
+    for (int i = 0; i < json.size(); i++) {
+      JSONArray properties = json.getJSONObject(i).getJSONArray("data");
+      assertEquals(1, properties.size());
+      assertEquals("cat-0", properties.getJSONObject(0).getString("category"));
     }
   }
 
@@ -111,9 +125,22 @@ public class PropertiesResourceTest {
     }
   }
   
+  @Test
+  public void testGetPropertiesForHost_category() {
+    when(request.getValue("corus:category")).thenReturn(new Value("corus:category", "cat-0"));
+    String response = resource.getPropertiesForHost(new RequestContext(request, connector));
+    JSONArray json = JSONArray.fromObject(response);
+    for (int i = 0; i < json.size(); i++) {
+      JSONArray properties = json.getJSONObject(i).getJSONArray("data");
+      assertEquals(1, properties.size());
+      assertEquals("cat-0", properties.getJSONObject(0).getString("category"));
+    }
+  }
+  
   private void doCheckProperty(JSONObject property, int i) {
     assertEquals("prop-key-" + i, property.getString("name"));
     assertEquals("prop-value-" + i, property.getString("value"));
+    assertNotNull(property.getString("category"));
   }  
 
 }

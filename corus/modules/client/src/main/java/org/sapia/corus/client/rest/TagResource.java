@@ -26,9 +26,7 @@ import org.sapia.ubik.util.Func;
 public class TagResource {
   
   @Path({
-    "/clusters/tags", 
     "/clusters/{corus:cluster}/tags",
-    "/clusters/hosts/tags", 
     "/clusters/{corus:cluster}/hosts/tags"
   })
   @HttpMethod(HttpMethod.GET)
@@ -41,7 +39,6 @@ public class TagResource {
   // --------------------------------------------------------------------------
   
   @Path({
-    "/clusters/hosts/{corus:host}/tags", 
     "/clusters/{corus:cluster}/hosts/{corus:host}/tags"
   })
   @HttpMethod(HttpMethod.GET)

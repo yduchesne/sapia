@@ -26,9 +26,7 @@ public class DistributionWriteResource {
   //  deploy
   
   @Path({
-    "/clusters/distributions", 
     "/clusters/{corus:cluster}/distributions",
-    "/clusters/hosts/distributions", 
     "/clusters/{corus:cluster}/hosts/distributions"
   })
   @HttpMethod(HttpMethod.PUT)
