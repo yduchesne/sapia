@@ -25,11 +25,6 @@ If you want to include Sapia libraries as dependencies in your projects, you mus
     </activation>
     <repositories>
       <repository>
-        <id>central</id>
-        <name>Central</name>
-        <url>http://repo1.maven.org/maven2</url>
-      </repository>
-      <repository>
         <id>bintray-sapia</id>
         <url>http://dl.bintray.com/sapiaoss/main</url>
         <releases>
@@ -39,11 +34,6 @@ If you want to include Sapia libraries as dependencies in your projects, you mus
           <enabled>false</enabled>
         </snapshots>
       </repository>
-      <repository>
-        <id>sapia-old-repo</id>
-        <name>Old Sapia Maven Repo</name>
-        <url>http://www.sapia-oss.org/maven2</url>
-      </repository>   
     </repositories> 
   </profile>
 </profiles>
