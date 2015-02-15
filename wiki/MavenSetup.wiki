@@ -19,7 +19,7 @@ If you want to include Sapia libraries as dependencies in your projects, you mus
 {{{
 <profiles>
   <profile> 
-    <id>default_profile</id> 
+    <id>sapia</id> 
     <activation> 
       <activeByDefault>true</activeByDefault>  
     </activation>
@@ -37,9 +37,15 @@ If you want to include Sapia libraries as dependencies in your projects, you mus
     </repositories> 
   </profile>
 </profiles>
+
+<activeProfiles>
+  <activeProfile>sapia</activeProfile>
+</activeProfiles>
 }}}
 
 If you are building the Sapia projects from source, these already include the above information in their POM, so you may just check out and do a `mvn install`.
+
+Also, note that you can add the sapia profile to the `activeProfiles` element, so that the Bintray repo is always searched.
 
 = 3) Publishing releases =
 
