@@ -1,0 +1,116 @@
+# Introduction #
+
+This page will guide you through the necessary steps to install Corus on Windows Vista.
+
+# 1. Preparing the Environment #
+
+## i) Java ##
+  * Before installing Corus you need to have Java installed on your machine. Corus requires at least Java 6.
+  * Corus requires the presence of the  JAVA\_HOME environment variable that points to the Java runtime you want to use (JRE or JDK).
+
+## ii) Installation Directory ##
+  * You need to create a directory on your system in which you will install Corus.
+  * For the purpose of this demonstration, we create the `C:\opt\sapia-corus` directory.
+
+
+# 2. Extract the Corus Distribution #
+  * Extract the Corus distribution zip file into the Corus installation directory created above.
+  * Rename the created root directory of the archive if you need.
+  * For example, we extracted the zip and the files reside under the directory `C:\opt\sapia-corus\sapia_corus-<version>`
+
+<table width='50%'>
+<tr><td>
+<a href='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_1_CorusExtract.jpg'><img width='100%' src='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_1_CorusExtract.jpg' /></a>
+</td></tr>
+<tr align='center'><td><i>Click on the image for full size resolution</i></td></tr>
+</table>
+
+# 3. Configure the Environment #
+  * To run properly, Corus requires the presence of another environment variable: CORUS\_HOME
+  * The variable must point to the home directory of the Corus installation, which in our case is the `C:\opt\sapia-corus\sapia_corus-<version>` directory
+  * To define an environment variable on Windows Vista, follow these simple steps:
+    1. Go in Control Panel -> System and Maintenance -> System -> Advanced system settings
+    1. In the System Properties window, select the Advanced tab and click on the Environment Variables... button
+    1. Add a new system variable by clicking on the New... button in the bottom section (System Variables)
+    1. Define the CORUS\_HOME variable with the appropriate value
+
+<table width='50%'>
+<tr><td>
+<a href='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_2_CorusHomeEnvVariable.jpg'><img width='100%' src='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_2_CorusHomeEnvVariable.jpg' /></a>
+</td></tr>
+<tr align='center'><td><i>Click on the image for full size resolution</i></td></tr>
+</table>
+
+  * You can also modify the `Path` environment variable to have an easy access to the various commands of the Corus distribution
+  * To do so, select the `Path` variable in the System Properties windows, and click on Edit...
+  * Append the following text to the parameter value field: "`;%CORUS_HOME%\bin`"
+
+<table width='50%'>
+<tr><td>
+<a href='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_3_PathEnvVariable.jpg'><img width='100%' src='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_3_PathEnvVariable.jpg' /></a>
+</td></tr>
+<tr align='center'><td><i>Click on the image for full size resolution</i></td></tr>
+</table>
+
+At this point you should be able to start Corus by manually invoking the `%CORUS_HOME%\bin\corus.bat` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a Windows service.
+
+
+# 4. Window Service Integration #
+With the installation of Corus as a Windows service, you will be able to automatically start Corus on startup of your machine. Windows provides a simple service management user interface to stop, start and restart services.
+
+To register Corus as a service, you need to:
+## i) Define a Corus configuration file ##
+  * you need to define a Corus configuration file that will be used when the service starts.
+  * We provide a default configuration file to help you: it is located under `%CORUS_HOME%\config\corus_service_33000.wrapper.properties`. You can have a look at the configuration section to know how to customize Corus.
+
+## ii) Prepare installation script ##
+  * A script is available to register Corus as a Windows Service: it located under `%CORUS_HOME%\bin\win32\InstallCorusService.bat`
+  * Edit the script (or copy it under a different name) and set the configuration file name to the variable WRAPPER\_CONF.
+  * By default, the `InstallCorusService.bat` is configured to use the `%CORUS_HOME%\config\corus_service_33000.wrapper.properties` file (so can have a try right now).
+
+## iii) Execute the installation script ##
+  * Once you are ready, you simply have to execute the `InstallCorusService.bat` script as an Administrator
+
+<table width='50%'>
+<tr><td>
+<a href='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_4_InstallService.jpg'><img width='100%' src='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_4_InstallService.jpg' /></a>
+</td></tr>
+<tr align='center'><td><i>Click on the image for full size resolution</i></td></tr>
+</table>
+
+  * To validate the installation, look at the Services management window to see that a new service called "Sapia Corus Server" is installed.
+  * To go to the Service management window go in Control Panel -> System and Maintenance ->  Administration Tools -> Service
+
+<table width='50%'>
+<tr><td>
+<a href='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_5_CorusService.jpg'><img width='100%' src='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_5_CorusService.jpg' /></a>
+</td></tr>
+<tr align='center'><td><i>Click on the image for full size resolution</i></td></tr>
+</table>
+
+As you can see, upon installation the Corus service is not running. You nee to click on Start to perform the initial execution. However, the Corus service will be automatically started on the next restart of Windows.
+
+Once you start the Corus service, you can validate the proper execution of the Corus service by:
+1. looking at the Corus log files that resides under the `%CORUS_HOME%\logs` directory
+
+<table width='50%'>
+<tr><td>
+<a href='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_6_CorusLogs.jpg'><img width='100%' src='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_6_CorusLogs.jpg' /></a>
+</td></tr>
+<tr align='center'><td><i>Click on the image for full size resolution</i></td></tr>
+</table>
+
+2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is called `coruscli.bat` and resides in the `%CORUS_HOME%\bin` directory. If you previously added the `%CORUS_HOME%\bin` directory in the `Path` environment variable, you can simply invoke the file. Otherwise you will have to get to the bin directory and invoke the command.
+
+<table width='50%'>
+<tr><td>
+<a href='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_7_CorusCLI.jpg'><img width='100%' src='http://sapia.googlecode.com/svn/wiki/resources/ScreenShot_WindowsVista_7_CorusCLI.jpg' /></a>
+</td></tr>
+<tr align='center'><td><i>Click on the image for full size resolution</i></td></tr>
+</table>
+
+And that is pretty much it for the installation. You can now envoy Corus.
+
+## iv) Manage the Corus service ##
+  * From the Services management window you can start, stop and restart the Corus service
+  * If you ever need to remove the Corus service, there is another script provided in the `%CORUS_HOME%\bin\win32` directory: it is called `UninstallCorusService.bat`. You can use this script the same way you previously installed the Corus service (don't forget to run it as an Administrator)

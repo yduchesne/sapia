@@ -1,0 +1,28 @@
+Describes how POM hierarchy works in Sapia projects
+
+# How-To #
+
+Whenever a project is created in the Sapia repository, a POM must be set up. In order to avoid repeating redundant configuration elements through each POM, we've decided to benefit from Maven's support for so-called "POM hierarchies".
+
+It goes like this: we've defined a global parent POM, which is kept in the repository, and released whenever me modify it. That POM defines elements such as:
+
+  * Project developers
+  * Documentation plugin configuration
+  * etc.
+
+In order to inherit from the global POM, just declare a 'parent' element, as in the following snippet:
+
+```
+  <parent>
+    <groupId>org.sapia</groupId>
+    <artifactId>sapia_global</artifactId>
+    <version>1.0</version>
+  </parent>
+```
+
+Use the most current version of the global POM. Then, you only need specifying the essentials as part of your project POM:
+
+  * name, description, artifact ID, group ID, version
+  * packaging
+  * license (if different than Apache 2.0)
+  * dependencies

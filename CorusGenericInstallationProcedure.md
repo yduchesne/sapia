@@ -1,0 +1,119 @@
+# Introduction #
+
+This procedure describes installing Corus as a service without using the Java Service Wrapper. Installation rests on a generic init.d script.
+
+# 1. Preparing the environment #
+
+## i) Java ##
+  * Before installing Corus you need to have Java installed on your machine. Corus requires at least Java 6.
+  * Corus requires the presence of the  `$JAVA_HOME` environment variable that points to the Java runtime you want to use (JRE or JDK).
+
+## ii) Corus user ##
+  * Since Corus is mainly a background process, we strongly suggest that the Corus server be installed and executed with the privileges of a restricted user.
+  * Using the command `useradd`, created a new system user named "corus". Here's a quick example of it:
+
+> |` sudo useradd corus `<br />|
+|:---------------------------|
+
+  * Using the groupadd command, create a group to which the corus user will belong (or you may simply prefer to associate the corus user to an already existing group). For example, creating an "infra" groups:
+
+> |`sudo groupadd infra`<br />|
+|:--------------------------|
+
+  * Associate the corus user to the group:
+
+> |`sudo usermod -G infra corus`<br />|
+|:----------------------------------|
+
+## iii) Installation directory ##
+  * You need to create a directory on your system in which you will install Corus.
+  * For the purpose of this demonstration, we create the `/opt/sapia-corus` directory.
+> |`sudo mkdir /opt/sapia-corus`<br />|
+|:----------------------------------|
+
+
+# 2. Extract the Corus distribution #
+  * Extract the Corus distribution file into the Corus installation directory created above.
+> |`sudo tar -xvf ../datastore/sapia_corus_server-2.0-linux64.tar.gz `<br />|
+|:------------------------------------------------------------------------|
+
+  * Rename the created root directory of the archive if you need.
+  * For example, we extracted the tar and the files reside under the directory `/opt/sapia-corus/sapia_corus-2.0`
+  * Make sure that the files of the distribution are own by the corus user. Here's an example using the `chown` command:
+> |`sudo chown -R corus:corus sapia_corus-2.0/ `<br />|
+|:--------------------------------------------------|
+
+
+# 3. Configure the Environment #
+  * To run properly, Corus requires the presence of another environment variable: CORUS\_HOME
+  * The variable must point to the home directory of the Corus installation, which in our case is the `/opt/sapia-corus/sapia_corus-2.0` directory
+  * However, we suggest the usage of a `current` symbolic link under `/opt/sapia-corus` to facilitate the future upgrades of Corus. That we if you ever extract another distribution of Corus you will simply have to change the sybolic link and upon restart the new distribution will start.
+  * Here an example of how to create a symbolic link using the `ln` command (make sure you are in the install direcotry):
+
+> | `sudo ln -s sapia_corus-2.0/ current`<br />|
+|:-------------------------------------------|
+
+  * To define an environment variable, we suggest to modify the file `/etc/profile` which contains the global environment variables setup for every user.
+  * Using `vi` (or the file editor of your choice) add the following lines to the file:
+> |` CORUS_HOME=/opt/sapia-corus/current `<br />` export CORUS_HOME `|
+|:-----------------------------------------------------------------|
+
+  * You can also modify the `$PATH` environment variable to have an easy access to the various commands of the Corus distribution
+  * To do so, edit the `/etc/profile` file again and add the following lines to it:
+> | ` PATH=$PATH:$CORUS_HOME/bin`<br />` export PATH ` |
+|:---------------------------------------------------|
+
+At this point you should be able to start Corus by manually invoking the `$CORUS_HOME\bin\corus` file. However performing this task manually is cumbersome. The next section will guide you through the steps to register Corus as a service with the Linux run levels.
+
+
+# 4. Linux System Service Integration #
+With the installation of Corus as a Linux system service (in the run levels), you will be able to automatically start Corus on startup of your machine. Once properly registered you can easily stop, start and restart Corus service using the `service` command.
+
+To register Corus as a system service, you need to:
+
+## i) Prepare the init.d script ##
+  * A script is available to register Corus as a system service: it is located under `$CORUS_HOME/bin/corus.init.d-nowrapper`
+  * Copy it under the directory `/etc/init.d` and name it `corus` (make sure you are using root user, or using sudo)
+> |`sudo cp $CORUS_HOME/current/bin/corus.init.d-nowrapper /etc/init.d/corus`|
+|:-------------------------------------------------------------------------|
+
+## ii) Set the script variables ##
+
+Edit the /etc/init.d/corus file with vi (or your favorite Linux text editor). Set the following variables:
+
+**JAVA\_HOME** CORUS\_HOME
+**CORUS\_GROUP (set the group to the one to which you've assigned the corus user)**
+
+You can go down the script an modify any variable according to your needs.
+
+## iii) Register with the run levels ##
+
+This part of the procedure may vary according to the Linux flavor you're using. We're describing the steps for RedHat flavors (RedHat, Centos, Fedora).
+
+  * Execute the `chkconfig` command:
+
+> | `sudo chkconfig --add /etc/init.d/corus `<br />|
+|:-----------------------------------------------|
+
+  * You can validate the run level registration as follows:
+
+> |`sudo chkconfig --list | grep corus `<br />` corus          	0:off	1:off	2:on	3:on	4:on	5:on	6:off  `<br />|
+|:----------------------------------------------------------------------------------------------------------|
+
+  * As you can see upon installation, the Corus service is not running. You can start it using the `service` command like that:
+
+> | `service corus start ` <br /> `Starting Sapia Corus Server [33000]...` <br /> |
+|:------------------------------------------------------------------------------|
+
+
+Once you start the Corus service, you can validate its proper execution by:
+
+1. looking at the Corus log files that resides under the `$CORUS_HOME/logs` directory
+
+2. starting the Corus CLI (Command Line Interface) to connect to the server. The script is called `coruscli` and resides under the `$CORUS_HOME/bin` directory. If you previously added the `$CORUS_HOME/bin` directory in the `$PATH` environment variable, you can simply invoke the script. Otherwise you will have to get to the bin directory and invoke the command.
+
+And that is pretty much it for the installation.
+
+## iv) Manage the Corus System Service ##
+
+  * Using the `service` command you can start, stop and restart the Corus service

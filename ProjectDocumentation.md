@@ -1,0 +1,35 @@
+# How-To #
+
+## Overview ##
+
+All Sapia doc is authored using XML, based on elements that combine XHTML with custom Sapia tags. The documentation files are saved with the xdocs.xml extension (e.g.: home.xdocs.xml), and process as part of Maven's 'site' phase. Sapia's custom documentation plugin (a Maven plugin), processes these xdocs files as part of project builds.
+
+The plugin is configured in Sapia's global POM, from which all Sapia projects by convention inherit.
+
+## Documentation Layout ##
+
+The xdocs files must be kept under a project structure identical to this one:
+```
+<project_home>/
+           sapia/
+                site/
+                    xml/
+```
+Then, as part of documentation generation, the standard Maven site is also generated according to the [Maven conventions](http://maven.apache.org/plugins/maven-site-plugin/examples/creating-content.html).
+
+
+## Output ##
+
+The xdocs files are tranformed with XSL, and the output is saved under `target/site`. For its part, the Maven site is generated under `target/site/maven`.
+
+It is thus up to the content of the xdocs files to point to the maven site accordingly.
+
+## Generating ##
+
+Do a
+
+`mvn site`
+
+Or a
+
+`mvn org.sapia:sapia_site_doc_plugin:generate`
